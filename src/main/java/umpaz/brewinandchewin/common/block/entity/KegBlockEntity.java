@@ -482,7 +482,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
     public void updateTemperature() {
         ArrayList<BlockState> states = new ArrayList<>();
-        int range = 1;
+        int range = 2;
         for (int x = -range; x <= range; x++) {
             for (int y = -range; y <= range; y++) {
                 for (int z = -range; z <= range; z++) {

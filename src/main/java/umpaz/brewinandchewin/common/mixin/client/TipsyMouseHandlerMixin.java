@@ -4,6 +4,7 @@ package umpaz.brewinandchewin.common.mixin.client;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
+import net.minecraft.world.entity.player.Player;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,8 +16,9 @@ public class TipsyMouseHandlerMixin {
 
    @ModifyExpressionValue(method = "turnPlayer()V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Options;smoothCamera:Z", opcode = Opcodes.GETFIELD))
    private boolean brewinandchewin$enableSmoothCamera(boolean original) {
-      if (Minecraft.getInstance().player != null) {
-         if (Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY.get())) {
+      Player player = Minecraft.getInstance().player;
+      if (player != null) {
+         if (player.hasEffect(BnCEffects.TIPSY.get()) && player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
             return true;
          }
       }

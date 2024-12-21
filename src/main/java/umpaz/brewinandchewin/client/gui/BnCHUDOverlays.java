@@ -96,7 +96,7 @@ public class BnCHUDOverlays {
             ++healthEnd;
         boolean splitHeartRight = false;
 
-        if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && !player.hasEffect(BnCEffects.TIPSY.get())) {
+        if (BnCConfiguration.NUMBED_HEART_FLICKERING.get()) {
             float increase = 0.05F * ((float) cap.getTicksUntilDamage() / TipsyNumbedHeartsCapability.MAX_TICKS_UNTIL_DAMAGE);
             numbedAlpha = Mth.clamp(numbedAlpha + (increaseNumbedAlpha ? increase : -increase), -0.01F, 1.01F);
             if (numbedAlpha < 0.0F)

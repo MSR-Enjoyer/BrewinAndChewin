@@ -2,10 +2,13 @@ package umpaz.brewinandchewin.common.event;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -15,6 +18,7 @@ import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.capability.TipsyNumbedHeartsCapability;
 import umpaz.brewinandchewin.common.registry.BnCDamageTypes;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
+import vectorwing.farmersdelight.common.registry.ModItems;
 
 @Mod.EventBusSubscriber(modid = BrewinAndChewin.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class BnCCommonEvents {
@@ -55,8 +59,9 @@ public class BnCCommonEvents {
         LivingEntity living = event.getEntity();
         living.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
             if (cap.getNumbedHealth() > 0.0F) {
-                cap.setTicksUntilDamage(living.hasEffect(BnCEffects.TIPSY.get()) ? 0 : cap.getTicksUntilDamage() + 1);
-                if (cap.getTicksUntilDamage() > TipsyNumbedHeartsCapability.MAX_TICKS_UNTIL_DAMAGE) {
+                cap.setTicksUntilDamage(cap.getTicksUntilDamage() + 1);
+                if (cap.getTicksUntilDamage() > 200) {
+                    System.out.println(cap.getTicksUntilDamage());
                     living.hurt(living.damageSources().source(BnCDamageTypes.CARDIAC_ARREST), cap.getNumbedHealth());
                     cap.setNumbedHealth(0.0F);
                 }
@@ -76,10 +81,27 @@ public class BnCCommonEvents {
         target.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
             float reducedAmount = Math.min(event.getAmount() * (0.3F + 0.022F * amplifier), maximumNumbedHearts - cap.getNumbedHealth());
             cap.setNumbedHealth(cap.getNumbedHealth() + reducedAmount);
+            cap.setTicksUntilDamage(0);
             if (target instanceof Player)
                 cap.sync();
             event.setAmount(event.getAmount() - reducedAmount);
         });
+    }
+
+    @SubscribeEvent
+    public static void reduceTipsy(final LivingEntityUseItemEvent.Finish event) {
+        LivingEntity player = event.getEntity();
+        if (player.hasEffect(BnCEffects.TIPSY.get())) {
+            if (event.getItem().isEdible()) {
+                MobEffectInstance tipsy = player.getEffect(BnCEffects.TIPSY.get());
+                if (event.getItem().is(Items.MILK_BUCKET) || event.getItem().is(ModItems.MILK_BOTTLE.get())) {
+                    player.forceAddEffect(new MobEffectInstance(BnCEffects.TIPSY.get(), (int) (tipsy.getDuration() * .5f), tipsy.getAmplifier(), false, false, true), player);
+                }
+                else {
+                    player.forceAddEffect(new MobEffectInstance(BnCEffects.TIPSY.get(), (int) (tipsy.getDuration() * .9f), tipsy.getAmplifier(), false, false, true), player);
+                }
+            }
+        }
     }
 }
 
