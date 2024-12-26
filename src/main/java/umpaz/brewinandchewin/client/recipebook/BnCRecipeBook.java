@@ -42,5 +42,6 @@ public class BnCRecipeBook {
             }
             return null;
         });
+        event.registerRecipeCategoryFinder(BnCRecipeTypes.KEG_POURING.get(), recipe -> RecipeBookCategories.UNKNOWN);
     }
 }
