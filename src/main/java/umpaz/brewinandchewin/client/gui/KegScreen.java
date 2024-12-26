@@ -172,7 +172,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
         if (!fluidStack.isEmpty() && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient() == null || fermentingRecipe.getFluidIngredient().getFluid().isSame(fluidStack.getRawFluid()))) {
 
             // Fluid
-            if (BnCConfiguration.FLUID_IN_KEG.get()) {
+            if (BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {
                 IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(fluidStack.getFluid());
                 ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(fluidStack);
                 if (stillTexture != null) {

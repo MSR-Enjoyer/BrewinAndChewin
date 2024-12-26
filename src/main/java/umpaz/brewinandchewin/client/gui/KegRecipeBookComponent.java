@@ -131,7 +131,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                     return;
                 // Fluid
                 if (!kegMenu.kegTank.getFluid().getFluid().isSame(fluidStack.getRawFluid())) {
-                    if (BnCConfiguration.FLUID_IN_KEG.get()) {
+                    if (BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {
                         IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(fluidStack.getFluid());
                         ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(fluidStack);
                         if (stillTexture != null) {
