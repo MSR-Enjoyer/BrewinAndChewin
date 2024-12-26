@@ -1,7 +1,12 @@
 {
   "type": "brewinandchewin:keg_pouring",
   "amount": 250,
-  "conditions": [],
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "create"
+    }
+  ],
   "container": {
     "item": "minecraft:glass_bottle"
   },

@@ -144,7 +144,7 @@ public class KegPouringRecipeBuilder {
 
             if (!conditions.isEmpty()) {
                 JsonArray conditions = new JsonArray();
-                this.conditions.forEach(CraftingHelper::serialize);
+                this.conditions.forEach(iCondition -> conditions.add(CraftingHelper.serialize(iCondition)));
                 json.add("conditions", conditions);
             }
         }
