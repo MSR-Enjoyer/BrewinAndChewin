@@ -20,7 +20,7 @@ import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import umpaz.brewinandchewin.common.registry.BnCRecipeSerializers;
-import umpaz.brewinandchewin.common.utility.BnCRecipeWrapper;
+import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
 import javax.annotation.Nullable;
 
@@ -38,7 +38,7 @@ public class CreatePotionPouringRecipe extends KegPouringRecipe {
     }
 
     @Override
-    public ItemStack assemble(BnCRecipeWrapper recipeWrapper, RegistryAccess registryAccess) {
+    public ItemStack assemble(KegRecipeWrapper recipeWrapper, RegistryAccess registryAccess) {
         ItemStack stack = new ItemStack(Items.POTION);
         FluidStack fluidStack = recipeWrapper.getFluid(0);
         if (fluidStack.getTag() != null) {

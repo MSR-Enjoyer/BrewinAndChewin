@@ -16,11 +16,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 import umpaz.brewinandchewin.common.registry.BnCItems;
 import umpaz.brewinandchewin.common.registry.BnCRecipeSerializers;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
-import umpaz.brewinandchewin.common.utility.BnCRecipeWrapper;
+import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
 import javax.annotation.Nullable;
 
-public class KegPouringRecipe implements Recipe<BnCRecipeWrapper> {
+public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
     private final ResourceLocation id;
     private final Fluid fluid;
     private final int amount;
@@ -50,12 +50,12 @@ public class KegPouringRecipe implements Recipe<BnCRecipeWrapper> {
     }
 
     @Override
-    public boolean matches(BnCRecipeWrapper inv, Level level) {
+    public boolean matches(KegRecipeWrapper inv, Level level) {
         return Ingredient.of(this.container).test(inv.getItem(4));
     }
 
     @Override
-    public ItemStack assemble(BnCRecipeWrapper recipeWrapper, RegistryAccess registryAccess) {
+    public ItemStack assemble(KegRecipeWrapper recipeWrapper, RegistryAccess registryAccess) {
         return this.output.copy();
     }
 

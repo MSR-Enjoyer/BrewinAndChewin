@@ -17,6 +17,7 @@
       "item": "minecraft:sugar"
     }
   ],
+  "recipe_book_tab": "drinks",
   "result": {
     "count": 1000,
     "fluid": "brewinandchewin:egg_grog"

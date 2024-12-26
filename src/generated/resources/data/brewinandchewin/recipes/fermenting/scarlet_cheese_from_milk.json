@@ -17,6 +17,7 @@
       "item": "minecraft:sugar"
     }
   ],
+  "recipe_book_tab": "meals",
   "result": {
     "count": 1000,
     "fluid": "brewinandchewin:scarlet_cheese"

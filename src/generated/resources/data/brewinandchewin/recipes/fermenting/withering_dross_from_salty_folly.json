@@ -20,6 +20,7 @@
       "item": "minecraft:bone"
     }
   ],
+  "recipe_book_tab": "drinks",
   "result": {
     "count": 1000,
     "fluid": "brewinandchewin:withering_dross"

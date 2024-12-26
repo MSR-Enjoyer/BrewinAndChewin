@@ -17,6 +17,7 @@
       "item": "minecraft:cocoa_beans"
     }
   ],
+  "recipe_book_tab": "meals",
   "result": {
     "count": 1,
     "item": "brewinandchewin:cocoa_fudge"

@@ -17,6 +17,7 @@
       "item": "minecraft:fermented_spider_eye"
     }
   ],
+  "recipe_book_tab": "drinks",
   "result": {
     "count": 1000,
     "fluid": "brewinandchewin:dread_nog"

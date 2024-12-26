@@ -14,6 +14,7 @@
       "item": "minecraft:brown_mushroom"
     }
   ],
+  "recipe_book_tab": "drinks",
   "result": {
     "count": 1000,
     "fluid": "brewinandchewin:rice_wine"

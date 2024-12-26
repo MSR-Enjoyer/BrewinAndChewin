@@ -15,6 +15,7 @@ public class SweetHeartEffect extends MobEffect {
         super(MobEffectCategory.BENEFICIAL, 16077186);
     }
 
+    // TODO: Swap out for more healing from saturation.
     @SubscribeEvent
     public static void sweetHeartEvent(LivingHealEvent event) {
         if (event.getEntity().hasEffect(BnCEffects.SWEET_HEART.get())) {

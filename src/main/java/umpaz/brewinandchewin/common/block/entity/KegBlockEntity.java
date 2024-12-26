@@ -49,7 +49,7 @@ import umpaz.brewinandchewin.common.registry.BnCBlockEntityTypes;
 import umpaz.brewinandchewin.common.registry.BnCItems;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.common.tag.BnCTags;
-import umpaz.brewinandchewin.common.utility.BnCRecipeWrapper;
+import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 import umpaz.brewinandchewin.common.utility.BnCTextUtils;
 import vectorwing.farmersdelight.common.block.entity.SyncedBlockEntity;
 import vectorwing.farmersdelight.common.mixin.accessor.RecipeManagerAccessor;
@@ -74,7 +74,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     private final LazyOptional<IItemHandler> outputHandler;
     private final FluidTank fluidTank;
     private final LazyOptional<FluidTank> fluidTankHandler;
-    private final BnCRecipeWrapper recipeWrapper;
+    private final KegRecipeWrapper recipeWrapper;
 
     private int fermentTime;
     private int fermentTimeTotal;
@@ -98,7 +98,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         this.kegData = createIntArray();
         this.usedRecipeTracker = new Object2IntOpenHashMap<>();
         this.checkNewRecipe = true;
-        this.recipeWrapper = new BnCRecipeWrapper(inventory, fluidTank);
+        this.recipeWrapper = new KegRecipeWrapper(inventory, fluidTank);
     }
 
     @Override
@@ -218,13 +218,6 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                 return false; // make sure the fluid amount is a multiple of the recipe amount
         }
 
-
-//      if (recipe.getResultFluid()!=null) { // if the recipe has a fluid result
-//         FluidStack resultStack = new FluidStack(recipe.getResultFluid(), recipe.getAmount());
-//
-//
-//      }
-
         return true;
     }
 
@@ -246,7 +239,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             }
 
         } else if (keg.fermentTime > 0) {
-            keg.fermentTime = Mth.clamp(keg.fermentTime - 2, 0, keg.fermentTimeTotal);
+            keg.fermentTime = 0;
         }
 
         ItemStack out = keg.extractInGui(keg, keg.inventory.getStackInSlot(CONTAINER_SLOT), keg.inventory.getStackInSlot(OUTPUT_SLOT), keg.inventory.getSlotLimit(OUTPUT_SLOT));
@@ -260,11 +253,11 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         }
     }
 
-    private Optional<KegFermentingRecipe> getMatchingRecipe(BnCRecipeWrapper inventoryWrapper) {
+    private Optional<KegFermentingRecipe> getMatchingRecipe(KegRecipeWrapper inventoryWrapper) {
         if (level == null) return Optional.empty();
 
         if (lastRecipeID != null) {
-            Recipe<BnCRecipeWrapper> recipe = ((RecipeManagerAccessor) level.getRecipeManager())
+            Recipe<KegRecipeWrapper> recipe = ((RecipeManagerAccessor) level.getRecipeManager())
                     .getRecipeMap(BnCRecipeTypes.FERMENTING.get())
                     .get(lastRecipeID);
             if (recipe instanceof KegFermentingRecipe kegFerm) {

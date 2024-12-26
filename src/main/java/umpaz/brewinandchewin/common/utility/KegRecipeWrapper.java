@@ -6,10 +6,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 
-public class BnCRecipeWrapper extends RecipeWrapper {
+public class KegRecipeWrapper extends RecipeWrapper {
     private final IFluidHandler tank;
 
-    public BnCRecipeWrapper(IItemHandlerModifiable itemHandler, IFluidHandler fluidHandler) {
+    public KegRecipeWrapper(IItemHandlerModifiable itemHandler, IFluidHandler fluidHandler) {
         super(itemHandler);
         this.tank = fluidHandler;
     }

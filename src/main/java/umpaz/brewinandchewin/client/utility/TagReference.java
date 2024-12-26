@@ -1,8 +1,5 @@
 package umpaz.brewinandchewin.client.utility;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-
 import java.util.ArrayList;
 import java.util.List;
 

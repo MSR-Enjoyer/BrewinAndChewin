@@ -18,29 +18,36 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
+import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.client.recipebook.FermentingRecipeBookTab;
+import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.registry.BnCItems;
 import umpaz.brewinandchewin.common.registry.BnCRecipeSerializers;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
-import umpaz.brewinandchewin.common.utility.BnCRecipeWrapper;
+import umpaz.brewinandchewin.common.utility.BnCRecipeUtils;
+import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
+import vectorwing.farmersdelight.client.recipebook.CookingPotRecipeBookTab;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
-public class KegFermentingRecipe implements Recipe<BnCRecipeWrapper> {
+public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
    public static final int INPUT_SLOTS = 4;
 
    private final ResourceLocation id;
    private final NonNullList<Ingredient> inputItems;
    @Nullable
-   private FluidStack fluidIngredient = null;
+   private final FermentingRecipeBookTab tab;
    @Nullable
-   private Fluid resultFluid = null;
+   private final FluidStack fluidIngredient;
    @Nullable
-   private Item resultItem = null;
+   private final Fluid resultFluid;
+   @Nullable
+   private final Item resultItem;
 
    private final float experience;
    private final int fermentTime;
@@ -48,9 +55,10 @@ public class KegFermentingRecipe implements Recipe<BnCRecipeWrapper> {
 
    private final int amount;
 
-   public KegFermentingRecipe(ResourceLocation id, NonNullList<Ingredient> inputItems, @Nullable FluidStack fluidIngredient, @Nullable Fluid resultFluid, @Nullable Item resultItem, int amount, float experience, int fermentTime, int temperature ) {
+   public KegFermentingRecipe(ResourceLocation id, NonNullList<Ingredient> inputItems, FermentingRecipeBookTab tab, @Nullable FluidStack fluidIngredient, @Nullable Fluid resultFluid, @Nullable Item resultItem, int amount, float experience, int fermentTime, int temperature ) {
       this.id = id;
       this.inputItems = inputItems;
+      this.tab = tab;
       this.fluidIngredient = fluidIngredient;
       this.resultFluid = resultFluid;
       this.resultItem = resultItem;
@@ -60,6 +68,10 @@ public class KegFermentingRecipe implements Recipe<BnCRecipeWrapper> {
       this.temperature = temperature;
    }
 
+   @Nullable
+   public FermentingRecipeBookTab getRecipeBookTab() {
+        return this.tab;
+   }
 
    @Override
    public ResourceLocation getId() {
@@ -89,7 +101,7 @@ public class KegFermentingRecipe implements Recipe<BnCRecipeWrapper> {
    }
 
    @Override
-   public ItemStack assemble( BnCRecipeWrapper inv, RegistryAccess access ) {
+   public ItemStack assemble(KegRecipeWrapper inv, RegistryAccess access ) {
       return ItemStack.EMPTY;
    }
 
@@ -106,7 +118,7 @@ public class KegFermentingRecipe implements Recipe<BnCRecipeWrapper> {
    }
 
    @Override
-   public boolean matches( BnCRecipeWrapper inv, Level level ) {
+   public boolean matches(KegRecipeWrapper inv, Level level ) {
       List<ItemStack> inputs = new ArrayList<>();
       int i = 0;
 
@@ -117,7 +129,7 @@ public class KegFermentingRecipe implements Recipe<BnCRecipeWrapper> {
             inputs.add(itemstack);
          }
       }
-      return i == this.inputItems.size() && RecipeMatcher.findMatches(inputs, this.inputItems) != null;
+      return i == this.inputItems.size() && RecipeMatcher.findMatches(inputs, this.inputItems) != null && (fluidIngredient == null && inv.getFluid(0).isEmpty() || fluidIngredient != null && inv.getFluid(0).isFluidEqual(fluidIngredient));
    }
 
    @Override
@@ -127,6 +139,10 @@ public class KegFermentingRecipe implements Recipe<BnCRecipeWrapper> {
 
    @Override
    public ItemStack getResultItem( RegistryAccess registryAccess ) {
+      if (resultItem != null)
+          return resultItem.getDefaultInstance();
+      if (resultFluid != null)
+          return BnCRecipeUtils.getPouredItemFromFluid(new FluidStack(resultFluid, BnCConfiguration.KEG_CAPACITY.get()));
       return ItemStack.EMPTY;
    }
 
@@ -184,48 +200,51 @@ public class KegFermentingRecipe implements Recipe<BnCRecipeWrapper> {
 
       @Override
       public KegFermentingRecipe fromJson( ResourceLocation recipeId, JsonObject json ) {
-         final NonNullList<Ingredient> inputItemsIn = readIngredients(GsonHelper.getAsJsonArray(json, "ingredients"));
-         if ( inputItemsIn.isEmpty() ) {
-            throw new JsonParseException("No ingredients for cooking recipe");
-         }
-         else if ( inputItemsIn.size() > KegFermentingRecipe.INPUT_SLOTS ) {
-            throw new JsonParseException("Too many ingredients for cooking recipe! The max is " + KegFermentingRecipe.INPUT_SLOTS);
-         }
-         else {
+          final NonNullList<Ingredient> inputItemsIn = readIngredients(GsonHelper.getAsJsonArray(json, "ingredients"));
+          if (inputItemsIn.isEmpty()) {
+              throw new JsonParseException("No ingredients for cooking recipe");
+          } else if (inputItemsIn.size() > KegFermentingRecipe.INPUT_SLOTS) {
+              throw new JsonParseException("Too many ingredients for cooking recipe! The max is " + KegFermentingRecipe.INPUT_SLOTS);
+          } else {
+              String tabKeyIn = GsonHelper.getAsString(json, "recipe_book_tab", null);
+              FermentingRecipeBookTab tabIn = FermentingRecipeBookTab.findByName(tabKeyIn);
+              if (tabKeyIn != null && tabIn == null) {
+                  BrewinAndChewin.LOG.warn("Optional field 'recipe_book_tab' does not match any valid tab. If defined, must be one of the following: " + EnumSet.allOf(CookingPotRecipeBookTab.class));
+              }
 
-            FluidStack baseFluidStackIn = null;
-            if ( json.has("basefluid") ) {
-               JsonObject baseFluid = json.getAsJsonObject("basefluid");
+              FluidStack baseFluidStackIn = null;
+              if (json.has("basefluid")) {
+                  JsonObject baseFluid = json.getAsJsonObject("basefluid");
 
-               baseFluidStackIn = new FluidStack(
-                       ForgeRegistries.FLUIDS.getValue(new ResourceLocation(GsonHelper.getAsString(baseFluid, "fluid"))),
-                       GsonHelper.getAsInt(baseFluid, "count", 200)
-               );
-            }
+                  baseFluidStackIn = new FluidStack(
+                          ForgeRegistries.FLUIDS.getValue(new ResourceLocation(GsonHelper.getAsString(baseFluid, "fluid"))),
+                          GsonHelper.getAsInt(baseFluid, "count", 200)
+                  );
+              }
 
 
-            float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
-            int fermentingTime = GsonHelper.getAsInt(json, "fermentingtime", 200);
-            int temperature = GsonHelper.getAsInt(json, "temperature", 3);
+              float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
+              int fermentingTime = GsonHelper.getAsInt(json, "fermentingtime", 200);
+              int temperature = GsonHelper.getAsInt(json, "temperature", 3);
 
-            JsonObject result = GsonHelper.getAsJsonObject(json, "result");
-            int count = GsonHelper.getAsInt(result, "count");
+              JsonObject result = GsonHelper.getAsJsonObject(json, "result");
+              int count = GsonHelper.getAsInt(result, "count");
 
-            Fluid resultFluid = null;
-            if ( result.has("fluid") ) {
-               resultFluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(GsonHelper.getAsString(result, "fluid")));
-            }
+              Fluid resultFluid = null;
+              if (result.has("fluid")) {
+                  resultFluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(GsonHelper.getAsString(result, "fluid")));
+              }
 
-            Item resultItem = null;
-            if ( result.has("item") ) {
-               resultItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(result, "item")));
-            }
+              Item resultItem = null;
+              if (result.has("item")) {
+                  resultItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(result, "item")));
+              }
 
-            return new KegFermentingRecipe(recipeId, inputItemsIn, baseFluidStackIn, resultFluid, resultItem, count, experience, fermentingTime, temperature);
-         }
+              return new KegFermentingRecipe(recipeId, inputItemsIn, tabIn, baseFluidStackIn, resultFluid, resultItem, count, experience, fermentingTime, temperature);
+          }
       }
 
-      private static NonNullList<Ingredient> readIngredients( JsonArray ingredientArray ) {
+       private static NonNullList<Ingredient> readIngredients( JsonArray ingredientArray ) {
          NonNullList<Ingredient> nonnulllist = NonNullList.create();
 
          for ( int i = 0; i < ingredientArray.size(); ++i ) {
@@ -249,6 +268,7 @@ public class KegFermentingRecipe implements Recipe<BnCRecipeWrapper> {
          }
 
 
+         Optional<FermentingRecipeBookTab> tabIn = buffer.readOptional(friendlyByteBuf -> friendlyByteBuf.readEnum(FermentingRecipeBookTab.class));
          Optional<FluidStack> baseFluidStackIn = buffer.readOptional(FriendlyByteBuf::readFluidStack);
          Optional<Item> itemResult = buffer.readOptional(FriendlyByteBuf::readItem).map(ItemStack::getItem);
          Optional<Fluid> fluidResult = buffer.readOptional(FriendlyByteBuf::readFluidStack).map(FluidStack::getFluid);
@@ -256,7 +276,7 @@ public class KegFermentingRecipe implements Recipe<BnCRecipeWrapper> {
          float experienceIn = buffer.readFloat();
          int fermentTimeIn = buffer.readVarInt();
          int temperatureIn = buffer.readVarInt();
-         return new KegFermentingRecipe(recipeId, inputItemsIn, baseFluidStackIn.orElse(null), fluidResult.orElse(null), itemResult.orElse(null), amount, experienceIn, fermentTimeIn, temperatureIn);
+         return new KegFermentingRecipe(recipeId, inputItemsIn, tabIn.orElse(null), baseFluidStackIn.orElse(null), fluidResult.orElse(null), itemResult.orElse(null), amount, experienceIn, fermentTimeIn, temperatureIn);
       }
 
       @Override
@@ -267,6 +287,7 @@ public class KegFermentingRecipe implements Recipe<BnCRecipeWrapper> {
             ingredient.toNetwork(buffer);
          }
 
+         buffer.writeOptional(( recipe.tab != null) ? Optional.of(recipe.tab) : Optional.empty(), FriendlyByteBuf::writeEnum);
          buffer.writeOptional(( recipe.fluidIngredient != null ) ? Optional.of(recipe.fluidIngredient) : Optional.empty(), FriendlyByteBuf::writeFluidStack);
          buffer.writeOptional(( recipe.resultItem != null ) ? Optional.of(recipe.resultItem.getDefaultInstance()) : Optional.empty(), FriendlyByteBuf::writeItem);
          buffer.writeOptional(( recipe.resultFluid != null ) ? Optional.of(new FluidStack(recipe.resultFluid, 1)) : Optional.empty(), FriendlyByteBuf::writeFluidStack);

@@ -6,12 +6,16 @@
   "refmap": "brewinandchewin.refmap.json",
   "mixins": [
     "CancelSaturationMixin",
+    "KegStackedContentsRecipePickerMixin",
     "PreventIntoxicationRemovalMixin$HotCocoa",
-    "PreventIntoxicationRemovalMixin$MilkBottle"
+    "PreventIntoxicationRemovalMixin$MilkBottle",
+    "ServerPlaceRecipeAccessor",
+    "StackedContentsRecipePickerAccessor"
   ],
   "client": [
     "client.GuiAccessor",
     "client.GuiMixin",
+    "client.RecipeBookComponentAccessor",
     "client.TipsyDontRenderFoodMixin",
     "client.TipsyDontRenderNourishment",
     "client.TipsyDrunkRendererMixin",

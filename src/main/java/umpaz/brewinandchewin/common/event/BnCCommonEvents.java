@@ -61,7 +61,6 @@ public class BnCCommonEvents {
             if (cap.getNumbedHealth() > 0.0F) {
                 cap.setTicksUntilDamage(cap.getTicksUntilDamage() + 1);
                 if (cap.getTicksUntilDamage() > 200) {
-                    System.out.println(cap.getTicksUntilDamage());
                     living.hurt(living.damageSources().source(BnCDamageTypes.CARDIAC_ARREST), cap.getNumbedHealth());
                     cap.setNumbedHealth(0.0F);
                 }

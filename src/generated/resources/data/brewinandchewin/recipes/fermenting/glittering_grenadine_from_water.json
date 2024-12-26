@@ -17,6 +17,7 @@
       "item": "minecraft:glow_ink_sac"
     }
   ],
+  "recipe_book_tab": "drinks",
   "result": {
     "count": 1000,
     "fluid": "brewinandchewin:glittering_grenadine"

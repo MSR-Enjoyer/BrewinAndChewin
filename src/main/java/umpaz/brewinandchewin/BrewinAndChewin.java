@@ -29,6 +29,7 @@ public class BrewinAndChewin
 {
    public static final String MODID = "brewinandchewin";
    public static final Logger LOG = LoggerFactory.getLogger("Brewin' And Chewin'");
+
     public BrewinAndChewin() {
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 

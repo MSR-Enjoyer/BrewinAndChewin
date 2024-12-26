@@ -20,6 +20,7 @@
       "tag": "forge:vegetables/carrot"
     }
   ],
+  "recipe_book_tab": "drinks",
   "result": {
     "count": 1000,
     "fluid": "brewinandchewin:strongroot_ale"
