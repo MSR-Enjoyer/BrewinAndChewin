@@ -1,12 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_any_ingredient": {
+    "has_sea_pickle": {
       "conditions": {
         "items": [
           {
             "items": [
-              "minecraft:glowstone_dust",
               "minecraft:sea_pickle"
             ]
           }
@@ -23,7 +22,7 @@
   },
   "requirements": [
     [
-      "has_any_ingredient",
+      "has_sea_pickle",
       "has_the_recipe"
     ]
   ],

@@ -1,20 +1,6 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_any_ingredient": {
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "minecraft:sea_pickle",
-              "minecraft:dried_kelp",
-              "minecraft:seagrass"
-            ]
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
-    },
     "has_the_recipe": {
       "conditions": {
         "recipe": "brewinandchewin:fermenting/salty_folly_from_vodka"
@@ -37,7 +23,6 @@
   "requirements": [
     [
       "has_vodka",
-      "has_any_ingredient",
       "has_the_recipe"
     ]
   ],

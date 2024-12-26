@@ -11,18 +11,6 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "has_kelp": {
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "minecraft:kelp"
-            ]
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
-    },
     "has_the_recipe": {
       "conditions": {
         "recipe": "brewinandchewin:fermenting/kippers"
@@ -33,7 +21,6 @@
   "requirements": [
     [
       "has_fish",
-      "has_kelp",
       "has_the_recipe"
     ]
   ],
