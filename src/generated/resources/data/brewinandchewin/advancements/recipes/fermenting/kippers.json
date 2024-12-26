@@ -1,12 +1,22 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_cheese": {
+    "has_fish": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:raw_fishes"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_kelp": {
       "conditions": {
         "items": [
           {
             "items": [
-              "brewinandchewin:scarlet_cheese_wedge"
+              "minecraft:kelp"
             ]
           }
         ]
@@ -15,21 +25,22 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+        "recipe": "brewinandchewin:fermenting/kippers"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_cheese",
+      "has_fish",
+      "has_kelp",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+      "brewinandchewin:fermenting/kippers"
     ]
   },
-  "sends_telemetry_event": false
+  "sends_telemetry_event": true
 }

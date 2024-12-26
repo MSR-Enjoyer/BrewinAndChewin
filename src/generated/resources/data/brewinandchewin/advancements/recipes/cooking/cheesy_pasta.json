@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "brewinandchewin:scarlet_cheese_wedge"
+              "brewinandchewin:flaxen_cheese_wedge"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+        "recipe": "brewinandchewin:cooking/cheesy_pasta"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,8 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+      "brewinandchewin:cooking/cheesy_pasta"
     ]
   },
-  "sends_telemetry_event": false
+  "sends_telemetry_event": true
 }

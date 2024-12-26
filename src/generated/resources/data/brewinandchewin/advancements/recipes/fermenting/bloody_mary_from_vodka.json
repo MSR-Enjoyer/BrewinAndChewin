@@ -1,0 +1,50 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_any_ingredient": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "farmersdelight:tomato",
+              "farmersdelight:cabbage",
+              "minecraft:sweet_berries"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "brewinandchewin:fermenting/bloody_mary_from_vodka"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_vodka": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "brewinandchewin:vodka"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_vodka",
+      "has_any_ingredient",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "brewinandchewin:fermenting/bloody_mary_from_vodka"
+    ]
+  },
+  "sends_telemetry_event": true
+}

@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_cheese": {
+    "has_glow_berries": {
       "conditions": {
         "items": [
           {
             "items": [
-              "brewinandchewin:scarlet_cheese_wedge"
+              "minecraft:glow_berries"
             ]
           }
         ]
@@ -15,21 +15,21 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+        "recipe": "brewinandchewin:cooking/glow_berry_marmalade"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_cheese",
+      "has_glow_berries",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+      "brewinandchewin:cooking/glow_berry_marmalade"
     ]
   },
-  "sends_telemetry_event": false
+  "sends_telemetry_event": true
 }

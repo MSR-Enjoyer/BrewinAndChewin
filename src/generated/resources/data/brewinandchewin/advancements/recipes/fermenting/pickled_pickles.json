@@ -1,12 +1,13 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_cheese": {
+    "has_any_ingredient": {
       "conditions": {
         "items": [
           {
             "items": [
-              "brewinandchewin:scarlet_cheese_wedge"
+              "minecraft:glowstone_dust",
+              "minecraft:sea_pickle"
             ]
           }
         ]
@@ -15,21 +16,21 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+        "recipe": "brewinandchewin:fermenting/pickled_pickles"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_cheese",
+      "has_any_ingredient",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+      "brewinandchewin:fermenting/pickled_pickles"
     ]
   },
-  "sends_telemetry_event": false
+  "sends_telemetry_event": true
 }

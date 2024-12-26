@@ -82,13 +82,13 @@ public class BnCCraftingRecipes {
                 .pattern("pp")
                 .pattern("pp")
                 .define('p', BnCItems.FLAXEN_CHEESE_WEDGE.get())
-                .unlockedBy("has_slice", InventoryChangeTrigger.TriggerInstance.hasItems(BnCItems.FLAXEN_CHEESE_WEDGE.get()))
+                .unlockedBy("has_cheese", InventoryChangeTrigger.TriggerInstance.hasItems(BnCItems.FLAXEN_CHEESE_WEDGE.get()))
                 .save(consumer, new ResourceLocation(BrewinAndChewin.MODID, "flaxen_cheese_wheel_from_wedges"));
         ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, BnCItems.SCARLET_CHEESE_WHEEL.get())
                 .pattern("pp")
                 .pattern("pp")
                 .define('p', BnCItems.SCARLET_CHEESE_WEDGE.get())
-                .unlockedBy("has_slice", InventoryChangeTrigger.TriggerInstance.hasItems(BnCItems.SCARLET_CHEESE_WEDGE.get()))
+                .unlockedBy("has_cheese", InventoryChangeTrigger.TriggerInstance.hasItems(BnCItems.SCARLET_CHEESE_WEDGE.get()))
                 .save(consumer, new ResourceLocation(BrewinAndChewin.MODID, "scarlet_cheese_wheel_from_wedges"));
         ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, BnCItems.QUICHE.get())
                 .pattern("pp")

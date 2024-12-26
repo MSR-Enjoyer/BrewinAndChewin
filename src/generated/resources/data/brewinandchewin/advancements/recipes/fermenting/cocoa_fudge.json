@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_cheese": {
+    "has_cocoa_beans": {
       "conditions": {
         "items": [
           {
             "items": [
-              "brewinandchewin:scarlet_cheese_wedge"
+              "minecraft:cocoa_beans"
             ]
           }
         ]
@@ -15,21 +15,21 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+        "recipe": "brewinandchewin:fermenting/cocoa_fudge"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_cheese",
+      "has_cocoa_beans",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+      "brewinandchewin:fermenting/cocoa_fudge"
     ]
   },
-  "sends_telemetry_event": false
+  "sends_telemetry_event": true
 }

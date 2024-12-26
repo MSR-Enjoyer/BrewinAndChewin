@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "brewinandchewin:scarlet_cheese_wedge"
-            ]
+            "tag": "brewinandchewin:cheese_wedges"
           }
         ]
       },
@@ -15,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+        "recipe": "brewinandchewin:cooking/vegetable_omelet"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,8 +26,8 @@
   ],
   "rewards": {
     "recipes": [
-      "brewinandchewin:scarlet_cheese_wheel_from_wedges"
+      "brewinandchewin:cooking/vegetable_omelet"
     ]
   },
-  "sends_telemetry_event": false
+  "sends_telemetry_event": true
 }
