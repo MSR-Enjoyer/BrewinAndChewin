@@ -44,5 +44,5 @@ public interface StackedContentsRecipePickerAccessor {
     int[] brewinandchewin$invokeGetUniqueAvailableIngredientItems();
 
     @Invoker("getIndex")
-    int brewinandchewin$getIndex(boolean isIngredientPath, int stackingIndex, int pathIndex);
+    int brewinandchewin$invokeGetIndex(boolean isIngredientPath, int stackingIndex, int pathIndex);
 }

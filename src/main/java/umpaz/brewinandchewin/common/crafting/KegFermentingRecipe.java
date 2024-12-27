@@ -129,7 +129,7 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
             inputs.add(itemstack);
          }
       }
-      return i == this.inputItems.size() && RecipeMatcher.findMatches(inputs, this.inputItems) != null && (fluidIngredient == null && inv.getFluid(0).isEmpty() || fluidIngredient != null && inv.getFluid(0).isFluidEqual(fluidIngredient));
+      return i == this.inputItems.size() && RecipeMatcher.findMatches(inputs, this.inputItems) != null && (fluidIngredient == null && inv.getFluid(0).isEmpty() || fluidIngredient != null && !inv.getFluid(0).isEmpty() && inv.getFluid(0).isFluidEqual(fluidIngredient) && inv.getFluid(0).getAmount() % amount == 0);
    }
 
    @Override

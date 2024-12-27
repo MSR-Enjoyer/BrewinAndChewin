@@ -38,6 +38,7 @@ import umpaz.brewinandchewin.common.registry.BnCBlockEntityTypes;
 import vectorwing.farmersdelight.common.utility.MathUtils;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class KegBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -62,15 +63,17 @@ public class KegBlock extends BaseEntityBlock implements SimpleWaterloggedBlock 
        if (level.isClientSide())
            return InteractionResult.SUCCESS;
        if (tileEntity instanceof KegBlockEntity kegBE) {
-           ItemStack itm = kegBE.extractInWorld(kegBE, heldStack, player.getSlot(player.getInventory().getFreeSlot()).get(), 1, player.getAbilities().instabuild);
-           if (!itm.isEmpty()) {
-               if (!ItemStack.isSameItemSameTags(itm, heldStack)) {
-                   if (heldStack.isEmpty()) {
-                       player.setItemInHand(hand, itm);
-                   } else if (!player.getInventory().add(itm)) {
-                       player.drop(itm, false);
+           List<ItemStack> itms = kegBE.extractInWorld(kegBE, heldStack, 1, player.getAbilities().instabuild);
+           if (!itms.isEmpty()) {
+               itms.forEach(itm -> {
+                   if (!ItemStack.isSameItemSameTags(itm, heldStack)) {
+                       if (heldStack.isEmpty()) {
+                           player.setItemInHand(hand, itm);
+                       } else if (!player.getInventory().add(itm)) {
+                           player.drop(itm, false);
+                       }
                    }
-               }
+               });
                level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1, 1);
                return InteractionResult.CONSUME;
            }

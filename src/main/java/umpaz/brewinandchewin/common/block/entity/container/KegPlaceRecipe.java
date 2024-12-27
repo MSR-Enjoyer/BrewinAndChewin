@@ -8,12 +8,15 @@ import net.minecraft.world.inventory.RecipeBookMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
+import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
 import umpaz.brewinandchewin.common.mixin.ServerPlaceRecipeAccessor;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,11 +59,14 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
 
             if (this.stackedContents.canCraft(recipe, intlist, k)) {
                 if (recipe instanceof KegFermentingRecipe fermentingRecipe && menu instanceof KegMenu kegMenu) {
+                    KegBlockEntity blockEntity = kegMenu.blockEntity;
+                    FluidTank kegTank = kegMenu.kegTank;
+
                     if (fermentingRecipe.getFluidIngredient() == null) {
-                        if (!kegMenu.kegTank.isEmpty()) {
-                            List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().isSame(kegMenu.kegTank.getFluid().getRawFluid())).toList();
+                        if (!kegTank.isEmpty()) {
+                            List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().isSame(kegTank.getFluid().getRawFluid())).toList();
                             for (int i = 0; i < inventory.items.size(); ++i) {
-                                if (kegMenu.kegTank.isEmpty())
+                                if (kegTank.isEmpty())
                                     break;
                                 ItemStack stack = inventory.items.get(i);
                                 Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
@@ -69,18 +75,60 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                                     return ItemStack.isSameItem(stack, pouring.getContainer());
                                 }).findFirst();
                                 if (optionalData.isPresent()) {
-                                    ItemStack extracted = kegMenu.blockEntity.extractInGui(kegMenu.blockEntity, stack, ItemStack.EMPTY, stack.getCount());
-                                    if (!inventory.add(i, extracted))
-                                        inventory.player.drop(extracted, false);
+                                    int finalI = i;
+                                    blockEntity.extractInGui(blockEntity, stack, stack.getCount()).forEach(s -> {
+                                        if (!inventory.add(inventory.items.get(finalI).isEmpty() ? finalI : inventory.getSlotWithRemainingSpace(s), s))
+                                            inventory.player.drop(s, false);
+                                    });
                                 }
                             }
                         }
-                        if (fermentingRecipe.getFluidIngredient() != null)
-                            intlist.removeInt(intlist.size() - 1);
-                    } else if (kegMenu.kegTank.isEmpty() || !kegMenu.kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient())) {
+                    } else if (!kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) || kegTank.getFluidAmount() % fermentingRecipe.getAmount() == 0 && kegTank.getFluidAmount() < kegTank.getCapacity()) {
+                        List<RecipeItem> extractItems = new ArrayList<>();
+
+                        if (!kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient())) {
+                            List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(ItemStack.EMPTY).isFluidEqual(kegTank.getFluid())).toList();
+                            int fluidToExtract = kegTank.getFluidAmount();
+                            for (int i = 0; i < inventory.items.size(); ++i) {
+                                if (fluidToExtract <= 0) {
+                                    break;
+                                }
+                                ItemStack stack = inventory.items.get(i);
+                                Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
+                                    if (stack.isEmpty())
+                                        return false;
+                                    if (pouring.isStrict())
+                                        return ItemStack.isSameItemSameTags(stack, pouring.getContainer());
+                                    return ItemStack.isSameItem(stack, pouring.getContainer());
+                                }).findFirst();
+                                if (optionalData.isPresent()) {
+                                    int itemAmount = Math.min(kegTank.getFluid().getAmount() / optionalData.get().getAmount(), stack.getCount());
+                                    ItemStack resultItem = optionalData.get().getResultItem(blockEntity.getLevel().registryAccess());
+                                    extractItems.add(new RecipeItem(i, itemAmount, optionalData.get().getContainer().copyWithCount(itemAmount), resultItem.copyWithCount(itemAmount)));
+                                    fluidToExtract -= optionalData.get().getAmount() * itemAmount;
+                                    stack.shrink(itemAmount);
+                                }
+                            }
+
+                            if (fluidToExtract > 0)
+                                return;
+
+                            List<RecipeItem> temporaryExtracts = List.copyOf(extractItems);
+                            extractItems.clear();
+                            for (RecipeItem extractItem : temporaryExtracts) {
+                                ItemStack copiedContainer = extractItem.container.copy();
+                                List<ItemStack> extracted = blockEntity.extractInGui(blockEntity, extractItem.container, extractItem.maxInsert);
+                                extractItems.addAll(extracted.stream().map(stack -> new RecipeItem(extractItem.slot, extractItem.maxInsert, copiedContainer, stack)).toList());
+                            }
+                            if (!extractItems.isEmpty())
+                                intlist.removeInt(intlist.size() - 1);
+                        }
+
+                        int amountOfFluidInserted = 0;
                         List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(ItemStack.EMPTY).isFluidEqual(fermentingRecipe.getFluidIngredient())).toList();
+                        List<RecipeItem> insertItems = new ArrayList<>();
                         for (int i = 0; i < inventory.items.size(); ++i) {
-                            if (kegMenu.kegTank.getFluidAmount() >= kegMenu.kegTank.getCapacity())
+                            if (amountOfFluidInserted >= kegTank.getCapacity())
                                 break;
                             ItemStack stack = inventory.items.get(i);
                             Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
@@ -89,13 +137,36 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                                 return ItemStack.isSameItem(stack, pouring.getOutput());
                             }).findFirst();
                             if (optionalData.isPresent()) {
-                                ItemStack extracted = kegMenu.blockEntity.extractInGui(kegMenu.blockEntity, stack, ItemStack.EMPTY, stack.getCount());
-                                if (!inventory.add(i, extracted))
-                                    inventory.player.drop(extracted, false);
+                                int itemAmount = Math.min(fermentingRecipe.getFluidIngredient().getAmount() / optionalData.get().getAmount(), stack.getCount());
+                                ItemStack outputStack = optionalData.get().getOutput().copyWithCount(itemAmount);
+                                if (insertItems.stream().anyMatch(recipeItem -> recipeItem.maxInsert < itemAmount)) {
+                                    amountOfFluidInserted = 0;
+                                    insertItems.clear();
+                                }
+                                amountOfFluidInserted += optionalData.get().getAmount() * itemAmount;
+                                insertItems.add(new RecipeItem(i, itemAmount, optionalData.get().getContainer().copy(), outputStack));
+                                stack.shrink(itemAmount);
                             }
                         }
-                        if (fermentingRecipe.getFluidIngredient() != null)
+                        if (!insertItems.isEmpty()) {
+                            List<RecipeItem> temporaryInserts = List.copyOf(insertItems);
+                            insertItems.clear();
+                            for (RecipeItem insertItem : temporaryInserts) {
+                                ItemStack copiedOutput = insertItem.output.copy();
+                                List<ItemStack> inserted = blockEntity.extractInGui(blockEntity, insertItem.output, insertItem.maxInsert);
+                                insertItems.addAll(inserted.stream().map(stack -> new RecipeItem(insertItem.slot, insertItem.maxInsert, copiedOutput, stack)).toList());
+                            }
+
+                            if (!extractItems.isEmpty())
+                                insertItems.addAll(extractItems);
+
+                            insertItems.removeIf(insertItem -> insertItem.output == null || insertItem.container.isEmpty());
+                            insertItems.forEach(e -> {
+                                if (!inventory.add(inventory.items.get(e.slot).isEmpty() ? e.slot : inventory.getSlotWithRemainingSpace(e.output), e.output))
+                                    inventory.player.drop(e.output, false);
+                            });
                             intlist.removeInt(intlist.size() - 1);
+                        }
                     }
                 }
                 this.clearGrid();
@@ -103,4 +174,6 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
             }
         }
     }
+
+    private record RecipeItem(int slot, int maxInsert, ItemStack container, ItemStack output) {}
 }
