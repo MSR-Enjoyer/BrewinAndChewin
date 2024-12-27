@@ -509,9 +509,9 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             if (biome.isBound()) {
                 float biomeTemperature = biome.value().getBaseTemperature();
                 if (biomeTemperature <= 0) {
-                    cold += 2;
+                    cold += 1;
                 } else if (biomeTemperature == 2) {
-                    heat += 2;
+                    heat += 1;
                 }
             }
         }
@@ -519,18 +519,18 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         kegTemperature = heat - cold;
 
         if (BnCConfiguration.KEG_DIM_TEMP.get() && level.dimensionType().ultraWarm()) {
-            kegTemperature += 3;
+            kegTemperature += 2;
         }
     }
 
     public int getTemperature() {
-        if (kegTemperature <= -(BnCConfiguration.KEG_COLD.get() + BnCConfiguration.KEG_FREEZING.get())) {
+        if (kegTemperature <= -(BnCConfiguration.KEG_FREEZING.get())) {
             return 1;
         } else if (kegTemperature <= -BnCConfiguration.KEG_COLD.get()) {
             return 2;
         } else if (kegTemperature < BnCConfiguration.KEG_WARM.get()) {
             return 3;
-        } else if (kegTemperature < BnCConfiguration.KEG_WARM.get() + BnCConfiguration.KEG_HOT.get()) {
+        } else if (kegTemperature < BnCConfiguration.KEG_HOT.get()) {
             return 4;
         } else {
             return 5;
