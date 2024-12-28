@@ -127,7 +127,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
 
                 FluidStack fluidStack = fermentingRecipe.getFluidIngredient();
                 // Fluid
-                if (fluidStack == null && kegMenu.kegTank.isEmpty() || fluidStack != null && !kegMenu.kegTank.getFluid().getFluid().isSame(fluidStack.getRawFluid())) {
+                if (fluidStack == null && !kegMenu.kegTank.isEmpty() || fluidStack != null && !kegMenu.kegTank.getFluid().getFluid().isSame(fluidStack.getRawFluid())) {
                     if (fluidStack != null && BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {
                         IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(fluidStack.getFluid());
                         ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(fluidStack);
