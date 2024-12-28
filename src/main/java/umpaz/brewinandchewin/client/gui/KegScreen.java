@@ -169,7 +169,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
         // Render temperature bars
 
         FluidStack fluidStack = this.menu.kegTank.getFluid();
-        if (!fluidStack.isEmpty() && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient() == null || fermentingRecipe.getFluidIngredient().getFluid().isSame(fluidStack.getRawFluid()))) {
+        if (!fluidStack.isEmpty() && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient() == null && !menu.kegTank.isEmpty() || fermentingRecipe.getFluidIngredient() != null && fermentingRecipe.getFluidIngredient().getFluid().isSame(fluidStack.getRawFluid()))) {
 
             // Fluid
             if (BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {

@@ -25,10 +25,19 @@ import java.util.stream.Collectors;
 public class KegStackedContents extends StackedContents {
     public final KegMenu menu;
     public final RecipeManager recipeManager;
+    private boolean ignoreItems;
 
     public KegStackedContents(KegMenu menu, RecipeManager manager) {
         this.menu = menu;
         this.recipeManager = manager;
+    }
+
+    public void setIgnoreItems(boolean value) {
+        ignoreItems = value;
+    }
+
+    public boolean shouldIgnoreItems() {
+        return ignoreItems;
     }
 
     @Override
@@ -53,6 +62,11 @@ public class KegStackedContents extends StackedContents {
                 boolean modified = false;
                 FluidTank kegTank = menu.kegTank;
                 StackedContentsRecipePickerAccessor accessor = (StackedContentsRecipePickerAccessor)this;
+
+                if (ignoreItems) {
+                    accessor.brewinandchewin$getIngredients().clear();
+                }
+
                 if (fermentingRecipe.getFluidIngredient() == null && !kegTank.isEmpty()) {
                     List<PouringEntry> fluidContainerStacks = recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream()
                             .filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().isSame(kegTank.getFluid().getRawFluid())).map(r -> new PouringEntry(r.getContainer(), r.getAmount(), r.isStrict())).toList();
@@ -92,7 +106,7 @@ public class KegStackedContents extends StackedContents {
                         modified = true;
                     }
 
-                    if (!kegTank.isEmpty()) {
+                    if (!kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient())) {
                         List<PouringEntry> fluidContainerStacks = recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream()
                                 .filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().isSame(kegTank.getFluid().getRawFluid())).map(r -> new PouringEntry(r.getContainer(), r.getAmount(), r.isStrict())).toList();
                         if (!fluidContainerStacks.isEmpty()) {
@@ -131,8 +145,8 @@ public class KegStackedContents extends StackedContents {
             }
         }
 
-        public boolean hasMultipliedAmount(int originalAmount, int itemIndex, int requiredAmount) {
-            return !stackCountRequirements.containsKey(itemIndex) && !overflowingStacks.contains(itemIndex) || (stackCountRequirements.get(itemIndex) * requiredAmount) <= originalAmount;
+        public boolean hasMultipliedAmount(int originalAmount, int itemIndex) {
+            return !stackCountRequirements.containsKey(itemIndex) && !overflowingStacks.contains(itemIndex) || stackCountRequirements.get(itemIndex) <= originalAmount;
         }
 
         private record PouringEntry(ItemStack stack, int fluidAmount, boolean strict) {}
