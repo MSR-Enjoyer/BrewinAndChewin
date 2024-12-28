@@ -49,8 +49,8 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
             }
         }
 
-        if (menu instanceof KegMenu kegMenu) {
-            if (kegMenu.kegTank.getFluidAmount() >= kegMenu.kegTank.getCapacity())
+        if (menu instanceof KegMenu kegMenu && recipe instanceof KegFermentingRecipe fermentingRecipe) {
+            if (fermentingRecipe.getFluidIngredient() == null && kegMenu.kegTank.isEmpty() || fermentingRecipe.getFluidIngredient() != null && kegMenu.kegTank.getFluidAmount() >= kegMenu.kegTank.getCapacity())
                 shouldHandleFluid = false;
         }
 
@@ -76,7 +76,6 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                     KegBlockEntity blockEntity = kegMenu.blockEntity;
                     FluidTank kegTank = kegMenu.kegTank;
 
-                    // TODO: Fix fluid removal.
                     if (fermentingRecipe.getFluidIngredient() == null) {
                         if (!kegTank.isEmpty()) {
                             List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().isSame(kegTank.getFluid().getRawFluid())).toList();
