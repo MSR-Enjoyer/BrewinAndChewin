@@ -78,11 +78,11 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
 
                     if (fermentingRecipe.getFluidIngredient() == null) {
                         if (!kegTank.isEmpty()) {
-                            List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().isSame(kegTank.getFluid().getRawFluid())).toList();
                             for (int i = 0; i < inventory.items.size(); ++i) {
                                 if (kegTank.isEmpty())
                                     break;
                                 ItemStack stack = inventory.items.get(i);
+                                List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(stack).isFluidEqual(kegTank.getFluid())).toList();
                                 Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                                     if (pouring.isStrict())
                                         return ItemStack.isSameItemSameTags(stack, pouring.getContainer());
@@ -97,14 +97,14 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                                 }
                             }
                         }
-                    } else if (!kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) || kegTank.getFluidAmount() % fermentingRecipe.getAmount() == 0 && kegTank.getFluidAmount() < kegTank.getCapacity()) {
+                    } else if (!kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) || kegTank.getFluidAmount() < fermentingRecipe.getAmount() ||  kegTank.getFluidAmount() % fermentingRecipe.getAmount() == 0 && kegTank.getFluidAmount() < kegTank.getCapacity()) {
                         List<RecipeItem> extractItems = new ArrayList<>();
 
                         if (!kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient())) {
-                            List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(ItemStack.EMPTY).isFluidEqual(kegTank.getFluid())).toList();
                             int fluidToExtract = kegTank.getFluidAmount();
                             for (int i = 0; i < inventory.items.size(); ++i) {
                                 ItemStack stack = inventory.items.get(i);
+                                List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(stack).isFluidEqual(kegTank.getFluid())).toList();
                                 Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                                     if (stack.isEmpty())
                                         return false;
@@ -143,11 +143,11 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                                 intlist.removeInt(intlist.size() - 1);
                         }
 
-                        List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(ItemStack.EMPTY).isFluidEqual(fermentingRecipe.getFluidIngredient())).toList();
                         List<RecipeItem> insertItems = new ArrayList<>();
                         int fluidToInsert = 0;
                         for (int i = 0; i < inventory.items.size(); ++i) {
                             ItemStack stack = inventory.items.get(i);
+                            List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(stack).isFluidEqual(fermentingRecipe.getFluidIngredient())).toList();
                             Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                                 if (pouring.isStrict())
                                     return ItemStack.isSameItemSameTags(stack, pouring.getOutput());
