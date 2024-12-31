@@ -3,6 +3,7 @@ package umpaz.brewinandchewin.common.block.entity.container;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.recipebook.ServerPlaceRecipe;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.RecipeBookMenu;
 import net.minecraft.world.item.ItemStack;
@@ -33,13 +34,16 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
     @Override
     protected void handleRecipeClicked(Recipe<KegRecipeWrapper> recipe, boolean placeAll) {
         boolean flag = this.menu.recipeMatches(recipe);
+
+        ((KegStackedContents)stackedContents).setIgnoreFluids(true);
         int biggestCraftableStack = this.stackedContents.getBiggestCraftableStack(recipe, null);
+        ((KegStackedContents)stackedContents).setIgnoreFluids(false);
 
         boolean shouldHandleItems = true;
         boolean shouldHandleFluid = true;
 
         if (flag) {
-            for(int j = 0; j < this.menu.getGridHeight() * this.menu.getGridWidth() + 1; ++j) {
+            for (int j = 0; j < this.menu.getGridHeight() * this.menu.getGridWidth() + 1; ++j) {
                 if (j != this.menu.getResultSlotIndex()) {
                     ItemStack itemstack = this.menu.getSlot(j).getItem();
                     if (!itemstack.isEmpty() && Math.min(biggestCraftableStack, itemstack.getMaxStackSize()) < itemstack.getCount() + 1) {
@@ -59,20 +63,19 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
 
         ((KegStackedContents)stackedContents).setIgnoreItems(!shouldHandleItems);
 
-        int j1 = this.getStackSize(placeAll, biggestCraftableStack, flag);
+        int stackSize = placeAll ? biggestCraftableStack : !shouldHandleFluid ? getStackSize(false, biggestCraftableStack, flag) : 1;
         IntList intlist = new IntArrayList();
-        if (this.stackedContents.canCraft(recipe, intlist, j1)) {
-            int k = j1;
+        if (this.stackedContents.canCraft(recipe, intlist, stackSize)) {
+            int k = stackSize;
 
-            for(int l : intlist) {
+            for (int l : intlist) {
                 int i1 = StackedContents.fromStackingIndex(l).getMaxStackSize();
-                if (i1 < k) {
+                if (!((KegStackedContents)stackedContents).isFluidItem(recipe, l) && i1 < k) {
                     k = i1;
                 }
             }
-
-            if (this.stackedContents.canCraft(recipe, intlist, k)) {
-                if (shouldHandleFluid && recipe instanceof KegFermentingRecipe fermentingRecipe && menu instanceof KegMenu kegMenu) {
+            if (recipe instanceof KegFermentingRecipe fermentingRecipe && menu instanceof KegMenu kegMenu) {
+                if (this.stackedContents.canCraft(recipe, intlist, k) && shouldHandleFluid) {
                     KegBlockEntity blockEntity = kegMenu.blockEntity;
                     FluidTank kegTank = kegMenu.kegTank;
 
@@ -97,8 +100,9 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                                 }
                             }
                         }
-                    } else if (!kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) || kegTank.getFluidAmount() < fermentingRecipe.getAmount() ||  kegTank.getFluidAmount() % fermentingRecipe.getAmount() == 0 && kegTank.getFluidAmount() < kegTank.getCapacity()) {
+                    } else if (kegTank.getFluidAmount() < kegTank.getCapacity()) {
                         List<RecipeItem> extractItems = new ArrayList<>();
+                        boolean shouldRemoveIndex = !kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) || kegTank.getFluidAmount() < fermentingRecipe.getFluidIngredient().getAmount();
 
                         if (!kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient())) {
                             int fluidToExtract = kegTank.getFluidAmount();
@@ -113,7 +117,7 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                                     return ItemStack.isSameItem(stack, pouring.getContainer());
                                 }).findFirst();
                                 if (optionalData.isPresent()) {
-                                    int itemAmount = Math.min(Math.max(kegTank.getFluid().getAmount(), fermentingRecipe.getFluidIngredient().getAmount() / optionalData.get().getAmount()), stack.getCount());
+                                    int itemAmount = Math.min(fermentingRecipe.getFluidIngredient().getAmount() / optionalData.get().getAmount(), stack.getCount());
                                     ItemStack inputStack = optionalData.get().getResultItem(blockEntity.getLevel().registryAccess());
                                     if (extractItems.stream().anyMatch(recipeItem -> recipeItem.fluidAmount > optionalData.get().getAmount()))
                                         continue;
@@ -154,7 +158,7 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                                 return ItemStack.isSameItem(stack, pouring.getOutput());
                             }).findFirst();
                             if (optionalData.isPresent()) {
-                                int itemAmount = Math.min(Math.max(1, fermentingRecipe.getFluidIngredient().getAmount() / optionalData.get().getAmount()), stack.getCount());
+                                int itemAmount = Mth.clamp(((fermentingRecipe.getFluidIngredient().getAmount() / optionalData.get().getAmount()) - ((kegTank.getFluidAmount() % fermentingRecipe.getFluidIngredient().getAmount()) / optionalData.get().getAmount())) * k, 1, Math.min(stack.getCount(), kegTank.getCapacity() / optionalData.get().getAmount()));
                                 ItemStack outputStack = optionalData.get().getOutput().copyWithCount(itemAmount);
                                 if (insertItems.stream().anyMatch(recipeItem -> recipeItem.fluidAmount > optionalData.get().getAmount()))
                                     continue;
@@ -186,7 +190,8 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                                 if (!inventory.add(inventory.items.get(e.slot).isEmpty() ? e.slot : inventory.getSlotWithRemainingSpace(e.output), e.output))
                                     inventory.player.drop(e.output, false);
                             });
-                            intlist.removeInt(intlist.size() - 1);
+                            if (shouldRemoveIndex)
+                                intlist.removeInt(intlist.size() - 1);
                         }
                     }
                 }
@@ -196,6 +201,7 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                 }
             }
         }
+        ((KegStackedContents)stackedContents).setIgnoreItems(false);
     }
 
     private record RecipeItem(int slot, int maxInsert, int fluidAmount, ItemStack container, ItemStack output) {}

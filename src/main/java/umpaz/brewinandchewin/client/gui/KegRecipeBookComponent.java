@@ -10,7 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.inventory.RecipeBookMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -18,8 +17,8 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.KegStackedContents;
 import umpaz.brewinandchewin.client.utility.BnCFluidItemDisplays;
 import umpaz.brewinandchewin.common.BnCConfiguration;
@@ -32,7 +31,6 @@ import umpaz.brewinandchewin.common.utility.BnCTextUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,7 +75,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
         if (this.isVisible() && this.menu instanceof KegMenu kegMenu) {
             Recipe<?> recipe = this.ghostRecipe.getRecipe();
             if (recipe instanceof KegFermentingRecipe fermentingRecipe) {
-                if (fermentingRecipe.getTemperature() != kegMenu.getKegTemperature())
+                if (!KegBlockEntity.isValidTemp(kegMenu.getKegTemperature(), fermentingRecipe.getTemperature()))
                     renderTemperatureTooltip(gui, renderX, renderY, mouseX, mouseY);
                 FluidStack fluidStack = fermentingRecipe.getFluidIngredient();
                 if (fluidStack == null)
@@ -97,7 +95,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
         if (this.menu instanceof KegMenu kegMenu) {
             Recipe<?> recipe = this.ghostRecipe.getRecipe();
             if (recipe instanceof KegFermentingRecipe fermentingRecipe) {
-                if (fermentingRecipe.getTemperature() != kegMenu.getKegTemperature()) {
+                if (!KegBlockEntity.isValidTemp(kegMenu.getKegTemperature(), fermentingRecipe.getTemperature())) {
                     RenderSystem.enableBlend();
                     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
                     int temp = fermentingRecipe.getTemperature();
@@ -186,8 +184,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
     }
 
     private void renderTemperatureTooltip(GuiGraphics gui, int renderX, int renderY, int mouseX, int mouseY) {
-        if ( this.isHovering(34, 54, 43, 5, mouseX - renderX, mouseY - renderY) && menu instanceof KegMenu kegMenu && getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe && kegMenu.getKegTemperature() != fermentingRecipe.getTemperature()) {
-            List<Component> tooltip = new ArrayList<>();
+        if ( this.isHovering(34, 54, 43, 5, mouseX - renderX, mouseY - renderY) && menu instanceof KegMenu kegMenu && getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe && !KegBlockEntity.isValidTemp(kegMenu.getKegTemperature(), fermentingRecipe.getTemperature())) {
             MutableComponent key = switch (fermentingRecipe.getTemperature()) {
                 case 1 -> BnCTextUtils.getTranslation("container.keg.frigid");
                 case 2 -> BnCTextUtils.getTranslation("container.keg.cold");
@@ -195,8 +192,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                 case 5 -> BnCTextUtils.getTranslation("container.keg.hot");
                 default -> BnCTextUtils.getTranslation("container.keg.normal");
             };
-            tooltip.add(key);
-            gui.renderComponentTooltip(minecraft.font, tooltip, mouseX, mouseY);
+            gui.renderComponentTooltip(minecraft.font, List.of(key), mouseX, mouseY);
         }
     }
 

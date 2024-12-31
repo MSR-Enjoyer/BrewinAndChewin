@@ -20,6 +20,7 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.BnCConfiguration;
+import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.client.utility.BnCFluidItemDisplays;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
@@ -112,7 +113,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
     }
 
     private void renderTemperatureTooltip(GuiGraphics gui, int mouseX, int mouseY) {
-        if ( this.isHovering(34, 54, 43, 5, mouseX, mouseY) && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getTemperature() == menu.getKegTemperature())) {
+        if ( this.isHovering(34, 54, 43, 5, mouseX, mouseY) && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || KegBlockEntity.isValidTemp(menu.getKegTemperature(), fermentingRecipe.getTemperature()))) {
             List<Component> tooltip = new ArrayList<>();
             MutableComponent key = switch (menu.getKegTemperature()) {
                 case 1 -> BnCTextUtils.getTranslation("container.keg.frigid");

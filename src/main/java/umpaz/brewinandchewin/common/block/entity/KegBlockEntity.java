@@ -209,15 +209,12 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
 
         if (recipe.getFluidIngredient() == null) { // if the recipe does not require a fluid
-            if (!keg.fluidTank.isEmpty()) return false; // make sure the fluid is empty
+            return keg.fluidTank.isEmpty(); // make sure the fluid is empty
         } else {
             if (!keg.fluidTank.getFluid().getFluid().isSame(recipe.getFluidIngredient().getFluid()))
                 return false; // make sure the fluid is the same
-            if (keg.fluidTank.getFluidAmount() % recipe.getFluidIngredient().getAmount() != 0)
-                return false; // make sure the fluid amount is a multiple of the recipe amount
+            return keg.fluidTank.getFluidAmount() % recipe.getFluidIngredient().getAmount() == 0; // make sure the fluid amount is a multiple of the recipe amount
         }
-
-        return true;
     }
 
     public static void fermentingTick(Level level, BlockPos pos, BlockState state, KegBlockEntity keg) {
@@ -349,7 +346,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             if (ItemStack.isSameItem(slotIn, recipe.get().getContainer()) && // if container is same
                     recipe.get().getAmount() <= keg.fluidTank.getFluidAmount() && // the amount is LTE the fluid amount
                     (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameTags(resultItem, keg.inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
-                int containerAmount = Mth.clamp(Math.min(slotIn.getCount(), (keg.fluidTank.getCapacity() - keg.fluidTank.getFluidAmount()) / recipe.get().getAmount()), 1, maxTakeAmount);
+                int containerAmount = Mth.clamp(Math.min(slotIn.getCount(), (keg.fluidTank.getFluidAmount()) / recipe.get().getAmount()), 1, maxTakeAmount);
                 keg.fluidTank.drain(new FluidStack(keg.fluidTank.getFluid(), recipe.get().getAmount() * containerAmount), IFluidHandler.FluidAction.EXECUTE);
 
                 if (!isCreative) {

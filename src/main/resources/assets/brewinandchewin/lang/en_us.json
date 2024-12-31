@@ -90,5 +90,9 @@
   "brewinandchewin.jei.aging": "Aging",
   "brewinandchewin.container.recipe_book.fermentable": "Showing Fermentables",
   "generic.unit.millibuckets": "mB",
-  "gui.jei.category.smelting.time.minutes": "%smin"
+  "gui.jei.category.smelting.time.minutes": "%smin",
+  "brewinandchewin.jei.tooltip.error.recipe.transfer.cant_empty": "Can't Empty Keg",
+  "brewinandchewin.jei.tooltip.error.recipe.transfer.not_enough_fluid": "Not Enough Fluid",
+  "brewinandchewin.jei.tooltip.error.recipe.transfer.temperature": "Incorrect Temperature",
+  "brewinandchewin.jei.tooltip.error.recipe.transfer.too_much_fluid": "Items Have Too Much Fluid"
 }

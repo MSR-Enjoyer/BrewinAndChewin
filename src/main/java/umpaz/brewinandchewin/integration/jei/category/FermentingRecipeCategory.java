@@ -67,7 +67,7 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
     protected final IDrawableAnimated rightBubble;
 
 
-    public FermentingRecipeCategory(IGuiHelper guiHelper, IModIdHelper modIdHelper, IIngredientManager ingredientManager) {
+    public FermentingRecipeCategory(IGuiHelper guiHelper, IModIdHelper modIdHelper) {
         this.modIdHelper = modIdHelper;
         title = BnCTextUtils.getTranslation("jei.fermenting");
         ResourceLocation backgroundImage = new ResourceLocation(BrewinAndChewin.MODID, "textures/gui/jei/keg.png");
@@ -130,9 +130,8 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
                         .addFluidStack(recipe.getFluidIngredient().getFluid(), recipe.getFluidIngredient().getAmount())
                         .setFluidRenderer(BnCConfiguration.KEG_CAPACITY.get(), false, 26, 30)
                         .setOverlay(kegOverlay, 0, 0);
-
             } else
-                builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
+                builder.addInvisibleIngredients(RecipeIngredientRole.CATALYST)
                         .addFluidStack(recipe.getFluidIngredient().getFluid(), recipe.getFluidIngredient().getAmount(), recipe.getFluidIngredient().getTag());
 
             ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), recipe.getFluidIngredient()).copy();

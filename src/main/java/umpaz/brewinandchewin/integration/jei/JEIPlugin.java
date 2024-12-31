@@ -15,11 +15,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.gui.KegScreen;
-import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.common.registry.BnCItems;
-import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
 import umpaz.brewinandchewin.integration.jei.category.CheeseRecipeCategory;
 import umpaz.brewinandchewin.integration.jei.category.FermentingRecipeCategory;
+import umpaz.brewinandchewin.integration.jei.transfer.FermentingTransfer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
@@ -34,7 +33,7 @@ public class JEIPlugin implements IModPlugin
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
-        registry.addRecipeCategories(new FermentingRecipeCategory(registry.getJeiHelpers().getGuiHelper(), registry.getJeiHelpers().getModIdHelper(), registry.getJeiHelpers().getIngredientManager()));
+        registry.addRecipeCategories(new FermentingRecipeCategory(registry.getJeiHelpers().getGuiHelper(), registry.getJeiHelpers().getModIdHelper()));
         registry.addRecipeCategories(new CheeseRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 
@@ -56,26 +55,9 @@ public class JEIPlugin implements IModPlugin
 
        registration.addRecipeClickArea(KegScreen.class, 75, 25, 21, 17, BnCJEIRecipeTypes.FERMENTING);
 
-
        Rect2i bounds = new Rect2i(107, 18, 26, 30);
 
        registration.addGuiContainerHandler(KegScreen.class, new IGuiContainerHandler<>() {
-
-          //          @Override
-//          public Collection<IGuiClickableArea> getGuiClickableAreas(KegScreen containerScreen, double mouseX, double mouseY) {
-//             return List.of(new IGuiClickableArea() {
-//                @Override
-//                public Rect2i getArea() {
-//                   return bounds;
-//                }
-//
-//                @Override
-//                public void onClick(IFocusFactory focusFactory, IRecipesGui recipesGui) {
-//                   recipesGui.showTypes(recipeTypesList);
-//                }
-//             });
-//          }
-//
           @Override
           public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse( KegScreen containerScreen, double mouseX, double mouseY ) {
              if ( bounds.contains((int) mouseX - containerScreen.getGuiLeft(), (int) mouseY - containerScreen.getGuiTop()) ) {
@@ -99,7 +81,7 @@ public class JEIPlugin implements IModPlugin
 
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-       registration.addRecipeTransferHandler(KegMenu.class, BnCMenuTypes.KEG.get(), BnCJEIRecipeTypes.FERMENTING, 0, 5, 6, 36);
+       registration.addRecipeTransferHandler(new FermentingTransfer.Handler(registration.getTransferHelper(), registration.getJeiHelpers().getStackHelper()), BnCJEIRecipeTypes.FERMENTING);
     }
 
     @Override
