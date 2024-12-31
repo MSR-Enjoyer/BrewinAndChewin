@@ -41,7 +41,7 @@ public class HeatingCaskBlock extends Block {
         if (isSpaceAbove(level, pos) && (heldStack.is(Items.WATER_BUCKET) || (heldStack.is(Items.POTION) && PotionUtils.getPotion(heldStack) == (Potions.WATER)))) {
             for (int i = 0; i < 20; i++) {
                 RandomSource randomsource = level.getRandom();
-                level.addParticle(ParticleTypes.CLOUD, pos.getX() + 0.5D + randomsource.nextDouble() / 4.0D * (randomsource.nextBoolean() ? 1 : -1), pos.getY() + 1.1D, pos.getZ() + 0.5D + randomsource.nextDouble() / 4.0D * (randomsource.nextBoolean() ? 1 : -1), randomsource.nextDouble() / 4.0D * (randomsource.nextBoolean() ? 1 : -1), 0.15D, randomsource.nextDouble() / 4.0D * (randomsource.nextBoolean() ? 1 : -1));
+                level.addParticle(ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5D + randomsource.nextDouble() / 4.0D * (randomsource.nextBoolean() ? 1 : -1), pos.getY() + 1.1D, pos.getZ() + 0.5D + randomsource.nextDouble() / 4.0D * (randomsource.nextBoolean() ? 1 : -1), randomsource.nextDouble() / 4.0D * (randomsource.nextBoolean() ? 1 : -1), 0.15D, randomsource.nextDouble() / 4.0D * (randomsource.nextBoolean() ? 1 : -1));
                 if (i % 3 == 0) {
                     level.playSound(player, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 0.5F, 1.0F);
                 }
@@ -60,7 +60,7 @@ public class HeatingCaskBlock extends Block {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (random.nextInt(5) == 0 && isSpaceAbove(level, pos)) {
-            level.addParticle(ParticleTypes.CLOUD, pos.getX() + 0.5D + random.nextDouble() / 4.0D * (random.nextBoolean() ? 1 : -1), pos.getY() + 1.1D, pos.getZ() + 0.5D + random.nextDouble() / 4.0D * (random.nextBoolean() ? 1 : -1), 0, 0.005D, 0);
+            level.addParticle(ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5D + random.nextDouble() / 4.0D * (random.nextBoolean() ? 1 : -1), pos.getY() + 1.1D, pos.getZ() + 0.5D + random.nextDouble() / 4.0D * (random.nextBoolean() ? 1 : -1), 0, 0.005D, 0);
         }
     }
 
