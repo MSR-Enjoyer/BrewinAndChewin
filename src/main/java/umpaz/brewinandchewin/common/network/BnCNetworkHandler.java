@@ -5,6 +5,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
+import umpaz.brewinandchewin.common.network.serverbound.TransferKegRecipeServerboundPacket;
 
 public class BnCNetworkHandler {
     private static final String PROTOCOL_VERISON = "1";
@@ -18,6 +19,7 @@ public class BnCNetworkHandler {
     public static void register() {
         int i = 0;
         INSTANCE.registerMessage(i++, SyncNumbedHeartsClientboundPacket.class, SyncNumbedHeartsClientboundPacket::encode, SyncNumbedHeartsClientboundPacket::decode, SyncNumbedHeartsClientboundPacket.Handler::handle);
+        INSTANCE.registerMessage(i++, TransferKegRecipeServerboundPacket.class, TransferKegRecipeServerboundPacket::encode, TransferKegRecipeServerboundPacket::decode, TransferKegRecipeServerboundPacket.Handler::handle);
     }
 
 }

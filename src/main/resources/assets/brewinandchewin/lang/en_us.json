@@ -94,5 +94,5 @@
   "brewinandchewin.jei.tooltip.error.recipe.transfer.cant_empty": "Can't Empty Keg",
   "brewinandchewin.jei.tooltip.error.recipe.transfer.not_enough_fluid": "Not Enough Fluid",
   "brewinandchewin.jei.tooltip.error.recipe.transfer.temperature": "Incorrect Temperature",
-  "brewinandchewin.jei.tooltip.error.recipe.transfer.too_much_fluid": "Items Have Too Much Fluid"
+  "brewinandchewin.jei.tooltip.error.recipe.transfer.invalid_fluid": "Invalid Fluid Items"
 }
