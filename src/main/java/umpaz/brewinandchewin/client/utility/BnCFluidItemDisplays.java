@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -55,7 +56,6 @@ public class BnCFluidItemDisplays {
         return ItemStack.EMPTY;
     }
 
-    // TODO: Rewrite me.
     public static class Loader extends SimplePreparableReloadListener<Map<Fluid, FluidBasedItemStack>> {
         public static final Loader INSTANCE = new Loader();
         private static final Gson GSON = new GsonBuilder().create();
@@ -64,26 +64,26 @@ public class BnCFluidItemDisplays {
 
         @Override
         protected Map<Fluid, FluidBasedItemStack> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+            FileToIdConverter fileToIdConverter = FileToIdConverter.json("brewinandchewin/fluid_item_displays");
             FluidBasedItemStack.CACHE.clear();
             Map<Fluid, FluidBasedItemStack> map = new HashMap<>();
-            for (Resource resource : resourceManager.getResourceStack(new ResourceLocation(BrewinAndChewin.MODID, "fluid_item_displays.json"))) {
-                try (Reader reader = resource.openAsReader()) {
-                    JsonObject jsonObject = GsonHelper.fromJson(GSON, reader, JsonObject.class);
-                    for (var e : jsonObject.entrySet()) {
-                        Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(e.getKey()));
-                        if (fluid == null) {
-                            if (e.getValue().isJsonObject() && e.getValue().getAsJsonObject().has("optional") && e.getValue().getAsJsonObject().get("optional").getAsBoolean())
+            for (Map.Entry<ResourceLocation, List<Resource>> entry : fileToIdConverter.listMatchingResourceStacks(resourceManager).entrySet()) {
+                for (Resource resource : entry.getValue()) {
+                    try (Reader reader = resource.openAsReader()) {
+                        JsonObject jsonObject = GsonHelper.fromJson(GSON, reader, JsonObject.class);
+                        for (var e : jsonObject.entrySet()) {
+                            Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(e.getKey()));
+                            if (fluid == null) {
+                                if (e.getValue().isJsonObject() && e.getValue().getAsJsonObject().has("optional") && e.getValue().getAsJsonObject().get("optional").getAsBoolean())
+                                    continue;
+                                BrewinAndChewin.LOG.error("Could not find fluid '" + e.getKey() + "' from fluid item display JSON at location '" + entry.getKey() + "' from pack '" + resource.sourcePackId() + "'.");
                                 continue;
-                            BrewinAndChewin.LOG.error("Could not find fluid " + e.getKey() + " from brewinandchewin/fluid_item_displays.json in pack " + resource.sourcePackId());
-                            continue;
+                            }
+                            map.put(fluid, FluidBasedItemStack.createFromJson(e.getValue(), fluid));
                         }
-                        if (!fluid.isSource(fluid.defaultFluidState())) {
-                            BrewinAndChewin.LOG.warn("Using non source fluids in brewinandchewin/fluid_item_displays.json is discouraged.");
-                        }
-                        map.put(fluid, FluidBasedItemStack.createFromJson(e.getValue(), fluid));
+                    } catch (IllegalArgumentException | IOException | JsonParseException jsonparseexception) {
+                        BrewinAndChewin.LOG.error("Couldn't parse fluid item display JSON at location '{}' from pack '{}'", entry.getKey(), resource.sourcePackId());
                     }
-                } catch (IllegalArgumentException | IOException | JsonParseException jsonparseexception) {
-                    BrewinAndChewin.LOG.error("Couldn't parse data file brewinandchewin:fluid_item_displays.json from {}", resource.sourcePackId());
                 }
             }
             return map;
