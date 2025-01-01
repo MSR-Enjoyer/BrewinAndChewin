@@ -33,7 +33,9 @@ public class BnCBlockLoot extends BlockLootSubProvider {
         dropSelf(BnCBlocks.HEATING_CASK.get());
         dropSelf(BnCBlocks.ICE_CRATE.get());
         dropSelf(BnCBlocks.UNRIPE_FLAXEN_CHEESE_WHEEL.get());
+        dropSelf(BnCBlocks.FLAXEN_CHEESE_WHEEL.get());
         dropSelf(BnCBlocks.UNRIPE_SCARLET_CHEESE_WHEEL.get());
+        dropSelf(BnCBlocks.SCARLET_CHEESE_WHEEL.get());
         add(BnCBlocks.COASTER.get(), (block) -> LootTable.lootTable().withPool(this.applyExplosionCondition(block, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(block)).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
                 .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CoasterBlock.INVISIBLE, false))))));
 
