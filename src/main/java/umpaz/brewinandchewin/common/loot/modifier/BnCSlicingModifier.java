@@ -45,8 +45,8 @@ public class BnCSlicingModifier extends LootModifier
                 generatedLoot.add(new ItemStack(slice, servings + 1));
             }
             else if (targetBlock instanceof CheeseWheelBlock) {
-                int servings = state.getValue(PizzaBlock.SERVINGS);
-                if (servings == 3) {
+                    int servings = state.getValue(CheeseWheelBlock.SERVINGS);
+                if (servings == 4) {
                     generatedLoot.add(new ItemStack(targetBlock.asItem()));
                 }
                 else {
