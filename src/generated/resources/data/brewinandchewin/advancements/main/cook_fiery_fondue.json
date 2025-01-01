@@ -1,0 +1,41 @@
+{
+  "parent": "brewinandchewin:main/ferment_cheese",
+  "criteria": {
+    "has_fiery_fondue_pot": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "brewinandchewin:fiery_fondue_pot"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "brewinandchewin.advancement.cook_fiery_fondue.desc"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "brewinandchewin:fiery_fondue_pot"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "brewinandchewin.advancement.cook_fiery_fondue"
+    }
+  },
+  "requirements": [
+    [
+      "has_fiery_fondue_pot"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  },
+  "sends_telemetry_event": true
+}

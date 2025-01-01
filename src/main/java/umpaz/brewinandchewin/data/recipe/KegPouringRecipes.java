@@ -78,6 +78,6 @@ public class KegPouringRecipes {
                 .build(consumer, new ResourceLocation(BrewinAndChewin.MODID, "pouring/create_potion"));
         KegPouringRecipeBuilder.kegPouringRecipe(Items.GLASS_BOTTLE, AllFluids.TEA.get().getSource(), 250, AllItems.BUILDERS_TEA.get())
                 .withCondition(new ModLoadedCondition("create"))
-                .build(consumer, new ResourceLocation(BrewinAndChewin.MODID, "create_builders_tea"));
+                .build(consumer, new ResourceLocation(BrewinAndChewin.MODID, "pouring/create_builders_tea"));
     }
 }

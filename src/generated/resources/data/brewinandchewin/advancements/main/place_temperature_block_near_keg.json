@@ -1,0 +1,83 @@
+{
+  "parent": "brewinandchewin:main/place_keg",
+  "criteria": {
+    "placed_heating_cask_near_keg": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "brewinandchewin:heating_cask"
+                ]
+              }
+            }
+          },
+          {
+            "condition": "brewinandchewin:area_location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "brewinandchewin:keg"
+                ]
+              }
+            },
+            "range": 2
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    },
+    "placed_ice_crate_near_keg": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "brewinandchewin:ice_crate"
+                ]
+              }
+            }
+          },
+          {
+            "condition": "brewinandchewin:area_location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "brewinandchewin:keg"
+                ]
+              }
+            },
+            "range": 2
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "brewinandchewin.advancement.place_temperature_block_near_keg.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "brewinandchewin:ice_crate"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "brewinandchewin.advancement.place_temperature_block_near_keg"
+    }
+  },
+  "requirements": [
+    [
+      "placed_heating_cask_near_keg",
+      "placed_ice_crate_near_keg"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -493,6 +493,10 @@ public class FermentingTransfer {
                 }
             }
 
+            if (!menu.kegTank.isEmpty() && emptyingBestMatches.isEmpty() && (recipe.getFluidIngredient() == null || !menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient()) || recipe.getFluidIngredient() != null && menu.kegTank.getFluidAmount() % recipe.getFluidIngredient().getAmount() != 0)) {
+                operations.canEmpty = false;
+            }
+
             return operations;
         }
     }

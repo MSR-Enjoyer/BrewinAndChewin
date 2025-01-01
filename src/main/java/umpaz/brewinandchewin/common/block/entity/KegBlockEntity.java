@@ -67,6 +67,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     public static final int CONTAINER_SLOT = 4;
     public static final int OUTPUT_SLOT = 5;
     public static final int INVENTORY_SIZE = OUTPUT_SLOT + 1;
+    public static final int RANGE = 2;
 
     private final ItemStackHandler inventory;
     private final LazyOptional<IItemHandler> inputHandler;
@@ -474,10 +475,9 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
     public void updateTemperature() {
         ArrayList<BlockState> states = new ArrayList<>();
-        int range = 2;
-        for (int x = -range; x <= range; x++) {
-            for (int y = -range; y <= range; y++) {
-                for (int z = -range; z <= range; z++) {
+        for (int x = -RANGE; x <= RANGE; x++) {
+            for (int y = -RANGE; y <= RANGE; y++) {
+                for (int z = -RANGE; z <= RANGE; z++) {
                     states.add(level.getBlockState(worldPosition.offset(x, y, z)));
                 }
             }

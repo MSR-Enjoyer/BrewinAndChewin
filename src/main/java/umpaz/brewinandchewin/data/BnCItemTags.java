@@ -34,6 +34,23 @@ public class BnCItemTags extends ItemTagsProvider {
     }
 
     private void registerModTags() {
+        tag(BnCTags.FERMENTED_DRINKS)
+                .add(BnCItems.BEER.get())
+                .add(BnCItems.VODKA.get())
+                .add(BnCItems.MEAD.get())
+                .add(BnCItems.RICE_WINE.get())
+                .add(BnCItems.EGG_GROG.get())
+                .add(BnCItems.STRONGROOT_ALE.get())
+                .add(BnCItems.SACCHARINE_RUM.get())
+                .add(BnCItems.PALE_JANE.get())
+                .add(BnCItems.SALTY_FOLLY.get())
+                .add(BnCItems.STEEL_TOE_STOUT.get())
+                .add(BnCItems.GLITTERING_GRENADINE.get())
+                .add(BnCItems.BLOODY_MARY.get())
+                .add(BnCItems.RED_RUM.get())
+                .add(BnCItems.WITHERING_DROSS.get())
+                .add(BnCItems.KOMBUCHA.get())
+                .add(BnCItems.DREAD_NOG.get());
         tag(BnCTags.CHEESE_WEDGES)
                 .add(BnCItems.FLAXEN_CHEESE_WEDGE.get())
                 .add(BnCItems.SCARLET_CHEESE_WEDGE.get());
@@ -44,7 +61,5 @@ public class BnCItemTags extends ItemTagsProvider {
         tag(BnCTags.HORROR_MEATS).addTag(ForgeTags.RAW_BEEF).addTag(ForgeTags.RAW_MUTTON);
         tag(BnCTags.RAW_MEATS).addTag(ForgeTags.RAW_BACON).addTag(ForgeTags.RAW_BEEF).addTag(ForgeTags.RAW_CHICKEN)
                 .addTag(ForgeTags.RAW_MUTTON).addTag(ForgeTags.RAW_PORK).add(Items.ROTTEN_FLESH);
-        tag(BnCTags.TIPSY_REDUCER)
-                .addTag(ForgeTags.MILK);
     }
 }

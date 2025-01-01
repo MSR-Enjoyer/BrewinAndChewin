@@ -61,12 +61,11 @@ public class BnCItems {
             .stacksTo(16).craftRemainder(BnCItems.TANKARD.get()).food(BnCFoods.RED_RUM)));
     public static final RegistryObject<Item> WITHERING_DROSS = registerWithTab("withering_dross", () -> new BoozeItem(BnCFluids.WITHERING_DROSS.get(), new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD.get()).food(BnCFoods.WITHERING_DROSS)));
-
-    public static final RegistryObject<Item> KOMBUCHA = registerWithTab("kombucha", () -> new BoozeItem(BnCFluids.KOMBUCHA.get(), new Item.Properties()
-            .stacksTo(16).craftRemainder(BnCItems.TANKARD.get()).food(BnCFoods.KOMBUCHA)));
     public static final RegistryObject<Item> DREAD_NOG = registerWithTab("dread_nog", () -> new BoozeItem(BnCFluids.DREAD_NOG.get(), new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD.get()).food(BnCFoods.DREAD_NOG)));
 
+    public static final RegistryObject<Item> KOMBUCHA = registerWithTab("kombucha", () -> new BoozeItem(BnCFluids.KOMBUCHA.get(), new Item.Properties()
+            .stacksTo(16).craftRemainder(BnCItems.TANKARD.get()).food(BnCFoods.KOMBUCHA)));
 
     public static final RegistryObject<Item> KIMCHI = registerWithTab("kimchi",
             () -> new Item(new Item.Properties().food(BnCFoods.KIMCHI)));

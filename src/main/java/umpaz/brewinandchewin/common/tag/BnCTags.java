@@ -14,11 +14,11 @@ import umpaz.brewinandchewin.BrewinAndChewin;
 
 public class BnCTags {
 
+    public static final TagKey<Item> FERMENTED_DRINKS = modItemTag("fermented_drinks");
     public static final TagKey<Item> HORROR_MEATS = modItemTag("horror_meats");
     public static final TagKey<Item> RAW_MEATS = modItemTag("raw_meats");
     public static final TagKey<Item> PIZZA_TOPPINGS = modItemTag("pizza_toppings");
     public static final TagKey<Item> CHEESE_WEDGES = modItemTag("cheese_wedges");
-    public static final TagKey<Item> TIPSY_REDUCER = modItemTag("tipsy_reducer");
 
     public static final TagKey<Block> FREEZE_SOURCES = modBlockTag("freeze_sources");
 

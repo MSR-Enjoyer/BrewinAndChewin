@@ -52,6 +52,7 @@ public class BrewinAndChewin
         BnCRecipeTypes.RECIPE_TYPES.register(modEventBus);
         BnCRecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
         BnCCreativeTabs.CREATIVE_TABS.register(modEventBus);
+        BnCLootConditions.LOOT_CONDITIONS.register(modEventBus);
         BnCLootFunctions.LOOT_FUNCTIONS.register(modEventBus);
         BnCLootModifiers.LOOT_MODIFIERS.register(modEventBus);
 
