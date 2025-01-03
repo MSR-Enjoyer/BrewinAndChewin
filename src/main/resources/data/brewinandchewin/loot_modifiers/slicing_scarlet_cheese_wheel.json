@@ -6,7 +6,7 @@
       "terms": [
         {
           "condition": "minecraft:block_state_property",
-          "block": "brewinandchewin:flaxen_cheese_wheel",
+          "block": "brewinandchewin:scarlet_cheese_wheel",
           "properties": {
             "servings": 3
           }
