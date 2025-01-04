@@ -1,16 +1,13 @@
-package umpaz.brewinandchewin.common.effects;
+package umpaz.brewinandchewin.common.effect;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraftforge.fml.common.Mod;
 import org.joml.Vector3f;
-import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.particle.DrunkBubbleParticleOptions;
 
-@Mod.EventBusSubscriber(modid = BrewinAndChewin.MODID)
 public class TipsyEffect extends MobEffect {
 
    public TipsyEffect() {
