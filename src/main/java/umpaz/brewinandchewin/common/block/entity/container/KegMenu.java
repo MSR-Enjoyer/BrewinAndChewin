@@ -214,7 +214,7 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper>
 
     @Override
     public RecipeBookType getRecipeBookType() {
-        return BnCRecipeBook.FERMENTING;
+        return BrewinAndChewin.FERMENTING;
     }
 
     @Override
