@@ -53,13 +53,13 @@ public class BnCConfiguration {
       COMMON_BUILDER.comment("Keg").push(CATEGORY_KEG);
       KEG_CAPACITY = COMMON_BUILDER.comment("How much fluid (in millibuckets) can the Keg hold?")
               .defineInRange("kegCapacity", 1000, 1, 10000);
-      KEG_FREEZING = COMMON_BUILDER.comment("How many cold blocks (added to cold blocks) are required for a freezing temperature in the Keg?")
+      KEG_FREEZING = COMMON_BUILDER.comment("How many cold blocks are required for a freezing temperature in the Keg?")
               .defineInRange("kegFreezing", 2, 1, 10);
       KEG_COLD = COMMON_BUILDER.comment("How many cold blocks are required for a cold temperature in the Keg?")
               .defineInRange("kegCold", 1, 1, 10);
-      KEG_WARM = COMMON_BUILDER.comment("How many cold blocks are required for a warm temperature in the Keg?")
+      KEG_WARM = COMMON_BUILDER.comment("How many hot blocks are required for a warm temperature in the Keg?")
               .defineInRange("kegWarm", 1, 1, 10);
-      KEG_HOT = COMMON_BUILDER.comment("How many cold blocks (added to warm blocks) are required for a hot temperature in the Keg?")
+      KEG_HOT = COMMON_BUILDER.comment("How many hot blocks are required for a hot temperature in the Keg?")
               .defineInRange("kegHot", 2, 1, 10);
       KEG_BIOME_TEMP = COMMON_BUILDER.comment("Should the biome temperature influence the temperature in the Keg?")
               .define("kegBiomeTemp", true);
