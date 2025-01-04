@@ -29,7 +29,7 @@ public class BnCCookingPotRecipes {
     }
 
     private static void cook(Consumer<FinishedRecipe> consumer) {
-        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.CHEESY_PASTA.get(), 1, NORMAL_COOKING, MEDIUM_EXP)
+        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.CHEESY_PASTA.get(), 1, NORMAL_COOKING, MEDIUM_EXP, Items.BOWL)
                 .addIngredient(BnCItems.FLAXEN_CHEESE_WEDGE.get())
                 .addIngredient(ForgeTags.PASTA_RAW_PASTA)
                 .addIngredient(ForgeTags.VEGETABLES_TOMATO)
@@ -37,7 +37,7 @@ public class BnCCookingPotRecipes {
                 .setRecipeBookTab(CookingPotRecipeBookTab.MEALS)
                 .unlockedByItems("has_cheese", BnCItems.FLAXEN_CHEESE_WEDGE.get())
                 .build(consumer);
-        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.CREAMY_ONION_SOUP.get(), 1, NORMAL_COOKING, MEDIUM_EXP)
+        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.CREAMY_ONION_SOUP.get(), 1, NORMAL_COOKING, MEDIUM_EXP, Items.BOWL)
                 .addIngredient(BnCTags.CHEESE_WEDGES)
                 .addIngredient(ForgeTags.VEGETABLES_ONION)
                 .addIngredient(ForgeTags.VEGETABLES)
@@ -55,7 +55,7 @@ public class BnCCookingPotRecipes {
                 .setRecipeBookTab(CookingPotRecipeBookTab.MEALS)
                 .unlockedByItems("has_cheese", BnCItems.SCARLET_CHEESE_WHEEL.get())
                 .build(consumer);
-        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.HORROR_LASAGNA.get(), 1, NORMAL_COOKING, MEDIUM_EXP)
+        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.HORROR_LASAGNA.get(), 1, NORMAL_COOKING, MEDIUM_EXP, Items.BOWL)
                 .addIngredient(BnCItems.SCARLET_CHEESE_WEDGE.get())
                 .addIngredient(ForgeTags.VEGETABLES_BEETROOT)
                 .addIngredient(ModItems.TOMATO_SAUCE.get())
@@ -64,7 +64,7 @@ public class BnCCookingPotRecipes {
                 .setRecipeBookTab(CookingPotRecipeBookTab.MEALS)
                 .unlockedByItems("has_cheese", BnCItems.SCARLET_CHEESE_WEDGE.get())
                 .build(consumer);
-        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.SCARLET_PIEROGIES.get(), 1, NORMAL_COOKING, MEDIUM_EXP)
+        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.SCARLET_PIEROGIES.get(), 1, NORMAL_COOKING, MEDIUM_EXP, Items.BOWL)
                 .addIngredient(BnCItems.SCARLET_CHEESE_WEDGE.get())
                 .addIngredient(ForgeTags.VEGETABLES_POTATO)
                 .addIngredient(ForgeTags.DOUGH)
@@ -73,7 +73,7 @@ public class BnCCookingPotRecipes {
                 .setRecipeBookTab(CookingPotRecipeBookTab.MEALS)
                 .unlockedByItems("has_cheese", BnCItems.SCARLET_CHEESE_WEDGE.get())
                 .build(consumer);
-        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.VEGETABLE_OMELET.get(), 1, NORMAL_COOKING, MEDIUM_EXP)
+        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.VEGETABLE_OMELET.get(), 1, NORMAL_COOKING, MEDIUM_EXP, Items.BOWL)
                 .addIngredient(BnCTags.CHEESE_WEDGES)
                 .addIngredient(ForgeTags.EGGS)
                 .addIngredient(ForgeTags.EGGS)

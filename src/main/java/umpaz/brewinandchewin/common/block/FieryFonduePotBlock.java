@@ -2,6 +2,7 @@ package umpaz.brewinandchewin.common.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -32,6 +33,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import umpaz.brewinandchewin.common.registry.BnCItems;
+import umpaz.brewinandchewin.common.utility.BnCTextUtils;
 import vectorwing.farmersdelight.common.registry.ModParticleTypes;
 import vectorwing.farmersdelight.common.registry.ModSounds;
 
@@ -106,6 +108,7 @@ public class FieryFonduePotBlock extends Block {
             level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_GENERIC, SoundSource.BLOCKS, 1.0F, 1.0F);
             return InteractionResult.SUCCESS;
         }
+        player.displayClientMessage(Component.translatable("farmersdelight.block.feast.use_container", bowl.getHoverName()), true);
         return InteractionResult.PASS;
     }
 

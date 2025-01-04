@@ -79,15 +79,15 @@ public class BnCItems {
             () -> new Item(new Item.Properties().food(BnCFoods.COCOA_FUDGE)));
 
     public static final RegistryObject<Item> VEGETABLE_OMELET = registerWithTab("vegetable_omelet",
-            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.VEGETABLE_OMELET), true));
+            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.VEGETABLE_OMELET).craftRemainder(Items.BOWL), true));
     public static final RegistryObject<Item> CHEESY_PASTA = registerWithTab("cheesy_pasta",
-            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.CHEESY_PASTA), true));
+            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.CHEESY_PASTA).craftRemainder(Items.BOWL), true));
     public static final RegistryObject<Item> CREAMY_ONION_SOUP = registerWithTab("creamy_onion_soup",
-            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.CREAMY_ONION_SOUP), true));
+            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.CREAMY_ONION_SOUP).craftRemainder(Items.BOWL), true));
     public static final RegistryObject<Item> SCARLET_PIEROGIES = registerWithTab("scarlet_pierogies",
-            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.SCARLET_PIEROGIES), true));
+            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.SCARLET_PIEROGIES).craftRemainder(Items.BOWL), true));
     public static final RegistryObject<Item> HORROR_LASAGNA = registerWithTab("horror_lasagna",
-            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.HORROR_LASAGNA), true));
+            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.HORROR_LASAGNA).craftRemainder(Items.BOWL), true));
 
     public static final RegistryObject<Item> UNRIPE_FLAXEN_CHEESE_WHEEL = registerWithTab("unripe_flaxen_cheese_wheel",
             () -> new BlockItem(BnCBlocks.UNRIPE_FLAXEN_CHEESE_WHEEL.get(), new Item.Properties().stacksTo(16)));
@@ -112,7 +112,7 @@ public class BnCItems {
     public static final RegistryObject<Item> FIERY_FONDUE_POT = registerWithTab("fiery_fondue_pot",
             () -> new BlockItem(BnCBlocks.FIERY_FONDUE_POT.get(), new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FIERY_FONDUE = registerWithTab("fiery_fondue",
-            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.FIERY_FONDUE), true));
+            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.FIERY_FONDUE).craftRemainder(Items.BOWL), true));
 
     public static final RegistryObject<Item> HAM_AND_CHEESE_SANDWICH = registerWithTab("ham_and_cheese_sandwich",
             () -> new Item(new Item.Properties().food(BnCFoods.HAM_AND_CHEESE_SANDWICH)));
@@ -128,6 +128,5 @@ public class BnCItems {
             () -> new JamJarItem(new Item.Properties().craftRemainder(Items.GLASS_BOTTLE).food(BnCFoods.GLOW_BERRY_MARMALADE)));
     public static final RegistryObject<Item> APPLE_JELLY = registerWithTab("apple_jelly",
             () -> new JamJarItem(new Item.Properties().craftRemainder(Items.GLASS_BOTTLE).food(BnCFoods.APPLE_JELLY)));
-    
 
 }
