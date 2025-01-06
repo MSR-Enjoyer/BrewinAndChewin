@@ -28,8 +28,6 @@ public class TipsyNumbedHeartsCapability implements ICapabilitySerializable<Comp
         this.provider = provider;
     }
 
-    public static final int MAX_TICKS_UNTIL_DAMAGE = 240;
-
     private float numbedHealth = 0.0f;
     private int ticksUntilDamage = 0;
 
@@ -80,6 +78,6 @@ public class TipsyNumbedHeartsCapability implements ICapabilitySerializable<Comp
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         numbedHealth = nbt.getFloat("numbed_health");
-        ticksUntilDamage = nbt.getInt("ticks_until_damage");
+        ticksUntilDamage = nbt.getInt("ticks");
     }
 }

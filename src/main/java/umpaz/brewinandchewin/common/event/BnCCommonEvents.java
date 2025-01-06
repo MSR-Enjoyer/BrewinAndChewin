@@ -59,8 +59,8 @@ public class BnCCommonEvents {
         LivingEntity living = event.getEntity();
         living.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
             if (cap.getNumbedHealth() > 0.0F) {
-                cap.setTicksUntilDamage(cap.getTicksUntilDamage() + 1);
-                if (cap.getTicksUntilDamage() > 200) {
+                cap.setTicksUntilDamage(cap.getTicksUntilDamage() - 1);
+                if (cap.getTicksUntilDamage() <= 0 || !living.hasEffect(BnCEffects.TIPSY.get())) {
                     living.hurt(living.damageSources().source(BnCDamageTypes.CARDIAC_ARREST), cap.getNumbedHealth());
                     cap.setNumbedHealth(0.0F);
                 }
@@ -73,14 +73,16 @@ public class BnCCommonEvents {
     @SubscribeEvent
     public static void onLivingDamage(LivingHurtEvent event) {
         LivingEntity target = event.getEntity();
-        if (!target.hasEffect(BnCEffects.TIPSY.get()))
+        if (!target.hasEffect(BnCEffects.TIPSY.get()) || event.getSource().is(BnCDamageTypes.CARDIAC_ARREST))
             return;
         int amplifier = target.getEffect(BnCEffects.TIPSY.get()).getAmplifier();
         float maximumNumbedHearts = Mth.floor((8 + (0.9F * amplifier)) / 2.0F) * 2.0F;
         target.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
             float reducedAmount = Math.min(event.getAmount() * (0.3F + 0.022F * amplifier), maximumNumbedHearts - cap.getNumbedHealth());
+            if (reducedAmount < 1.0)
+                return;
             cap.setNumbedHealth(cap.getNumbedHealth() + reducedAmount);
-            cap.setTicksUntilDamage(0);
+            cap.setTicksUntilDamage(200 + 20 * amplifier);
             if (target instanceof Player)
                 cap.sync();
             event.setAmount(event.getAmount() - reducedAmount);
