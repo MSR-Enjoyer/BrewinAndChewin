@@ -58,15 +58,17 @@ public class BnCCommonEvents {
     public static void onLivingTick(LivingEvent.LivingTickEvent event) {
         LivingEntity living = event.getEntity();
         living.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
-            if (cap.getNumbedHealth() > 0.0F) {
-                cap.setTicksUntilDamage(cap.getTicksUntilDamage() - 1);
-                if (cap.getTicksUntilDamage() <= 0 || !living.hasEffect(BnCEffects.TIPSY.get())) {
+            if (cap.getNumbedHealth() > 0.0) {
+                if (cap.getTicksUntilDamage() > 0)
+                    cap.setTicksUntilDamage(cap.getTicksUntilDamage() - 1);
+
+                if (cap.getTicksUntilDamage() < 1 || !living.hasEffect(BnCEffects.TIPSY.get())) {
                     living.hurt(living.damageSources().source(BnCDamageTypes.CARDIAC_ARREST), cap.getNumbedHealth());
                     cap.setNumbedHealth(0.0F);
                 }
-                if (!living.level().isClientSide)
-                    cap.sync();
             }
+            if (!living.level().isClientSide)
+                cap.sync();
         });
     }
 
@@ -76,11 +78,9 @@ public class BnCCommonEvents {
         if (!target.hasEffect(BnCEffects.TIPSY.get()) || event.getSource().is(BnCDamageTypes.CARDIAC_ARREST))
             return;
         int amplifier = target.getEffect(BnCEffects.TIPSY.get()).getAmplifier();
-        float maximumNumbedHearts = Mth.floor((8 + (0.9F * amplifier)) / 2.0F) * 2.0F;
+        float maximumNumbedHearts = Mth.floor(8 + (amplifier * 0.9F) / 2) * 2;
         target.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
             float reducedAmount = Math.min(event.getAmount() * (0.3F + 0.022F * amplifier), maximumNumbedHearts - cap.getNumbedHealth());
-            if (reducedAmount < 1.0 && cap.getNumbedHealth() < 1)
-                return;
             cap.setNumbedHealth(cap.getNumbedHealth() + reducedAmount);
             cap.setTicksUntilDamage(200 + 20 * amplifier);
             if (target instanceof Player)
