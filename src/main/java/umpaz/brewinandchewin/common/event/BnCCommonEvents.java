@@ -78,14 +78,15 @@ public class BnCCommonEvents {
         if (!target.hasEffect(BnCEffects.TIPSY.get()) || event.getSource().is(BnCDamageTypes.CARDIAC_ARREST))
             return;
         int amplifier = target.getEffect(BnCEffects.TIPSY.get()).getAmplifier();
-        float maximumNumbedHearts = Mth.floor(8 + (amplifier * 0.9F) / 2) * 2;
+        float maximumNumbedHealth = Mth.floor(8 + (amplifier * 0.9F) / 2);
         target.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
-            float reducedAmount = Math.min(event.getAmount() * (0.3F + 0.022F * amplifier), maximumNumbedHearts - cap.getNumbedHealth());
-            cap.setNumbedHealth(cap.getNumbedHealth() + reducedAmount);
+            float reducedAmount = event.getAmount() * (0.3F + 0.022F * amplifier);
+            float numbedHealth = Math.min(cap.getNumbedHealth() + reducedAmount, maximumNumbedHealth);
+            event.setAmount(event.getAmount() - (numbedHealth - cap.getNumbedHealth()));
+            cap.setNumbedHealth(numbedHealth);
             cap.setTicksUntilDamage(200 + 20 * amplifier);
             if (target instanceof Player)
                 cap.sync();
-            event.setAmount(event.getAmount() - reducedAmount);
         });
     }
 

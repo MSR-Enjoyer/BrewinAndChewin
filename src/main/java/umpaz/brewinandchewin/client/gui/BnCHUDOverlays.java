@@ -17,7 +17,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.capability.TipsyNumbedHeartsCapability;
-import umpaz.brewinandchewin.common.mixin.client.GuiAccessor;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 import vectorwing.farmersdelight.common.registry.ModEffects;
 
@@ -85,23 +84,23 @@ public class BnCHUDOverlays {
         rand.setSeed(ticks * 312871L);
         TipsyNumbedHeartsCapability cap = player.getCapability(TipsyNumbedHeartsCapability.INSTANCE).orElseThrow(NullPointerException::new);
 
-        boolean shouldDrawHighlighted = Gui.HeartType.forPlayer(player).canBlink && ((GuiAccessor)Minecraft.getInstance().gui).brewinandchewin$getHealthBlinkTime() > (long)ticks && (((GuiAccessor)Minecraft.getInstance().gui).brewinandchewin$getHealthBlinkTime() - (long)ticks) / 3L % 2L == 1L;
-
         RenderSystem.enableBlend();
 
         int healthStart = Mth.ceil(player.getHealth() / 2);
-        int healthEnd = Math.max(healthStart - Mth.ceil(cap.getNumbedHealth() / 2), 0);
-        boolean healthOverflow = healthStart - Mth.ceil(cap.getNumbedHealth() / 2) <= 0;
+        int healthEnd = Math.max(healthStart - Mth.floor(cap.getNumbedHealth() / 2), 0);
+        boolean healthOverflow = healthStart - Mth.floor(cap.getNumbedHealth() / 2) <= 0;
         if (!healthOverflow && Mth.ceil(player.getHealth()) % 2 == 1)
             --healthEnd;
 
         if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && cap.getTicksUntilDamage() < 80) {
-            float increase = Mth.lerp((float) (80 - cap.getTicksUntilDamage()) / 80, 0.0F, 0.12F);
-            numbedAlpha = Mth.clamp(numbedAlpha + (increaseNumbedAlpha ? increase : -increase), -0.01F, 1.01F);
-            if (numbedAlpha < 0.0F)
-                increaseNumbedAlpha = true;
-            if (numbedAlpha > 1.0F)
-                increaseNumbedAlpha = false;
+            if (!Minecraft.getInstance().isPaused()) {
+                float increase = Mth.lerp((float) (80 - cap.getTicksUntilDamage()) / 80, 0.0F, 0.08F);
+                numbedAlpha = Mth.clamp(numbedAlpha + (increaseNumbedAlpha ? increase : -increase), -0.01F, 1.01F);
+                if (numbedAlpha < 0.0F)
+                    increaseNumbedAlpha = true;
+                if (numbedAlpha > 1.0F)
+                    increaseNumbedAlpha = false;
+            }
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, numbedAlpha);
         } else
             numbedAlpha = 1.0F;
@@ -117,13 +116,13 @@ public class BnCHUDOverlays {
             boolean splitHeartLeft = !healthOverflow && i == healthStart && i * 2 > Mth.ceil(player.getHealth());
 
             if (splitHeartLeft || (player.getHealth() / 2) - (cap.getNumbedHealth() / 2) > i - 1 && i * 2 > Mth.ceil(player.getHealth())) {
-                graphics.blit(MOD_ICONS_TEXTURE, x, y, (shouldDrawHighlighted ? 9 : 0), 9, 9, 9);
+                graphics.blit(MOD_ICONS_TEXTURE, x, y, 0, 9, 9, 9);
                 if (splitHeartLeft)
                     splitHeartRight = true;
             } else if (splitHeartRight && (i == healthEnd + 1) || (player.getHealth() / 2) - (cap.getNumbedHealth() / 2) > i - 1 && i * 2 > Mth.ceil(player.getHealth())) {
-                graphics.blit(MOD_ICONS_TEXTURE, x, y, 36 + (shouldDrawHighlighted ? 9 : 0), 9, 9, 9);
+                graphics.blit(MOD_ICONS_TEXTURE, x, y, 18, 9, 9, 9);
             } else {
-                graphics.blit(MOD_ICONS_TEXTURE, x, y, 18 + (shouldDrawHighlighted ? 9 : 0), 9, 9, 9);
+                graphics.blit(MOD_ICONS_TEXTURE, x, y, 9, 9, 9, 9);
             }
         }
 

@@ -13,7 +13,6 @@
     "StackedContentsRecipePickerAccessor"
   ],
   "client": [
-    "client.GuiAccessor",
     "client.GuiMixin",
     "client.RecipeBookComponentAccessor",
     "client.TipsyDontRenderFoodMixin",
