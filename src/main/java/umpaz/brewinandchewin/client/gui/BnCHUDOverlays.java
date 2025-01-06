@@ -90,10 +90,10 @@ public class BnCHUDOverlays {
         RenderSystem.enableBlend();
 
         int healthStart = Mth.ceil(player.getHealth() / 2);
-        int healthEnd = Math.max(healthStart - Mth.ceil((cap.getNumbedHealth() - 1) / 2), 0);
-        boolean healthOverflow = healthStart - Mth.ceil((cap.getNumbedHealth() - 1) / 2) < 0;
-        if (!healthOverflow && (int)player.getHealth() % 2 == 1)
-            ++healthEnd;
+        int healthEnd = Math.max(healthStart - Mth.ceil(cap.getNumbedHealth() / 2), 0);
+        boolean healthOverflow = healthStart - Mth.ceil(cap.getNumbedHealth() / 2) < 0;
+        if (!healthOverflow && Mth.ceil(player.getHealth()) % 2 == 1)
+            --healthEnd;
 
         if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && cap.getTicksUntilDamage() < 80) {
             float increase = Mth.lerp((float) (80 - cap.getTicksUntilDamage()) / 80, 0.0F, 0.12F);
@@ -107,7 +107,7 @@ public class BnCHUDOverlays {
             numbedAlpha = 1.0F;
 
         boolean splitHeartRight = false;
-        for (int i = healthStart; i > healthEnd - 1; --i) {
+        for (int i = healthStart; i > healthEnd; --i) {
             int x = (right + i * 8 - 8);
             int y = top;
             if (player.getHealth() <= 4) {
@@ -120,7 +120,7 @@ public class BnCHUDOverlays {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, (shouldDrawHighlighted ? 9 : 0), 9, 9, 9);
                 if (splitHeartLeft)
                     splitHeartRight = true;
-            } else if (splitHeartRight && (i == healthEnd) || (player.getHealth() / 2) - (cap.getNumbedHealth() / 2) > i - 1 && i * 2 < Mth.ceil(player.getHealth())) {
+            } else if (splitHeartRight && (i == healthEnd + 1) || (player.getHealth() / 2) - (cap.getNumbedHealth() / 2) > i - 1 && i * 2 < Mth.ceil(player.getHealth())) {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 36 + (shouldDrawHighlighted ? 9 : 0), 9, 9, 9);
             } else {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 18 + (shouldDrawHighlighted ? 9 : 0), 9, 9, 9);
