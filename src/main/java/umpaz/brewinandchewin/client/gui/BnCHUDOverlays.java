@@ -120,7 +120,7 @@ public class BnCHUDOverlays {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, (shouldDrawHighlighted ? 9 : 0), 9, 9, 9);
                 if (splitHeartLeft)
                     splitHeartRight = true;
-            } else if (splitHeartRight && (i == healthEnd + 1) || (player.getHealth() / 2) - (cap.getNumbedHealth() / 2) > i - 1 && i * 2 < Mth.ceil(player.getHealth())) {
+            } else if (splitHeartRight && (i == healthEnd) || (player.getHealth() / 2) - (cap.getNumbedHealth() / 2) > i - 1 && i * 2 < Mth.ceil(player.getHealth())) {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 36 + (shouldDrawHighlighted ? 9 : 0), 9, 9, 9);
             } else {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 18 + (shouldDrawHighlighted ? 9 : 0), 9, 9, 9);
