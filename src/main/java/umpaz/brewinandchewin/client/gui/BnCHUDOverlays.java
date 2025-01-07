@@ -86,15 +86,14 @@ public class BnCHUDOverlays {
 
         RenderSystem.enableBlend();
 
-        float renderHealth = player.getAbsorptionAmount() > 0 ? 20 + player.getAbsorptionAmount() : player.getHealth();
+        float renderHealth = player.getAbsorptionAmount() > 0 ? 20 + player.getAbsorptionAmount() : Math.min(player.getMaxHealth(), player.getHealth());
 
         int healthStart = Mth.ceil(renderHealth / 2);
-        int healthEnd = healthStart - Mth.floor(cap.getNumbedHealth() / 2);
-        int healthRow = Mth.floor(renderHealth / 2 / 10);
+        // FIXME: Add an extra value when hearts are uneven. Float modulo is weird.
+        int healthEnd = Mth.floor(Math.max((renderHealth - cap.getNumbedHealth()) / 2, 0));
+        int healthRow = Math.max(0, Mth.floor((renderHealth - 1) / 2 / 10));
         int maxHealthRows = Mth.ceil((player.getMaxHealth() + player.getAbsorptionAmount()) / 2.0F / 10.0F);
-        int healthOverflow = Math.abs(Math.max(healthStart - Mth.floor(cap.getNumbedHealth() / 2), 0));
-        if (healthOverflow > 0 && Mth.ceil(renderHealth) % 2 == 1)
-            --healthEnd;
+        int healthOverflow = Math.abs(Math.min(Mth.ceil(healthStart - cap.getNumbedHealth()) / 2, 0));
 
         if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && cap.getTicksUntilDamage() < 80) {
             if (!Minecraft.getInstance().isPaused()) {
@@ -109,29 +108,25 @@ public class BnCHUDOverlays {
         } else
             numbedAlpha = 1.0F;
 
-        boolean splitHeartRight = false;
         for (int i = healthStart; i > healthEnd; --i) {
-            int calculatedHeartLocation = i - (healthRow) * 10;
+            int calculatedHeartLocation = i - healthRow * 10;
 
             if (healthRow == 0 && player.getAbsorptionAmount() > 0 && player.getHealth() < calculatedHeartLocation * 2)
                 calculatedHeartLocation -= Mth.ceil(20 - player.getHealth()) / 2;
 
             int x = (right + calculatedHeartLocation * 8 - 8);
-            int y = top + (maxHealthRows * 10) - 10 - (healthRow * 10);
-            if (renderHealth <= 4) {
+            int y = top + maxHealthRows * 10 - 10 - healthRow * 10;
+            if (renderHealth <= 4 && heartOffset.length > i - 1) {
                 y += heartOffset[i - 1];
             }
 
-            boolean splitHeartLeft = healthOverflow > 0 && i == healthStart && i > Mth.ceil(renderHealth);
 
-            if (splitHeartLeft || calculatedHeartLocation - (cap.getNumbedHealth() / 2) > (calculatedHeartLocation + healthRow * 10) - 1 && (calculatedHeartLocation + healthRow * 10) * 2 > renderHealth) {
-                graphics.blit(MOD_ICONS_TEXTURE, x, y, 0, 9, 9, 9);
-                if (splitHeartLeft)
-                    splitHeartRight = true;
-            } else if (splitHeartRight && (i == healthEnd + 1) || (player.getHealth() / 2) - (cap.getNumbedHealth() / 2) > (calculatedHeartLocation + healthRow * 10) - 1 && (calculatedHeartLocation + healthRow * 10) > renderHealth) {
-                graphics.blit(MOD_ICONS_TEXTURE, x, y, 18, 9, 9, 9);
+            if (i == healthStart && healthOverflow == 0 && (Math.ceil(renderHealth) < healthStart * 2 || Math.ceil(renderHealth) % 2 == 1)) {
+                graphics.blit(MOD_ICONS_TEXTURE, x, y, 0, 9, 9, 9); // Left Heart
+            } else if (i == healthEnd + 1 && (Math.ceil(renderHealth) < healthEnd * 2 || Math.ceil(renderHealth) % 2 == 1)) {
+                graphics.blit(MOD_ICONS_TEXTURE, x, y, 18, 9, 9, 9); // Right Heart
             } else {
-                graphics.blit(MOD_ICONS_TEXTURE, x, y, 9, 9, 9, 9);
+                graphics.blit(MOD_ICONS_TEXTURE, x, y, 9, 9, 9, 9); // Full Heart
             }
             if (calculatedHeartLocation == 1)
                 --healthRow;

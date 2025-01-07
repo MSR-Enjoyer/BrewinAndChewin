@@ -69,7 +69,7 @@ public class BnCCommonEvents {
                     cap.setTicksUntilDamage(cap.getTicksUntilDamage() - 1);
 
                 if (cap.getTicksUntilDamage() < 1 || !living.hasEffect(BnCEffects.TIPSY.get())) {
-                    if (cap.getNumbedHealth() > 0.9E-5F) // Float comparisons don't like equals.
+                    if (living.getHealth() + living.getAbsorptionAmount() - cap.getNumbedHealth() > 1) // Float comparisons don't like equals.
                         living.hurt(living.damageSources().source(BnCDamageTypes.CARDIAC_ARREST), cap.getNumbedHealth());
                     cap.setNumbedHealth(0.0F);
                 }
@@ -89,9 +89,7 @@ public class BnCCommonEvents {
         target.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
             float reducedAmount = event.getAmount() * (0.3F + 0.022F * amplifier);
             float numbedHealth = Math.min(cap.getNumbedHealth() + reducedAmount, maximumNumbedHealth);
-            if (event.getAmount() - (numbedHealth - cap.getNumbedHealth()) > target.getHealth()) {
-                event.setAmount(event.getAmount() - (numbedHealth - cap.getNumbedHealth()));
-            }
+            event.setAmount(Math.min(event.getAmount() - (numbedHealth - cap.getNumbedHealth()), target.getHealth()));
             cap.setNumbedHealth(numbedHealth);
             cap.setTicksUntilDamage(200 + 20 * amplifier);
             if (target instanceof Player)
