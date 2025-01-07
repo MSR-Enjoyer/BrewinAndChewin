@@ -16,6 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.capability.TipsyNumbedHeartsCapability;
+import umpaz.brewinandchewin.common.item.BoozeItem;
 import umpaz.brewinandchewin.common.registry.BnCDamageTypes;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 import vectorwing.farmersdelight.common.registry.ModItems;
@@ -44,7 +45,6 @@ public class BnCCommonEvents {
     public static void onStartTracking(PlayerEvent.Clone event) {
         if (!event.isWasDeath()) {
             event.getOriginal().reviveCaps();
-
             event.getEntity().getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
                 cap.setFrom(event.getOriginal().getCapability(TipsyNumbedHeartsCapability.INSTANCE).orElse(null));
                 cap.sync();
@@ -91,17 +91,15 @@ public class BnCCommonEvents {
     }
 
     @SubscribeEvent
-    public static void reduceTipsy(final LivingEntityUseItemEvent.Finish event) {
+    public static void reduceTipsy(LivingEntityUseItemEvent.Finish event) {
         LivingEntity player = event.getEntity();
         if (player.hasEffect(BnCEffects.TIPSY.get())) {
-            if (event.getItem().isEdible()) {
-                MobEffectInstance tipsy = player.getEffect(BnCEffects.TIPSY.get());
-                if (event.getItem().is(Items.MILK_BUCKET) || event.getItem().is(ModItems.MILK_BOTTLE.get())) {
-                    player.forceAddEffect(new MobEffectInstance(BnCEffects.TIPSY.get(), (int) (tipsy.getDuration() * .5f), tipsy.getAmplifier(), false, false, true), player);
-                }
-                else {
-                    player.forceAddEffect(new MobEffectInstance(BnCEffects.TIPSY.get(), (int) (tipsy.getDuration() * .9f), tipsy.getAmplifier(), false, false, true), player);
-                }
+            MobEffectInstance tipsy = player.getEffect(BnCEffects.TIPSY.get());
+            if (event.getItem().isEdible() && !(event.getItem().getItem() instanceof BoozeItem)) {
+                player.forceAddEffect(new MobEffectInstance(BnCEffects.TIPSY.get(), (int) (tipsy.getDuration() * .9f), tipsy.getAmplifier(), false, false, true), player);
+            }
+            else if (event.getItem().is(Items.MILK_BUCKET)) {
+                player.forceAddEffect(new MobEffectInstance(BnCEffects.TIPSY.get(), (int) (tipsy.getDuration() * .5f), tipsy.getAmplifier(), false, false, true), player);
             }
         }
     }

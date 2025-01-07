@@ -5,7 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "brewinandchewin.refmap.json",
   "mixins": [
-    "CancelSaturationMixin",
+    "IntoxicationCancelSaturationMixin",
     "KegStackedContentsRecipePickerMixin",
     "PreventIntoxicationRemovalMixin$HotCocoa",
     "PreventIntoxicationRemovalMixin$MilkBottle",
@@ -14,9 +14,9 @@
   ],
   "client": [
     "client.GuiMixin",
+    "client.IntoxicationDontRenderFoodMixin",
+    "client.IntoxicationDontRenderNourishment",
     "client.RecipeBookComponentAccessor",
-    "client.TipsyDontRenderFoodMixin",
-    "client.TipsyDontRenderNourishment",
     "client.TipsyDrunkRendererMixin",
     "client.TipsyMouseHandlerMixin",
     "client.TipsySignRendererMixin",

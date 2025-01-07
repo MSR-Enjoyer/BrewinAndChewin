@@ -195,10 +195,10 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         return switch (want) {
             case 1 -> kegTemp <= 1;
             case 2 -> kegTemp <= 2;
-            case 3 -> kegTemp == 3;
+            case 3 -> kegTemp < 5 && kegTemp > 1;
             case 4 -> kegTemp >= 4;
             case 5 -> kegTemp >= 5;
-            default -> false; // Consider adding a default case to handle unexpected values
+            default -> false;
         };
     }
 

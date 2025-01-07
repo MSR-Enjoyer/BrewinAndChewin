@@ -11,7 +11,7 @@ import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 
 @Mixin(ForgeGui.class)
-public class TipsyDontRenderFoodMixin {
+public class IntoxicationDontRenderFoodMixin {
     @Inject(method = "renderFood", at = @At("HEAD"), cancellable = true, remap = false)
     private void brewinandchewin$dontRenderFood(int width, int height, GuiGraphics guiGraphics, CallbackInfo ci) {
         if (BnCConfiguration.INTOXICATION_FOOD_OVERLAY.get() && Minecraft.getInstance().player.hasEffect(BnCEffects.INTOXICATION.get()))

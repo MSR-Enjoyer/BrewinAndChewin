@@ -40,9 +40,7 @@ public class AreaLocationCheck implements LootItemCondition {
     }
 
     public static LootItemCondition.Builder checkArea(LocationPredicate.Builder pLocationPredicateBuilder, int range) {
-        return () -> {
-            return new AreaLocationCheck(pLocationPredicateBuilder.build(), range);
-        };
+        return () -> new AreaLocationCheck(pLocationPredicateBuilder.build(), range);
     }
 
     public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<AreaLocationCheck> {

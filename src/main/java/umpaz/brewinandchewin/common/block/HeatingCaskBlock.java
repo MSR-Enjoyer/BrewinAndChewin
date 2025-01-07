@@ -46,11 +46,13 @@ public class HeatingCaskBlock extends Block {
                     level.playSound(player, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 0.5F, 1.0F);
                 }
             }
-            if (heldStack.is(Items.WATER_BUCKET)) {
-                player.setItemInHand(hand, heldStack.getCraftingRemainingItem());
-            }
-            else {
-                player.setItemInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
+            if (!player.isCreative()) {
+                if (heldStack.is(Items.WATER_BUCKET)) {
+                    player.setItemInHand(hand, heldStack.getCraftingRemainingItem());
+                }
+                else {
+                    player.setItemInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
+                }
             }
             return InteractionResult.SUCCESS;
         }

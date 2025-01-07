@@ -12,7 +12,7 @@ import umpaz.brewinandchewin.common.registry.BnCEffects;
 import vectorwing.farmersdelight.client.gui.NourishmentHungerOverlay;
 
 @Mixin(NourishmentHungerOverlay.class)
-public class TipsyDontRenderNourishment {
+public class IntoxicationDontRenderNourishment {
     @Inject(method = "drawNourishmentOverlay", at = @At("HEAD"), cancellable = true, remap = false)
     private static void brewinandchewin$dontRenderNourishment(FoodData stats, Minecraft mc, GuiGraphics graphics, int left, int top, boolean naturalHealing, CallbackInfo ci) {
         if (BnCConfiguration.INTOXICATION_FOOD_OVERLAY.get() && mc.player.hasEffect(BnCEffects.INTOXICATION.get()))

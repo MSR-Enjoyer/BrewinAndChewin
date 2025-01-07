@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 
 @Mixin(FoodData.class)
-public class CancelSaturationMixin {
+public class IntoxicationCancelSaturationMixin {
 
     @Unique
     private LivingEntity brewinandchewin$entity;
