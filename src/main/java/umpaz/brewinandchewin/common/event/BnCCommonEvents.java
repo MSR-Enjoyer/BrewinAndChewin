@@ -89,7 +89,7 @@ public class BnCCommonEvents {
         target.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
             float reducedAmount = event.getAmount() * (0.3F + 0.022F * amplifier);
             float numbedHealth = Math.min(cap.getNumbedHealth() + reducedAmount, maximumNumbedHealth);
-            if (numbedHealth - cap.getNumbedHealth() > 0.999) {
+            if (event.getAmount() - (numbedHealth - cap.getNumbedHealth()) > target.getHealth()) {
                 event.setAmount(event.getAmount() - (numbedHealth - cap.getNumbedHealth()));
             }
             cap.setNumbedHealth(numbedHealth);
