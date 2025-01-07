@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -68,7 +69,8 @@ public class BnCCommonEvents {
                     cap.setTicksUntilDamage(cap.getTicksUntilDamage() - 1);
 
                 if (cap.getTicksUntilDamage() < 1 || !living.hasEffect(BnCEffects.TIPSY.get())) {
-                    living.hurt(living.damageSources().source(BnCDamageTypes.CARDIAC_ARREST), cap.getNumbedHealth());
+                    if (cap.getNumbedHealth() > 0.9E-5F) // Float comparisons don't like equals.
+                        living.hurt(living.damageSources().source(BnCDamageTypes.CARDIAC_ARREST), cap.getNumbedHealth());
                     cap.setNumbedHealth(0.0F);
                 }
             }
@@ -78,7 +80,7 @@ public class BnCCommonEvents {
     }
 
     @SubscribeEvent
-    public static void onLivingDamage(LivingHurtEvent event) {
+    public static void onLivingDamage(LivingDamageEvent event) {
         LivingEntity target = event.getEntity();
         if (!target.hasEffect(BnCEffects.TIPSY.get()) || event.getSource().is(BnCDamageTypes.CARDIAC_ARREST))
             return;

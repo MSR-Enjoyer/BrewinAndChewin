@@ -86,10 +86,14 @@ public class BnCHUDOverlays {
 
         RenderSystem.enableBlend();
 
-        int healthStart = Mth.ceil(player.getHealth() / 2);
-        int healthEnd = Math.max(healthStart - Mth.floor(cap.getNumbedHealth() / 2), 0);
-        boolean healthOverflow = healthStart - Mth.floor(cap.getNumbedHealth() / 2) <= 0;
-        if (!healthOverflow && Mth.ceil(player.getHealth()) % 2 == 1)
+        float renderHealth = player.getAbsorptionAmount() > 0 ? 20 + player.getAbsorptionAmount() : player.getHealth();
+
+        int healthStart = Mth.ceil(renderHealth / 2);
+        int healthEnd = healthStart - Mth.floor(cap.getNumbedHealth() / 2);
+        int healthRow = Mth.floor(renderHealth / 2 / 10);
+        int maxHealthRows = Mth.ceil((player.getMaxHealth() + player.getAbsorptionAmount()) / 2.0F / 10.0F);
+        int healthOverflow = Math.abs(Math.max(healthStart - Mth.floor(cap.getNumbedHealth() / 2), 0));
+        if (healthOverflow > 0 && Mth.ceil(renderHealth) % 2 == 1)
             --healthEnd;
 
         if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && cap.getTicksUntilDamage() < 80) {
@@ -107,23 +111,30 @@ public class BnCHUDOverlays {
 
         boolean splitHeartRight = false;
         for (int i = healthStart; i > healthEnd; --i) {
-            int x = (right + i * 8 - 8);
-            int y = top;
-            if (player.getHealth() <= 4) {
+            int calculatedHeartLocation = i - (healthRow) * 10;
+
+            if (healthRow == 0 && player.getAbsorptionAmount() > 0 && player.getHealth() < calculatedHeartLocation * 2)
+                calculatedHeartLocation -= Mth.ceil(20 - player.getHealth()) / 2;
+
+            int x = (right + calculatedHeartLocation * 8 - 8);
+            int y = top + (maxHealthRows * 10) - 10 - (healthRow * 10);
+            if (renderHealth <= 4) {
                 y += heartOffset[i - 1];
             }
 
-            boolean splitHeartLeft = !healthOverflow && i == healthStart && i * 2 > Mth.ceil(player.getHealth());
+            boolean splitHeartLeft = healthOverflow > 0 && i == healthStart && i > Mth.ceil(renderHealth);
 
-            if (splitHeartLeft || (player.getHealth() / 2) - (cap.getNumbedHealth() / 2) > i - 1 && i * 2 > Mth.ceil(player.getHealth())) {
+            if (splitHeartLeft || calculatedHeartLocation - (cap.getNumbedHealth() / 2) > (calculatedHeartLocation + healthRow * 10) - 1 && (calculatedHeartLocation + healthRow * 10) * 2 > renderHealth) {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 0, 9, 9, 9);
                 if (splitHeartLeft)
                     splitHeartRight = true;
-            } else if (splitHeartRight && (i == healthEnd + 1) || (player.getHealth() / 2) - (cap.getNumbedHealth() / 2) > i - 1 && i * 2 > Mth.ceil(player.getHealth())) {
+            } else if (splitHeartRight && (i == healthEnd + 1) || (player.getHealth() / 2) - (cap.getNumbedHealth() / 2) > (calculatedHeartLocation + healthRow * 10) - 1 && (calculatedHeartLocation + healthRow * 10) > renderHealth) {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 18, 9, 9, 9);
             } else {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 9, 9, 9, 9);
             }
+            if (calculatedHeartLocation == 1)
+                --healthRow;
         }
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
