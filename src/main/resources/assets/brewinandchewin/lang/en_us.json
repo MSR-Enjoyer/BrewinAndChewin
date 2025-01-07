@@ -73,6 +73,7 @@
   "effect.brewinandchewin.sweet_heart": "Sweet Heart",
   "effect.brewinandchewin.satisfaction": "Satisfaction",
   "effect.brewinandchewin.hangover": "Hangover",
+  "brewinandchewin.container.keg.served_in": "Served in: %s",
   "brewinandchewin.container.keg": "Keg",
   "brewinandchewin.container.keg.frigid": "Frigid",
   "brewinandchewin.container.keg.cold": "Cold",

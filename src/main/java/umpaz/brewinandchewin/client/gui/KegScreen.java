@@ -1,6 +1,7 @@
 package umpaz.brewinandchewin.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
@@ -9,6 +10,7 @@ import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,6 +18,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import umpaz.brewinandchewin.BrewinAndChewin;
@@ -31,7 +34,9 @@ import umpaz.brewinandchewin.common.utility.BnCTextUtils;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class KegScreen extends AbstractContainerScreen<KegMenu> implements RecipeUpdateListener
@@ -104,11 +109,31 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
         this.recipeBookComponent.renderTooltip(gui, this.leftPos, this.topPos, mouseX, mouseY);
     }
 
+    private static final Map<Fluid, Component> FLUID_CONTAINER_COMPONENTS = new HashMap<>();
+
+    // Called on /reload.
+    public static void clearFluidContainerComponents() {
+        FLUID_CONTAINER_COMPONENTS.clear();
+    }
+
+
     private void renderTankTooltip(GuiGraphics gui, int mouseX, int mouseY) {
+
             if ( isHovering(108, 19, 24, 28, mouseX, mouseY) && !this.menu.kegTank.isEmpty() && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient() == null || fermentingRecipe.getFluidIngredient().getFluid().isSame(menu.kegTank.getFluid().getRawFluid()))) {
+            Component containerComponent = (BnCTextUtils.getTranslation("container.keg.served_in", FLUID_CONTAINER_COMPONENTS.computeIfAbsent(menu.kegTank.getFluid().getFluid(), fluid -> {
+                MutableComponent component = MutableComponent.create(ComponentContents.EMPTY).withStyle(ChatFormatting.GRAY);
+                int amountAdded = 0;
+                for (KegPouringRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(pouringRecipe -> pouringRecipe.getRawFluid().isSame(fluid)).sorted(Comparator.comparing(recipe -> recipe.getContainer().getItem().getDescription().getString())).toList()) {
+                    if (amountAdded > 0)
+                        component.append(", ");
+                    component.append(recipe.getContainer().getItem().getDescription().plainCopy().withStyle(ChatFormatting.GRAY));
+                    ++amountAdded;
+                }
+                return component;
+            }))).withStyle(ChatFormatting.GRAY);
             Component component = MutableComponent.create(this.menu.kegTank.getFluid().getDisplayName().getContents())
                     .append(" (%s/%s mB)".formatted(this.menu.kegTank.getFluidAmount(), this.menu.kegTank.getCapacity()));
-            gui.renderTooltip(this.font, component, mouseX, mouseY);
+            gui.renderComponentTooltip(this.font, List.of(component, containerComponent), mouseX, mouseY);
         }
     }
 

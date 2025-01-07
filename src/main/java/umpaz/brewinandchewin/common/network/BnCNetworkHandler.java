@@ -4,6 +4,7 @@ package umpaz.brewinandchewin.common.network;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
 import umpaz.brewinandchewin.common.network.serverbound.TransferKegRecipeServerboundPacket;
 
@@ -19,6 +20,7 @@ public class BnCNetworkHandler {
     public static void register() {
         int i = 0;
         INSTANCE.registerMessage(i++, SyncNumbedHeartsClientboundPacket.class, SyncNumbedHeartsClientboundPacket::encode, SyncNumbedHeartsClientboundPacket::decode, SyncNumbedHeartsClientboundPacket.Handler::handle);
+        INSTANCE.registerMessage(i++, ClearKegFluidContainerComponentsPacket.class, ClearKegFluidContainerComponentsPacket::encode, ClearKegFluidContainerComponentsPacket::decode, ClearKegFluidContainerComponentsPacket.Handler::handle);
         INSTANCE.registerMessage(i++, TransferKegRecipeServerboundPacket.class, TransferKegRecipeServerboundPacket::encode, TransferKegRecipeServerboundPacket::decode, TransferKegRecipeServerboundPacket.Handler::handle);
     }
 

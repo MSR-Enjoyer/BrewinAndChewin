@@ -8,15 +8,19 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.capability.TipsyNumbedHeartsCapability;
 import umpaz.brewinandchewin.common.item.BoozeItem;
+import umpaz.brewinandchewin.common.network.BnCNetworkHandler;
+import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsPacket;
 import umpaz.brewinandchewin.common.registry.BnCDamageTypes;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 import vectorwing.farmersdelight.common.registry.ModItems;
@@ -45,6 +49,7 @@ public class BnCCommonEvents {
     public static void onStartTracking(PlayerEvent.Clone event) {
         if (!event.isWasDeath()) {
             event.getOriginal().reviveCaps();
+
             event.getEntity().getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
                 cap.setFrom(event.getOriginal().getCapability(TipsyNumbedHeartsCapability.INSTANCE).orElse(null));
                 cap.sync();
@@ -102,6 +107,11 @@ public class BnCCommonEvents {
                 player.forceAddEffect(new MobEffectInstance(BnCEffects.TIPSY.get(), (int) (tipsy.getDuration() * .5f), tipsy.getAmplifier(), false, false, true), player);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void sendClearFluidContainerTextComponents(OnDatapackSyncEvent event) {
+        BnCNetworkHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClearKegFluidContainerComponentsPacket());
     }
 }
 
