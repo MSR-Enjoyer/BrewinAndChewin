@@ -68,8 +68,10 @@ public class BnCCommonEvents {
                 if (cap.getTicksUntilDamage() > 0)
                     cap.setTicksUntilDamage(cap.getTicksUntilDamage() - 1);
 
-                if (cap.getTicksUntilDamage() < 1 || !living.hasEffect(BnCEffects.TIPSY.get())) {
-                    if (living.getHealth() + living.getAbsorptionAmount() - cap.getNumbedHealth() > 1) // Float comparisons don't like equals.
+                if (cap.getTicksUntilDamage() <= 0 || !living.hasEffect(BnCEffects.TIPSY.get())) {
+                    float health = living.getHealth() + living.getAbsorptionAmount();
+                    int remainingHealth = Mth.ceil(Math.min(cap.getNumbedHealth() - health % 1, health));
+                    if (remainingHealth > 0)
                         living.hurt(living.damageSources().source(BnCDamageTypes.CARDIAC_ARREST), cap.getNumbedHealth());
                     cap.setNumbedHealth(0.0F);
                 }
@@ -80,7 +82,7 @@ public class BnCCommonEvents {
     }
 
     @SubscribeEvent
-    public static void onLivingDamage(LivingDamageEvent event) {
+    public static void onLivingDamage(LivingHurtEvent event) { // Use LivingHurtEvent so we can run before Protection enchantments, Resistance and Absorption.
         LivingEntity target = event.getEntity();
         if (!target.hasEffect(BnCEffects.TIPSY.get()) || event.getSource().is(BnCDamageTypes.CARDIAC_ARREST))
             return;

@@ -78,6 +78,7 @@ public class BnCHUDOverlays {
     private static boolean increaseNumbedAlpha = false;
     public static int[] heartOffset = new int[10];
 
+    // TODO: Create an event for this overlay.
     public static void drawNumbedOverlay(Player player, Minecraft minecraft, GuiGraphics graphics, int right, int top) {
         int ticks = minecraft.gui.getGuiTicks();
         Random rand = new Random();
@@ -86,14 +87,13 @@ public class BnCHUDOverlays {
 
         RenderSystem.enableBlend();
 
-        float renderHealth = player.getAbsorptionAmount() > 0 ? 20 + player.getAbsorptionAmount() : Math.min(player.getMaxHealth(), player.getHealth());
+        float renderHealth = player.getAbsorptionAmount() > 0 ? player.getMaxHealth() + player.getAbsorptionAmount() : player.getHealth();
+        float actualHealth = player.getHealth() + player.getAbsorptionAmount();
 
         int healthStart = Mth.ceil(renderHealth / 2);
-        // FIXME: Add an extra value when hearts are uneven. Float modulo is weird.
-        int healthEnd = Mth.floor(Math.max((renderHealth - cap.getNumbedHealth()) / 2, 0));
+        int healthEnd = Math.max(Mth.ceil((Math.max(actualHealth, cap.getNumbedHealth()) - cap.getNumbedHealth()) / 2) - Mth.ceil(Math.max(actualHealth, cap.getNumbedHealth()) - cap.getNumbedHealth()) % 2, 0);
         int healthRow = Math.max(0, Mth.floor((renderHealth - 1) / 2 / 10));
         int maxHealthRows = Mth.ceil((player.getMaxHealth() + player.getAbsorptionAmount()) / 2.0F / 10.0F);
-        int healthOverflow = Math.abs(Math.min(Mth.ceil(healthStart - cap.getNumbedHealth()) / 2, 0));
 
         if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && cap.getTicksUntilDamage() < 80) {
             if (!Minecraft.getInstance().isPaused()) {
@@ -108,27 +108,41 @@ public class BnCHUDOverlays {
         } else
             numbedAlpha = 1.0F;
 
+        int remainingHealth = Mth.ceil(Math.min(cap.getNumbedHealth() - renderHealth % 1, renderHealth));
+        boolean startWasHalfLeft = false;
+        boolean fixedToMaxHealth = false;
         for (int i = healthStart; i > healthEnd; --i) {
-            int calculatedHeartLocation = i - healthRow * 10;
+            if (remainingHealth <= 0)
+                break;
 
-            if (healthRow == 0 && player.getAbsorptionAmount() > 0 && player.getHealth() < calculatedHeartLocation * 2)
-                calculatedHeartLocation -= Mth.ceil(20 - player.getHealth()) / 2;
+
+            if (!fixedToMaxHealth && player.getAbsorptionAmount() > 0 && i * 2 <= player.getMaxHealth()) {
+                renderHealth = Math.min(player.getMaxHealth(), player.getHealth());
+                i -= Mth.ceil(player.getAbsorptionAmount()) / 2 + Mth.ceil(player.getMaxHealth() - player.getHealth()) / 2 - 1;
+                healthStart = i;
+                fixedToMaxHealth = true;
+            }
+
+            int calculatedHeartLocation = i - healthRow * 10;
 
             int x = (right + calculatedHeartLocation * 8 - 8);
             int y = top + maxHealthRows * 10 - 10 - healthRow * 10;
-            if (renderHealth <= 4 && heartOffset.length > i - 1) {
-                y += heartOffset[i - 1];
+            if (renderHealth <= 4 && heartOffset.length > calculatedHeartLocation - 1) {
+                y += heartOffset[calculatedHeartLocation - 1];
             }
 
-
-            if (i == healthStart && healthOverflow == 0 && (Math.ceil(renderHealth) < healthStart * 2 || Math.ceil(renderHealth) % 2 == 1)) {
+            if (calculatedHeartLocation == healthStart && Mth.ceil(renderHealth) % 2 == 1 || !startWasHalfLeft && calculatedHeartLocation == healthEnd + 1 && Mth.ceil(renderHealth) % 2 == 1 && remainingHealth == 1) {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 0, 9, 9, 9); // Left Heart
-            } else if (i == healthEnd + 1 && (Math.ceil(renderHealth) < healthEnd * 2 || Math.ceil(renderHealth) % 2 == 1)) {
+                --remainingHealth;
+                startWasHalfLeft = true;
+            } else if (calculatedHeartLocation == healthStart && Mth.ceil(renderHealth) % 2 == 1 && remainingHealth == 1 || calculatedHeartLocation == healthEnd + 1 && remainingHealth == 1) {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 18, 9, 9, 9); // Right Heart
+                --remainingHealth;
             } else {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 9, 9, 9, 9); // Full Heart
+                remainingHealth -= 2;
             }
-            if (calculatedHeartLocation == 1)
+            if (i - healthRow * 10 <= 1)
                 --healthRow;
         }
 
