@@ -123,6 +123,8 @@ public class BnCHUDOverlays {
                 fixedToMaxHealth = true;
             }
 
+            if (i - healthRow * 10 < 1)
+                --healthRow;
             int calculatedHeartLocation = i - healthRow * 10;
 
             int x = (right + calculatedHeartLocation * 8 - 8);
@@ -142,8 +144,6 @@ public class BnCHUDOverlays {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 9, 9, 9, 9); // Full Heart
                 remainingHealth -= 2;
             }
-            if (i - healthRow * 10 <= 1)
-                --healthRow;
         }
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
