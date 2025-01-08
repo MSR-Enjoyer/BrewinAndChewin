@@ -78,6 +78,6 @@ public class TipsyNumbedHeartsCapability implements ICapabilitySerializable<Comp
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         numbedHealth = nbt.getFloat("numbed_health");
-        ticksUntilDamage = nbt.getInt("ticks");
+        ticksUntilDamage = nbt.getInt("ticks_until_damage");
     }
 }
