@@ -137,11 +137,11 @@ public class BnCHUDOverlays {
             if (player.level().getLevelData().isHardcore())
                 textureYOffset += 18;
 
-            if (calculatedHeartLocation == healthStart && Mth.ceil(renderHealth) % 2 == 1 || !startWasHalfLeft && calculatedHeartLocation == healthEnd + 1 && Mth.ceil(renderHealth) % 2 == 1 && remainingHealth == 1) {
+            if (i == healthStart && Mth.ceil(renderHealth) % 2 == 1 || !startWasHalfLeft && i == healthEnd + 1 && Mth.ceil(renderHealth) % 2 == 1 && remainingHealth == 1) {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 0, 9 + textureYOffset, 9, 9); // Left Heart
                 --remainingHealth;
                 startWasHalfLeft = true;
-            } else if (calculatedHeartLocation == healthStart && Mth.ceil(renderHealth) % 2 == 1 && remainingHealth == 1 || calculatedHeartLocation == healthEnd + 1 && remainingHealth == 1) {
+            } else if (i == healthStart && Mth.ceil(renderHealth) % 2 == 1 && remainingHealth == 1 || i == healthEnd + 1 && remainingHealth == 1) {
                 graphics.blit(MOD_ICONS_TEXTURE, x, y, 18, 9 + textureYOffset, 9, 9); // Right Heart
                 --remainingHealth;
             } else {
