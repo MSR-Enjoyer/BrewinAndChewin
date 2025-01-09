@@ -70,7 +70,7 @@ public class BnCCommonEvents {
 
                 if (cap.getTicksUntilDamage() <= 0 || !living.hasEffect(BnCEffects.TIPSY.get())) {
                     float health = living.getHealth() + living.getAbsorptionAmount();
-                    int remainingHealth = Mth.ceil(Math.min(cap.getNumbedHealth() - health % 1, health));
+                    int remainingHealth = Mth.ceil(Math.min(cap.getNumbedHealth() - (health % 1 > cap.getNumbedHealth() % 1 ? 1 : 0), health));
                     if (remainingHealth > 0)
                         living.hurt(living.damageSources().source(BnCDamageTypes.CARDIAC_ARREST), cap.getNumbedHealth());
                     cap.setNumbedHealth(0.0F);
