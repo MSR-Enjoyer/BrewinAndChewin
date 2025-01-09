@@ -108,19 +108,20 @@ public class BnCHUDOverlays {
         } else
             numbedAlpha = 1.0F;
 
-        int remainingHealth = Mth.ceil(Math.min(cap.getNumbedHealth() - renderHealth % 1, renderHealth));
+
+        int remainingHealth = Mth.ceil(Math.min(cap.getNumbedHealth(), renderHealth));
         boolean startWasHalfLeft = false;
-        boolean fixedToMaxHealth = false;
+        boolean pastAbsorption = false;
+
         for (int i = healthStart; i > healthEnd; --i) {
             if (remainingHealth <= 0)
                 break;
 
-
-            if (!fixedToMaxHealth && player.getAbsorptionAmount() > 0 && i * 2 <= player.getMaxHealth()) {
+            if (!pastAbsorption && player.getAbsorptionAmount() > 0 && i * 2 <= player.getMaxHealth()) {
                 renderHealth = Math.min(player.getMaxHealth(), player.getHealth());
                 i -= Mth.ceil(player.getAbsorptionAmount()) / 2 + Mth.ceil(player.getMaxHealth() - player.getHealth()) / 2 - 1;
                 healthStart = i;
-                fixedToMaxHealth = true;
+                pastAbsorption = true;
             }
 
             if (i - healthRow * 10 < 1)
@@ -129,19 +130,22 @@ public class BnCHUDOverlays {
 
             int x = (right + calculatedHeartLocation * 8 - 8);
             int y = top + maxHealthRows * 10 - 10 - healthRow * 10;
-            if (renderHealth <= 4 && heartOffset.length > calculatedHeartLocation - 1) {
+            if (renderHealth <= 4 && heartOffset.length > calculatedHeartLocation - 1)
                 y += heartOffset[calculatedHeartLocation - 1];
-            }
+
+            int textureYOffset = player.getAbsorptionAmount() > 0 && !pastAbsorption ? 9 : 0;
+            if (player.level().getLevelData().isHardcore())
+                textureYOffset += 18;
 
             if (calculatedHeartLocation == healthStart && Mth.ceil(renderHealth) % 2 == 1 || !startWasHalfLeft && calculatedHeartLocation == healthEnd + 1 && Mth.ceil(renderHealth) % 2 == 1 && remainingHealth == 1) {
-                graphics.blit(MOD_ICONS_TEXTURE, x, y, 0, 9, 9, 9); // Left Heart
+                graphics.blit(MOD_ICONS_TEXTURE, x, y, 0, 9 + textureYOffset, 9, 9); // Left Heart
                 --remainingHealth;
                 startWasHalfLeft = true;
             } else if (calculatedHeartLocation == healthStart && Mth.ceil(renderHealth) % 2 == 1 && remainingHealth == 1 || calculatedHeartLocation == healthEnd + 1 && remainingHealth == 1) {
-                graphics.blit(MOD_ICONS_TEXTURE, x, y, 18, 9, 9, 9); // Right Heart
+                graphics.blit(MOD_ICONS_TEXTURE, x, y, 18, 9 + textureYOffset, 9, 9); // Right Heart
                 --remainingHealth;
             } else {
-                graphics.blit(MOD_ICONS_TEXTURE, x, y, 9, 9, 9, 9); // Full Heart
+                graphics.blit(MOD_ICONS_TEXTURE, x, y, 9, 9 + textureYOffset, 9, 9); // Full Heart
                 remainingHealth -= 2;
             }
         }
