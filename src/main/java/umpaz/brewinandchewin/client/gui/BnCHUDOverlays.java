@@ -91,7 +91,7 @@ public class BnCHUDOverlays {
         float actualHealth = player.getHealth() + player.getAbsorptionAmount();
 
         int healthStart = Mth.ceil(renderHealth / 2);
-        int healthEnd = Math.max(Mth.ceil((Math.max(actualHealth, cap.getNumbedHealth()) - cap.getNumbedHealth()) / 2) - Mth.ceil(Math.max(actualHealth, cap.getNumbedHealth()) - cap.getNumbedHealth()) % 2, 0);
+        int healthEnd = Math.max(Mth.ceil(Math.max(renderHealth, cap.getNumbedHealth()) - cap.getNumbedHealth()) / 2 - (Mth.ceil(cap.getNumbedHealth()) == 1 ? 0 : Mth.ceil(Mth.ceil(Math.max(renderHealth, cap.getNumbedHealth()) - cap.getNumbedHealth()) % 2)), 0);
         int healthRow = Math.max(0, Mth.floor((renderHealth - 1) / 2 / 10));
         int maxHealthRows = Mth.ceil((player.getMaxHealth() + player.getAbsorptionAmount()) / 2.0F / 10.0F);
 
@@ -110,6 +110,12 @@ public class BnCHUDOverlays {
 
 
         int remainingHealth = Mth.ceil(Math.min(cap.getNumbedHealth(), actualHealth));
+
+        // FIXME: This may be a hack. Maybe solve this with proper math at some point please.
+        float numbedHealthRemainder = cap.getNumbedHealth() % 1;
+        float actualHealthRemainder = actualHealth % 1;
+        remainingHealth -= actualHealthRemainder > numbedHealthRemainder ? 1 : 0;
+
         boolean startWasHalfLeft = false;
         boolean pastAbsorption = false;
 
