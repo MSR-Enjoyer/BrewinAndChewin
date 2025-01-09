@@ -109,7 +109,7 @@ public class BnCHUDOverlays {
             numbedAlpha = 1.0F;
 
 
-        int remainingHealth = Mth.ceil(Math.min(cap.getNumbedHealth(), renderHealth));
+        int remainingHealth = Mth.ceil(Math.min(cap.getNumbedHealth(), actualHealth));
         boolean startWasHalfLeft = false;
         boolean pastAbsorption = false;
 
