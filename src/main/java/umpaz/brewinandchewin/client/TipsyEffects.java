@@ -17,6 +17,7 @@ import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.integration.appleskin.TipsyAppleSkinCompat;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
+import vectorwing.farmersdelight.client.renderer.CanvasSignRenderer;
 
 import java.util.Arrays;
 import java.util.Random;

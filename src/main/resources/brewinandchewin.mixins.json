@@ -19,7 +19,8 @@
     "client.RecipeBookComponentAccessor",
     "client.TipsyDrunkRendererMixin",
     "client.TipsyMouseHandlerMixin",
-    "client.TipsySignRendererMixin",
+    "client.TipsySignRendererMixin$TipsyCanvasSignRenderMixin",
+    "client.TipsySignRendererMixin$TipsySignRenderMixin",
     "client.integration.appleskin.HUDOverlayHandlerAccessor"
   ],
   "injectors": {
