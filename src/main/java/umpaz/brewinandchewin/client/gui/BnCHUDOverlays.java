@@ -109,12 +109,7 @@ public class BnCHUDOverlays {
             numbedAlpha = 1.0F;
 
 
-        int remainingHealth = Mth.ceil(Math.min(cap.getNumbedHealth(), actualHealth));
-
-        // FIXME: This may be a hack. Maybe solve this with proper math at some point please.
-        float numbedHealthRemainder = cap.getNumbedHealth() % 1;
-        float actualHealthRemainder = actualHealth % 1;
-        remainingHealth -= actualHealthRemainder > numbedHealthRemainder ? 1 : 0;
+        int remainingHealth = Mth.ceil(Math.min(cap.getNumbedHealth() - (actualHealth % 1 > cap.getNumbedHealth() % 1 ? 1 : 0), actualHealth));
 
         boolean startWasHalfLeft = false;
         boolean pastAbsorption = false;
