@@ -140,7 +140,7 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
    @Override
    public ItemStack getResultItem( RegistryAccess registryAccess ) {
       if (resultItem != null)
-          return resultItem.getDefaultInstance();
+          return resultItem.getDefaultInstance().copyWithCount(amount);
       if (resultFluid != null)
           return BnCRecipeUtils.getPouredItemFromFluid(new FluidStack(resultFluid, BnCConfiguration.KEG_CAPACITY.get()));
       return ItemStack.EMPTY;
