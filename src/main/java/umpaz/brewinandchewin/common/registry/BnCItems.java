@@ -76,7 +76,7 @@ public class BnCItems {
     public static final RegistryObject<Item> KIPPERS = registerWithTab("kippers",
             () -> new ConsumableItem(new Item.Properties().food(BnCFoods.KIPPERS)));
     public static final RegistryObject<Item> COCOA_FUDGE = registerWithTab("cocoa_fudge",
-            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.COCOA_FUDGE), true));
+            () -> new ConsumableItem(new Item.Properties().food(BnCFoods.COCOA_FUDGE)));
 
     public static final RegistryObject<Item> VEGETABLE_OMELET = registerWithTab("vegetable_omelet",
             () -> new ConsumableItem(new Item.Properties().stacksTo(16).food(BnCFoods.VEGETABLE_OMELET).craftRemainder(Items.BOWL), true));
