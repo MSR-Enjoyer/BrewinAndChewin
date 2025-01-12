@@ -149,7 +149,7 @@ public class BnCFoods {
             .nutrition(12).saturationMod(1.0F)
             .effect(() -> new MobEffectInstance(ModEffects.NOURISHMENT.get(), 7200, 0), 1.0F).build();
     public static final FoodProperties HORROR_LASAGNA = (new FoodProperties.Builder())
-            .nutrition(14).saturationMod(0.6F)
+            .nutrition(16).saturationMod(0.55F)
             .effect(() -> new MobEffectInstance(ModEffects.NOURISHMENT.get(), 6000, 0), 1.0F).build();
 
     public static final FoodProperties SWEET_BERRY_JAM = (new FoodProperties.Builder())
