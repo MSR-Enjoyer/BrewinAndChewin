@@ -26,9 +26,7 @@ public class BnCMobEffectTags extends IntrinsicHolderTagsProvider<MobEffect>
     }
 
     protected void registerModTags() {
-        tag(BnCTags.MILK_BOTTLES_CANNOT_REMOVE)
-                .add(BnCEffects.INTOXICATION.get());
-        tag(BnCTags.HOT_COCOA_CANNOT_REMOVE)
-                .add(BnCEffects.INTOXICATION.get());
+        tag(BnCTags.MILK_BOTTLE_LOW_PRIORITY)
+                .add(BnCEffects.TIPSY.get());
     }
 }

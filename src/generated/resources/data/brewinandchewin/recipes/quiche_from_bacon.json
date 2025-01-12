@@ -6,7 +6,7 @@
       "item": "farmersdelight:pie_crust"
     },
     "b": {
-      "item": "farmersdelight:bacon"
+      "item": "farmersdelight:cooked_bacon"
     },
     "c": {
       "tag": "brewinandchewin:cheese_wedges"
@@ -18,7 +18,7 @@
       "item": "farmersdelight:cabbage_leaf"
     },
     "m": {
-      "item": "farmersdelight:milk_bottle"
+      "tag": "forge:milk"
     }
   },
   "pattern": [

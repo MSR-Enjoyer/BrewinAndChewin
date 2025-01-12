@@ -18,7 +18,7 @@
       "item": "farmersdelight:cabbage_leaf"
     },
     "m": {
-      "item": "farmersdelight:milk_bottle"
+      "tag": "forge:milk"
     }
   },
   "pattern": [

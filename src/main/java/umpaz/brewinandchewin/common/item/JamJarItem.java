@@ -11,7 +11,6 @@ public class JamJarItem extends ConsumableItem {
         super(pProperties);
     }
 
-
     public UseAnim getUseAnimation(ItemStack pStack) {
         return UseAnim.DRINK;
     }

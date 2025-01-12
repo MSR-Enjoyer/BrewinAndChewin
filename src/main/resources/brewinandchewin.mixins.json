@@ -7,8 +7,8 @@
   "mixins": [
     "IntoxicationCancelSaturationMixin",
     "KegStackedContentsRecipePickerMixin",
-    "PreventIntoxicationRemovalMixin$HotCocoa",
-    "PreventIntoxicationRemovalMixin$MilkBottle",
+    "PreventTaggedEffectRemovalMixin$HotCocoa",
+    "PreventTaggedEffectRemovalMixin$MilkBottle",
     "ServerPlaceRecipeAccessor",
     "StackedContentsRecipePickerAccessor"
   ],

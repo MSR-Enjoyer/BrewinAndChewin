@@ -24,8 +24,8 @@ public class BnCTags {
 
     public static final TagKey<Fluid> KEG_BLACKLIST = modFluidTag("keg_blacklist");
 
-    public static final TagKey<MobEffect> MILK_BOTTLES_CANNOT_REMOVE = modMobEffectTag("milk_bottles_cannot_remove");
-    public static final TagKey<MobEffect> HOT_COCOA_CANNOT_REMOVE = modMobEffectTag("hot_cocoa_cannot_remove");
+    public static final TagKey<MobEffect> MILK_BOTTLE_LOW_PRIORITY = modEffectTag("low_priority/milk_bottle");
+    public static final TagKey<MobEffect> HOT_COCOA_LOW_PRIORITY = modEffectTag("low_priority/hot_cocoa");
 
 
     private static TagKey<Item> modItemTag(String path) {
@@ -40,7 +40,7 @@ public class BnCTags {
         return FluidTags.create(new ResourceLocation(BrewinAndChewin.MODID, path));
     }
 
-    private static TagKey<MobEffect> modMobEffectTag(String path) {
+    private static TagKey<MobEffect> modEffectTag(String path) {
         return TagKey.create(Registries.MOB_EFFECT, new ResourceLocation(BrewinAndChewin.MODID, path));
     }
 }

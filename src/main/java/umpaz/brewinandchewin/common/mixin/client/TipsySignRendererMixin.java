@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import umpaz.brewinandchewin.client.utility.BnCSignTextUtils;
-import umpaz.brewinandchewin.common.utility.BnCTextUtils;
 import vectorwing.farmersdelight.client.renderer.CanvasSignRenderer;
 
 public class TipsySignRendererMixin {

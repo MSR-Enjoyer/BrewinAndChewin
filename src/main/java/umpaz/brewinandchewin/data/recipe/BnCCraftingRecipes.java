@@ -11,6 +11,7 @@ import umpaz.brewinandchewin.common.tag.BnCTags;
 import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.registry.ModRecipeSerializers;
+import vectorwing.farmersdelight.common.tag.ForgeTags;
 import vectorwing.farmersdelight.common.tag.ModTags;
 
 import java.util.function.Consumer;
@@ -45,9 +46,9 @@ public class BnCCraftingRecipes {
                 .pattern("blb")
                 .pattern("mcm")
                 .pattern("eCe")
-                .define('b', ModItems.BACON.get())
+                .define('b', ModItems.COOKED_BACON.get())
                 .define('l', ModItems.CABBAGE_LEAF.get())
-                .define('m', ModItems.MILK_BOTTLE.get())
+                .define('m', ForgeTags.MILK)
                 .define('c', BnCTags.CHEESE_WEDGES)
                 .define('e', Items.EGG)
                 .define('C', ModItems.PIE_CRUST.get())
@@ -59,7 +60,7 @@ public class BnCCraftingRecipes {
                 .pattern("eCe")
                 .define('b', Items.BROWN_MUSHROOM)
                 .define('l', ModItems.CABBAGE_LEAF.get())
-                .define('m', ModItems.MILK_BOTTLE.get())
+                .define('m', ForgeTags.MILK)
                 .define('c', BnCTags.CHEESE_WEDGES)
                 .define('e', Items.EGG)
                 .define('C', ModItems.PIE_CRUST.get())

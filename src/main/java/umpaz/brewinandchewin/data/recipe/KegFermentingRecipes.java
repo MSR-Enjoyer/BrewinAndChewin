@@ -194,7 +194,7 @@ public class KegFermentingRecipes {
               .setRecipeBookTab(FermentingRecipeBookTab.MEALS)
               .build(consumer);
 
-      KegFermentingRecipeBuilder.kegFermentingRecipe(BnCItems.KIPPERS.get(), 3, SLOW_COOKING, MEDIUM_EXP, 4)
+      KegFermentingRecipeBuilder.kegFermentingRecipe(BnCItems.KIPPERS.get(), 2, SLOW_COOKING, MEDIUM_EXP, 4)
               .addIngredient(ForgeTags.RAW_FISHES)
               .addIngredient(ForgeTags.RAW_FISHES)
               .addIngredient(Items.KELP)
@@ -206,7 +206,7 @@ public class KegFermentingRecipes {
               .addFluidIngredient(BnCFluids.HONEY_FLUID.get(), 250)
               .addIngredient(Items.SEA_PICKLE)
               .addIngredient(Items.SEA_PICKLE)
-              .addIngredient(Items.GLOWSTONE_DUST)
+              .addIngredient(Items.GLOW_BERRIES)
               .unlockedByItems("has_sea_pickle", Items.SEA_PICKLE)
               .setRecipeBookTab(FermentingRecipeBookTab.MEALS)
               .build(consumer);
