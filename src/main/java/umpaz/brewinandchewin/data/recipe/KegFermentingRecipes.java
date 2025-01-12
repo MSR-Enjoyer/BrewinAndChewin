@@ -167,7 +167,7 @@ public class KegFermentingRecipes {
               .unlockedByItems("has_pumpkin_seeds", Items.PUMPKIN_SEEDS)
               .setRecipeBookTab(FermentingRecipeBookTab.MEALS)
               .build(consumer);
-      KegFermentingRecipeBuilder.kegFermentingRecipe(BnCFluids.SCARLET_CHEESE.get(), 1000, SLOW_COOKING, MEDIUM_EXP, 4)
+      KegFermentingRecipeBuilder.kegFermentingRecipe(BnCFluids.SCARLET_CHEESE.get(), 1000, SLOW_COOKING, MEDIUM_EXP, 5)
               .addFluidIngredient(ForgeMod.MILK.get(), 1000)
               .addIngredient(Items.CRIMSON_FUNGUS)
               .addIngredient(Items.NETHER_WART)
