@@ -17,7 +17,6 @@ public class BnCFoods {
             .alwaysEat()
             .build();
     public static final FoodProperties MEAD = (new FoodProperties.Builder())
-            .nutrition(6).saturationMod(0.1F)
             .effect(() -> new MobEffectInstance(BnCEffects.TIPSY.get(), 2400, 0), 1.0F)
             .effect(() -> new MobEffectInstance(BnCEffects.INTOXICATION.get(), 1800, 0), 1.0F)
             .effect(() -> new MobEffectInstance(BnCEffects.SWEET_HEART.get(), 2400, 0), 1.0F)
@@ -67,7 +66,6 @@ public class BnCFoods {
             .alwaysEat()
             .build();
     public static final FoodProperties SACCHARINE_RUM = (new FoodProperties.Builder())
-            .nutrition(6).saturationMod(0.1F)
             .effect(() -> new MobEffectInstance(BnCEffects.TIPSY.get(), 3600, 1), 1.0F)
             .effect(() -> new MobEffectInstance(BnCEffects.INTOXICATION.get(), 2400, 0), 1.0F)
             .effect(() -> new MobEffectInstance(BnCEffects.SWEET_HEART.get(), 3600, 0), 1.0F)
