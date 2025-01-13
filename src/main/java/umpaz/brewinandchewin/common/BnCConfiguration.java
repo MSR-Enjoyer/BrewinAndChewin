@@ -34,7 +34,6 @@ public class BnCConfiguration {
    public static ForgeConfigSpec.BooleanValue CHAT_SCRAMBLE;
    public static ForgeConfigSpec.BooleanValue SIGN_SCRAMBLE;
    public static ForgeConfigSpec.BooleanValue NAME_SCRAMBLE;
-   public static ForgeConfigSpec.BooleanValue TIPSY_SCREEN_EFFECT;
    public static ForgeConfigSpec.BooleanValue RENDER_FLUID_IN_KEG;
 
 
@@ -90,8 +89,6 @@ public class BnCConfiguration {
       SIGN_SCRAMBLE = CLIENT_BUILDER.comment("Should signs scramble when the player has the Tipsy effect?")
               .define("scrambleSign", true);
 
-      TIPSY_SCREEN_EFFECT = CLIENT_BUILDER.comment("Should the screen wobble when the player has the Tipsy effect?")
-              .define("tipsyScreenEffect", true);
       RENDER_FLUID_IN_KEG = CLIENT_BUILDER.comment("Should kegs render the fluid texture in the background of the fluid slot?")
                       .define("renderFluidInKeg", true);
       CLIENT_BUILDER.pop();
