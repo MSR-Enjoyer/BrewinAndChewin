@@ -20,10 +20,6 @@ public class TipsyMouseHandlerMixin {
     @Final
     private Minecraft minecraft;
 
-    @Shadow private double accumulatedDX;
-
-    @Shadow private double accumulatedDY;
-
     @Unique
     private final SmoothDouble brewinandchewin$smoothTurnX = new SmoothDouble();
 
@@ -34,8 +30,9 @@ public class TipsyMouseHandlerMixin {
     private double brewinandchewin$smoothCameraMovementScopedX(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 3) double d5) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             float distortionScale = minecraft.options.screenEffectScale().get().floatValue();
-            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && distortionScale > 0) {
-                return Mth.lerp((1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale, original, brewinandchewin$smoothTurnX.getNewDeltaValue(accumulatedDX * d5, d1 * d5 * 1.5));
+            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1 && distortionScale > 0) {
+                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale;
+                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d5 * Math.max(1.0, tipsyDelta + 0.6));
             }
         }
         brewinandchewin$smoothTurnX.reset();
@@ -46,8 +43,10 @@ public class TipsyMouseHandlerMixin {
     private double brewinandchewin$smoothCameraMovementScopedY(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 3) double d5) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             float distortionScale = minecraft.options.screenEffectScale().get().floatValue();
-            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && distortionScale > 0)
-                return Mth.lerp((1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale, original, brewinandchewin$smoothTurnY.getNewDeltaValue(accumulatedDY * d5, d1 * d5 * 1.5));
+            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1 && distortionScale > 0) {
+                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale;
+                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d5 * Math.max(1.0, tipsyDelta + 0.6));
+            }
         }
         brewinandchewin$smoothTurnY.reset();
         return original;
@@ -57,8 +56,9 @@ public class TipsyMouseHandlerMixin {
     private double brewinandchewin$smoothCameraMovementX(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 4) double d6) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             float distortionScale = minecraft.options.screenEffectScale().get().floatValue();
-            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && distortionScale > 0) {
-                return Mth.lerp((1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale, original, brewinandchewin$smoothTurnX.getNewDeltaValue(accumulatedDX * d6, d1 * d6 * 1.5));
+            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1 && distortionScale > 0) {
+                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale;
+                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta + 0.6));
             }
         }
         brewinandchewin$smoothTurnX.reset();
@@ -69,8 +69,9 @@ public class TipsyMouseHandlerMixin {
     private double brewinandchewin$smoothCameraMovementY(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 4) double d6) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             float distortionScale = minecraft.options.screenEffectScale().get().floatValue();
-            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && distortionScale > 0) {
-                return Mth.lerp((1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale, original, brewinandchewin$smoothTurnY.getNewDeltaValue(accumulatedDY * d6, d1 * d6 * 1.5));
+            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1 && distortionScale > 0) {
+                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale;
+                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta + 0.6));
             }
         }
         brewinandchewin$smoothTurnY.reset();
