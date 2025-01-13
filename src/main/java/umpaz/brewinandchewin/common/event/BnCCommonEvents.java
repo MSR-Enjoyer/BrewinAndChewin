@@ -100,20 +100,6 @@ public class BnCCommonEvents {
     }
 
     @SubscribeEvent
-    public static void reduceTipsy(LivingEntityUseItemEvent.Finish event) {
-        LivingEntity player = event.getEntity();
-        if (player.hasEffect(BnCEffects.TIPSY.get())) {
-            MobEffectInstance tipsy = player.getEffect(BnCEffects.TIPSY.get());
-            if (event.getItem().isEdible() && !(event.getItem().getItem() instanceof BoozeItem)) {
-                player.forceAddEffect(new MobEffectInstance(BnCEffects.TIPSY.get(), (int) (tipsy.getDuration() * .9f), tipsy.getAmplifier(), false, false, true), player);
-            }
-            else if (event.getItem().is(Items.MILK_BUCKET)) {
-                player.forceAddEffect(new MobEffectInstance(BnCEffects.TIPSY.get(), (int) (tipsy.getDuration() * .5f), tipsy.getAmplifier(), false, false, true), player);
-            }
-        }
-    }
-
-    @SubscribeEvent
     public static void sendClearFluidContainerTextComponents(OnDatapackSyncEvent event) {
         BnCNetworkHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClearKegFluidContainerComponentsPacket());
     }
