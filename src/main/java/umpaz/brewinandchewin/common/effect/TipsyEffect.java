@@ -35,14 +35,8 @@ public class TipsyEffect extends MobEffect {
       return new DrunkBubbleParticleOptions(new Vector3f(((getColor() >> 16) & 0xFF) / 255f, ((getColor() >> 8) & 0xFF) / 255f, (getColor() & 0xFF) / 255f), 0.25f);
    }
 
-
    @Override
    public boolean isDurationEffectTick(int duration, int amplifier) {
       return true;
-   }
-
-   @Override
-   public List<ItemStack> getCurativeItems() {
-      return new ArrayList<>();
    }
 }
