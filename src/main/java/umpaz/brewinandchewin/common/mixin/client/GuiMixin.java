@@ -22,6 +22,7 @@ import umpaz.brewinandchewin.common.registry.BnCEffects;
 import java.util.Optional;
 import java.util.Random;
 
+// Implemented via mixin because Forge doesn't let us overlay health over specific hearts.
 @Mixin(Gui.class)
 public class GuiMixin {
     @Shadow @Final protected Minecraft minecraft;
@@ -36,7 +37,6 @@ public class GuiMixin {
     private boolean brewinandchewin$completedAbsorption = false;
 
     // TODO: Create an event for this overlay.
-    // Implemented via mixin because Forge doesn't let us overlay health over specific hearts.
     @WrapOperation(method = "renderHearts", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderHeart(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Gui$HeartType;IIIZZ)V", ordinal = 3))
     private void brewinandchewin$renderTipsyHearts(Gui instance,
                                                    GuiGraphics graphics,
@@ -126,7 +126,6 @@ public class GuiMixin {
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
-
 
     @WrapOperation(method = "renderHearts", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderHeart(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Gui$HeartType;IIIZZ)V", ordinal = 1))
     private void brewinandchewin$renderAbsorbingTipsyHearts(Gui instance,
