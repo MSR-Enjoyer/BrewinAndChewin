@@ -11,11 +11,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.registries.ForgeRegistries;
 import umpaz.brewinandchewin.common.block.CheeseWheelBlock;
 import umpaz.brewinandchewin.common.block.PizzaBlock;
+import vectorwing.farmersdelight.common.tag.ForgeTags;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
@@ -46,7 +49,7 @@ public class BnCSlicingModifier extends LootModifier
             }
             else if (targetBlock instanceof CheeseWheelBlock) {
                     int servings = state.getValue(CheeseWheelBlock.SERVINGS);
-                if (servings == 3) {
+                if (servings == 3 && !context.getParam(LootContextParams.TOOL).is(ForgeTags.TOOLS_KNIVES)) {
                     generatedLoot.add(new ItemStack(targetBlock.asItem()));
                 }
                 else {
