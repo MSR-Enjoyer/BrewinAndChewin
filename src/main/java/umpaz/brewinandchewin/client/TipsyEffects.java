@@ -64,19 +64,6 @@ public class TipsyEffects {
             }
     }
 
-    @SubscribeEvent
-    public static void screwWithBreakSpeed(PlayerEvent.BreakSpeed event) {
-        if (event.getEntity().hasEffect(BnCEffects.TIPSY.get())) {
-            float speed = event.getNewSpeed();
-            speed *= ((event.getEntity().getRandom().nextFloat())) * (event.getEntity().getEffect(BnCEffects.TIPSY.get()).getAmplifier() / 10f);
-            event.setNewSpeed(speed);
-
-            if (event.getEntity().getRandom().nextInt(51 - Math.min(event.getEntity().getEffect(BnCEffects.TIPSY.get()).getAmplifier(), 10) * 5) == 0) {
-                event.setCanceled(true);
-            }
-        }
-    }
-
     // make the text you put in chat garbled
     @SubscribeEvent
     public static void iCanSpeak(ClientChatEvent event) {
