@@ -9,6 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.item.BoozeItem;
+import umpaz.brewinandchewin.common.item.DreadNogItem;
 import umpaz.brewinandchewin.common.item.JamJarItem;
 import umpaz.brewinandchewin.common.item.KegItem;
 import vectorwing.farmersdelight.common.item.ConsumableItem;
@@ -61,7 +62,7 @@ public class BnCItems {
             .stacksTo(16).craftRemainder(BnCItems.TANKARD.get()).food(BnCFoods.RED_RUM)));
     public static final RegistryObject<Item> WITHERING_DROSS = registerWithTab("withering_dross", () -> new BoozeItem(BnCFluids.WITHERING_DROSS.get(), new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD.get()).food(BnCFoods.WITHERING_DROSS)));
-    public static final RegistryObject<Item> DREAD_NOG = registerWithTab("dread_nog", () -> new BoozeItem(BnCFluids.DREAD_NOG.get(), new Item.Properties()
+    public static final RegistryObject<Item> DREAD_NOG = registerWithTab("dread_nog", () -> new DreadNogItem(BnCFluids.DREAD_NOG.get(), new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD.get()).food(BnCFoods.DREAD_NOG)));
 
     public static final RegistryObject<Item> KOMBUCHA = registerWithTab("kombucha", () -> new BoozeItem(BnCFluids.KOMBUCHA.get(), new Item.Properties()
