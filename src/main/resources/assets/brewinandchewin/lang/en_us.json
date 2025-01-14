@@ -73,6 +73,7 @@
   "effect.brewinandchewin.sweet_heart": "Sweet Heart",
   "brewinandchewin.tooltip.dread_nog": "Increases Bad Omen By 1",
   "brewinandchewin.container.keg.served_in": "Served in: %s",
+  "brewinandchewin.container.keg.temperature_requirement": "Must Be %s",
   "brewinandchewin.container.keg": "Keg",
   "brewinandchewin.container.keg.frigid": "Frigid",
   "brewinandchewin.container.keg.cold": "Cold",

@@ -126,12 +126,12 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
 
         if (recipe.getFluidIngredient() != null) {
             if (BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {
-                builder.addSlot(RecipeIngredientRole.CATALYST, 0, 2)
+                builder.addSlot(RecipeIngredientRole.INPUT, 0, 2)
                         .addFluidStack(recipe.getFluidIngredient().getFluid(), recipe.getFluidIngredient().getAmount())
                         .setFluidRenderer(BnCConfiguration.KEG_CAPACITY.get(), false, 26, 30)
                         .setOverlay(kegOverlay, 0, 0);
             } else
-                builder.addInvisibleIngredients(RecipeIngredientRole.CATALYST)
+                builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
                         .addFluidStack(recipe.getFluidIngredient().getFluid(), recipe.getFluidIngredient().getAmount(), recipe.getFluidIngredient().getTag());
 
             ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), recipe.getFluidIngredient()).copy();

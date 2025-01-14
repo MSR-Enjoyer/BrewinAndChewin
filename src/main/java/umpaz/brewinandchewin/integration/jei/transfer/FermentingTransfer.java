@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -132,7 +133,7 @@ public class FermentingTransfer {
             List<Slot> craftingSlots = Collections.unmodifiableList(info.getRecipeSlots(menu, recipe));
             List<Slot> inventorySlots = Collections.unmodifiableList(info.getInventorySlots(menu, recipe));
 
-            List<IRecipeSlotView> inputItemSlotViews = view.getSlotViews(RecipeIngredientRole.INPUT);
+            List<IRecipeSlotView> inputItemSlotViews = view.getSlotViews(RecipeIngredientRole.INPUT).stream().filter(ingredientView -> ingredientView.getAllIngredients().anyMatch(ingredient -> ingredient.getIngredient(VanillaTypes.ITEM_STACK).isPresent())).toList();
 
             InventoryState inv = createInvState(craftingSlots, inventorySlots);
 
@@ -147,7 +148,7 @@ public class FermentingTransfer {
                     inv.availableItemStacks,
                     inputItemSlotViews,
                     recipe.getFluidIngredient() != null ?
-                            view.getSlotViews(RecipeIngredientRole.CATALYST).get(0) :
+                            view.getSlotViews(RecipeIngredientRole.INPUT).stream().filter(ingredientView -> ingredientView.getAllIngredients().anyMatch(ingredient -> ingredient.getIngredient(ForgeTypes.FLUID_STACK).isPresent())).findFirst().orElse(null) :
                             null,
                     recipe,
                     menu,
@@ -250,7 +251,7 @@ public class FermentingTransfer {
                     }
                 }
 
-                if (recipe.getFluidIngredient() != null && !requiredFluidStack.isEmpty() && requiredFluidStack.getDisplayedIngredient(ForgeTypes.FLUID_STACK).isPresent()) {
+                if (recipe.getFluidIngredient() != null && !requiredFluidStack.isEmpty() && requiredFluidStack.getIngredients(ForgeTypes.FLUID_STACK).findFirst().isPresent()) {
                     List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(slotTuple.getValue()).isFluidEqual(recipe.getFluidIngredient())).toList();
                     Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                         if (pouring.isStrict())

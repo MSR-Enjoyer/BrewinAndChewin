@@ -261,9 +261,8 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             Recipe<KegRecipeWrapper> recipe = ((RecipeManagerAccessor) level.getRecipeManager())
                     .getRecipeMap(BnCRecipeTypes.FERMENTING.get())
                     .get(lastRecipeID);
-            if (recipe instanceof KegFermentingRecipe kegFerm) {
-                boolean hasFluidIngredient = kegFerm.getFluidIngredient() == null || kegFerm.getFluidIngredient().isFluidEqual(this.fluidTank.getFluid());
-                if (recipe.matches(inventoryWrapper, level) && hasFluidIngredient) {
+            if (recipe instanceof KegFermentingRecipe) {
+                if (recipe.matches(inventoryWrapper, level)) {
                     return Optional.of((KegFermentingRecipe) recipe);
                 }
             }

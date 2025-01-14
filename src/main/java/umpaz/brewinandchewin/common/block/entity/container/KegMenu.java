@@ -1,7 +1,6 @@
 package umpaz.brewinandchewin.common.block.entity.container;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.recipebook.ServerPlaceRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.*;
