@@ -50,7 +50,7 @@ public class BnCFoods {
     // TODO: Find a new niche for this. Then figure out values for this.
     public static final FoodProperties BLOODY_MARY = (new FoodProperties.Builder())
             .effect(() -> new MobEffectInstance(BnCEffects.TIPSY.get(), 3600, 0, false, false), 1.0F)
-            .effect(() -> new MobEffectInstance(BnCEffects.INTOXICATION.get(), 300, 0, false, false), 1.0F)
+            .effect(() -> new MobEffectInstance(BnCEffects.INTOXICATION.get(), 3000, 0, false, false), 1.0F)
             .alwaysEat()
             .build();
     // TODO: Find a new niche for this. Then figure out values for this.
