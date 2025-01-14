@@ -523,9 +523,9 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     }
 
     public int getTemperature() {
-        if (kegTemperature <= -BnCConfiguration.KEG_FREEZING.get()) {
+        if (kegTemperature <= -BnCConfiguration.KEG_COLD.get()) {
             return 1;
-        } else if (kegTemperature <= -BnCConfiguration.KEG_COLD.get()) {
+        } else if (kegTemperature <= -BnCConfiguration.KEG_CHILLY.get()) {
             return 2;
         } else if (kegTemperature < BnCConfiguration.KEG_WARM.get()) {
             return 3;

@@ -103,20 +103,20 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                     int maxX = minX + 8;
 
                     if (temp < 3) {
-                        gui.blit(KegScreen.BACKGROUND_TEXTURE, leftPos + KegScreen.COLD_BAR.x, topPos + KegScreen.COLD_BAR.y, 184, 0, KegScreen.COLD_BAR.width, KegScreen.COLD_BAR.height);
-                        minX = leftPos + KegScreen.COLD_BAR.x;
+                        gui.blit(KegScreen.BACKGROUND_TEXTURE, leftPos + KegScreen.CHILLY_BAR.x(), topPos + KegScreen.CHILLY_BAR.y(), 184, 0, KegScreen.CHILLY_BAR.width(), KegScreen.CHILLY_BAR.height());
+                        minX = leftPos + KegScreen.CHILLY_BAR.x();
                     }
                     if (temp == 1) {
-                        gui.blit(KegScreen.BACKGROUND_TEXTURE, leftPos + KegScreen.FRIGID_BAR.x, topPos + KegScreen.FRIGID_BAR.y, 176, 0, KegScreen.FRIGID_BAR.width, KegScreen.FRIGID_BAR.height);
-                        minX = leftPos + KegScreen.FRIGID_BAR.x;
+                        gui.blit(KegScreen.BACKGROUND_TEXTURE, leftPos + KegScreen.COLD_BAR.x(), topPos + KegScreen.COLD_BAR.y(), 176, 0, KegScreen.COLD_BAR.width(), KegScreen.COLD_BAR.height());
+                        minX = leftPos + KegScreen.COLD_BAR.x();
                     }
                     if (temp > 3) {
-                        gui.blit(KegScreen.BACKGROUND_TEXTURE, leftPos + KegScreen.WARM_BAR.x, topPos + KegScreen.WARM_BAR.y, 201, 0, KegScreen.WARM_BAR.width, KegScreen.WARM_BAR.height);
-                        maxX = leftPos + KegScreen.WARM_BAR.x + KegScreen.WARM_BAR.width;
+                        gui.blit(KegScreen.BACKGROUND_TEXTURE, leftPos + KegScreen.WARM_BAR.x(), topPos + KegScreen.WARM_BAR.y(), 201, 0, KegScreen.WARM_BAR.width(), KegScreen.WARM_BAR.height());
+                        maxX = leftPos + KegScreen.WARM_BAR.x() + KegScreen.WARM_BAR.width();
                     }
                     if (temp == 5) {
-                        gui.blit(KegScreen.BACKGROUND_TEXTURE, leftPos + KegScreen.HOT_BAR.x, topPos + KegScreen.HOT_BAR.y, 210, 0, KegScreen.HOT_BAR.width, KegScreen.HOT_BAR.height);
-                        maxX = leftPos + KegScreen.HOT_BAR.x + KegScreen.HOT_BAR.width;
+                        gui.blit(KegScreen.BACKGROUND_TEXTURE, leftPos + KegScreen.HOT_BAR.x(), topPos + KegScreen.HOT_BAR.y(), 210, 0, KegScreen.HOT_BAR.width(), KegScreen.HOT_BAR.height());
+                        maxX = leftPos + KegScreen.HOT_BAR.x() + KegScreen.HOT_BAR.width();
                     }
                     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                     RenderSystem.disableBlend();
@@ -186,8 +186,8 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
     private void renderTemperatureTooltip(GuiGraphics gui, int renderX, int renderY, int mouseX, int mouseY) {
         if ( this.isHovering(34, 54, 43, 5, mouseX - renderX, mouseY - renderY) && menu instanceof KegMenu kegMenu && getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe && !KegBlockEntity.isValidTemp(kegMenu.getKegTemperature(), fermentingRecipe.getTemperature())) {
             MutableComponent key = switch (fermentingRecipe.getTemperature()) {
-                case 1 -> BnCTextUtils.getTranslation("container.keg.frigid");
-                case 2 -> BnCTextUtils.getTranslation("container.keg.cold");
+                case 1 -> BnCTextUtils.getTranslation("container.keg.cold");
+                case 2 -> BnCTextUtils.getTranslation("container.keg.chilly");
                 case 4 -> BnCTextUtils.getTranslation("container.keg.warm");
                 case 5 -> BnCTextUtils.getTranslation("container.keg.hot");
                 default -> BnCTextUtils.getTranslation("container.keg.normal");

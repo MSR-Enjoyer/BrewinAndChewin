@@ -1,21 +1,16 @@
 package umpaz.brewinandchewin.integration.jei.category;
 
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.forge.ForgeTypes;
-import mezz.jei.api.gui.builder.IIngredientAcceptor;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IModIdHelper;
-import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.runtime.IIngredientManager;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -56,8 +51,8 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
     private final Component title;
     private final IDrawable background;
     private final IDrawable icon;
-    private final IDrawable frigid;
     private final IDrawable cold;
+    private final IDrawable chilly;
     private final IDrawable warm;
     private final IDrawable hot;
     protected final IDrawable timeIcon;
@@ -75,8 +70,8 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
         icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BnCItems.KEG.get()));
         arrow = guiHelper.drawableBuilder(backgroundImage, 171, 4, 23, 16)
                 .buildAnimated(200, IDrawableAnimated.StartDirection.LEFT, false);
-        frigid = guiHelper.createDrawable(backgroundImage, 170, 0, 8, 3);
-        cold = guiHelper.createDrawable(backgroundImage, 178, 0, 9, 3);
+        cold = guiHelper.createDrawable(backgroundImage, 170, 0, 8, 3);
+        chilly = guiHelper.createDrawable(backgroundImage, 178, 0, 9, 3);
         warm = guiHelper.createDrawable(backgroundImage, 195, 0, 9, 3);
         hot = guiHelper.createDrawable(backgroundImage, 204, 0, 8, 3);
         expIcon = guiHelper.createDrawable(backgroundImage, 170, 32, 9, 9);
@@ -184,10 +179,10 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
         rightBubble.draw(guiGraphics, 127, 3);
 
         if (recipe.getTemperature() <= 2) {
-            cold.draw(guiGraphics, 33, 39);
+            chilly.draw(guiGraphics, 33, 39);
         }
         if (recipe.getTemperature() <= 1) {
-            frigid.draw(guiGraphics, 25, 39);
+            cold.draw(guiGraphics, 25, 39);
         }
         if (recipe.getTemperature() >= 4) {
             warm.draw(guiGraphics, 50, 39);
@@ -221,8 +216,8 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
             return tooltipStrings;
         } else if (ClientRenderUtils.isCursorInsideBounds(24, 38, 44, 5, mouseX, mouseY)) {
             MutableComponent key = switch (recipe.getTemperature()) {
-                case 1 -> BnCTextUtils.getTranslation("container.keg.frigid");
-                case 2 -> BnCTextUtils.getTranslation("container.keg.cold");
+                case 1 -> BnCTextUtils.getTranslation("container.keg.cold");
+                case 2 -> BnCTextUtils.getTranslation("container.keg.chilly");
                 case 3 -> BnCTextUtils.getTranslation("container.keg.normal");
                 case 4 -> BnCTextUtils.getTranslation("container.keg.warm");
                 case 5 -> BnCTextUtils.getTranslation("container.keg.hot");

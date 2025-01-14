@@ -18,8 +18,8 @@ public class BnCConfiguration {
 
    public static final String CATEGORY_KEG = "keg";
    public static ForgeConfigSpec.IntValue KEG_CAPACITY;
-   public static ForgeConfigSpec.IntValue KEG_FREEZING;
    public static ForgeConfigSpec.IntValue KEG_COLD;
+   public static ForgeConfigSpec.IntValue KEG_CHILLY;
    public static ForgeConfigSpec.IntValue KEG_WARM;
    public static ForgeConfigSpec.IntValue KEG_HOT;
    public static ForgeConfigSpec.BooleanValue KEG_BIOME_TEMP;
@@ -52,10 +52,10 @@ public class BnCConfiguration {
       COMMON_BUILDER.comment("Keg").push(CATEGORY_KEG);
       KEG_CAPACITY = COMMON_BUILDER.comment("How much fluid (in millibuckets) can the Keg hold?")
               .defineInRange("kegCapacity", 1000, 1, 10000);
-      KEG_FREEZING = COMMON_BUILDER.comment("How many cold blocks are required for a freezing temperature in the Keg?")
-              .defineInRange("kegFreezing", 2, 1, 10);
       KEG_COLD = COMMON_BUILDER.comment("How many cold blocks are required for a cold temperature in the Keg?")
-              .defineInRange("kegCold", 1, 1, 10);
+              .defineInRange("kegCold", 2, 1, 10);
+      KEG_CHILLY = COMMON_BUILDER.comment("How many cold blocks are required for a chilly temperature in the Keg?")
+              .defineInRange("kegChilly", 1, 1, 10);
       KEG_WARM = COMMON_BUILDER.comment("How many hot blocks are required for a warm temperature in the Keg?")
               .defineInRange("kegWarm", 1, 1, 10);
       KEG_HOT = COMMON_BUILDER.comment("How many hot blocks are required for a hot temperature in the Keg?")

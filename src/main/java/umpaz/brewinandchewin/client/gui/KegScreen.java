@@ -44,8 +44,8 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
     private static final ResourceLocation RECIPE_BUTTON_LOCATION = new ResourceLocation("textures/gui/recipe_button.png");
     public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(BrewinAndChewin.MODID, "textures/gui/keg.png");
     private static final BnCRectangle PROGRESS_ARROW = new BnCRectangle(80, 25, 0, 18);
-    public static final BnCRectangle FRIGID_BAR = new BnCRectangle(35, 55, 8, 4);
-    public static final BnCRectangle COLD_BAR = new BnCRectangle(43, 55, 9, 4);
+    public static final BnCRectangle COLD_BAR = new BnCRectangle(35, 55, 8, 4);
+    public static final BnCRectangle CHILLY_BAR = new BnCRectangle(43, 55, 9, 4);
     public static final BnCRectangle WARM_BAR = new BnCRectangle(60, 55, 9, 4);
     public static final BnCRectangle HOT_BAR = new BnCRectangle(69, 55, 8, 4);
     private static final BnCRectangle LEFT_BUBBLE = new BnCRectangle(109, 44, 9, 24);
@@ -141,8 +141,8 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
         if ( this.isHovering(35, 54, 42, 5, mouseX, mouseY) && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || KegBlockEntity.isValidTemp(menu.getKegTemperature(), fermentingRecipe.getTemperature()))) {
             List<Component> tooltip = new ArrayList<>();
             MutableComponent key = switch (menu.getKegTemperature()) {
-                case 1 -> BnCTextUtils.getTranslation("container.keg.frigid");
-                case 2 -> BnCTextUtils.getTranslation("container.keg.cold");
+                case 1 -> BnCTextUtils.getTranslation("container.keg.cold");
+                case 2 -> BnCTextUtils.getTranslation("container.keg.chilly");
                 case 4 -> BnCTextUtils.getTranslation("container.keg.warm");
                 case 5 -> BnCTextUtils.getTranslation("container.keg.hot");
                 default -> BnCTextUtils.getTranslation("container.keg.normal");
@@ -181,10 +181,10 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
 
         int temp = this.menu.getKegTemperature();
         if (temp == 1) {
-            gui.blit(BACKGROUND_TEXTURE, this.leftPos + FRIGID_BAR.x(), this.topPos + FRIGID_BAR.y(), 176, 0, FRIGID_BAR.width(), FRIGID_BAR.height());
+            gui.blit(BACKGROUND_TEXTURE, this.leftPos + COLD_BAR.x(), this.topPos + COLD_BAR.y(), 176, 0, COLD_BAR.width(), COLD_BAR.height());
         }
         if (temp < 3) {
-            gui.blit(BACKGROUND_TEXTURE, this.leftPos + COLD_BAR.x(), this.topPos + COLD_BAR.y(), 184, 0, COLD_BAR.width(), COLD_BAR.height());
+            gui.blit(BACKGROUND_TEXTURE, this.leftPos + CHILLY_BAR.x(), this.topPos + CHILLY_BAR.y(), 184, 0, CHILLY_BAR.width(), CHILLY_BAR.height());
         }
         if (temp > 3) {
             gui.blit(BACKGROUND_TEXTURE, this.leftPos + WARM_BAR.x(), this.topPos + WARM_BAR.y(), 201, 0, WARM_BAR.width(), WARM_BAR.height());
