@@ -28,10 +28,6 @@ public interface TagReference {
         return references;
     }
 
-    default boolean isArrayInObject() {
-        return this instanceof ArrayInObject;
-    }
-
     default boolean isArrayValue() {
         return this instanceof ArrayValue;
     }
@@ -46,18 +42,6 @@ public interface TagReference {
 
     default String key() {
         return "";
-    }
-
-    record ArrayInObject(String key, int index) implements TagReference {
-        @Override
-        public int index() {
-            return index;
-        }
-
-        @Override
-        public String key() {
-            return key;
-        }
     }
 
     record ArrayValue(int index) implements TagReference {
