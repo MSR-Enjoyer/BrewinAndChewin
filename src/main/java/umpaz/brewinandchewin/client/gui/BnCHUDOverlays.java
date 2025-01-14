@@ -1,10 +1,13 @@
 package umpaz.brewinandchewin.client.gui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
@@ -28,20 +31,55 @@ public class BnCHUDOverlays {
         MinecraftForge.EVENT_BUS.register(new BnCHUDOverlays());
     }
 
+    private static final ResourceLocation NAUSEA_LOCATION = new ResourceLocation("textures/misc/nausea.png");
+    private static final ResourceLocation PORTAL_ELEMENT = new ResourceLocation("minecraft", "portal");
+    private static final ResourceLocation FOOD_LEVEL_ELEMENT = new ResourceLocation("minecraft", "food_level");
 
-    static ResourceLocation FOOD_LEVEL_ELEMENT = new ResourceLocation("minecraft", "food_level");
+    private static float tipsyTransparencyModifier = 0.0F;
 
     @SubscribeEvent
     public void onRenderGuiOverlayPost(RenderGuiOverlayEvent.Post event) {
-        if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT)) {
-            Minecraft mc = Minecraft.getInstance();
-            ForgeGui gui = (ForgeGui) mc.gui;
-            if (!mc.options.hideGui && gui.shouldDrawSurvivalElements()) {
-                if (mc.player.hasEffect(BnCEffects.INTOXICATION.get())) {
-                    renderIntoxicationOverlay(gui, event.getGuiGraphics());
-                }
-            }
+        Minecraft mc = Minecraft.getInstance();
+        ForgeGui gui = (ForgeGui) mc.gui;
+
+        if (mc.player == null)
+            return;
+
+        if (event.getOverlay() == GuiOverlayManager.findOverlay(PORTAL_ELEMENT)) {
+            if (!mc.player.hasEffect(MobEffects.CONFUSION) && mc.player.hasEffect(BnCEffects.TIPSY.get())) {
+                MobEffectInstance effect = mc.player.getEffect(BnCEffects.TIPSY.get());
+                float distortionScale = mc.options.screenEffectScale().get().floatValue();
+                float tipsyScale = Math.min((1 + effect.getAmplifier()) / 10.0F * 0.4F, 0.4F);
+                if (distortionScale < 1.0F && tipsyScale > 0.0F) {
+                    renderTipsyOverlay(event.getGuiGraphics(), (1.0F - distortionScale) * tipsyScale * tipsyTransparencyModifier);
+                    float partialTickModifier = event.getPartialTick() * (effect.endsWithin(60) ? -0.006F : 0.007F);
+                    tipsyTransparencyModifier = Mth.clamp(tipsyTransparencyModifier + partialTickModifier, 0.0F, 1.0F);
+                } else
+                    tipsyTransparencyModifier = 0.0F;
+            } else
+                tipsyTransparencyModifier = 0.0F;
         }
+
+        if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT) &&
+                !mc.options.hideGui && gui.shouldDrawSurvivalElements() &&
+                mc.player.hasEffect(BnCEffects.INTOXICATION.get()))
+            renderIntoxicationOverlay(gui, event.getGuiGraphics());
+    }
+
+    public static void renderTipsyOverlay(GuiGraphics guiGraphics, float scalar) {
+        int width = guiGraphics.guiWidth();
+        int height = guiGraphics.guiHeight();
+        RenderSystem.disableDepthTest();
+        RenderSystem.depthMask(false);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+        guiGraphics.setColor(scalar, 0.55F * scalar, 0.08F * scalar, 1.0F);
+        guiGraphics.blit(NAUSEA_LOCATION, 0, 0, -90, 0.0F, 0.0F, width, height, width, height);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableBlend();
+        RenderSystem.depthMask(true);
+        RenderSystem.enableDepthTest();
     }
 
     public static void renderIntoxicationOverlay(ForgeGui gui, GuiGraphics guiGraphics) {

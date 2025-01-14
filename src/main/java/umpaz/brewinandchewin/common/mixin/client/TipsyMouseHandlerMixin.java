@@ -31,7 +31,7 @@ public class TipsyMouseHandlerMixin {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
                 double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0;
-                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d5 * Math.max(1.0, tipsyDelta + 0.6));
+                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d5 * Math.max(1.0, tipsyDelta * 2));
             }
         }
         brewinandchewin$smoothTurnX.reset();
@@ -55,7 +55,7 @@ public class TipsyMouseHandlerMixin {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
                 double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0;
-                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta + 0.6));
+                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta * 2));
             }
         }
         brewinandchewin$smoothTurnX.reset();
@@ -67,7 +67,7 @@ public class TipsyMouseHandlerMixin {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
                 double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0;
-                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta + 0.6));
+                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta * 2));
             }
         }
         brewinandchewin$smoothTurnY.reset();
