@@ -44,6 +44,7 @@ import umpaz.brewinandchewin.common.tag.BnCTags;
 import vectorwing.farmersdelight.common.block.CabinetBlock;
 import vectorwing.farmersdelight.common.block.FeastBlock;
 import vectorwing.farmersdelight.common.block.PieBlock;
+import vectorwing.farmersdelight.common.tag.ModTags;
 import vectorwing.farmersdelight.common.utility.TextUtils;
 
 import javax.annotation.Nullable;
@@ -101,8 +102,8 @@ public class BnCAdvancements implements ForgeAdvancementProvider.AdvancementGene
                 .addCriterion("placed_keg", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(BnCBlocks.KEG.get()))
                 .save(saver, BrewinAndChewin.asResource("main/place_keg").toString());
         Advancement placeTemperatureBlockNearKeg = getAdvancement(placeKeg, BnCItems.ICE_CRATE.get(), Component.translatable("brewinandchewin.advancement.place_temperature_block_near_keg"), Component.translatable("brewinandchewin.advancement.place_temperature_block_near_keg.desc"), FrameType.TASK, true, true, false)
-                .addCriterion("placed_heating_cask_near_keg", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.HEATING_CASK.get()).build())), AreaLocationCheck.checkArea(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.KEG.get()).build()), KegBlockEntity.RANGE)))
-                .addCriterion("placed_ice_crate_near_keg", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.ICE_CRATE.get()).build())), AreaLocationCheck.checkArea(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.KEG.get()).build()), KegBlockEntity.RANGE)))
+                .addCriterion("placed_heat_source_near_keg", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(ModTags.HEAT_SOURCES).build())), AreaLocationCheck.checkArea(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.KEG.get()).build()), KegBlockEntity.RANGE)))
+                .addCriterion("placed_freeze_source_near_keg", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCTags.FREEZE_SOURCES).build())), AreaLocationCheck.checkArea(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.KEG.get()).build()), KegBlockEntity.RANGE)))
                 .requirements(RequirementsStrategy.OR)
                 .save(saver, BrewinAndChewin.asResource("main/place_temperature_block_near_keg").toString());
         Advancement brewDrink = getAdvancement(placeKeg, BnCItems.VODKA.get(), Component.translatable("brewinandchewin.advancement.brew_drink"), Component.translatable("brewinandchewin.advancement.brew_drink.desc"), FrameType.TASK, true, true, false)

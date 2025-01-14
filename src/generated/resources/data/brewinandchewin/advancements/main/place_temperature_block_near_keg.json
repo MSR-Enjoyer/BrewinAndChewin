@@ -1,16 +1,14 @@
 {
   "parent": "brewinandchewin:main/place_keg",
   "criteria": {
-    "placed_heating_cask_near_keg": {
+    "placed_freeze_source_near_keg": {
       "conditions": {
         "location": [
           {
             "condition": "minecraft:location_check",
             "predicate": {
               "block": {
-                "blocks": [
-                  "brewinandchewin:heating_cask"
-                ]
+                "tag": "brewinandchewin:freeze_sources"
               }
             }
           },
@@ -29,16 +27,14 @@
       },
       "trigger": "minecraft:placed_block"
     },
-    "placed_ice_crate_near_keg": {
+    "placed_heat_source_near_keg": {
       "conditions": {
         "location": [
           {
             "condition": "minecraft:location_check",
             "predicate": {
               "block": {
-                "blocks": [
-                  "brewinandchewin:ice_crate"
-                ]
+                "tag": "farmersdelight:heat_sources"
               }
             }
           },
@@ -75,8 +71,8 @@
   },
   "requirements": [
     [
-      "placed_heating_cask_near_keg",
-      "placed_ice_crate_near_keg"
+      "placed_heat_source_near_keg",
+      "placed_freeze_source_near_keg"
     ]
   ],
   "sends_telemetry_event": true
