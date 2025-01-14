@@ -29,9 +29,8 @@ public class TipsyMouseHandlerMixin {
     @ModifyVariable(method = "turnPlayer()V", at = @At(value = "STORE", ordinal = 2), ordinal = 5) // Targets the else block if where the player is scoping.
     private double brewinandchewin$smoothCameraMovementScopedX(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 3) double d5) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
-            float distortionScale = minecraft.options.screenEffectScale().get().floatValue();
-            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1 && distortionScale > 0) {
-                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale;
+            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
+                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0;
                 return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d5 * Math.max(1.0, tipsyDelta + 0.6));
             }
         }
@@ -42,10 +41,9 @@ public class TipsyMouseHandlerMixin {
     @ModifyVariable(method = "turnPlayer()V", at = @At(value = "STORE", ordinal = 2), ordinal = 6) // Targets the else block if where the player is scoping.
     private double brewinandchewin$smoothCameraMovementScopedY(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 3) double d5) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
-            float distortionScale = minecraft.options.screenEffectScale().get().floatValue();
-            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1 && distortionScale > 0) {
-                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale;
-                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d5 * Math.max(1.0, tipsyDelta + 0.6));
+            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
+                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0;
+                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d5 * Math.max(1.0, tipsyDelta * 2));
             }
         }
         brewinandchewin$smoothTurnY.reset();
@@ -55,9 +53,8 @@ public class TipsyMouseHandlerMixin {
     @ModifyVariable(method = "turnPlayer()V", at = @At(value = "STORE", ordinal = 3), ordinal = 5) // Targets the else block, if smooth camera is off and the player is not scoping.
     private double brewinandchewin$smoothCameraMovementX(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 4) double d6) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
-            float distortionScale = minecraft.options.screenEffectScale().get().floatValue();
-            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1 && distortionScale > 0) {
-                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale;
+            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
+                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0;
                 return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta + 0.6));
             }
         }
@@ -68,9 +65,8 @@ public class TipsyMouseHandlerMixin {
     @ModifyVariable(method = "turnPlayer()V", at = @At(value = "STORE", ordinal = 3), ordinal = 6) // Targets the else block, if smooth camera is off and the player is not scoping.
     private double brewinandchewin$smoothCameraMovementY(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 4) double d6) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
-            float distortionScale = minecraft.options.screenEffectScale().get().floatValue();
-            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1 && distortionScale > 0) {
-                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0 * distortionScale;
+            if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
+                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0;
                 return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta + 0.6));
             }
         }
