@@ -93,7 +93,7 @@ public class GuiMixin {
         if (brewinandchewin$remainingHealth <= 0)
             return;
 
-        if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && cap.get().getNumbedHealth() > 1 && cap.get().getTicksUntilDamage() < 80 && heartIndex == healthStart) {
+        if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && cap.get().getNumbedHealth() > 1 && cap.get().getTicksUntilDamage() < 80 && heartIndex == healthStart && absorptionAmount == 0) {
             if (!Minecraft.getInstance().isPaused()) {
                 float increase = Mth.lerp((float) (80 - cap.get().getTicksUntilDamage()) / 80, 0.0F, 0.06F);
                 brewinandchewin$numbedAlpha = Mth.clamp(brewinandchewin$numbedAlpha + (brewinandchewin$increaseNumbedAlpha ? increase : -increase), -0.01F, 1.01F);
