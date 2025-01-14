@@ -53,7 +53,7 @@ public class JEIPlugin implements IModPlugin
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
        IIngredientHelper<FluidStack> test = registration.getJeiHelpers().getIngredientManager().getIngredientHelper(ForgeTypes.FLUID_STACK);
 
-       registration.addRecipeClickArea(KegScreen.class, 75, 25, 21, 17, BnCJEIRecipeTypes.FERMENTING);
+       registration.addRecipeClickArea(KegScreen.class, 80, 25, 23, 17, BnCJEIRecipeTypes.FERMENTING);
 
        Rect2i bounds = new Rect2i(107, 18, 26, 30);
 
