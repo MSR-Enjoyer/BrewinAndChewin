@@ -22,6 +22,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.client.utility.BnCRectangle;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
@@ -31,7 +32,6 @@ import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.common.utility.BnCTextUtils;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -43,13 +43,13 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
 {
     private static final ResourceLocation RECIPE_BUTTON_LOCATION = new ResourceLocation("textures/gui/recipe_button.png");
     public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(BrewinAndChewin.MODID, "textures/gui/keg.png");
-    private static final Rectangle PROGRESS_ARROW = new Rectangle(80, 25, 0, 18);
-    public static final Rectangle FRIGID_BAR = new Rectangle(35, 55, 8, 4);
-    public static final Rectangle COLD_BAR = new Rectangle(43, 55, 9, 4);
-    public static final Rectangle WARM_BAR = new Rectangle(60, 55, 9, 4);
-    public static final Rectangle HOT_BAR = new Rectangle(69, 55, 8, 4);
-    private static final Rectangle LEFT_BUBBLE = new Rectangle(109, 44, 9, 24);
-    private static final Rectangle RIGHT_BUBBLE = new Rectangle(147, 44, 9, 24);
+    private static final BnCRectangle PROGRESS_ARROW = new BnCRectangle(80, 25, 0, 18);
+    public static final BnCRectangle FRIGID_BAR = new BnCRectangle(35, 55, 8, 4);
+    public static final BnCRectangle COLD_BAR = new BnCRectangle(43, 55, 9, 4);
+    public static final BnCRectangle WARM_BAR = new BnCRectangle(60, 55, 9, 4);
+    public static final BnCRectangle HOT_BAR = new BnCRectangle(69, 55, 8, 4);
+    private static final BnCRectangle LEFT_BUBBLE = new BnCRectangle(109, 44, 9, 24);
+    private static final BnCRectangle RIGHT_BUBBLE = new BnCRectangle(147, 44, 9, 24);
 
     private final KegRecipeBookComponent recipeBookComponent = new KegRecipeBookComponent(Minecraft.getInstance().level.getRecipeManager());
     private boolean widthTooNarrow;
@@ -169,28 +169,28 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
 
         // Render progress arrow
         int l = this.menu.getFermentProgressionScaled();
-        gui.blit(BACKGROUND_TEXTURE, this.leftPos + PROGRESS_ARROW.x, this.topPos + PROGRESS_ARROW.y, 176, 4, l + 1, PROGRESS_ARROW.height);
+        gui.blit(BACKGROUND_TEXTURE, this.leftPos + PROGRESS_ARROW.x(), this.topPos + PROGRESS_ARROW.y(), 176, 4, l + 1, PROGRESS_ARROW.height());
 
 
         if (menu.blockEntity.hasRecipe()) {
-            int bubScale = (int) (((this.menu.getProgression() / 80)) * LEFT_BUBBLE.height) % (LEFT_BUBBLE.height + 1);
+            int bubScale = (int) (((this.menu.getProgression() / 80)) * LEFT_BUBBLE.height()) % (LEFT_BUBBLE.height() + 1);
             // render bubbles
-            gui.blit(BACKGROUND_TEXTURE, this.leftPos + LEFT_BUBBLE.x, this.topPos + LEFT_BUBBLE.y - bubScale, 176, 79 - bubScale, LEFT_BUBBLE.width, bubScale + 1);
-            gui.blit(BACKGROUND_TEXTURE, this.leftPos + RIGHT_BUBBLE.x, this.topPos + RIGHT_BUBBLE.y - bubScale, 186, 79 - bubScale, RIGHT_BUBBLE.width, bubScale + 1);
+            gui.blit(BACKGROUND_TEXTURE, this.leftPos + LEFT_BUBBLE.x(), this.topPos + LEFT_BUBBLE.y() - bubScale, 176, 79 - bubScale, LEFT_BUBBLE.width(), bubScale + 1);
+            gui.blit(BACKGROUND_TEXTURE, this.leftPos + RIGHT_BUBBLE.x(), this.topPos + RIGHT_BUBBLE.y() - bubScale, 186, 79 - bubScale, RIGHT_BUBBLE.width(), bubScale + 1);
         }
 
         int temp = this.menu.getKegTemperature();
         if (temp == 1) {
-            gui.blit(BACKGROUND_TEXTURE, this.leftPos + FRIGID_BAR.x, this.topPos + FRIGID_BAR.y, 176, 0, FRIGID_BAR.width, FRIGID_BAR.height);
+            gui.blit(BACKGROUND_TEXTURE, this.leftPos + FRIGID_BAR.x(), this.topPos + FRIGID_BAR.y(), 176, 0, FRIGID_BAR.width(), FRIGID_BAR.height());
         }
         if (temp < 3) {
-            gui.blit(BACKGROUND_TEXTURE, this.leftPos + COLD_BAR.x, this.topPos + COLD_BAR.y, 184, 0, COLD_BAR.width, COLD_BAR.height);
+            gui.blit(BACKGROUND_TEXTURE, this.leftPos + COLD_BAR.x(), this.topPos + COLD_BAR.y(), 184, 0, COLD_BAR.width(), COLD_BAR.height());
         }
         if (temp > 3) {
-            gui.blit(BACKGROUND_TEXTURE, this.leftPos + WARM_BAR.x, this.topPos + WARM_BAR.y, 201, 0, WARM_BAR.width, WARM_BAR.height);
+            gui.blit(BACKGROUND_TEXTURE, this.leftPos + WARM_BAR.x(), this.topPos + WARM_BAR.y(), 201, 0, WARM_BAR.width(), WARM_BAR.height());
         }
         if (temp == 5) {
-            gui.blit(BACKGROUND_TEXTURE, this.leftPos + HOT_BAR.x, this.topPos + HOT_BAR.y, 210, 0, HOT_BAR.width, HOT_BAR.height);
+            gui.blit(BACKGROUND_TEXTURE, this.leftPos + HOT_BAR.x(), this.topPos + HOT_BAR.y(), 210, 0, HOT_BAR.width(), HOT_BAR.height());
         }
 
         // Render temperature bars
