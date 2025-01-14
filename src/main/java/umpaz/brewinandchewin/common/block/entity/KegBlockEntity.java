@@ -232,7 +232,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                     keg.fermentTime = 0;
                 }
             } else {
-                keg.fermentTime = 0;
+                keg.fermentTime = Math.max(0, keg.fermentTime - 20);
             }
 
         } else if (keg.fermentTime > 0) {
@@ -248,6 +248,10 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         if (didInventoryChange) {
             keg.inventoryChanged();
         }
+    }
+
+    public boolean hasRecipe() {
+        return getMatchingRecipe(recipeWrapper).isPresent();
     }
 
     private Optional<KegFermentingRecipe> getMatchingRecipe(KegRecipeWrapper inventoryWrapper) {

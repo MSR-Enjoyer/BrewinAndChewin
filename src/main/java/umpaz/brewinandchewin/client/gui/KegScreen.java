@@ -43,13 +43,13 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
 {
     private static final ResourceLocation RECIPE_BUTTON_LOCATION = new ResourceLocation("textures/gui/recipe_button.png");
     public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(BrewinAndChewin.MODID, "textures/gui/keg.png");
-    private static final Rectangle PROGRESS_ARROW = new Rectangle(74, 25, 0, 18);
-    public static final Rectangle FRIGID_BAR = new Rectangle(32, 55, 8, 4);
-    public static final Rectangle COLD_BAR = new Rectangle(40, 55, 9, 4);
-    public static final Rectangle WARM_BAR = new Rectangle(57, 55, 9, 4);
-    public static final Rectangle HOT_BAR = new Rectangle(66, 55, 8, 4);
-    private static final Rectangle LEFT_BUBBLE = new Rectangle(97, 43, 9, 24);
-    private static final Rectangle RIGHT_BUBBLE = new Rectangle(134, 43, 9, 24);
+    private static final Rectangle PROGRESS_ARROW = new Rectangle(80, 25, 0, 18);
+    public static final Rectangle FRIGID_BAR = new Rectangle(35, 55, 8, 4);
+    public static final Rectangle COLD_BAR = new Rectangle(43, 55, 9, 4);
+    public static final Rectangle WARM_BAR = new Rectangle(60, 55, 9, 4);
+    public static final Rectangle HOT_BAR = new Rectangle(69, 55, 8, 4);
+    private static final Rectangle LEFT_BUBBLE = new Rectangle(109, 44, 9, 24);
+    private static final Rectangle RIGHT_BUBBLE = new Rectangle(147, 44, 9, 24);
 
     private final KegRecipeBookComponent recipeBookComponent = new KegRecipeBookComponent(Minecraft.getInstance().level.getRecipeManager());
     private boolean widthTooNarrow;
@@ -102,7 +102,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
             super.render(gui, mouseX, mouseY, partialTicks);
             this.recipeBookComponent.renderGhostRecipe(gui, this.leftPos, this.topPos, false, partialTicks);
         }
-        gui.blit(BACKGROUND_TEXTURE, this.leftPos + 107, this.topPos + 15, 176, 22, 27, 33);
+        gui.blit(BACKGROUND_TEXTURE, this.leftPos + 119, this.topPos + 15, 176, 22, 27, 33);
         this.renderTankTooltip(gui, mouseX, mouseY);
         this.renderTemperatureTooltip(gui, mouseX, mouseY);
         this.renderTooltip(gui, mouseX, mouseY);
@@ -119,7 +119,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
 
     private void renderTankTooltip(GuiGraphics gui, int mouseX, int mouseY) {
 
-            if ( isHovering(108, 19, 24, 28, mouseX, mouseY) && !this.menu.kegTank.isEmpty() && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient() == null || fermentingRecipe.getFluidIngredient().getFluid().isSame(menu.kegTank.getFluid().getRawFluid()))) {
+            if ( isHovering(120, 19, 24, 28, mouseX, mouseY) && !this.menu.kegTank.isEmpty() && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient() == null || fermentingRecipe.getFluidIngredient().getFluid().isSame(menu.kegTank.getFluid().getRawFluid()))) {
             Component containerComponent = (BnCTextUtils.getTranslation("container.keg.served_in", FLUID_CONTAINER_COMPONENTS.computeIfAbsent(menu.kegTank.getFluid().getFluid(), fluid -> {
                 MutableComponent component = MutableComponent.create(ComponentContents.EMPTY).withStyle(ChatFormatting.GRAY);
                 int amountAdded = 0;
@@ -138,7 +138,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
     }
 
     private void renderTemperatureTooltip(GuiGraphics gui, int mouseX, int mouseY) {
-        if ( this.isHovering(34, 54, 43, 5, mouseX, mouseY) && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || KegBlockEntity.isValidTemp(menu.getKegTemperature(), fermentingRecipe.getTemperature()))) {
+        if ( this.isHovering(35, 54, 42, 5, mouseX, mouseY) && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || KegBlockEntity.isValidTemp(menu.getKegTemperature(), fermentingRecipe.getTemperature()))) {
             List<Component> tooltip = new ArrayList<>();
             MutableComponent key = switch (menu.getKegTemperature()) {
                 case 1 -> BnCTextUtils.getTranslation("container.keg.frigid");
@@ -172,11 +172,12 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
         gui.blit(BACKGROUND_TEXTURE, this.leftPos + PROGRESS_ARROW.x, this.topPos + PROGRESS_ARROW.y, 176, 4, l + 1, PROGRESS_ARROW.height);
 
 
-        int bubScale = (int) (((this.menu.getProgression() / 80)) * LEFT_BUBBLE.height) % (LEFT_BUBBLE.height + 1);
-        // render bubbles
-        gui.blit(BACKGROUND_TEXTURE, this.leftPos + LEFT_BUBBLE.x, this.topPos + LEFT_BUBBLE.y - bubScale, 176, 79 - bubScale, LEFT_BUBBLE.width, (int) (bubScale + 1));
-        gui.blit(BACKGROUND_TEXTURE, this.leftPos + RIGHT_BUBBLE.x, this.topPos + RIGHT_BUBBLE.y - bubScale, 186, 79 - bubScale, RIGHT_BUBBLE.width, (int) (bubScale + 1));
-
+        if (menu.blockEntity.hasRecipe()) {
+            int bubScale = (int) (((this.menu.getProgression() / 80)) * LEFT_BUBBLE.height) % (LEFT_BUBBLE.height + 1);
+            // render bubbles
+            gui.blit(BACKGROUND_TEXTURE, this.leftPos + LEFT_BUBBLE.x, this.topPos + LEFT_BUBBLE.y - bubScale, 176, 79 - bubScale, LEFT_BUBBLE.width, bubScale + 1);
+            gui.blit(BACKGROUND_TEXTURE, this.leftPos + RIGHT_BUBBLE.x, this.topPos + RIGHT_BUBBLE.y - bubScale, 186, 79 - bubScale, RIGHT_BUBBLE.width, bubScale + 1);
+        }
 
         int temp = this.menu.getKegTemperature();
         if (temp == 1) {
@@ -218,16 +219,16 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
                         float topCapacity = (capacity - 0.57F) / 0.43F;
                         float vDistance = sprite.getV1() - sprite.getV0();
                         float v0 = sprite.getV0() + (0.25F * vDistance) + (0.75F * vDistance * (1 - topCapacity));
-                        gui.innerBlit(sprite.atlasLocation(), this.leftPos + 108, this.leftPos + 108 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
-                        gui.innerBlit(sprite.atlasLocation(), this.leftPos + 124, this.leftPos + 124 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
+                        gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120, this.leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
+                        gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120 + 16, this.leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
 
                     }
                     int y1 = this.topPos + 31 + (int) (16 * (1 - Math.min(1, (capacity / .57F))));
                     int y2 = this.topPos + 31 + 16;
                     float vDistance = sprite.getV1() - sprite.getV0();
                     float v0 = sprite.getV0() + (vDistance * (1 - Math.min(1, (capacity / .57F))));
-                    gui.innerBlit(sprite.atlasLocation(), this.leftPos + 108, this.leftPos + 108 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
-                    gui.innerBlit(sprite.atlasLocation(), this.leftPos + 124, this.leftPos + 124 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
+                    gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120, this.leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
+                    gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120 + 16, this.leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
 
                 }
             }
@@ -239,8 +240,8 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
             int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(this.menu.kegTank.getCapacity(), this.menu.kegTank.getFluidAmount()) / kegPouringRecipe.getAmount()).orElse(1);
             itemDisplay.setCount(pourCount);
             if (!itemDisplay.isEmpty()) {
-                gui.renderItem(itemDisplay, this.leftPos + 112, this.topPos + 21);
-                gui.renderItemDecorations(minecraft.font, itemDisplay, this.leftPos + 112, this.topPos + 21);
+                gui.renderItem(itemDisplay, this.leftPos + 124, this.topPos + 23);
+                gui.renderItemDecorations(minecraft.font, itemDisplay, this.leftPos + 124, this.topPos + 23);
             }
         }
     }

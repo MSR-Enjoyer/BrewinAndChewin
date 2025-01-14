@@ -17,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import umpaz.brewinandchewin.BrewinAndChewin;
-import umpaz.brewinandchewin.client.recipebook.BnCRecipeBook;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.registry.BnCBlocks;
 import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
@@ -52,7 +51,7 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper>
         // Ingredient Slots - 2 Rows x 2 Columns
         int startX = 8;
         int startY = 18;
-        int inputStartX = 36;
+        int inputStartX = 39;
         int inputStartY = 17;
         int borderSlotSize = 18;
         for (int row = 0; row < 2; ++row) {
@@ -65,7 +64,7 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper>
 
 
         // Tankard Input
-        this.addSlot(new SlotItemHandler(inventory, 4, 80, 55)
+        this.addSlot(new SlotItemHandler(inventory, 4, 91, 55)
         {
             public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
                 return Pair.of(InventoryMenu.BLOCK_ATLAS, EMPTY_CONTAINER_SLOT_TANKARD);
@@ -73,7 +72,7 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper>
         });
 
         // Tankard Output
-        this.addSlot(new KegResultSlot(inventory, 5, 112, 55));
+        this.addSlot(new KegResultSlot(inventory, 5, 124, 55));
 
 
         // Main Player Inventory
