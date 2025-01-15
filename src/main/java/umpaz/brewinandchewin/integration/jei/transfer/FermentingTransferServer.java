@@ -80,19 +80,19 @@ public class FermentingTransferServer {
                 true
         );
 
-        if (recipeSlotToTakenStacks.isEmpty() && fluidSlotToTakenStacks.isEmpty() && emptyingSlotToTakenStacks.isEmpty()) {
+        if (recipeSlotToTakenStacks.isEmpty() && fluidSlotToTakenStacks.isEmpty() && emptyingSlotToTakenStacks.isEmpty())
             return;
-        }
 
         boolean sameFluid = recipe.getFluidIngredient().isFluidEqual(kegMenu.kegTank.getFluid());
 
         List<ItemStack> clearedFluidItems = extractFromFluidTank(emptyingSlotToTakenStacks, kegMenu, false, null);
 
-        stowItems(player, inventorySlots, clearedFluidItems);
 
-        if (sameFluid && !maxTransfer) {
+        if (sameFluid && !maxTransfer)
             fluidSlotToTakenStacks = clearedFluidItems;
-        }
+        else
+            stowItems(player, inventorySlots, clearedFluidItems);
+
         List<ItemStack> fluidItems = extractFromFluidTank(fluidSlotToTakenStacks, kegMenu, true, !maxTransfer ? recipe : null);
 
         List<ItemStack> clearedCraftingItems = clearCraftingGrid(craftingSlots, player);
