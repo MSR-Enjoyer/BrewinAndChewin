@@ -172,7 +172,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
         gui.blit(BACKGROUND_TEXTURE, this.leftPos + PROGRESS_ARROW.x(), this.topPos + PROGRESS_ARROW.y(), 176, 4, l + 1, PROGRESS_ARROW.height());
 
 
-        if (menu.blockEntity.hasRecipe()) {
+        if (menu.blockEntity.isFermenting()) {
             int bubScale = (int) (((this.menu.getProgression() / 80)) * LEFT_BUBBLE.height()) % (LEFT_BUBBLE.height() + 1);
             // render bubbles
             gui.blit(BACKGROUND_TEXTURE, this.leftPos + LEFT_BUBBLE.x(), this.topPos + LEFT_BUBBLE.y() - bubScale, 176, 79 - bubScale, LEFT_BUBBLE.width(), bubScale + 1);

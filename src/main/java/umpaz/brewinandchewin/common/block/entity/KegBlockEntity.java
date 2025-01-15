@@ -249,8 +249,8 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         }
     }
 
-    public boolean hasRecipe() {
-        return getMatchingRecipe(recipeWrapper).isPresent();
+    public boolean isFermenting() {
+        return getMatchingRecipe(recipeWrapper).isPresent() && canFerment(getMatchingRecipe(recipeWrapper).get(), this);
     }
 
     private Optional<KegFermentingRecipe> getMatchingRecipe(KegRecipeWrapper inventoryWrapper) {
