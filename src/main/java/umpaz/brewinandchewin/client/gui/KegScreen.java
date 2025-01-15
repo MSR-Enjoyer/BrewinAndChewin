@@ -67,7 +67,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
     public void init() {
         super.init();
         this.widthTooNarrow = this.width < 379;
-        this.titleLabelX = 28;
+        this.titleLabelX = 38;
         this.recipeBookComponent.init(this.width, this.height, this.minecraft, this.widthTooNarrow, this.menu);
         this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
         if (BnCConfiguration.ENABLE_RECIPE_BOOK_KEG.get()) {
