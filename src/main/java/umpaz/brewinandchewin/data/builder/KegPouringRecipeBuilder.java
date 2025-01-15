@@ -30,22 +30,32 @@ public class KegPouringRecipeBuilder {
     private final int amount;
     private final ItemStack output;
     private final boolean strict;
+    private final boolean filling;
     private final List<ICondition> conditions = new ArrayList<>();
 
-    private KegPouringRecipeBuilder(ItemStack container, Fluid fluid, int amount, ItemStack output, boolean strict) {
+    private KegPouringRecipeBuilder(ItemStack container, Fluid fluid, int amount, ItemStack output, boolean strict, boolean filling) {
         this.container = container;
         this.fluid = fluid;
         this.amount = amount;
         this.output = output;
         this.strict = strict;
+        this.filling = filling;
     }
 
     public static KegPouringRecipeBuilder kegPouringRecipe(ItemLike container, Fluid fluid, int amount, ItemStack output, boolean strict) {
-        return new KegPouringRecipeBuilder(container.asItem().getDefaultInstance(), fluid, amount, output, strict);
+        return new KegPouringRecipeBuilder(container.asItem().getDefaultInstance(), fluid, amount, output, strict, true);
+    }
+
+    public static KegPouringRecipeBuilder kegPouringRecipe(ItemLike container, Fluid fluid, int amount, ItemStack output, boolean strict, boolean filling) {
+        return new KegPouringRecipeBuilder(container.asItem().getDefaultInstance(), fluid, amount, output, strict, filling);
     }
 
     public static KegPouringRecipeBuilder kegPouringRecipe(ItemLike container, Fluid fluid, int amount, ItemLike output) {
-        return new KegPouringRecipeBuilder(container.asItem().getDefaultInstance(), fluid, amount, output.asItem().getDefaultInstance(), false);
+        return new KegPouringRecipeBuilder(container.asItem().getDefaultInstance(), fluid, amount, output.asItem().getDefaultInstance(), false, true);
+    }
+
+    public static KegPouringRecipeBuilder kegPouringRecipe(ItemLike container, Fluid fluid, int amount, ItemLike output, boolean filling) {
+        return new KegPouringRecipeBuilder(container.asItem().getDefaultInstance(), fluid, amount, output.asItem().getDefaultInstance(), false, filling);
     }
 
     public KegPouringRecipeBuilder withCondition(ICondition condition) {
@@ -68,7 +78,7 @@ public class KegPouringRecipeBuilder {
     }
 
     public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
-        consumerIn.accept(new KegPouringRecipeBuilder.Result(id, container, fluid, amount, output, strict, conditions));
+        consumerIn.accept(new KegPouringRecipeBuilder.Result(id, container, fluid, amount, output, strict, filling, conditions));
 
         if (ForgeRegistries.ITEMS.getKey(output.getItem()).getNamespace().equals("create"))
             return;
@@ -78,6 +88,14 @@ public class KegPouringRecipeBuilder {
                 .require(container.getItem())
                 .output(output)
                 .withCondition(new ModLoadedCondition("create"));
+
+        for (ICondition condition : conditions)
+            fillingBuilder.withCondition(condition);
+
+        fillingBuilder.build(consumerIn);
+
+        if (!filling)
+            return;
 
         var emptyingBuilder = new ProcessingRecipeBuilder<>(EmptyingRecipe::new, new ResourceLocation(BrewinAndChewin.MODID, "create/" + id.getPath().replace("pouring/", "")))
                 .output(fluid, amount)
@@ -89,12 +107,9 @@ public class KegPouringRecipeBuilder {
         else
             emptyingBuilder.require(output.getItem());
 
-        for (ICondition condition : conditions) {
-            fillingBuilder.withCondition(condition);
+        for (ICondition condition : conditions)
             emptyingBuilder.withCondition(condition);
-        }
 
-        fillingBuilder.build(consumerIn);
         emptyingBuilder.build(consumerIn);
     }
 
@@ -106,15 +121,17 @@ public class KegPouringRecipeBuilder {
         private final int amount;
         private final ItemStack output;
         private final boolean strict;
+        private final boolean filling;
         private final List<ICondition> conditions;
 
-        public Result(ResourceLocation idIn, ItemStack containerIn, Fluid fluidIn, int amountIn, ItemStack outputIn, boolean strict, List<ICondition> conditions) {
+        public Result(ResourceLocation idIn, ItemStack containerIn, Fluid fluidIn, int amountIn, ItemStack outputIn, boolean strict, boolean filling, List<ICondition> conditions) {
             this.id = idIn;
             this.container = containerIn;
             this.fluid = fluidIn;
             this.amount = amountIn;
             this.output = outputIn;
             this.strict = strict;
+            this.filling = filling;
             this.conditions = conditions;
         }
 
@@ -141,6 +158,7 @@ public class KegPouringRecipeBuilder {
             json.addProperty("amount", amount);
 
             json.addProperty("strict", strict);
+            json.addProperty("filling", filling);
 
             if (!conditions.isEmpty()) {
                 JsonArray conditions = new JsonArray();

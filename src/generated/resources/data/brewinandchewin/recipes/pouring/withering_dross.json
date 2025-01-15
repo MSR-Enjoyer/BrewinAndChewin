@@ -4,6 +4,7 @@
   "container": {
     "item": "brewinandchewin:tankard"
   },
+  "filling": true,
   "fluid": "brewinandchewin:withering_dross",
   "output": {
     "item": "brewinandchewin:withering_dross"

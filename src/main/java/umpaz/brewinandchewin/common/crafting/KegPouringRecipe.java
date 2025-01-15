@@ -19,6 +19,7 @@ import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
     private final ResourceLocation id;
@@ -27,14 +28,16 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
     private final ItemStack container;
     private final ItemStack output;
     private final boolean strict;
+    private final boolean filling;
 
-    public KegPouringRecipe(ResourceLocation id, Fluid fluid, ItemStack container, ItemStack output, int amount, boolean strict) {
+    public KegPouringRecipe(ResourceLocation id, Fluid fluid, ItemStack container, ItemStack output, int amount, boolean strict, boolean filling) {
         this.id = id;
         this.amount = amount;
         this.fluid = fluid;
         this.container = container;
         this.output = output;
         this.strict = strict;
+        this.filling = filling;
     }
 
     @Override
@@ -93,6 +96,10 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
         return strict;
     }
 
+    public boolean canFill() {
+        return filling;
+    }
+
     @Override
     public RecipeSerializer<?> getSerializer() {
         return BnCRecipeSerializers.KEG_POURING.get();
@@ -110,12 +117,7 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
 
     @Override
     public int hashCode() {
-        int result = getId().hashCode();
-        result = 31 * result + container.hashCode();
-        //result = 31 * result + output.hashCode();
-        result = 31 * result + fluid.hashCode();
-        result = 31 * result + amount;
-        return result;
+        return Objects.hash(id, fluid, amount, container, output, strict, filling);
     }
 
     @Override
@@ -129,7 +131,9 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
         if (!output.equals(that.output)) return false;
         if (amount != that.amount) return false;
         if (!fluid.equals(that.fluid)) return false;
-        return container.equals(that.container);
+        if (!container.equals(that.container)) return false;
+        if (strict != that.strict) return false;
+        return filling == that.filling;
     }
 
     public static class Serializer implements RecipeSerializer<KegPouringRecipe> {
@@ -143,7 +147,8 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
             ItemStack container = GsonHelper.isValidNode(json, "container") ? CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "container"), true) : ItemStack.EMPTY;
             final ItemStack outputIn = CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "output"), true);
             final boolean strictIn = GsonHelper.getAsBoolean(json, "strict", false);
-            return new KegPouringRecipe(recipeId, fluidIn, container, outputIn, amountIn, strictIn);
+            final boolean fillingIn = GsonHelper.getAsBoolean(json, "filling", true);
+            return new KegPouringRecipe(recipeId, fluidIn, container, outputIn, amountIn, strictIn, fillingIn);
         }
 
         @Nullable
@@ -153,8 +158,9 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
             int amountIn = buffer.readVarInt();
             ItemStack containerIn = buffer.readItem();
             ItemStack outputIn = buffer.readItem();
-            boolean strictIn = buffer.readBoolean();
-            return new KegPouringRecipe(recipeId, fluidIn, containerIn, outputIn, amountIn, strictIn);
+            boolean strictIn  = buffer.readBoolean();
+            boolean fillingIn = buffer.readBoolean();
+            return new KegPouringRecipe(recipeId, fluidIn, containerIn, outputIn, amountIn, strictIn, fillingIn);
         }
 
         @Override
@@ -164,6 +170,7 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
             buffer.writeItem(recipe.container);
             buffer.writeItem(recipe.output);
             buffer.writeBoolean(recipe.strict);
+            buffer.writeBoolean(recipe.filling);
         }
     }
 }

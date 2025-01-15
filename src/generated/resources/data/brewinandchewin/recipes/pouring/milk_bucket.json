@@ -4,6 +4,7 @@
   "container": {
     "item": "minecraft:bucket"
   },
+  "filling": true,
   "fluid": "minecraft:milk",
   "output": {
     "item": "minecraft:milk_bucket"

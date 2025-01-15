@@ -252,7 +252,7 @@ public class FermentingTransfer {
                 }
 
                 if (recipe.getFluidIngredient() != null && !requiredFluidStack.isEmpty() && requiredFluidStack.getIngredients(ForgeTypes.FLUID_STACK).findFirst().isPresent()) {
-                    List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(slotTuple.getValue()).isFluidEqual(recipe.getFluidIngredient())).toList();
+                    List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.canFill() && kegPouringRecipe.getFluid(slotTuple.getValue()).isFluidEqual(recipe.getFluidIngredient())).toList();
                     Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                         if (pouring.isStrict())
                             return ItemStack.isSameItemSameTags(slotTuple.getValue(), pouring.getOutput());

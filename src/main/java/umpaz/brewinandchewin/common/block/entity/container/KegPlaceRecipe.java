@@ -151,7 +151,7 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                         int fluidToInsert = 0;
                         for (int i = 0; i < inventory.items.size(); ++i) {
                             ItemStack stack = inventory.items.get(i);
-                            List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(stack).isFluidEqual(fermentingRecipe.getFluidIngredient())).toList();
+                            List<KegPouringRecipe> pouringRecipes = manager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.canFill() && kegPouringRecipe.getFluid(stack).isFluidEqual(fermentingRecipe.getFluidIngredient())).toList();
                             Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                                 if (pouring.isStrict())
                                     return ItemStack.isSameItemSameTags(stack, pouring.getOutput());

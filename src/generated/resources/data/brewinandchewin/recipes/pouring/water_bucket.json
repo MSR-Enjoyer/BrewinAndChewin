@@ -4,6 +4,7 @@
   "container": {
     "item": "minecraft:bucket"
   },
+  "filling": true,
   "fluid": "minecraft:water",
   "output": {
     "item": "minecraft:water_bucket"

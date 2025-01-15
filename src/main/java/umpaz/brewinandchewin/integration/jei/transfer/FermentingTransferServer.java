@@ -331,7 +331,7 @@ public class FermentingTransferServer {
             ItemStack stack = slotStack.copy();
 
             int fluidStackAmount = 1;
-            List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(stack).isFluidEqual(pouringRecipeSource.map(KegFermentingRecipe::getFluidIngredient, menu -> menu.kegTank.getFluid()))).toList();
+            List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> (pouringRecipeSource.left().isEmpty() || kegPouringRecipe.canFill()) && kegPouringRecipe.getFluid(stack).isFluidEqual(pouringRecipeSource.map(KegFermentingRecipe::getFluidIngredient, menu -> menu.kegTank.getFluid()))).toList();
             Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                 if (pouring.isStrict())
                     return ItemStack.isSameItemSameTags(stack, pouringRecipeSource.map(ignored -> pouring.getOutput(), ignored -> pouring.getContainer()));
@@ -374,7 +374,7 @@ public class FermentingTransferServer {
 
             int toExtract = stack.getCount();
             if (recipe != null && recipe.getFluidIngredient() != null) {
-                List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(stack).isFluidEqual(recipe.getFluidIngredient())).toList();
+                List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> (!insert || kegPouringRecipe.canFill()) && kegPouringRecipe.getFluid(stack).isFluidEqual(recipe.getFluidIngredient())).toList();
                 Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                     if (pouring.isStrict())
                         return ItemStack.isSameItemSameTags(stack, pouring.getOutput());

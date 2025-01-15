@@ -69,7 +69,7 @@ public class KegStackedContentsRecipePickerMixin {
                     ingredients.clear();
 
                 if (!kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) || kegTank.getFluidAmount() < fermentingRecipe.getFluidIngredient().getAmount()) {
-                    List<KegStackedContents.PouringEntry> fluidOutputStacks = kegRecipePicker.getOuter().recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().isSame(fermentingRecipe.getFluidIngredient().getRawFluid())).map(r -> new KegStackedContents.PouringEntry(r.getOutput(), r.getAmount(), r.isStrict())).collect(Collectors.toCollection(ArrayList::new));
+                    List<KegStackedContents.PouringEntry> fluidOutputStacks = kegRecipePicker.getOuter().recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.canFill() && kegPouringRecipe.getRawFluid().isSame(fermentingRecipe.getFluidIngredient().getRawFluid())).map(r -> new KegStackedContents.PouringEntry(r.getOutput(), r.getAmount(), r.isStrict())).collect(Collectors.toCollection(ArrayList::new));
                     fluidOutputStacks.removeIf(entry -> {
                         int itemAmount = (fermentingRecipe.getFluidIngredient().getAmount() / entry.fluidAmount()) - ((kegTank.getFluidAmount() % fermentingRecipe.getFluidIngredient().getAmount()) / entry.fluidAmount());
                         return itemAmount <= 0 || (itemAmount * entry.fluidAmount()) + kegTank.getFluidAmount() > kegTank.getCapacity();

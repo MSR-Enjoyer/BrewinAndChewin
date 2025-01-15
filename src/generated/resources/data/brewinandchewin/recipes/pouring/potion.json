@@ -4,6 +4,7 @@
   "container": {
     "item": "minecraft:glass_bottle"
   },
+  "filling": true,
   "fluid": "minecraft:water",
   "output": {
     "item": "minecraft:potion",

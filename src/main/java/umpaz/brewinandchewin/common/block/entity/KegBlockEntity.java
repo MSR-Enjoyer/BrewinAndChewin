@@ -365,7 +365,8 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                     outputs.add(slotIn);
                 }
                 changed = true;
-            } else if ((recipe.get().isStrict() && ItemStack.isSameItemSameTags(resultItem, slotIn) || !recipe.get().isStrict() && ItemStack.isSameItem(slotIn, resultItem)) && // if result is same
+            } else if (recipe.filter(KegPouringRecipe::canFill).isPresent() && // if the recipe can fill
+                    (recipe.get().isStrict() && ItemStack.isSameItemSameTags(resultItem, slotIn) || !recipe.get().isStrict() && ItemStack.isSameItem(slotIn, resultItem)) && // if result is same
                     (keg.fluidTank.isEmpty() || keg.fluidTank.getFluidAmount() < keg.fluidTank.getCapacity()) && // if the result can fit in the container
                     (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameTags(resultItem, keg.inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
                 int containerAmount = Mth.clamp(Math.min(slotIn.getCount(), (keg.fluidTank.getCapacity() - keg.fluidTank.getFluidAmount()) / recipe.get().getAmount()), 1, maxTakeAmount);
@@ -391,7 +392,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             }
         }
 
-        if (!outputs.isEmpty())
+        if (!outputs.isEmpty() || recipe.isPresent())
             return outputs;
 
         LazyOptional<IFluidHandlerItem> fluidHandler = isCreative ? slotIn.copy().getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM) : slotIn.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
@@ -462,7 +463,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                     boolean fluidCheck = false;
                     if (r.isStrict() && ItemStack.isSameItemSameTags(r.getContainer(), slot) || !r.isStrict() && (r.getContainer().getItem() == slot.getItem()))
                         containerCheck = true;
-                    if (!containerCheck && (r.isStrict() && ItemStack.isSameItemSameTags(r.assemble(recipeWrapper, level.registryAccess()), slot) || !r.isStrict() && r.assemble(recipeWrapper, level.registryAccess()).getItem() == slot.getItem()))
+                    if (!containerCheck && r.canFill() && (r.isStrict() && ItemStack.isSameItemSameTags(r.assemble(recipeWrapper, level.registryAccess()), slot) || !r.isStrict() && r.assemble(recipeWrapper, level.registryAccess()).getItem() == slot.getItem()))
                         resultCheck = true;
                     if (recipeWrapper.getFluid(0).isEmpty() || (containerCheck && r.getRawFluid() == recipeWrapper.getFluid(0).getFluid() || r.getFluid(slot).isFluidEqual(recipeWrapper.getFluid(0))))
                         fluidCheck = true;

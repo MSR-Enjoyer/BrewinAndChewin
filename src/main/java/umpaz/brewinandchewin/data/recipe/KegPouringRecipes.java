@@ -68,9 +68,9 @@ public class KegPouringRecipes {
         KegPouringRecipeBuilder.kegPouringRecipe(Items.BUCKET, ForgeMod.MILK.get(), 1000, Items.MILK_BUCKET)
                 .build(consumer);
 
-        KegPouringRecipeBuilder.kegPouringRecipe(Items.HONEYCOMB, BnCFluids.FLAXEN_CHEESE.get(), 1000, BnCItems.UNRIPE_FLAXEN_CHEESE_WHEEL.get())
+        KegPouringRecipeBuilder.kegPouringRecipe(Items.HONEYCOMB, BnCFluids.FLAXEN_CHEESE.get(), 1000, BnCItems.UNRIPE_FLAXEN_CHEESE_WHEEL.get(), false)
                 .build(consumer);
-        KegPouringRecipeBuilder.kegPouringRecipe(Items.HONEYCOMB, BnCFluids.SCARLET_CHEESE.get(), 1000, BnCItems.UNRIPE_SCARLET_CHEESE_WHEEL.get())
+        KegPouringRecipeBuilder.kegPouringRecipe(Items.HONEYCOMB, BnCFluids.SCARLET_CHEESE.get(), 1000, BnCItems.UNRIPE_SCARLET_CHEESE_WHEEL.get(), false)
                 .build(consumer);
 
         // Create Compat

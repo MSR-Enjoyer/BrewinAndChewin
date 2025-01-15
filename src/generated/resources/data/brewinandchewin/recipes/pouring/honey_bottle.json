@@ -4,6 +4,7 @@
   "container": {
     "item": "minecraft:glass_bottle"
   },
+  "filling": true,
   "fluid": "brewinandchewin:honey",
   "output": {
     "item": "minecraft:honey_bottle"

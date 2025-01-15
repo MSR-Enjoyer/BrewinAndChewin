@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 public class CreatePotionPouringRecipe extends KegPouringRecipe {
 
     public CreatePotionPouringRecipe(ResourceLocation id, ItemStack container, int amount) {
-        super(id, AllFluids.POTION.get().getSource(), container, Items.POTION.getDefaultInstance(), amount, false);
+        super(id, AllFluids.POTION.get().getSource(), container, Items.POTION.getDefaultInstance(), amount, false, true);
     }
 
     @Override
