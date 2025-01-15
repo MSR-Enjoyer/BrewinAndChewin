@@ -229,14 +229,13 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                 if (keg.canFerment(recipe.get(), keg)) {
                     didInventoryChange = keg.processFermenting(recipe.get(), keg);
                 } else {
-                    keg.fermentTime = 0;
+                    keg.fermentTime = Math.max(0, keg.fermentTime - 20);
                 }
             } else {
                 keg.fermentTime = Math.max(0, keg.fermentTime - 20);
             }
-
         } else if (keg.fermentTime > 0) {
-            keg.fermentTime = 0;
+            keg.fermentTime = Math.max(0, keg.fermentTime - 20);
         }
 
         List<ItemStack> out = keg.extractInGui(keg, keg.inventory.getStackInSlot(CONTAINER_SLOT), keg.inventory.getSlotLimit(OUTPUT_SLOT));
@@ -454,7 +453,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
     public Optional<KegPouringRecipe> getPouringRecipe(ItemStack slot) {
         if (level == null) return Optional.empty();
-        Optional<KegPouringRecipe> recipe = level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get())
+        return level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get())
                 .stream()
                 .sorted(Comparator.comparingInt(value -> value.isStrict() ? 0 : 1))
                 .filter(r -> {
@@ -470,11 +469,6 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                     return (containerCheck || resultCheck) && fluidCheck;
                 })
                 .findFirst();
-        if (recipe.isPresent()) {
-            lastRecipeID = recipe.get().getId();
-            return recipe;
-        }
-        return Optional.empty();
     }
 
     public void updateTemperature() {
