@@ -103,8 +103,8 @@ public class FermentingTransferServer {
         stowItems(player, inventorySlots, clearedCraftingItems);
         stowItems(player, inventorySlots, remainderItems);
 
-        AbstractContainerMenu container = player.containerMenu;
-        container.broadcastChanges();
+        kegMenu.blockEntity.setChanged();
+        player.level().sendBlockUpdated(kegMenu.blockEntity.getBlockPos(), kegMenu.blockEntity.getBlockState(), kegMenu.blockEntity.getBlockState(), 2);
     }
 
     @NotNull

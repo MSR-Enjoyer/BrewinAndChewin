@@ -230,6 +230,7 @@ public class FermentingTransfer {
             boolean hasTooMuchFluid = false;
             int fluidCapacity = 0;
             int largestFluidCapacity = 0;
+            int largestEmptyCapacity = 0;
 
             for (Map.Entry<Slot, ItemStack> slotTuple : availableItemStacks.entrySet()) {
                 for (IRecipeSlotView ingredient : requiredItemStacks) {
@@ -251,6 +252,47 @@ public class FermentingTransfer {
                     }
                 }
 
+
+                if (!menu.kegTank.isEmpty() && (!maxTransfer || recipe.getFluidIngredient() == null || !menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient()))) {
+                    List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(slotTuple.getValue()).isFluidEqual(menu.kegTank.getFluid())).toList();
+                    Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
+                        if (pouring.isStrict())
+                            return ItemStack.isSameItemSameTags(slotTuple.getValue(), pouring.getContainer());
+                        return ItemStack.isSameItem(slotTuple.getValue(), pouring.getContainer());
+                    }).findFirst();
+                    if (optionalData.isPresent()) {
+                        if (optionalData.get().getAmount() <= menu.kegTank.getFluidAmount()) {
+                            int shrinkAmount = menu.kegTank.getFluidAmount() / optionalData.get().getAmount();
+                            emptyingSlots
+                                    .computeIfAbsent(slotTuple.getValue(), it -> new ArrayList<>())
+                                    .add(new SlotReference(slotTuple.getKey(), slotTuple.getValue(), optionalData.get().getAmount() * shrinkAmount, shrinkAmount));
+                        }
+                        if (recipe.getFluidIngredient() != null && menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient())) {
+                            if (optionalData.get().getAmount() <= recipe.getFluidIngredient().getAmount() && fluidCapacity < recipe.getFluidIngredient().getAmount()) {
+                                if (optionalData.get().getAmount() > largestEmptyCapacity) {
+                                    relevantSlots.remove(requiredFluidStack);
+                                }
+                                int shrinkAmount = recipe.getFluidIngredient().getAmount() / optionalData.get().getAmount();
+                                largestEmptyCapacity = optionalData.get().getAmount();
+                                relevantSlots
+                                        .computeIfAbsent(requiredFluidStack, it -> new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
+                                            @Override
+                                            public int hashCode(ItemStack o) {
+                                                return o.getItem().hashCode();
+                                            }
+
+                                            @Override
+                                            public boolean equals(ItemStack a, ItemStack b) {
+                                                return stackHelper.isEquivalent(a, b, UidContext.Ingredient);
+                                            }
+                                        }))
+                                        .computeIfAbsent(slotTuple.getValue(), it -> new ArrayList<>())
+                                        .add(new SlotReference(slotTuple.getKey(), optionalData.get().getResultItem(Minecraft.getInstance().level.registryAccess()).copyWithCount(shrinkAmount), optionalData.get().getAmount() * shrinkAmount, shrinkAmount));
+                            }
+                        }
+                    }
+                }
+
                 if (recipe.getFluidIngredient() != null && !requiredFluidStack.isEmpty() && requiredFluidStack.getIngredients(ForgeTypes.FLUID_STACK).findFirst().isPresent()) {
                     List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.canFill() && kegPouringRecipe.getFluid(slotTuple.getValue()).isFluidEqual(recipe.getFluidIngredient())).toList();
                     Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
@@ -258,12 +300,13 @@ public class FermentingTransfer {
                             return ItemStack.isSameItemSameTags(slotTuple.getValue(), pouring.getOutput());
                         return ItemStack.isSameItem(slotTuple.getValue(), pouring.getOutput());
                     }).findFirst();
+                    int tankAmount = menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient()) ? menu.kegTank.getFluidAmount() : 0;
                     if (optionalData.isPresent()) {
-                        if (optionalData.get().getAmount() <= menu.kegTank.getCapacity() - menu.kegTank.getFluidAmount() && fluidCapacity < menu.kegTank.getCapacity() - menu.kegTank.getFluidAmount()) {
+                        if (optionalData.get().getAmount() <= menu.kegTank.getCapacity() - tankAmount && fluidCapacity < menu.kegTank.getCapacity() - tankAmount) {
                             if (optionalData.get().getAmount() > largestFluidCapacity) {
                                 relevantSlots.remove(requiredFluidStack);
                             }
-                            int shrinkAmount = (recipe.getFluidIngredient().getAmount() / optionalData.get().getAmount()) - ((menu.kegTank.getFluidAmount() % recipe.getFluidIngredient().getAmount()) / optionalData.get().getAmount());
+                            int shrinkAmount = (recipe.getFluidIngredient().getAmount() / optionalData.get().getAmount()) - ((tankAmount % recipe.getFluidIngredient().getAmount()) / optionalData.get().getAmount());
                             largestFluidCapacity = optionalData.get().getAmount();
                             fluidCapacity += optionalData.get().getAmount() * shrinkAmount;
                             relevantSlots
@@ -282,48 +325,6 @@ public class FermentingTransfer {
                                     .add(new SlotReference(slotTuple.getKey(), slotTuple.getValue(), optionalData.get().getAmount() * shrinkAmount, shrinkAmount));
                         } else
                             hasTooMuchFluid = true;
-                    }
-                }
-
-                if (!menu.kegTank.isEmpty() && (!maxTransfer || recipe.getFluidIngredient() == null || !menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient()))) {
-                    List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(slotTuple.getValue()).isFluidEqual(menu.kegTank.getFluid())).toList();
-                    Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
-                        if (pouring.isStrict())
-                            return ItemStack.isSameItemSameTags(slotTuple.getValue(), pouring.getContainer());
-                        return ItemStack.isSameItem(slotTuple.getValue(), pouring.getContainer());
-                    }).findFirst();
-                    if (optionalData.isPresent()) {
-                        if (optionalData.get().getAmount() <= menu.kegTank.getFluidAmount()) {
-                            int shrinkAmount = menu.kegTank.getFluidAmount() / optionalData.get().getAmount();
-                            emptyingSlots
-                                    .computeIfAbsent(slotTuple.getValue(), it -> new ArrayList<>())
-                                    .add(new SlotReference(slotTuple.getKey(), slotTuple.getValue(), optionalData.get().getAmount() * shrinkAmount, shrinkAmount));
-                        }
-                        if (recipe.getFluidIngredient() != null && menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient())) {
-                            fluidCapacity = 0;
-                            if (optionalData.get().getAmount() <= recipe.getFluidIngredient().getAmount() && fluidCapacity < recipe.getFluidIngredient().getAmount()) {
-                                if (optionalData.get().getAmount() > largestFluidCapacity) {
-                                    relevantSlots.remove(requiredFluidStack);
-                                }
-                                int shrinkAmount = recipe.getFluidIngredient().getAmount() / optionalData.get().getAmount();
-                                largestFluidCapacity = optionalData.get().getAmount();
-                                fluidCapacity += optionalData.get().getAmount() * shrinkAmount;
-                                relevantSlots
-                                        .computeIfAbsent(requiredFluidStack, it -> new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
-                                            @Override
-                                            public int hashCode(ItemStack o) {
-                                                return o.getItem().hashCode();
-                                            }
-
-                                            @Override
-                                            public boolean equals(ItemStack a, ItemStack b) {
-                                                return stackHelper.isEquivalent(a, b, UidContext.Ingredient);
-                                            }
-                                        }))
-                                        .computeIfAbsent(slotTuple.getValue(), it -> new ArrayList<>())
-                                        .add(new SlotReference(slotTuple.getKey(), optionalData.get().getResultItem(Minecraft.getInstance().level.registryAccess()).copyWithCount(shrinkAmount), optionalData.get().getAmount() * shrinkAmount, shrinkAmount));
-                            }
-                        }
                     }
                 }
             }

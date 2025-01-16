@@ -115,6 +115,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         for (String key : compoundRecipes.getAllKeys()) {
             usedRecipeTracker.put(new ResourceLocation(key), compoundRecipes.getInt(key));
         }
+        checkNewRecipe = true;
     }
 
     public static FluidStack getMealFromItem(ItemStack kegStack) {
@@ -249,8 +250,22 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         }
     }
 
-    public boolean isFermenting() {
-        return getMatchingRecipe(recipeWrapper).isPresent() && canFerment(getMatchingRecipe(recipeWrapper).get(), this);
+    public Optional<KegFermentingRecipe> getRecipeWithoutTemperature() {
+        if (!hasInput())
+            return Optional.empty();
+        Optional<KegFermentingRecipe> recipe = getMatchingRecipe(recipeWrapper);
+        if (recipe.isEmpty())
+            return Optional.empty();
+        if (recipe.get().getFluidIngredient() == null) { // if the recipe does not require a fluid
+            if (fluidTank.isEmpty()) // make sure the fluid is empty
+                return Optional.empty();
+        } else {
+            if (!fluidTank.getFluid().getFluid().isSame(recipe.get().getFluidIngredient().getFluid()))
+                return Optional.empty(); // make sure the fluid is the same
+            if (fluidTank.getFluidAmount() % recipe.get().getFluidIngredient().getAmount() != 0) // make sure the fluid amount is a multiple of the recipe amount
+                return Optional.empty();
+        }
+        return recipe;
     }
 
     private Optional<KegFermentingRecipe> getMatchingRecipe(KegRecipeWrapper inventoryWrapper) {
