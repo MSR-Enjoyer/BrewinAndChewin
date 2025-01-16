@@ -54,7 +54,7 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
         }
 
         if (menu instanceof KegMenu kegMenu && recipe instanceof KegFermentingRecipe fermentingRecipe) {
-            if (fermentingRecipe.getFluidIngredient() == null && kegMenu.kegTank.isEmpty() || fermentingRecipe.getFluidIngredient() != null && kegMenu.kegTank.getFluidAmount() >= kegMenu.kegTank.getCapacity())
+            if (fermentingRecipe.getFluidIngredient() == null && kegMenu.kegTank.isEmpty() || fermentingRecipe.getFluidIngredient() != null && kegMenu.kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) && kegMenu.kegTank.getFluidAmount() >= kegMenu.kegTank.getCapacity())
                 shouldHandleFluid = false;
         }
 
@@ -100,7 +100,7 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                                 }
                             }
                         }
-                    } else if (kegTank.getFluidAmount() < kegTank.getCapacity()) {
+                    } else {
                         List<RecipeItem> extractItems = new ArrayList<>();
                         boolean shouldRemoveIndex = !kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) || kegTank.getFluidAmount() < fermentingRecipe.getFluidIngredient().getAmount();
 

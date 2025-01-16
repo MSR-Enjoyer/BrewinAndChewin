@@ -1,10 +1,8 @@
 package umpaz.brewinandchewin.common.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -43,6 +41,14 @@ public class KegStackedContentsRecipePickerMixin {
         return original;
     }
 
+    @WrapWithCondition(method = "tryPick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/StackedContents;take(II)I"))
+    private boolean brewinandchewin$dontTakeAwayFluidStack(StackedContents instance, int stackingIndex, int amount) {
+        if ((StackedContents.RecipePicker)(Object)this instanceof KegStackedContents.RecipePicker kegRecipePicker) {
+            return !kegRecipePicker.isFluidItem(stackingIndex);
+        }
+        return true;
+    }
+
     @ModifyVariable(method = "tryPick", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/item/crafting/Recipe;getIngredients()Lnet/minecraft/core/NonNullList;"))
     private List<Ingredient> brewinandchewin$addExtraFluidContextToPick(List<Ingredient> original) {
         if ((StackedContents.RecipePicker)(Object)this instanceof KegStackedContents.RecipePicker kegRecipePicker && recipe instanceof KegFermentingRecipe fermentingRecipe) {
@@ -68,11 +74,29 @@ public class KegStackedContentsRecipePickerMixin {
                 if (kegRecipePicker.getOuter().shouldIgnoreItems())
                     ingredients.clear();
 
-                if (!kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) || kegTank.getFluidAmount() < fermentingRecipe.getFluidIngredient().getAmount()) {
+                int tankAmount = kegTank.getFluidAmount();
+
+                if (!kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient())) {
+                    List<KegStackedContents.PouringEntry> fluidContainerStacks = kegRecipePicker.getOuter().recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream()
+                            .filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().isSame(kegTank.getFluid().getFluid())).map(r -> new KegStackedContents.PouringEntry(r.getContainer(), r.getAmount(), r.isStrict())).toList();
+                    if (!fluidContainerStacks.isEmpty()) {
+                        Ingredient extractIngredient = Ingredient.of(fluidContainerStacks.stream().map(KegStackedContents.PouringEntry::stack).toArray(ItemStack[]::new));
+
+                        for (KegStackedContents.PouringEntry entry : fluidContainerStacks)
+                            tankAmount -= entry.fluidAmount();
+
+                        extractIngredient.getItems();
+                        extractIngredient.getStackingIds();
+                        ingredients.add(extractIngredient);
+                    }
+                }
+
+                if (!kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) || tankAmount < fermentingRecipe.getFluidIngredient().getAmount()) {
                     List<KegStackedContents.PouringEntry> fluidOutputStacks = kegRecipePicker.getOuter().recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.canFill() && kegPouringRecipe.getRawFluid().isSame(fermentingRecipe.getFluidIngredient().getRawFluid())).map(r -> new KegStackedContents.PouringEntry(r.getOutput(), r.getAmount(), r.isStrict())).collect(Collectors.toCollection(ArrayList::new));
+                    int finalTankAmount = tankAmount;
                     fluidOutputStacks.removeIf(entry -> {
-                        int itemAmount = (fermentingRecipe.getFluidIngredient().getAmount() / entry.fluidAmount()) - ((kegTank.getFluidAmount() % fermentingRecipe.getFluidIngredient().getAmount()) / entry.fluidAmount());
-                        return itemAmount <= 0 || (itemAmount * entry.fluidAmount()) + kegTank.getFluidAmount() > kegTank.getCapacity();
+                        int itemAmount = (fermentingRecipe.getFluidIngredient().getAmount() / entry.fluidAmount()) - ((finalTankAmount % fermentingRecipe.getFluidIngredient().getAmount()) / entry.fluidAmount());
+                        return itemAmount <= 0 || (itemAmount * entry.fluidAmount()) + finalTankAmount > kegTank.getCapacity();
                     });
                     if (!fluidOutputStacks.isEmpty()) {
                         Ingredient ingredient = Ingredient.of(fluidOutputStacks.stream().map(KegStackedContents.PouringEntry::stack).toArray(ItemStack[]::new));
@@ -86,17 +110,6 @@ public class KegStackedContentsRecipePickerMixin {
                         ingredient.getItems();
                         ingredient.getStackingIds();
                         ingredients.add(ingredient);
-                    }
-                }
-
-                if (!kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient())) {
-                    List<ItemStack> fluidContainerStacks = kegRecipePicker.getOuter().recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream()
-                            .filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().isSame(kegTank.getFluid().getFluid())).map(KegPouringRecipe::getContainer).toList();
-                    if (!fluidContainerStacks.isEmpty()) {
-                        Ingredient extractIngredient = Ingredient.of(fluidContainerStacks.toArray(ItemStack[]::new));
-                        extractIngredient.getItems();
-                        extractIngredient.getStackingIds();
-                        ingredients.add(extractIngredient);
                     }
                 }
 
