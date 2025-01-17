@@ -26,6 +26,9 @@ public class BnCClientSetupEvents {
     public static void registerParticles(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(BnCParticleTypes.FOG.get(), SteamParticle.Factory::new);
         event.registerSpriteSet(BnCParticleTypes.DRUNK_BUBBLE.get(), DrunkBubbleParticle.Factory::new);
-        event.registerSpriteSet(BnCParticleTypes.RAGING.get(), RagingParticle.Factory::new);
+        event.registerSpriteSet(BnCParticleTypes.RAGING_STAGE_1.get(), RagingParticle.Factory::new);
+        event.registerSpriteSet(BnCParticleTypes.RAGING_STAGE_2.get(), RagingParticle.Factory::new);
+        event.registerSpriteSet(BnCParticleTypes.RAGING_STAGE_3.get(), RagingParticle.Factory::new);
+        event.registerSpriteSet(BnCParticleTypes.RAGING_STAGE_4.get(), RagingParticle.Factory::new);
     }
 }

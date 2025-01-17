@@ -79,11 +79,6 @@ public class BnCCommonEvents {
                 cap.sync();
         });
         RagingCapability.tick(living);
-
-        if (living.hasEffect(BnCEffects.RAGING.get()) && living.getEffect(BnCEffects.RAGING.get()).isVisible() && living.getRandom().nextInt(3) == 0) {
-            double heightAddition = living.getBbHeight() - living.getEyeHeight();
-            living.level().addParticle(BnCParticleTypes.RAGING.get(), living.getRandomX(0.7D), living.getRandom().nextDouble() * heightAddition + living.getEyeY() - heightAddition * 2, living.getRandomZ(0.7D), 0.0, 0.0, 0.0);
-        }
     }
 
     @SubscribeEvent

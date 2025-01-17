@@ -7,23 +7,22 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
-import umpaz.brewinandchewin.common.capability.TipsyNumbedHeartsCapability;
+import umpaz.brewinandchewin.common.capability.RagingCapability;
 
 import java.util.function.Supplier;
 
-public record SyncNumbedHeartsClientboundPacket(int entityId, float numbedHealth, int ticksUntilDamage) {
+public record SyncRagingStacksClientboundPacket(int entityId, int stacks) {
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(entityId());
-        buf.writeFloat(numbedHealth());
-        buf.writeInt(ticksUntilDamage());
+        buf.writeInt(stacks());
     }
 
-    public static SyncNumbedHeartsClientboundPacket decode(FriendlyByteBuf buf) {
-        return new SyncNumbedHeartsClientboundPacket(buf.readInt(), buf.readFloat(), buf.readInt());
+    public static SyncRagingStacksClientboundPacket decode(FriendlyByteBuf buf) {
+        return new SyncRagingStacksClientboundPacket(buf.readInt(), buf.readInt());
     }
 
     public static class Handler {
-        public static void handle(SyncNumbedHeartsClientboundPacket packet, Supplier<NetworkEvent.Context> context) {
+        public static void handle(SyncRagingStacksClientboundPacket packet, Supplier<NetworkEvent.Context> context) {
             if (context.get().getDirection() != NetworkDirection.PLAY_TO_CLIENT)
                 return;
             context.get().enqueueWork(() -> {
@@ -32,9 +31,8 @@ public record SyncNumbedHeartsClientboundPacket(int entityId, float numbedHealth
                 if (!(entity instanceof LivingEntity living))
                     return;
 
-                living.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
-                    cap.setNumbedHealth(packet.numbedHealth());
-                    cap.setTicksUntilDamage(packet.ticksUntilDamage());
+                living.getCapability(RagingCapability.INSTANCE).ifPresent(cap -> {
+                    cap.setStacks(packet.stacks());
                 });
             });
             context.get().setPacketHandled(true);

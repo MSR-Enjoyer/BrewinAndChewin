@@ -14,7 +14,13 @@ public class BnCParticleTypes {
 
     public static final RegistryObject<SimpleParticleType> FOG = PARTICLE_TYPES.register("fog",
             () -> new SimpleParticleType(true));
-    public static final RegistryObject<SimpleParticleType> RAGING = PARTICLE_TYPES.register("raging",
+    public static final RegistryObject<SimpleParticleType> RAGING_STAGE_1 = PARTICLE_TYPES.register("raging_stage_1",
+            () -> new SimpleParticleType(false));
+    public static final RegistryObject<SimpleParticleType> RAGING_STAGE_2 = PARTICLE_TYPES.register("raging_stage_2",
+            () -> new SimpleParticleType(false));
+    public static final RegistryObject<SimpleParticleType> RAGING_STAGE_3 = PARTICLE_TYPES.register("raging_stage_3",
+            () -> new SimpleParticleType(false));
+    public static final RegistryObject<SimpleParticleType> RAGING_STAGE_4 = PARTICLE_TYPES.register("raging_stage_4",
             () -> new SimpleParticleType(false));
 
 
