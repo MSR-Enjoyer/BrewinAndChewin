@@ -17,14 +17,15 @@ import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.client.particle.RagingParticleOptions;
 import umpaz.brewinandchewin.common.network.BnCNetworkHandler;
 import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
-import umpaz.brewinandchewin.common.registry.BnCParticleTypes;
 
 import java.util.UUID;
 
 public class RagingCapability implements ICapabilitySerializable<CompoundTag> {
+    public static final int RESET_TICKS = 60;
     public static final ResourceLocation ID = BrewinAndChewin.asResource("raging");
     public static final Capability<RagingCapability> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
     private final LazyOptional<RagingCapability> thisOptional = LazyOptional.of(() -> this);
@@ -57,7 +58,12 @@ public class RagingCapability implements ICapabilitySerializable<CompoundTag> {
     public static void tick(LivingEntity living) {
         living.getCapability(INSTANCE).ifPresent(cap -> {
             if (!living.level().isClientSide()) {
-                if (cap.getStacks() <= 0 || cap.getTicksUntilReset() <= 0 || !living.hasEffect(BnCEffects.RAGING.get())) {
+                if (cap.getTicksUntilReset() <= 0 &&  cap.getStacks() > 0) {
+                    cap.setStacks(cap.getStacks() - 1);
+                    cap.setTicksUntilReset(RESET_TICKS);
+                }
+
+                if (cap.getStacks() <= 0 || !living.hasEffect(BnCEffects.RAGING.get())) {
                     if (living.getAttributes().hasModifier(Attributes.ATTACK_SPEED, RAGING_ATTRIBUTE_UUID))
                         living.getAttribute(Attributes.ATTACK_SPEED).removeModifier(RAGING_ATTRIBUTE_UUID);
                     if (cap.previousStacks != 0) {
@@ -79,19 +85,19 @@ public class RagingCapability implements ICapabilitySerializable<CompoundTag> {
                 cap.previousStacks = cap.stacks;
             }
 
-            if (living.hasEffect(BnCEffects.RAGING.get()) && cap.getStacks() > 0 && living.getEffect(BnCEffects.RAGING.get()).isVisible() && living.getRandom().nextInt(3) == 0) {
+            if (living.hasEffect(BnCEffects.RAGING.get()) && living.getEffect(BnCEffects.RAGING.get()).isVisible() && living.getRandom().nextInt(cap.getStacks() > 0 ? 3 : 20) == 0) {
                 double heightAddition = living.getBbHeight() - living.getEyeHeight();
-                living.level().addParticle(getParticleType(cap.getStacks()), living.getRandomX(0.7D), living.getRandom().nextDouble() * heightAddition + living.getEyeY() - heightAddition * 2, living.getRandomZ(0.7D), 0.0, 0.0, 0.0);
+                living.level().addParticle(getParticleType(cap.getStacks(), 0.75F), living.getRandomX(0.7D), living.getRandom().nextDouble() * heightAddition * 2 + living.getEyeY() - heightAddition, living.getRandomZ(0.7D), (0.5 - living.getRandom().nextDouble()) * 0.1F, 0.0, (0.5 - living.getRandom().nextDouble()) * 0.1F);
             }
         });
     }
 
-    private static ParticleOptions getParticleType(int stacks) {
+    public static ParticleOptions getParticleType(int stacks, float size) {
         return switch (stacks) {
-            case 1 -> BnCParticleTypes.RAGING_STAGE_1.get();
-            case 2 -> BnCParticleTypes.RAGING_STAGE_2.get();
-            case 3 -> BnCParticleTypes.RAGING_STAGE_3.get();
-            default -> BnCParticleTypes.RAGING_STAGE_4.get();
+            case 0, 1 -> new RagingParticleOptions.StageOne(size);
+            case 2 -> new RagingParticleOptions.StageTwo(size);
+            case 3 -> new RagingParticleOptions.StageThree(size);
+            default -> new RagingParticleOptions.StageFour(size);
         };
     }
 

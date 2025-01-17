@@ -1,5 +1,6 @@
 package umpaz.brewinandchewin.common.event;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -7,6 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -20,7 +22,6 @@ import umpaz.brewinandchewin.common.network.BnCNetworkHandler;
 import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsPacket;
 import umpaz.brewinandchewin.common.registry.BnCDamageTypes;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
-import umpaz.brewinandchewin.common.registry.BnCParticleTypes;
 import umpaz.brewinandchewin.common.tag.BnCTags;
 
 @Mod.EventBusSubscriber(modid = BrewinAndChewin.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -83,14 +84,7 @@ public class BnCCommonEvents {
 
     @SubscribeEvent
     public static void onLivingDamage(LivingHurtEvent event) { // Use LivingHurtEvent so we can run before Protection enchantments, Resistance and Absorption.
-        Entity attacker = event.getSource().getEntity();
         LivingEntity target = event.getEntity();
-        if (attacker instanceof LivingEntity living && (!(living instanceof Player player) || player.getAttackStrengthScale(0.0F) > 0.8F) && living.hasEffect(BnCEffects.RAGING.get()) && event.getSource().is(BnCTags.TRIGGERS_RAGING)) {
-            living.getCapability(RagingCapability.INSTANCE).ifPresent((RagingCapability cap) -> {
-                cap.setStacks(Math.min(4, cap.getStacks() + 1));
-                cap.setTicksUntilReset(120);
-            });
-        }
         if (!target.hasEffect(BnCEffects.TIPSY.get()) || event.getSource().is(BnCDamageTypes.CARDIAC_ARREST))
             return;
         int amplifier = target.getEffect(BnCEffects.TIPSY.get()).getAmplifier();
@@ -104,6 +98,24 @@ public class BnCCommonEvents {
             if (target instanceof Player)
                 cap.sync();
         });
+    }
+
+    @SubscribeEvent
+    public static void onLivingDamage(LivingDamageEvent event) { // Use LivingDamageEvent to make sure that attack strength is correct.
+        Entity attacker = event.getSource().getEntity();
+        LivingEntity target = event.getEntity();
+
+        if (attacker instanceof LivingEntity living && (!(living instanceof Player player) || player.getAttackStrengthScale(0.0F) > 0.8F) && living.hasEffect(BnCEffects.RAGING.get()) && event.getSource().is(BnCTags.TRIGGERS_RAGING)) {
+            living.getCapability(RagingCapability.INSTANCE).ifPresent((RagingCapability cap) -> {
+                int stacks = Math.min(4, cap.getStacks() + 1);
+                if (stacks != cap.getStacks() && !target.level().isClientSide()) {
+                    double heightAddition = living.getY(1.0D) - living.getY(0.5D);
+                    ((ServerLevel) target.level()).sendParticles(RagingCapability.getParticleType(stacks, 0.5F), target.getX(), target.getY(0.5), target.getZ(), 12, target.getRandom().nextDouble() * 0.4 - 0.2, target.getRandom().nextDouble() * heightAddition * 2 - heightAddition, target.getRandom().nextDouble() * 0.4 - 0.2, 0.0);
+                }
+                cap.setStacks(stacks);
+                cap.setTicksUntilReset(RagingCapability.RESET_TICKS);
+            });
+        }
     }
 
     @SubscribeEvent
