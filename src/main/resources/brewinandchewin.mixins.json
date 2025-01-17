@@ -7,10 +7,14 @@
   "mixins": [
     "IntoxicationCancelSaturationMixin",
     "KegStackedContentsRecipePickerMixin",
+    "LootContextAccessor",
+    "LootParamsAccessor",
     "PreventTaggedEffectRemovalMixin$HotCocoa",
     "PreventTaggedEffectRemovalMixin$MilkBottle",
     "ServerPlaceRecipeAccessor",
-    "StackedContentsRecipePickerAccessor"
+    "StackedContentsRecipePickerAccessor",
+    "StoreLootParamsMixin$LootParamsBuilderMixin",
+    "StoreLootParamsMixin$LootParamsMixin"
   ],
   "client": [
     "client.GuiMixin",

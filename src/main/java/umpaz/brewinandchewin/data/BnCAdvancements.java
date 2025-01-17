@@ -2,57 +2,38 @@ package umpaz.brewinandchewin.data;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.advancements.RequirementsStrategy;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.ConsumeItemTrigger;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
 import net.minecraft.advancements.critereon.LocationPredicate;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DoublePlantBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
-import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeAdvancementProvider;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
-import umpaz.brewinandchewin.common.loot.condition.AreaLocationCheck;
+import umpaz.brewinandchewin.common.loot.condition.AreaLocationCheckCondition;
+import umpaz.brewinandchewin.common.loot.condition.NullTrueBlockStateCondition;
 import umpaz.brewinandchewin.common.registry.BnCBlocks;
 import umpaz.brewinandchewin.common.registry.BnCItems;
 import umpaz.brewinandchewin.common.tag.BnCTags;
-import vectorwing.farmersdelight.common.block.CabinetBlock;
-import vectorwing.farmersdelight.common.block.FeastBlock;
-import vectorwing.farmersdelight.common.block.PieBlock;
 import vectorwing.farmersdelight.common.tag.ModTags;
-import vectorwing.farmersdelight.common.utility.TextUtils;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.Arrays;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class BnCAdvancements implements ForgeAdvancementProvider.AdvancementGenerator {
     // Make sure to exclude compatibility items such as Kombucha.
@@ -102,8 +83,11 @@ public class BnCAdvancements implements ForgeAdvancementProvider.AdvancementGene
                 .addCriterion("placed_keg", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(BnCBlocks.KEG.get()))
                 .save(saver, BrewinAndChewin.asResource("main/place_keg").toString());
         Advancement placeTemperatureBlockNearKeg = getAdvancement(placeKeg, BnCItems.ICE_CRATE.get(), Component.translatable("brewinandchewin.advancement.place_temperature_block_near_keg"), Component.translatable("brewinandchewin.advancement.place_temperature_block_near_keg.desc"), FrameType.TASK, true, true, false)
-                .addCriterion("placed_heat_source_near_keg", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(ModTags.HEAT_SOURCES).build())), AreaLocationCheck.checkArea(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.KEG.get()).build()), KegBlockEntity.RANGE)))
-                .addCriterion("placed_freeze_source_near_keg", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCTags.FREEZE_SOURCES).build())), AreaLocationCheck.checkArea(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.KEG.get()).build()), KegBlockEntity.RANGE)))
+                .addCriterion("placed_heat_source_near_keg", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(ModTags.HEAT_SOURCES).build())), NullTrueBlockStateCondition.checkState(new NullTrueBlockStateCondition.PropertyMatcher("lit", "true")), AreaLocationCheckCondition.checkArea(KegBlockEntity.RANGE, LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.KEG.get()).build())))))
+                .addCriterion("placed_freeze_source_near_keg", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCTags.FREEZE_SOURCES).build())), NullTrueBlockStateCondition.checkState(new NullTrueBlockStateCondition.PropertyMatcher("lit", "true")), AreaLocationCheckCondition.checkArea(KegBlockEntity.RANGE, LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.KEG.get()).build())))))
+                .addCriterion("updated_heat_source_near_keg", itemUsedOnBlock(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(ModTags.HEAT_SOURCES).build())), NullTrueBlockStateCondition.checkState(new NullTrueBlockStateCondition.PropertyMatcher("lit", "true")), AreaLocationCheckCondition.checkArea(KegBlockEntity.RANGE, LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.KEG.get()).build())))))
+                .addCriterion("updated_freeze_source_near_keg", itemUsedOnBlock(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCTags.FREEZE_SOURCES).build())), NullTrueBlockStateCondition.checkState(new NullTrueBlockStateCondition.PropertyMatcher("lit", "true")), AreaLocationCheckCondition.checkArea(KegBlockEntity.RANGE, LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.KEG.get()).build())))))
+                .addCriterion("placed_keg_near_source", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCBlocks.KEG.get()).build())), AreaLocationCheckCondition.checkArea(KegBlockEntity.RANGE, AnyOfCondition.anyOf(LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(ModTags.HEAT_SOURCES).build())), LocationCheck.checkLocation(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BnCTags.FREEZE_SOURCES).build()))), NullTrueBlockStateCondition.checkState(new NullTrueBlockStateCondition.PropertyMatcher("lit", "true")))))
                 .requirements(RequirementsStrategy.OR)
                 .save(saver, BrewinAndChewin.asResource("main/place_temperature_block_near_keg").toString());
         Advancement brewDrink = getAdvancement(placeKeg, BnCItems.VODKA.get(), Component.translatable("brewinandchewin.advancement.brew_drink"), Component.translatable("brewinandchewin.advancement.brew_drink.desc"), FrameType.TASK, true, true, false)
@@ -129,6 +113,11 @@ public class BnCAdvancements implements ForgeAdvancementProvider.AdvancementGene
 
     protected static Advancement.Builder getAdvancement(Advancement parent, ItemLike item, Component name, Component description, FrameType frameType, boolean showToast, boolean announceToChat, boolean hidden) {
         return Advancement.Builder.advancement().parent(parent).display(item, name, description, null, frameType, showToast, announceToChat, hidden);
+    }
+
+    protected static ItemUsedOnLocationTrigger.TriggerInstance itemUsedOnBlock(LootItemCondition.Builder... pConditions) {
+        ContextAwarePredicate contextawarepredicate = ContextAwarePredicate.create(Arrays.stream(pConditions).map(LootItemCondition.Builder::build).toArray(LootItemCondition[]::new));
+        return new ItemUsedOnLocationTrigger.TriggerInstance(CriteriaTriggers.ITEM_USED_ON_BLOCK.getId(), ContextAwarePredicate.ANY, contextawarepredicate);
     }
 
     protected static Advancement.Builder getCraftingProblemAdvancement(Advancement.Builder builder) {
