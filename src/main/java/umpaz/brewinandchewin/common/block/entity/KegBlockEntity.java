@@ -496,22 +496,12 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             }
         }
 
-        int heat = states.stream().filter(s -> s.is(ModTags.HEAT_SOURCES)).filter(s -> s.hasProperty(BlockStateProperties.LIT)).filter(s -> s.getValue(BlockStateProperties.LIT)).mapToInt(s -> 1).sum();
-        heat += states.stream().filter(s -> s.is(ModTags.HEAT_SOURCES)).filter(s -> !s.hasProperty(BlockStateProperties.LIT)).mapToInt(s -> 1).sum();
-        BlockState stateBelow = level.getBlockState(worldPosition.below());
-        if (stateBelow.is(ModTags.HEAT_CONDUCTORS)) {
-            BlockState stateFurtherBelow = level.getBlockState(worldPosition.below(2));
-            if (stateFurtherBelow.is(ModTags.HEAT_SOURCES)) {
-                if (stateFurtherBelow.hasProperty(BlockStateProperties.LIT)) {
-                    if (stateFurtherBelow.getValue(BlockStateProperties.LIT)) {
-                        heat += 1;
-                    }
-                } else {
-                    heat += 1;
-                }
-            }
-        }
-        int cold = states.stream().filter(s -> s.is(BnCTags.FREEZE_SOURCES)).mapToInt(s -> 1).sum();
+        int heat = states.stream().filter(s -> s.is(ModTags.HEAT_SOURCES) && s.hasProperty(BlockStateProperties.LIT)).filter(s -> s.getValue(BlockStateProperties.LIT)).mapToInt(s -> 1).sum();
+        heat += states.stream().filter(s -> s.is(ModTags.HEAT_SOURCES) && !s.hasProperty(BlockStateProperties.LIT)).mapToInt(s -> 1).sum();
+
+        // Compat with mods that have lit states, such as a future Pug FD addon.
+        int cold = states.stream().filter(s -> s.is(BnCTags.FREEZE_SOURCES) && s.hasProperty(BlockStateProperties.LIT)).filter(s -> s.hasProperty(BlockStateProperties.LIT)).filter(s -> s.getValue(BlockStateProperties.LIT)).mapToInt(s -> 1).sum();
+        cold += states.stream().filter(s -> s.is(BnCTags.FREEZE_SOURCES) && !s.hasProperty(BlockStateProperties.LIT)).mapToInt(s -> 1).sum();
 
         if (BnCConfiguration.KEG_BIOME_TEMP.get()) {
             Holder<Biome> biome = level.getBiome(worldPosition);
