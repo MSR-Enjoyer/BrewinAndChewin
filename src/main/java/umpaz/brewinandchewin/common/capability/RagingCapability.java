@@ -3,11 +3,12 @@ package umpaz.brewinandchewin.common.capability;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -25,7 +26,7 @@ import umpaz.brewinandchewin.common.registry.BnCEffects;
 import java.util.UUID;
 
 public class RagingCapability implements ICapabilitySerializable<CompoundTag> {
-    public static final int RESET_TICKS = 60;
+    public static final float RESET_TICK_MULTIPLIER = 2.5F;
     public static final ResourceLocation ID = BrewinAndChewin.asResource("raging");
     public static final Capability<RagingCapability> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
     private final LazyOptional<RagingCapability> thisOptional = LazyOptional.of(() -> this);
@@ -60,7 +61,7 @@ public class RagingCapability implements ICapabilitySerializable<CompoundTag> {
             if (!living.level().isClientSide()) {
                 if (cap.getTicksUntilReset() <= 0 &&  cap.getStacks() > 0) {
                     cap.setStacks(cap.getStacks() - 1);
-                    cap.setTicksUntilReset(RESET_TICKS);
+                    cap.setTicksUntilReset(Mth.ceil(RESET_TICK_MULTIPLIER * (living instanceof Player player ? player.getCurrentItemAttackStrengthDelay() : 30)));
                 }
 
                 if (cap.getStacks() <= 0 || !living.hasEffect(BnCEffects.RAGING.get())) {

@@ -113,7 +113,7 @@ public class BnCCommonEvents {
                     ((ServerLevel) target.level()).sendParticles(RagingCapability.getParticleType(stacks, 0.5F), target.getX(), target.getY(0.5), target.getZ(), 12, target.getRandom().nextDouble() * 0.4 - 0.2, target.getRandom().nextDouble() * heightAddition * 2 - heightAddition, target.getRandom().nextDouble() * 0.4 - 0.2, 0.0);
                 }
                 cap.setStacks(stacks);
-                cap.setTicksUntilReset(RagingCapability.RESET_TICKS);
+                cap.setTicksUntilReset(Mth.ceil(RagingCapability.RESET_TICK_MULTIPLIER * (living instanceof Player player ? player.getCurrentItemAttackStrengthDelay() : 30)));
             });
         }
     }
