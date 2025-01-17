@@ -2,15 +2,11 @@ package umpaz.brewinandchewin.common.event;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -18,20 +14,23 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.common.capability.RagingCapability;
 import umpaz.brewinandchewin.common.capability.TipsyNumbedHeartsCapability;
-import umpaz.brewinandchewin.common.item.BoozeItem;
 import umpaz.brewinandchewin.common.network.BnCNetworkHandler;
 import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsPacket;
 import umpaz.brewinandchewin.common.registry.BnCDamageTypes;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
-import vectorwing.farmersdelight.common.registry.ModItems;
+import umpaz.brewinandchewin.common.registry.BnCParticleTypes;
+import umpaz.brewinandchewin.common.tag.BnCTags;
 
 @Mod.EventBusSubscriber(modid = BrewinAndChewin.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class BnCCommonEvents {
     @SubscribeEvent
     public static void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof LivingEntity living)
+        if (event.getObject() instanceof LivingEntity living) {
             event.addCapability(TipsyNumbedHeartsCapability.ID, new TipsyNumbedHeartsCapability(living));
+            event.addCapability(RagingCapability.ID, new RagingCapability());
+        }
     }
 
     @SubscribeEvent
@@ -79,11 +78,24 @@ public class BnCCommonEvents {
             if (!living.level().isClientSide)
                 cap.sync();
         });
+        RagingCapability.tick(living);
+
+        if (living.hasEffect(BnCEffects.RAGING.get()) && living.getEffect(BnCEffects.RAGING.get()).isVisible() && living.getRandom().nextInt(3) == 0) {
+            double heightAddition = living.getBbHeight() - living.getEyeHeight();
+            living.level().addParticle(BnCParticleTypes.RAGING.get(), living.getRandomX(0.7D), living.getRandom().nextDouble() * heightAddition + living.getEyeY() - heightAddition * 2, living.getRandomZ(0.7D), 0.0, 0.0, 0.0);
+        }
     }
 
     @SubscribeEvent
     public static void onLivingDamage(LivingHurtEvent event) { // Use LivingHurtEvent so we can run before Protection enchantments, Resistance and Absorption.
+        Entity attacker = event.getSource().getEntity();
         LivingEntity target = event.getEntity();
+        if (attacker instanceof LivingEntity living && (!(living instanceof Player player) || player.getAttackStrengthScale(0.0F) > 0.8F) && living.hasEffect(BnCEffects.RAGING.get()) && event.getSource().is(BnCTags.TRIGGERS_RAGING)) {
+            living.getCapability(RagingCapability.INSTANCE).ifPresent((RagingCapability cap) -> {
+                cap.setStacks(Math.min(4, cap.getStacks() + 1));
+                cap.setTicksUntilReset(120);
+            });
+        }
         if (!target.hasEffect(BnCEffects.TIPSY.get()) || event.getSource().is(BnCDamageTypes.CARDIAC_ARREST))
             return;
         int amplifier = target.getEffect(BnCEffects.TIPSY.get()).getAmplifier();

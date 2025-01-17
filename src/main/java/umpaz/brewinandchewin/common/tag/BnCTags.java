@@ -6,6 +6,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -27,6 +28,8 @@ public class BnCTags {
     public static final TagKey<MobEffect> MILK_BOTTLE_LOW_PRIORITY = modEffectTag("low_priority/milk_bottle");
     public static final TagKey<MobEffect> HOT_COCOA_LOW_PRIORITY = modEffectTag("low_priority/hot_cocoa");
 
+    public static final TagKey<DamageType> TRIGGERS_RAGING = modDamageTypeTag("triggers_raging");
+
 
     private static TagKey<Item> modItemTag(String path) {
         return ItemTags.create(new ResourceLocation(BrewinAndChewin.MODID, path));
@@ -42,5 +45,9 @@ public class BnCTags {
 
     private static TagKey<MobEffect> modEffectTag(String path) {
         return TagKey.create(Registries.MOB_EFFECT, new ResourceLocation(BrewinAndChewin.MODID, path));
+    }
+
+    private static TagKey<DamageType> modDamageTypeTag(String path) {
+        return TagKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(BrewinAndChewin.MODID, path));
     }
 }

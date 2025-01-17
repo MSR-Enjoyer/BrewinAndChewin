@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class SweetHeartEffect extends MobEffect {
 
     public SweetHeartEffect() {
-        super(MobEffectCategory.BENEFICIAL, 16077186);
+        super(MobEffectCategory.BENEFICIAL, 0);
     }
 
     @Override

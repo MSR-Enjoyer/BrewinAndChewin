@@ -14,6 +14,8 @@ public class BnCParticleTypes {
 
     public static final RegistryObject<SimpleParticleType> FOG = PARTICLE_TYPES.register("fog",
             () -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> RAGING = PARTICLE_TYPES.register("raging",
+            () -> new SimpleParticleType(false));
 
 
    public static final RegistryObject<ParticleType<DrunkBubbleParticleOptions>> DRUNK_BUBBLE = PARTICLE_TYPES.register("drunk_bubble", () -> new ParticleType<>(false, DrunkBubbleParticleOptions.DESERIALIZER) {

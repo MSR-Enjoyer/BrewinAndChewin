@@ -16,7 +16,7 @@ import java.util.List;
 public class TipsyEffect extends MobEffect {
 
    public TipsyEffect() {
-      super(MobEffectCategory.NEUTRAL, 13208334);
+      super(MobEffectCategory.NEUTRAL, 0);
    }
 
    @Override

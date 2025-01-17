@@ -6,6 +6,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.effect.IntoxicationEffect;
+import umpaz.brewinandchewin.common.effect.RagingEffect;
 import umpaz.brewinandchewin.common.effect.SweetHeartEffect;
 import umpaz.brewinandchewin.common.effect.TipsyEffect;
 
@@ -15,6 +16,7 @@ public class BnCEffects {
 
     public static final RegistryObject<MobEffect> INTOXICATION = EFFECTS.register("intoxication", IntoxicationEffect::new);
     public static final RegistryObject<MobEffect> SWEET_HEART = EFFECTS.register("sweet_heart", SweetHeartEffect::new);
+    public static final RegistryObject<MobEffect> RAGING = EFFECTS.register("raging", RagingEffect::new);
     public static final RegistryObject<MobEffect> TIPSY = EFFECTS.register("tipsy", TipsyEffect::new);
 
 }

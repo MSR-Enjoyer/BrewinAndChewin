@@ -32,6 +32,7 @@ public class BnCDataGenerators {
         generator.addProvider(event.includeServer(), new BnCItemTags(output, lookupProvider, blockTags.contentsGetter(), helper));
         generator.addProvider(event.includeServer(), new BnCFluidTags(output, lookupProvider, helper));
         generator.addProvider(event.includeServer(), new BnCMobEffectTags(output, lookupProvider, helper));
+        generator.addProvider(event.includeServer(), new BnCDamageTypeTags(output, lookupProvider, helper));
         generator.addProvider(event.includeServer(), new BnCRecipes(output));
         generator.addProvider(event.includeServer(), new LootTableProvider(output, Collections.emptySet(), List.of(
                 new LootTableProvider.SubProviderEntry(BnCBlockLoot::new, LootContextParamSets.BLOCK)

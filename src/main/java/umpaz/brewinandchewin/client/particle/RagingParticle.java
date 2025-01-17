@@ -1,0 +1,81 @@
+package umpaz.brewinandchewin.client.particle;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+
+import javax.annotation.Nonnull;
+
+public class RagingParticle extends TextureSheetParticle {
+    private static final RandomSource RANDOM = RandomSource.create();
+    private final SpriteSet sprites;
+
+    protected RagingParticle(ClientLevel level, double x, double y, double z, double motionX, double motionY, double motionZ, SpriteSet sprites) {
+        super(level, x, y, z, 0.5D - RANDOM.nextDouble(), motionY, 0.5D - RANDOM.nextDouble());
+        this.friction = 0.96F;
+        this.gravity = -0.1F;
+        this.speedUpWhenYMotionIsBlocked = true;
+        this.sprites = sprites;
+        yd *= 0.2F;
+        if (motionX == 0.0D && motionZ == 0.0D) {
+            this.xd *= 0.1F;
+            this.zd *= 0.1F;
+        }
+        oRoll = 0.4F;
+        roll = 0.4F;
+
+        this.quadSize *= 0.75F;
+        this.lifetime = (int) (8.0D / (Math.random() * 0.8D + 0.2D));
+        this.hasPhysics = false;
+        this.setSpriteFromAge(sprites);
+        if (this.isCloseToScopingPlayer()) {
+            this.setAlpha(0.0F);
+        }
+    }
+
+    @Override
+    @Nonnull
+    public ParticleRenderType getRenderType() {
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    }
+
+    public void tick() {
+        super.tick();
+        if (random.nextFloat() < 0.2F)
+            setSprite(sprites.get(random));
+        oRoll = 0.4F;
+        roll = 0.4F;
+        if (this.isCloseToScopingPlayer()) {
+            this.setAlpha(0.0F);
+        } else {
+            this.setAlpha(Mth.lerp(0.025F, alpha, 1.0F));
+        }
+    }
+
+    private boolean isCloseToScopingPlayer() {
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer localplayer = minecraft.player;
+        return localplayer != null && localplayer.getEyePosition().distanceToSqr(this.x, this.y, this.z) <= 9.0D && minecraft.options.getCameraType().isFirstPerson() && localplayer.isScoping();
+    }
+
+    public static class Factory implements ParticleProvider<SimpleParticleType> {
+        private final SpriteSet spriteSet;
+
+        public Factory(SpriteSet sprite) {
+            this.spriteSet = sprite;
+        }
+
+        @Override
+        public Particle createParticle(SimpleParticleType typeIn, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+            return new RagingParticle(level, x, y + 0.3D, z, xSpeed, ySpeed, zSpeed, spriteSet);
+        }
+    }
+}

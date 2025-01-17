@@ -1,6 +1,5 @@
 package umpaz.brewinandchewin.client.event;
 
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
@@ -9,6 +8,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.particle.DrunkBubbleParticle;
+import umpaz.brewinandchewin.client.particle.RagingParticle;
 import umpaz.brewinandchewin.client.renderer.CoasterBlockEntityRenderer;
 import umpaz.brewinandchewin.common.registry.BnCBlockEntityTypes;
 import umpaz.brewinandchewin.common.registry.BnCParticleTypes;
@@ -24,7 +24,8 @@ public class BnCClientSetupEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerParticles(RegisterParticleProvidersEvent event) {
-        Minecraft.getInstance().particleEngine.register(BnCParticleTypes.FOG.get(), SteamParticle.Factory::new);
-        Minecraft.getInstance().particleEngine.register(BnCParticleTypes.DRUNK_BUBBLE.get(), DrunkBubbleParticle.Factory::new);
+        event.registerSpriteSet(BnCParticleTypes.FOG.get(), SteamParticle.Factory::new);
+        event.registerSpriteSet(BnCParticleTypes.DRUNK_BUBBLE.get(), DrunkBubbleParticle.Factory::new);
+        event.registerSpriteSet(BnCParticleTypes.RAGING.get(), RagingParticle.Factory::new);
     }
 }
