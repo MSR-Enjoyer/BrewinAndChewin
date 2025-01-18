@@ -27,7 +27,7 @@ public class TipsyDrunkRendererMixin {
             float distortionScale = minecraft.options.screenEffectScale().get().floatValue();
             if (distortionScale > 0) {
                 int ticks = minecraft.levelRenderer.getTicks();
-                int strength = player.getEffect(BnCEffects.TIPSY.get()).getAmplifier();
+                int strength = Math.min(player.getEffect(BnCEffects.TIPSY.get()).getAmplifier(), 11);
                 float scaledStrength = strength * distortionScale;
 
                 // left and right

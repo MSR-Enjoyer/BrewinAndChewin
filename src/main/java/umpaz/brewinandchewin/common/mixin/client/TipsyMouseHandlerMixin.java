@@ -10,7 +10,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 
 @Mixin(MouseHandler.class)
@@ -26,12 +28,20 @@ public class TipsyMouseHandlerMixin {
     @Unique
     private final SmoothDouble brewinandchewin$smoothTurnY = new SmoothDouble();
 
+    @Inject(method = "turnPlayer", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;lastMouseEventTime:D", ordinal = 1))
+    private void brewinandchewin$resetSmoothTurn(CallbackInfo ci) {
+        if (minecraft.player != null && minecraft.player.hasContainerOpen() || minecraft.options.smoothCamera) {
+            brewinandchewin$smoothTurnX.reset();
+            brewinandchewin$smoothTurnY.reset();
+        }
+    }
+
     @ModifyVariable(method = "turnPlayer()V", at = @At(value = "STORE", ordinal = 2), ordinal = 5) // Targets the else block if where the player is scoping.
     private double brewinandchewin$smoothCameraMovementScopedX(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 3) double d5) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
-                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0;
-                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d5 * Math.max(1.0, tipsyDelta * 1.6));
+                double tipsyDelta = Math.min(1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier(), 10) / 10.0;
+                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d5 * Math.max(1.0, tipsyDelta * 2.0));
             }
         }
         brewinandchewin$smoothTurnX.reset();
@@ -42,8 +52,8 @@ public class TipsyMouseHandlerMixin {
     private double brewinandchewin$smoothCameraMovementScopedY(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 3) double d5) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
-                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0;
-                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d5 * Math.max(1.0, tipsyDelta * 1.6));
+                double tipsyDelta = Math.min(1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier(), 10) / 10.0;
+                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d5 * Math.max(1.0, tipsyDelta * 2.0));
             }
         }
         brewinandchewin$smoothTurnY.reset();
@@ -54,8 +64,8 @@ public class TipsyMouseHandlerMixin {
     private double brewinandchewin$smoothCameraMovementX(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 4) double d6) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
-                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0;
-                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta * 1.6));
+                double tipsyDelta = Math.min(1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier(), 10) / 10.0;
+                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta * 2.0));
             }
         }
         brewinandchewin$smoothTurnX.reset();
@@ -66,8 +76,8 @@ public class TipsyMouseHandlerMixin {
     private double brewinandchewin$smoothCameraMovementY(double original, @Local(ordinal = 1) double d1, @Local(ordinal = 4) double d6) {
         if (minecraft.player != null && !minecraft.player.isSpectator()) {
             if (minecraft.player.hasEffect(BnCEffects.TIPSY.get()) && minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() > 1) {
-                double tipsyDelta = (1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier()) / 10.0;
-                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta * 1.6));
+                double tipsyDelta = Math.min(1 + minecraft.player.getEffect(BnCEffects.TIPSY.get()).getAmplifier(), 10) / 10.0;
+                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, d1 * 10, d1) * d6 * Math.max(1.0, tipsyDelta * 2.0));
             }
         }
         brewinandchewin$smoothTurnY.reset();

@@ -21,7 +21,7 @@ public class TipsyEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        if (entity.level().isClientSide && entity.level().random.nextInt(13 - amplifier) == 0) {
+        if (entity.level().isClientSide && entity.level().random.nextInt(Math.max(13 - amplifier, 4)) == 0) {
             entity.level().addParticle(getParticle(), entity.getRandomX(1.0D), entity.getEyeY() - entity.getRandom().nextDouble() + .25d, entity.getRandomZ(1.0D), 0.0D, 0.0D, 0.0D);
         }
     }
