@@ -76,13 +76,13 @@ public class BnCFluidItemDisplays {
                             if (fluid == null) {
                                 if (e.getValue().isJsonObject() && e.getValue().getAsJsonObject().has("optional") && e.getValue().getAsJsonObject().get("optional").getAsBoolean())
                                     continue;
-                                BrewinAndChewin.LOG.error("Could not find fluid '" + e.getKey() + "' from fluid item display JSON at location '" + entry.getKey() + "' from pack '" + resource.sourcePackId() + "'.");
+                                BrewinAndChewin.LOG.error("Could not find fluid '{}' from fluid item display JSON at location '{}' from pack '{}'.", e.getKey(), entry.getKey(), resource.sourcePackId());
                                 continue;
                             }
                             map.put(fluid, FluidBasedItemStack.createFromJson(e.getValue(), fluid));
                         }
-                    } catch (IllegalArgumentException | IOException | JsonParseException jsonparseexception) {
-                        BrewinAndChewin.LOG.error("Couldn't parse fluid item display JSON at location '{}' from pack '{}'", entry.getKey(), resource.sourcePackId());
+                    } catch (IllegalArgumentException | IOException | JsonParseException ex) {
+                        BrewinAndChewin.LOG.error("Couldn't parse fluid item display JSON at location '{}' from pack '{}'. ", entry.getKey(), resource.sourcePackId(), ex);
                     }
                 }
             }
