@@ -7,14 +7,14 @@
     }
   ],
   "basefluid": {
-    "amount": 1000,
+    "count": 1000,
     "fluid": "farmersrespite:green_tea"
   },
-  "cookingtime": 36000,
+  "fermentingtime": 9600,
   "experience": 1.0,
   "ingredients": [
     {
-      "item": "minecraft:carrot"
+      "tag": "forge:crops/carrot"
     },
     {
       "item": "minecraft:sweet_berries"
@@ -24,7 +24,7 @@
     }
   ],
   "result": {
-    "amount": 1000,
+    "count": 1000,
     "fluid": "brewinandchewin:kombucha"
   },
   "temperature": 3
