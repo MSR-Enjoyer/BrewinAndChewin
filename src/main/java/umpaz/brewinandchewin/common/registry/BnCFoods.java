@@ -134,22 +134,22 @@ public class BnCFoods {
     //Bowl Foods
     public static final FoodProperties FIERY_FONDUE = (new FoodProperties.Builder())
             .nutrition(14).saturationMod(0.75f)
-            .effect(() -> new MobEffectInstance(ModEffects.COMFORT.get(), 7200, 0), 1.0F).build();
+            .effect(() -> new MobEffectInstance(ModEffects.COMFORT.get(), 8400, 0), 1.0F).build();
 
     public static final FoodProperties QUICHE_SLICE = (new FoodProperties.Builder())
             .nutrition(4).saturationMod(0.8F).fast().build();
     public static final FoodProperties VEGETABLE_OMELET = (new FoodProperties.Builder())
             .nutrition(12).saturationMod(0.8F)
-            .effect(() -> new MobEffectInstance(ModEffects.NOURISHMENT.get(), 4800, 0), 1.0F).build();
+            .effect(() -> new MobEffectInstance(ModEffects.NOURISHMENT.get(), 3600, 0), 1.0F).build();
     public static final FoodProperties CREAMY_ONION_SOUP = (new FoodProperties.Builder())
             .nutrition(12).saturationMod(0.8F)
-            .effect(() -> new MobEffectInstance(ModEffects.COMFORT.get(), 4800, 0), 1.0F).build();
+            .effect(() -> new MobEffectInstance(ModEffects.COMFORT.get(), 3600, 0), 1.0F).build();
     public static final FoodProperties CHEESY_PASTA = (new FoodProperties.Builder())
             .nutrition(14).saturationMod(0.75F)
             .effect(() -> new MobEffectInstance(ModEffects.NOURISHMENT.get(), 6000, 0), 1.0F).build();
     public static final FoodProperties SCARLET_PIEROGIES = (new FoodProperties.Builder())
             .nutrition(12).saturationMod(1.0F)
-            .effect(() -> new MobEffectInstance(ModEffects.NOURISHMENT.get(), 7200, 0), 1.0F).build();
+            .effect(() -> new MobEffectInstance(ModEffects.NOURISHMENT.get(), 8400, 0), 1.0F).build();
     public static final FoodProperties HORROR_LASAGNA = (new FoodProperties.Builder())
             .nutrition(16).saturationMod(0.55F)
             .effect(() -> new MobEffectInstance(ModEffects.NOURISHMENT.get(), 6000, 0), 1.0F).build();
