@@ -22,7 +22,6 @@ import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
 import java.util.Objects;
-import java.util.Optional;
 
 public class KegMenu extends RecipeBookMenu<KegRecipeWrapper>
 {
