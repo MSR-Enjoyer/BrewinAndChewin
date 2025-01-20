@@ -116,7 +116,7 @@ public class KegStackedContents extends StackedContents {
 
                         if (!kegTank.isEmpty() && !kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) || tankAmount < fermentingRecipe.getFluidIngredient().getAmount()) {
                             for (PouringEntry entry : List.copyOf(fluidOutputStacks)) {
-                                int itemAmount = (fermentingRecipe.getFluidIngredient().getAmount() / entry.fluidAmount()) - ((tankAmount % fermentingRecipe.getFluidIngredient().getAmount()) / entry.fluidAmount());
+                                int itemAmount = (Math.max(fermentingRecipe.getFluidIngredient().getAmount(), entry.fluidAmount() - tankAmount) / entry.fluidAmount()) - ((tankAmount % fermentingRecipe.getFluidIngredient().getAmount()) / entry.fluidAmount());
                                 if (itemAmount <= 0 || (itemAmount * entry.fluidAmount()) + tankAmount > kegTank.getCapacity())
                                     fluidOutputStacks.remove(entry);
                                 else
