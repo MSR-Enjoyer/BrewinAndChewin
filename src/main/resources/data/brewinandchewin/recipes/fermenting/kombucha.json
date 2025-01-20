@@ -3,7 +3,7 @@
   "conditions": [
     {
       "type": "forge:mod_loaded",
-      "modid": "farmers_respite"
+      "modid": "farmersrespite"
     }
   ],
   "basefluid": {
