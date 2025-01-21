@@ -1,5 +1,7 @@
 ## Changes
 - Implemented the ability to use the `output`'s crafting remainder item for pouring recipe containers. You may do this by not specifying a `container` if the `output` has a crafting remainder. ([#9](https://github.com/MerchantPug/BrewinAndChewin/issues/9))
+- Updated `en_us` with effect descriptions. ([#10](https://github.com/MerchantPug/BrewinAndChewin/pull/10))
+- Added `ru_ru` lang support. ([#10](https://github.com/MerchantPug/BrewinAndChewin/pull/10))
 
 ## Bugfixes
 - Fixed vanilla recipe books being unable to place uncombined stacks of items.
