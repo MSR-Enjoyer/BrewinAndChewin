@@ -69,9 +69,13 @@
   "item.brewinandchewin.kombucha": "Kombucha",
 
   "effect.brewinandchewin.tipsy": "Tipsy",
+  "effect.brewinandchewin.tipsy.description": "§kDescription Missing§r",
   "effect.brewinandchewin.intoxication": "Intoxication",
+  "effect.brewinandchewin.intoxication.description": "§kDescription Missing§r",
   "effect.brewinandchewin.raging": "Raging",
+  "effect.brewinandchewin.raging.description": "§kDescription Missing§r",
   "effect.brewinandchewin.sweet_heart": "Sweet Heart",
+  "effect.brewinandchewin.sweet_heart.description": "§kDescription Missing§r",
   "brewinandchewin.tooltip.dread_nog": "Increases Bad Omen By 1",
   "brewinandchewin.container.keg.served_in": "Served in: %s",
   "brewinandchewin.container.keg.temperature_requirement": "Must Be %s",
