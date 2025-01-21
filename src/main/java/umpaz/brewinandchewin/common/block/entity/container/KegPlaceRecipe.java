@@ -159,13 +159,8 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                             }).findFirst();
                             if (optionalData.isPresent()) {
                                 int itemAmount = Mth.clamp(((fermentingRecipe.getFluidIngredient().getAmount() / optionalData.get().getAmount()) - ((kegTank.getFluidAmount() % fermentingRecipe.getFluidIngredient().getAmount()) / optionalData.get().getAmount())) * k, 1, Math.min(stack.getCount(), kegTank.getCapacity() / optionalData.get().getAmount()));
-                                int endFluidAmount = optionalData.get().getAmount() * itemAmount + fluidToInsert + (!kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) ? 0 : kegTank.getFluidAmount());
-
-                                if (endFluidAmount > kegTank.getCapacity())
-                                    continue;
-                                boolean canInsert = endFluidAmount % fermentingRecipe.getFluidIngredient().getAmount() == 0;
                                 ItemStack outputStack = optionalData.get().getOutput().copyWithCount(itemAmount);
-                                if (insertItems.stream().anyMatch(recipeItem -> recipeItem.fluidAmount > optionalData.get().getAmount()) || !canInsert)
+                                if (insertItems.stream().anyMatch(recipeItem -> recipeItem.fluidAmount > optionalData.get().getAmount()))
                                     continue;
                                 if (insertItems.stream().anyMatch(recipeItem -> recipeItem.fluidAmount < optionalData.get().getAmount())) {
                                     fluidToInsert = 0;
@@ -175,6 +170,16 @@ public class KegPlaceRecipe extends ServerPlaceRecipe<KegRecipeWrapper> {
                                     continue;
                                 insertItems.add(new RecipeItem(i, itemAmount, optionalData.get().getAmount() * itemAmount, optionalData.get().getContainer().copy(), outputStack));
                                 fluidToInsert += optionalData.get().getAmount() * itemAmount;
+                            }
+                        }
+                        int endFluidAmount = fluidToInsert + (!kegTank.getFluid().isFluidEqual(fermentingRecipe.getFluidIngredient()) ? 0 : kegTank.getFluidAmount());
+                        if (endFluidAmount % fermentingRecipe.getFluidIngredient().getAmount() != 0) {
+                            int itemCount = endFluidAmount / fermentingRecipe.getFluidIngredient().getAmount();
+                            for (int i = 0; i < itemCount; ++i) {
+                                if (itemCount % fermentingRecipe.getFluidIngredient().getAmount() == 0)
+                                    break;
+                                insertItems.remove(insertItems.size() - 1);
+                                --itemCount;
                             }
                         }
                         if (!insertItems.isEmpty()) {
