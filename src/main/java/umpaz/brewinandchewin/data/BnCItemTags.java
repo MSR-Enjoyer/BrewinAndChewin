@@ -4,20 +4,15 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.registry.BnCItems;
+import umpaz.brewinandchewin.common.tag.BnCCompatTags;
 import umpaz.brewinandchewin.common.tag.BnCTags;
-import vectorwing.farmersdelight.FarmersDelight;
 import vectorwing.farmersdelight.common.registry.ModItems;
-import vectorwing.farmersdelight.common.tag.CompatibilityTags;
 import vectorwing.farmersdelight.common.tag.ForgeTags;
-import vectorwing.farmersdelight.common.tag.ModTags;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
@@ -61,5 +56,14 @@ public class BnCItemTags extends ItemTagsProvider {
         tag(BnCTags.HORROR_MEATS).addTag(ForgeTags.RAW_BEEF).addTag(ForgeTags.RAW_MUTTON);
         tag(BnCTags.RAW_MEATS).addTag(ForgeTags.RAW_BACON).addTag(ForgeTags.RAW_BEEF).addTag(ForgeTags.RAW_CHICKEN)
                 .addTag(ForgeTags.RAW_MUTTON).addTag(ForgeTags.RAW_PORK).add(Items.ROTTEN_FLESH);
+        tag(BnCCompatTags.ORIGINS_MEAT)
+                .add(BnCItems.JERKY.get())
+                .add(BnCItems.KIPPERS.get())
+                .add(BnCItems.CHEESY_PASTA.get())
+                .add(BnCItems.HORROR_LASAGNA.get())
+                .add(BnCItems.FIERY_FONDUE.get())
+                .add(BnCItems.HAM_AND_CHEESE_SANDWICH.get());
+        tag(BnCCompatTags.ORIGINS_IGNORE_DIET)
+                .addTag(BnCTags.FERMENTED_DRINKS);
     }
 }
