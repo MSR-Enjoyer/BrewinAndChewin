@@ -122,7 +122,7 @@ public class CoasterBlock extends BaseEntityBlock {
 
     @Override
     public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
-        return Math.max(blockState.getValue(SIZE) * 4, 15);
+        return Math.min(blockState.getValue(SIZE) * 4, 15);
     }
 
     @Override
