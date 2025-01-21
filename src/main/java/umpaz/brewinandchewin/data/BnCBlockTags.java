@@ -56,6 +56,7 @@ public class BnCBlockTags extends BlockTagsProvider
         );
 
         tag(ModTags.HEAT_SOURCES).add(
+                BnCBlocks.FIERY_FONDUE_POT.get(),
                 BnCBlocks.HEATING_CASK.get()
         );
     }
