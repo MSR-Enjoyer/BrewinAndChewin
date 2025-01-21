@@ -3,7 +3,6 @@ package umpaz.brewinandchewin.common.crafting;
 import com.google.gson.JsonObject;
 import com.simibubi.create.AllFluids;
 import com.simibubi.create.content.fluids.potion.PotionFluid;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -12,29 +11,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.DifferenceIngredient;
-import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import umpaz.brewinandchewin.common.registry.BnCRecipeSerializers;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class CreatePotionPouringRecipe extends KegPouringRecipe {
 
-    public CreatePotionPouringRecipe(ResourceLocation id, ItemStack container, int amount) {
+    public CreatePotionPouringRecipe(ResourceLocation id, Optional<ItemStack> container, int amount) {
         super(id, AllFluids.POTION.get().getSource(), container, Items.POTION.getDefaultInstance(), amount, false, true);
-    }
-
-    @Override
-    public NonNullList<Ingredient> getIngredients() {
-        NonNullList<Ingredient> ingredient = NonNullList.create();
-        ingredient.add(DifferenceIngredient.of(Ingredient.of(Items.POTION), StrictNBTIngredient.of(Items.POTION.getDefaultInstance())));
-        return ingredient;
     }
 
     @Override
@@ -69,7 +59,7 @@ public class CreatePotionPouringRecipe extends KegPouringRecipe {
         @Override
         public CreatePotionPouringRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
             final int amountIn = GsonHelper.getAsInt(json, "amount", 250);
-            final ItemStack containerIn = CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "container"), true);
+            final Optional<ItemStack> containerIn = GsonHelper.isValidNode(json, "container") ? Optional.of(CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "container"), true)) : Optional.empty();
             return new CreatePotionPouringRecipe(recipeId, containerIn, amountIn);
         }
 
@@ -77,14 +67,14 @@ public class CreatePotionPouringRecipe extends KegPouringRecipe {
         @Override
         public CreatePotionPouringRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
             int amountIn = buffer.readVarInt();
-            ItemStack containerIn = buffer.readItem();
+            Optional<ItemStack> containerIn = buffer.readOptional(FriendlyByteBuf::readItem);
             return new CreatePotionPouringRecipe(recipeId, containerIn, amountIn);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buffer, CreatePotionPouringRecipe recipe) {
             buffer.writeVarInt(recipe.getAmount());
-            buffer.writeItem(recipe.getContainer());
+            buffer.writeOptional(recipe.getRawContainer(), FriendlyByteBuf::writeItem);
         }
     }
 }

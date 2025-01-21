@@ -1,6 +1,7 @@
 package umpaz.brewinandchewin.common.crafting;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,17 +21,18 @@ import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Optional;
 
 public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
     private final ResourceLocation id;
     private final Fluid fluid;
     private final int amount;
-    private final ItemStack container;
+    private final Optional<ItemStack> container;
     private final ItemStack output;
     private final boolean strict;
     private final boolean filling;
 
-    public KegPouringRecipe(ResourceLocation id, Fluid fluid, ItemStack container, ItemStack output, int amount, boolean strict, boolean filling) {
+    public KegPouringRecipe(ResourceLocation id, Fluid fluid, Optional<ItemStack> container, ItemStack output, int amount, boolean strict, boolean filling) {
         this.id = id;
         this.amount = amount;
         this.fluid = fluid;
@@ -48,13 +50,13 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
     @Override
     public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> ingredient = NonNullList.create();
-        ingredient.add(Ingredient.of(this.container));
+        ingredient.add(Ingredient.of(getContainer()));
         return ingredient;
     }
 
     @Override
     public boolean matches(KegRecipeWrapper inv, Level level) {
-        return Ingredient.of(this.container).test(inv.getItem(4));
+        return Ingredient.of(getContainer()).test(inv.getItem(4));
     }
 
     @Override
@@ -68,6 +70,10 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
     }
 
     public ItemStack getContainer(){
+        return this.container.orElse(output.getCraftingRemainingItem());
+    }
+
+    public Optional<ItemStack> getRawContainer(){
         return this.container;
     }
 
@@ -144,10 +150,12 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
         public KegPouringRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
             final Fluid fluidIn = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(GsonHelper.getAsString(json, "fluid")));
             final int amountIn = GsonHelper.getAsInt(json, "amount", 250);
-            ItemStack container = GsonHelper.isValidNode(json, "container") ? CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "container"), true) : ItemStack.EMPTY;
+            Optional<ItemStack> container = GsonHelper.isValidNode(json, "container") ? Optional.of(CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "container"), true)) : Optional.empty();
             final ItemStack outputIn = CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "output"), true);
             final boolean strictIn = GsonHelper.getAsBoolean(json, "strict", false);
             final boolean fillingIn = GsonHelper.getAsBoolean(json, "filling", true);
+            if (!outputIn.hasCraftingRemainingItem() && container.isEmpty())
+                throw new JsonParseException("\"container\" field must be specified if the output doesn't have a crafting remainder item.");
             return new KegPouringRecipe(recipeId, fluidIn, container, outputIn, amountIn, strictIn, fillingIn);
         }
 
@@ -156,7 +164,7 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
         public KegPouringRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
             Fluid fluidIn = buffer.readFluidStack().getFluid();
             int amountIn = buffer.readVarInt();
-            ItemStack containerIn = buffer.readItem();
+            Optional<ItemStack> containerIn = buffer.readOptional(FriendlyByteBuf::readItem);
             ItemStack outputIn = buffer.readItem();
             boolean strictIn  = buffer.readBoolean();
             boolean fillingIn = buffer.readBoolean();
@@ -167,7 +175,7 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
         public void toNetwork(FriendlyByteBuf buffer, KegPouringRecipe recipe) {
             buffer.writeFluidStack(new FluidStack(recipe.fluid, 1000));
             buffer.writeVarInt(recipe.amount);
-            buffer.writeItem(recipe.container);
+            buffer.writeOptional(recipe.container, FriendlyByteBuf::writeItem);
             buffer.writeItem(recipe.output);
             buffer.writeBoolean(recipe.strict);
             buffer.writeBoolean(recipe.filling);

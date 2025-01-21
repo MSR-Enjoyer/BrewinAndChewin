@@ -17,7 +17,9 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.registries.ForgeRegistries;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
 import umpaz.brewinandchewin.common.registry.BnCRecipeSerializers;
+import umpaz.brewinandchewin.data.recipe.KegPouringRecipes;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class KegPouringRecipeBuilder {
-    private final ItemStack container;
+    private ItemStack container;
     private final Fluid fluid;
     private final int amount;
     private final ItemStack output;
@@ -33,8 +35,7 @@ public class KegPouringRecipeBuilder {
     private final boolean filling;
     private final List<ICondition> conditions = new ArrayList<>();
 
-    private KegPouringRecipeBuilder(ItemStack container, Fluid fluid, int amount, ItemStack output, boolean strict, boolean filling) {
-        this.container = container;
+    private KegPouringRecipeBuilder(Fluid fluid, int amount, ItemStack output, boolean strict, boolean filling) {
         this.fluid = fluid;
         this.amount = amount;
         this.output = output;
@@ -42,20 +43,25 @@ public class KegPouringRecipeBuilder {
         this.filling = filling;
     }
 
-    public static KegPouringRecipeBuilder kegPouringRecipe(ItemLike container, Fluid fluid, int amount, ItemStack output, boolean strict) {
-        return new KegPouringRecipeBuilder(container.asItem().getDefaultInstance(), fluid, amount, output, strict, true);
+    public static KegPouringRecipeBuilder kegPouringRecipe(Fluid fluid, int amount, ItemStack output, boolean strict) {
+        return new KegPouringRecipeBuilder(fluid, amount, output, strict, true);
     }
 
-    public static KegPouringRecipeBuilder kegPouringRecipe(ItemLike container, Fluid fluid, int amount, ItemStack output, boolean strict, boolean filling) {
-        return new KegPouringRecipeBuilder(container.asItem().getDefaultInstance(), fluid, amount, output, strict, filling);
+    public static KegPouringRecipeBuilder kegPouringRecipe(Fluid fluid, int amount, ItemStack output, boolean strict, boolean filling) {
+        return new KegPouringRecipeBuilder(fluid, amount, output, strict, filling);
     }
 
-    public static KegPouringRecipeBuilder kegPouringRecipe(ItemLike container, Fluid fluid, int amount, ItemLike output) {
-        return new KegPouringRecipeBuilder(container.asItem().getDefaultInstance(), fluid, amount, output.asItem().getDefaultInstance(), false, true);
+    public static KegPouringRecipeBuilder kegPouringRecipe(Fluid fluid, int amount, ItemLike output) {
+        return new KegPouringRecipeBuilder(fluid, amount, output.asItem().getDefaultInstance(), false, true);
     }
 
-    public static KegPouringRecipeBuilder kegPouringRecipe(ItemLike container, Fluid fluid, int amount, ItemLike output, boolean filling) {
-        return new KegPouringRecipeBuilder(container.asItem().getDefaultInstance(), fluid, amount, output.asItem().getDefaultInstance(), false, filling);
+    public static KegPouringRecipeBuilder kegPouringRecipe(Fluid fluid, int amount, ItemLike output, boolean filling) {
+        return new KegPouringRecipeBuilder(fluid, amount, output.asItem().getDefaultInstance(), false, filling);
+    }
+
+    public KegPouringRecipeBuilder withContainer(ItemLike container) {
+        this.container = container.asItem().getDefaultInstance();
+        return this;
     }
 
     public KegPouringRecipeBuilder withCondition(ICondition condition) {
@@ -78,6 +84,9 @@ public class KegPouringRecipeBuilder {
     }
 
     public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
+        if (!output.hasCraftingRemainingItem() && container == null)
+            throw new IllegalStateException("Pouring Recipe " + id + " must specify a container as the output does not have a remainder.");
+
         consumerIn.accept(new KegPouringRecipeBuilder.Result(id, container, fluid, amount, output, strict, filling, conditions));
 
         if (ForgeRegistries.ITEMS.getKey(output.getItem()).getNamespace().equals("create"))
@@ -85,7 +94,7 @@ public class KegPouringRecipeBuilder {
 
         var fillingBuilder = new ProcessingRecipeBuilder<>(FillingRecipe::new, new ResourceLocation(BrewinAndChewin.MODID, "create/" + id.getPath().replace("pouring/", "")))
                 .require(fluid, amount)
-                .require(container.getItem())
+                .require(container == null ? output.getCraftingRemainingItem().getItem() : container.getItem())
                 .output(output)
                 .withCondition(new ModLoadedCondition("create"));
 
@@ -99,7 +108,7 @@ public class KegPouringRecipeBuilder {
 
         var emptyingBuilder = new ProcessingRecipeBuilder<>(EmptyingRecipe::new, new ResourceLocation(BrewinAndChewin.MODID, "create/" + id.getPath().replace("pouring/", "")))
                 .output(fluid, amount)
-                .output(container)
+                .output(container == null ? output.getCraftingRemainingItem().getItem() : container.getItem())
                 .withCondition(new ModLoadedCondition("create"));
 
         if (strict)
@@ -116,6 +125,7 @@ public class KegPouringRecipeBuilder {
 
     public static class Result implements FinishedRecipe {
         private final ResourceLocation id;
+        @Nullable
         private final ItemStack container;
         private final Fluid fluid;
         private final int amount;
@@ -137,12 +147,13 @@ public class KegPouringRecipeBuilder {
 
         @Override
         public void serializeRecipeData(JsonObject json) {
-
-            JsonObject objectContainer = new JsonObject();
-            objectContainer.addProperty("item", ForgeRegistries.ITEMS.getKey(container.getItem()).toString());
-            json.add("container", objectContainer);
-            if (container.hasTag()) {
-                objectContainer.addProperty("nbt", container.getTag().toString());
+            if (container != null) {
+                JsonObject objectContainer = new JsonObject();
+                objectContainer.addProperty("item", ForgeRegistries.ITEMS.getKey(container.getItem()).toString());
+                if (container.hasTag()) {
+                    objectContainer.addProperty("nbt", container.getTag().toString());
+                }
+                json.add("container", objectContainer);
             }
 
             JsonObject objectContainer1 = new JsonObject();
