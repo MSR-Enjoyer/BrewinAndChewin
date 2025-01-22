@@ -30,13 +30,5 @@
 				"up": {"uv": [7, 2, 11, 6], "texture": "#bowl"}
 			}
 		}
-	],
-	"groups": [
-		{
-			"name": "main",
-			"origin": [8, 8, 8],
-			"color": 0,
-			"children": [0, 1]
-		}
 	]
 }
