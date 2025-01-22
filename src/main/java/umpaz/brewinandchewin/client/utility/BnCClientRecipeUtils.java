@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class BnCClientRecipeUtils {
     public static ItemStack getPouredItemFromFluid(MinecraftServer server, FluidStack fluid) {
-        if (fluid.isEmpty())
+        if (fluid.isEmpty() || Minecraft.getInstance().level == null)
             return ItemStack.EMPTY;
         RegistryAccess registryAccess = (server == null || EffectiveSide.get().isClient()) ? Minecraft.getInstance().level.registryAccess() : server.registryAccess();
         ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(registryAccess, fluid);

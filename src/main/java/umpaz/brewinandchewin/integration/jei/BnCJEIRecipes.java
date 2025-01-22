@@ -3,7 +3,6 @@ package umpaz.brewinandchewin.integration.jei;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.item.crafting.RecipeManager;
-import org.jetbrains.annotations.NotNull;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
 import umpaz.brewinandchewin.common.registry.BnCBlocks;
