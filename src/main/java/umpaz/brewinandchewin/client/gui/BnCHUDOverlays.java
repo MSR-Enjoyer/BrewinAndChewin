@@ -38,8 +38,8 @@ public class BnCHUDOverlays {
 
     private static float tipsyTransparencyModifier = 0.0F;
 
-    @SubscribeEvent(priority = EventPriority.HIGH) // Run before Farmer's Delight Nourishment GUI Event.
-    public void onRenderGuiOverlayPost(RenderGuiOverlayEvent.Post event) {
+    @SubscribeEvent(priority = EventPriority.LOW) // We want this to run after more important pre events.
+    public void onRenderGuiOverlayPost(RenderGuiOverlayEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
         ForgeGui gui = (ForgeGui) mc.gui;
 
@@ -65,7 +65,7 @@ public class BnCHUDOverlays {
                 !mc.options.hideGui && gui.shouldDrawSurvivalElements() &&
                 mc.player.hasEffect(BnCEffects.INTOXICATION.get())) {
             renderIntoxicationOverlay(gui, event.getGuiGraphics());
-            event.setCanceled(true); // We most likely want to cancel other events.
+            event.setCanceled(true);
         }
     }
 
@@ -101,6 +101,7 @@ public class BnCHUDOverlays {
         int right = minecraft.getWindow().getGuiScaledWidth() / 2 + 91;
 
         drawIntoxicationOverlay(player, minecraft, guiGraphics, right, top);
+        gui.rightHeight += 10;
     }
 
     public static void drawIntoxicationOverlay(Player player, Minecraft minecraft, GuiGraphics graphics, int right, int top) {
