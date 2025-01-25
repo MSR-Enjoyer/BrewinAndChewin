@@ -18,8 +18,6 @@
   ],
   "client": [
     "client.GuiMixin",
-    "client.IntoxicationDontRenderFoodMixin",
-    "client.IntoxicationDontRenderNourishment",
     "client.RecipeBookComponentAccessor",
     "client.TipsyDrunkRendererMixin",
     "client.TipsyMouseHandlerMixin",

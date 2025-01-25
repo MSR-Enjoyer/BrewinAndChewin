@@ -14,6 +14,7 @@ import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.BnCConfiguration;
@@ -37,7 +38,7 @@ public class BnCHUDOverlays {
 
     private static float tipsyTransparencyModifier = 0.0F;
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH) // Run before Farmer's Delight Nourishment GUI Event.
     public void onRenderGuiOverlayPost(RenderGuiOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         ForgeGui gui = (ForgeGui) mc.gui;
@@ -62,8 +63,10 @@ public class BnCHUDOverlays {
 
         if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT) &&
                 !mc.options.hideGui && gui.shouldDrawSurvivalElements() &&
-                mc.player.hasEffect(BnCEffects.INTOXICATION.get()))
+                mc.player.hasEffect(BnCEffects.INTOXICATION.get())) {
             renderIntoxicationOverlay(gui, event.getGuiGraphics());
+            event.setCanceled(true); // We most likely want to cancel other events.
+        }
     }
 
     public static void renderTipsyOverlay(GuiGraphics guiGraphics, float scalar) {
@@ -111,7 +114,7 @@ public class BnCHUDOverlays {
 
         for (int i = 0; i < 10; ++i) {
             int x = (right - i * 8 - 9) + (int) (Mth.cos((ticks + i * 2) * 0.20F) * 2f);
-            int y = (top) + (int) (Mth.sin((ticks + i * 2) * 0.25F) * 2f);
+            int y = top + (int) (Mth.sin((ticks + i * 2) * 0.25F) * 2f);
 
             float effectiveHungerOfBar = (float) player.getFoodData().getFoodLevel() / 2.0F - (float) i;
             boolean isPlayerHealingWithSaturationAndNourishment =
