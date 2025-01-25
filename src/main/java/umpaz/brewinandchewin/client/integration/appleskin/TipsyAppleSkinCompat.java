@@ -5,11 +5,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
+import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.api.event.HUDOverlayEvent;
 import squeek.appleskin.api.food.FoodValues;
+import squeek.appleskin.client.HUDOverlayHandler;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.TextureHelper;
 import umpaz.brewinandchewin.common.BnCConfiguration;
@@ -26,9 +31,84 @@ public class TipsyAppleSkinCompat {
         MinecraftForge.EVENT_BUS.addListener(TipsyAppleSkinCompat::renderAppleSkinRestored);
     }
 
+    public static void renderAppleSkinFoodWithIntoxication(RenderGuiOverlayEvent.Pre event, int foodIconsOffset) {
+        if (!HUDOverlayHandlerAccessor.brewinandchewin$shouldRenderAnyOverlays())
+            return;
+
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        assert player != null;
+        FoodData stats = player.getFoodData();
+
+        int top = mc.getWindow().getGuiScaledHeight() - foodIconsOffset;
+        int left = mc.getWindow().getGuiScaledWidth() / 2 - 91; // left of health bar
+        int right = mc.getWindow().getGuiScaledWidth() / 2 + 91; // right of food bar
+
+        HUDOverlayHandlerAccessor.brewinandchewin$generateHungerBarOffsets(top, left, right, mc.gui.getGuiTicks(), player);
+
+        HUDOverlayEvent.Saturation saturationRenderEvent;
+
+        saturationRenderEvent = new HUDOverlayEvent.Saturation(stats.getSaturationLevel(), right, top, event.getGuiGraphics());
+
+        // cancel render overlay event when configuration disabled.
+        if (!ModConfig.SHOW_SATURATION_OVERLAY.get())
+            saturationRenderEvent.setCanceled(true);
+
+        // notify everyone that we should render saturation hud overlay
+        if (!saturationRenderEvent.isCanceled())
+            MinecraftForge.EVENT_BUS.post(saturationRenderEvent);
+
+        // the render saturation event maybe cancelled by other mods
+        if (!saturationRenderEvent.isCanceled())
+            HUDOverlayHandler.drawSaturationOverlay(0, mc.player.getFoodData().getSaturationLevel(), mc, event.getGuiGraphics(), right, top, 1f);
+
+        // try to get the item stack in the player hand
+        ItemStack heldItem = player.getMainHandItem();
+        if (ModConfig.SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND.get() && !FoodHelper.canConsume(heldItem, player))
+            heldItem = player.getOffhandItem();
+
+        boolean shouldRenderHeldItemValues = !heldItem.isEmpty() && FoodHelper.canConsume(heldItem, player);
+        if (!shouldRenderHeldItemValues)
+        {
+            HUDOverlayHandler.resetFlash();
+            return;
+        }
+
+        FoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
+        FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, heldItem, FoodHelper.getDefaultFoodValues(heldItem, player), modifiedFoodValues);
+        MinecraftForge.EVENT_BUS.post(foodValuesEvent);
+        modifiedFoodValues = foodValuesEvent.modifiedFoodValues;
+
+        if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get())
+            return;
+
+        // notify everyone that we should render hunger hud overlay
+        HUDOverlayEvent.HungerRestored renderRenderEvent = new HUDOverlayEvent.HungerRestored(stats.getFoodLevel(), heldItem, modifiedFoodValues, saturationRenderEvent.x, saturationRenderEvent.y, event.getGuiGraphics());
+        MinecraftForge.EVENT_BUS.post(renderRenderEvent);
+        if (renderRenderEvent.isCanceled())
+            return;
+
+        // calculate the final hunger and saturation
+        int foodHunger = modifiedFoodValues.hunger;
+        float foodSaturationIncrement = modifiedFoodValues.getSaturationIncrement();
+
+        // restored hunger/saturation overlay while holding food
+        HUDOverlayHandler.drawHungerOverlay(foodHunger, renderRenderEvent.currentFoodLevel, mc, event.getGuiGraphics(), renderRenderEvent.x, renderRenderEvent.y,  HUDOverlayHandlerAccessor.brewinandchewin$flashAlpha(), FoodHelper.isRotten(heldItem, player));
+
+        // The render saturation overlay event maybe cancelled by other mods
+        assert saturationRenderEvent != null;
+        if (!saturationRenderEvent.isCanceled()) {
+            int newFoodValue = stats.getFoodLevel() + foodHunger;
+            float newSaturationValue = stats.getSaturationLevel() + foodSaturationIncrement;
+            float saturationGained = newSaturationValue > newFoodValue ? newFoodValue - stats.getSaturationLevel() : foodSaturationIncrement;
+            // Redraw saturation overlay for gained
+            HUDOverlayHandler.drawSaturationOverlay(saturationGained, saturationRenderEvent.saturationLevel, mc, event.getGuiGraphics(), saturationRenderEvent.x, saturationRenderEvent.y, HUDOverlayHandlerAccessor.brewinandchewin$flashAlpha());
+        }
+    }
+
     public static void preventSaturationInAppleSkin(FoodValuesEvent event) {
         Player entity = event.player;
-        if (entity.hasEffect(BnCEffects.TIPSY.get())) {
+        if (entity.hasEffect(BnCEffects.INTOXICATION.get())) {
             event.modifiedFoodValues = new FoodValues(event.modifiedFoodValues.hunger, 0.0F);
         }
     }

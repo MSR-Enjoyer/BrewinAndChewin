@@ -16,7 +16,9 @@ import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.client.integration.appleskin.TipsyAppleSkinCompat;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 import vectorwing.farmersdelight.common.registry.ModEffects;
@@ -64,7 +66,7 @@ public class BnCHUDOverlays {
         if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT) &&
                 !mc.options.hideGui && gui.shouldDrawSurvivalElements() &&
                 mc.player.hasEffect(BnCEffects.INTOXICATION.get())) {
-            renderIntoxicationOverlay(gui, event.getGuiGraphics());
+            renderIntoxicationOverlay(gui, event);
             event.setCanceled(true);
         }
     }
@@ -85,7 +87,7 @@ public class BnCHUDOverlays {
         RenderSystem.enableDepthTest();
     }
 
-    public static void renderIntoxicationOverlay(ForgeGui gui, GuiGraphics guiGraphics) {
+    public static void renderIntoxicationOverlay(ForgeGui gui, RenderGuiOverlayEvent.Pre event) {
         if (!BnCConfiguration.INTOXICATION_FOOD_OVERLAY.get()) {
             return;
         }
@@ -100,7 +102,10 @@ public class BnCHUDOverlays {
         int top = minecraft.getWindow().getGuiScaledHeight() - foodIconsOffset;
         int right = minecraft.getWindow().getGuiScaledWidth() / 2 + 91;
 
-        drawIntoxicationOverlay(player, minecraft, guiGraphics, right, top);
+        drawIntoxicationOverlay(player, minecraft, event.getGuiGraphics(), right, top);
+        if (ModList.get().isLoaded("appleskin")) {
+            TipsyAppleSkinCompat.renderAppleSkinFoodWithIntoxication(event, foodIconsOffset);
+        }
         gui.rightHeight += 10;
     }
 
