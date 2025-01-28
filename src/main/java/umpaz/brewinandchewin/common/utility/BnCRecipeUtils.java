@@ -4,6 +4,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.utility.BnCClientRecipeUtils;
 import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
@@ -15,7 +16,7 @@ public class BnCRecipeUtils {
     public static ItemStack getPouredItemFromFluid(FluidStack fluid) {
         if (fluid.isEmpty())
             return ItemStack.EMPTY;
-        if (SideUtil.isClient())
+        if (BrewinAndChewin.isClient())
             return BnCClientRecipeUtils.getPouredItemFromFluid(fluid);
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (server == null)

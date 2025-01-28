@@ -25,12 +25,16 @@ import vectorwing.farmersdelight.common.registry.ModBiomeModifiers;
 import vectorwing.farmersdelight.common.registry.ModLootFunctions;
 
 @Mod(BrewinAndChewin.MODID)
-public class BrewinAndChewin
-{
-   public static final String MODID = "brewinandchewin";
-   public static final Logger LOG = LoggerFactory.getLogger("Brewin' And Chewin'");
+public class BrewinAndChewin {
+    public static final String MODID = "brewinandchewin";
+    public static final Logger LOG = LoggerFactory.getLogger("Brewin' And Chewin'");
+    private static boolean isClient = false;
 
     public static final RecipeBookType FERMENTING = RecipeBookType.create("FERMENTING");
+
+    public static boolean isClient() {
+        return isClient;
+    }
 
     public BrewinAndChewin() {
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -38,10 +42,11 @@ public class BrewinAndChewin
         modEventBus.addListener(BnCCommonSetup::init);
         if (FMLEnvironment.dist.isClient()) {
             modEventBus.addListener(BnCClientSetup::init);
+            isClient = true;
         }
 
-       ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BnCConfiguration.COMMON_CONFIG);
-       ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BnCConfiguration.CLIENT_CONFIG);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BnCConfiguration.COMMON_CONFIG);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BnCConfiguration.CLIENT_CONFIG);
 
         BnCBlocks.BLOCKS.register(modEventBus);
         BnCFluids.FLUIDS.register(modEventBus);
