@@ -1,5 +1,6 @@
 package umpaz.brewinandchewin.common.utility;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -16,7 +17,10 @@ public class BnCRecipeUtils {
             return ItemStack.EMPTY;
         if (SideUtil.isClient())
             return BnCClientRecipeUtils.getPouredItemFromFluid(fluid);
-        Optional<KegPouringRecipe> recipe = ServerLifecycleHooks.getCurrentServer().getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().isSame(fluid.getRawFluid())).findFirst();
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server == null)
+            return ItemStack.EMPTY;
+        Optional<KegPouringRecipe> recipe = server.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().isSame(fluid.getRawFluid())).findFirst();
         return recipe.map(KegPouringRecipe::getOutput).orElse(ItemStack.EMPTY);
     }
 }
