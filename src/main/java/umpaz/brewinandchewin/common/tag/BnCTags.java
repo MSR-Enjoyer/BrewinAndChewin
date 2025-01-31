@@ -23,8 +23,6 @@ public class BnCTags {
 
     public static final TagKey<Block> FREEZE_SOURCES = modBlockTag("freeze_sources");
 
-    public static final TagKey<Fluid> KEG_BLACKLIST = modFluidTag("keg_blacklist");
-
     public static final TagKey<MobEffect> MILK_BOTTLE_LOW_PRIORITY = modEffectTag("low_priority/milk_bottle");
     public static final TagKey<MobEffect> HOT_COCOA_LOW_PRIORITY = modEffectTag("low_priority/hot_cocoa");
 
@@ -37,10 +35,6 @@ public class BnCTags {
 
     private static TagKey<Block> modBlockTag(String path) {
         return BlockTags.create(new ResourceLocation(BrewinAndChewin.MODID, path));
-    }
-
-    private static TagKey<Fluid> modFluidTag(String path) {
-        return FluidTags.create(new ResourceLocation(BrewinAndChewin.MODID, path));
     }
 
     private static TagKey<MobEffect> modEffectTag(String path) {

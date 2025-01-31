@@ -411,10 +411,10 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
         LazyOptional<IFluidHandlerItem> fluidHandler = isCreative ? slotIn.copy().getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM) : slotIn.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
         IFluidHandlerItem iFluidItemHandler = fluidHandler.orElse(null);
-        if (iFluidItemHandler != null && !iFluidItemHandler.getFluidInTank(0).isEmpty() && iFluidItemHandler.getFluidInTank(0).getFluid().is(BnCTags.KEG_BLACKLIST))
-            return List.of();
 
-        if (fluidHandler.isPresent() && !slotIn.isEmpty()) {
+        IFluidHandlerItem finalIFluidItemHandler = iFluidItemHandler;
+
+        if (fluidHandler.isPresent() && !slotIn.isEmpty() && keg.level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().anyMatch(pouringRecipe -> pouringRecipe.getFluid(slotIn).isFluidEqual(finalIFluidItemHandler.getFluidInTank(0)))) {
             if (keg.fluidTank.getFluid().isFluidEqual(iFluidItemHandler.getFluidInTank(0)) || keg.fluidTank.getFluid().isEmpty() &&
                     (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || keg.inventory.getStackInSlot(OUTPUT_SLOT).is(iFluidItemHandler.getContainer().getItem()))) {
                 int amountToDrain = keg.fluidTank.getCapacity() - keg.fluidTank.getFluidAmount();

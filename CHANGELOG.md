@@ -39,8 +39,10 @@
   - Suspicious Stew
   - Tomato Sauce
   - Vegetable Soup
-- Added compat recipes for Farmer's Respite.
 - Updated compat recipe naming schema to `brewinandchewin:<recipetype>/<modid>/<name>`
+- Kegs can no longer accept fluids that are not associated with any pouring recipe.
+- Removed `brewinandchewin:keg_blacklist` fluid tag, to match the above change.
 
 ## Bugfixes
 - Fixed crashes with KubeJS when attempting to modify the mod's recipe types on a server. ([#16](https://github.com/MerchantPug/BrewinAndChewin/issues/16))
+- Fixed pouring recipes not being available for Farmer's Respite. ([#17](https://github.com/MerchantPug/BrewinAndChewin/issues/17))
