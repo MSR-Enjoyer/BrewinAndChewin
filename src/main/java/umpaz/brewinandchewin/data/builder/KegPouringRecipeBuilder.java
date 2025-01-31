@@ -34,6 +34,7 @@ public class KegPouringRecipeBuilder {
     private final boolean strict;
     private final boolean filling;
     private final List<ICondition> conditions = new ArrayList<>();
+    private boolean includeCreateRecipes = true;
 
     private KegPouringRecipeBuilder(Fluid fluid, int amount, ItemStack output, boolean strict, boolean filling) {
         this.fluid = fluid;
@@ -69,6 +70,11 @@ public class KegPouringRecipeBuilder {
         return this;
     }
 
+    public KegPouringRecipeBuilder excludeCreateCompat() {
+        includeCreateRecipes = false;
+        return this;
+    }
+
     public void build(Consumer<FinishedRecipe> consumerIn) {
         ResourceLocation outputLocation = ForgeRegistries.ITEMS.getKey(output.getItem());
         build(consumerIn, BrewinAndChewin.MODID + ":pouring/" + outputLocation.getPath());
@@ -89,7 +95,7 @@ public class KegPouringRecipeBuilder {
 
         consumerIn.accept(new KegPouringRecipeBuilder.Result(id, container, fluid, amount, output, strict, filling, conditions));
 
-        if (ForgeRegistries.ITEMS.getKey(output.getItem()).getNamespace().equals("create"))
+        if (ForgeRegistries.ITEMS.getKey(output.getItem()).getNamespace().equals("create") || !includeCreateRecipes)
             return;
 
         var fillingBuilder = new ProcessingRecipeBuilder<>(FillingRecipe::new, new ResourceLocation(BrewinAndChewin.MODID, "create/" + id.getPath().replace("pouring/", "")))
