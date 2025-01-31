@@ -414,9 +414,10 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
         IFluidHandlerItem finalIFluidItemHandler = iFluidItemHandler;
 
-        if (fluidHandler.isPresent() && !slotIn.isEmpty() && keg.level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().anyMatch(pouringRecipe -> pouringRecipe.getFluid(slotIn).isFluidEqual(finalIFluidItemHandler.getFluidInTank(0)))) {
+        if (fluidHandler.isPresent() && !slotIn.isEmpty()) {
             if (keg.fluidTank.getFluid().isFluidEqual(iFluidItemHandler.getFluidInTank(0)) || keg.fluidTank.getFluid().isEmpty() &&
-                    (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || keg.inventory.getStackInSlot(OUTPUT_SLOT).is(iFluidItemHandler.getContainer().getItem()))) {
+                    (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || keg.inventory.getStackInSlot(OUTPUT_SLOT).is(iFluidItemHandler.getContainer().getItem())) &&
+                    keg.level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().anyMatch(pouringRecipe -> pouringRecipe.getFluid(slotIn).isFluidEqual(finalIFluidItemHandler.getFluidInTank(0)))) {
                 int amountToDrain = keg.fluidTank.getCapacity() - keg.fluidTank.getFluidAmount();
                 int amount = keg.fluidTank.fill(iFluidItemHandler.drain(amountToDrain, IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.SIMULATE);
                 if (amount <= amountToDrain && amount > 0) {
