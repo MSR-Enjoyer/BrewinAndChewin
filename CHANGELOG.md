@@ -1,2 +1,44 @@
+## Changes
+- Added Coaster models for these items:
+  - Baked Cod Stew
+  - Beef
+  - Beef Stew
+  - Beetroot Soup
+  - Bone Broth
+  - Bowl of Stuffed Pumpkin
+  - Cod Roll
+  - Cooked Chicken
+  - Cooked Mutton
+  - Cooked Porkchop
+  - Cooked Rabbit
+  - Chicken Soup
+  - Creamy Onion Soup
+  - Dog Food
+  - Egg
+  - Fiery Fondue
+  - Fish Stew
+  - Fried Rice
+  - Fruit Salad
+  - Glow Berry Custard
+  - Kelp Roll
+  - Kelp Roll Slice
+  - Melon Popsicle
+  - Mixed Salad
+  - Mushroom Stew
+  - Nether Salad
+  - Noodle Soup
+  - Pumpkin Soup
+  - Rabbit Stew
+  - Raw Beef
+  - Raw Chicken
+  - Raw Mutton
+  - Raw Porkchop
+  - Raw Rabbit
+  - Salmon Roll
+  - Steak
+  - Suspicious Stew
+  - Tomato Sauce
+  - Vegetable Soup
+
 ## Bugfixes
 - Fixed crashes with KubeJS when attempting to modify the mod's recipe types on a server. ([#16](https://github.com/MerchantPug/BrewinAndChewin/issues/16))
