@@ -39,6 +39,8 @@
   - Suspicious Stew
   - Tomato Sauce
   - Vegetable Soup
+- Added compat recipes for Farmer's Respite.
+- Updated compat recipe naming schema to `brewinandchewin:<recipetype>/<modid>/<name>`
 
 ## Bugfixes
 - Fixed crashes with KubeJS when attempting to modify the mod's recipe types on a server. ([#16](https://github.com/MerchantPug/BrewinAndChewin/issues/16))

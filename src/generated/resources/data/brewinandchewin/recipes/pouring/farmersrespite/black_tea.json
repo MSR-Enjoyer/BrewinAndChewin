@@ -1,0 +1,16 @@
+{
+  "type": "brewinandchewin:keg_pouring",
+  "amount": 250,
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "farmersrespite"
+    }
+  ],
+  "filling": true,
+  "fluid": "farmersrespite:black_tea",
+  "output": {
+    "item": "farmersrespite:black_tea"
+  },
+  "strict": false
+}

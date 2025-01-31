@@ -130,7 +130,8 @@ sourceSets.main.resources {
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    implementation fg.deobf("curse.maven:farmersdelight-398521:5051242")
+    implementation fg.deobf("curse.maven:farmersdelight-398521:5962797")
+    implementation fg.deobf("curse.maven:farmersrespite-551453:5543547")
     compileOnly fg.deobf("com.tterrag.registrate:Registrate:MC1.20-1.3.0")
     implementation fg.deobf("curse.maven:create-328085:4835191")
 
