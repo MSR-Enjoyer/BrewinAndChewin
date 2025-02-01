@@ -1,0 +1,208 @@
+package umpaz.brewinandchewin.common.crafting;
+
+import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.level.Level;
+import umpaz.brewinandchewin.client.recipebook.FermentingBookCategory;
+import umpaz.brewinandchewin.common.BnCConfiguration;
+import umpaz.brewinandchewin.common.registry.BnCItems;
+import umpaz.brewinandchewin.common.registry.BnCRecipeSerializers;
+import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
+import umpaz.brewinandchewin.common.utility.BnCRecipeUtils;
+import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+
+public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
+    public static final int INPUT_SLOTS = 4;
+
+    private final NonNullList<Ingredient> inputItems;
+    private final ShapedRecipePattern pattern;
+
+    private final Optional<FluidIngredientWithAmount> fluidIngredient;
+
+    private final FermentingBookCategory tab;
+
+    private final Either<AbstractedFluidStack, ItemStack> result;
+
+    private final float experience;
+    private final int fermentTime;
+    private final int temperature;
+
+    public KegFermentingRecipe(NonNullList<Ingredient> inputItems, FermentingBookCategory tab, Optional<FluidIngredientWithAmount> fluidIngredient, Either<AbstractedFluidStack, ItemStack> result, float experience, int fermentTime, int temperature) {
+        this.inputItems = inputItems;
+        this.pattern = new ShapedRecipePattern(2, 2, inputItems, Optional.empty());
+        this.tab = tab;
+        this.fluidIngredient = fluidIngredient;
+        this.result = result;
+        this.experience = experience;
+        this.fermentTime = fermentTime;
+        this.temperature = temperature;
+    }
+
+    public FermentingBookCategory getRecipeBookCategory() {
+        return this.tab;
+    }
+
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        return this.inputItems;
+    }
+
+    public Optional<FluidIngredientWithAmount> getFluidIngredient() {
+        return fluidIngredient;
+    }
+
+    public Either<AbstractedFluidStack, ItemStack> getResult() {
+        return result;
+    }
+
+    @Override
+    public ItemStack assemble(KegRecipeWrapper inv, HolderLookup.Provider access) {
+        return ItemStack.EMPTY;
+    }
+
+    public float getExperience() {
+        return this.experience;
+    }
+
+    public int getFermentTime() {
+        return this.fermentTime;
+    }
+
+    public int getTemperature() {
+        return this.temperature;
+    }
+
+    @Override
+    public boolean matches(KegRecipeWrapper inv, Level level) {
+        List<ItemStack> inputs = new ArrayList<>();
+        int i = 0;
+
+        for (int j = 0; j < INPUT_SLOTS; ++j) {
+            ItemStack itemstack = inv.getItem(j);
+            if (!itemstack.isEmpty()) {
+                ++i;
+                inputs.add(itemstack);
+            }
+        }
+        CraftingInput input = CraftingInput.of(2, 2, inputs);
+        return i == this.inputItems.size() && pattern.matches(input) && (fluidIngredient.isEmpty() && inv.getFluid().isEmpty() || fluidIngredient.isPresent() && !inv.getFluid().isEmpty() && fluidIngredient.get().ingredient().matches(inv.getFluid()) && inv.getFluid().amount() % fluidIngredient.get().amount() == 0);
+    }
+
+    @Override
+    public boolean canCraftInDimensions(int width, int height) {
+        return width * height >= this.inputItems.size();
+    }
+
+    @Override
+    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
+        if (result.right().isPresent())
+            return result.right().get().copy();
+        if (result.left().isPresent())
+            return BnCRecipeUtils.getPouredItemFromFluid(new AbstractedFluidStack(result.left().get().fluid(), BnCConfiguration.KEG_CAPACITY.get(), result.left().get().components()));
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public RecipeSerializer<?> getSerializer() {
+        return BnCRecipeSerializers.FERMENTING;
+    }
+
+    @Override
+    public RecipeType<?> getType() {
+        return BnCRecipeTypes.FERMENTING;
+    }
+
+    @Override
+    public ItemStack getToastSymbol() {
+        return new ItemStack(BnCItems.KEG);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        KegFermentingRecipe that = (KegFermentingRecipe) o;
+
+        if (Float.compare(that.getExperience(), getExperience()) != 0) return false;
+        if (getFermentTime() != that.getFermentTime()) return false;
+        if (getTemperature() != that.getTemperature()) return false;
+        if (getResult() != (that.getResult())) return false;
+        if (getFluidIngredient() != (that.getFluidIngredient())) return false;
+
+        return inputItems.equals(that.inputItems);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inputItems, fluidIngredient, result, experience, fermentTime, temperature);
+    }
+
+    public static class Serializer implements RecipeSerializer<KegFermentingRecipe> {
+        public static final MapCodec<KegFermentingRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+                Ingredient.CODEC.listOf(1, 4).xmap(ingredients -> NonNullList.of(Ingredient.EMPTY, ingredients.toArray(Ingredient[]::new)), Function.identity()).fieldOf("ingredients").forGetter(KegFermentingRecipe::getIngredients),
+                FermentingBookCategory.CODEC.optionalFieldOf("category", FermentingBookCategory.DRINKS).forGetter(KegFermentingRecipe::getRecipeBookCategory),
+                FluidIngredientWithAmount.CODEC.optionalFieldOf("base_fluid").forGetter(KegFermentingRecipe::getFluidIngredient),
+                Codec.either(AbstractedFluidStack.CODEC, ItemStack.CODEC).fieldOf("result").forGetter(KegFermentingRecipe::getResult),
+                Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(KegFermentingRecipe::getExperience),
+                Codec.INT.optionalFieldOf("fermenting_time", 9600).forGetter(KegFermentingRecipe::getFermentTime),
+                Codec.INT.optionalFieldOf("temperature", 3).forGetter(KegFermentingRecipe::getTemperature)
+        ).apply(inst, KegFermentingRecipe::new));
+        public static final StreamCodec<RegistryFriendlyByteBuf, KegFermentingRecipe> STREAM_CODEC = StreamCodec.of(KegFermentingRecipe.Serializer::toNetwork, KegFermentingRecipe.Serializer::fromNetwork);
+
+        public Serializer() {
+        }
+
+        public MapCodec<KegFermentingRecipe> codec() {
+            return CODEC;
+        }
+
+        public StreamCodec<RegistryFriendlyByteBuf, KegFermentingRecipe> streamCodec() {
+            return STREAM_CODEC;
+        }
+
+        public static void toNetwork(RegistryFriendlyByteBuf buf, KegFermentingRecipe recipe) {
+            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(4)).encode(buf, recipe.getIngredients());
+            FermentingBookCategory.STREAM_CODEC.encode(buf, recipe.getRecipeBookCategory());
+            ByteBufCodecs.optional(FluidIngredientWithAmount.STREAM_CODEC).encode(buf, recipe.getFluidIngredient());
+            ByteBufCodecs.either(AbstractedFluidStack.STREAM_CODEC, ItemStack.STREAM_CODEC).encode(buf, recipe.getResult());
+            buf.writeFloat(recipe.getExperience());
+            buf.writeInt(recipe.getFermentTime());
+            buf.writeInt(recipe.getTemperature());
+        }
+
+        public static KegFermentingRecipe fromNetwork(RegistryFriendlyByteBuf buf) {
+            NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY, Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(4)).decode(buf).toArray(Ingredient[]::new));
+            FermentingBookCategory category = FermentingBookCategory.STREAM_CODEC.decode(buf);
+            Optional<FluidIngredientWithAmount> fluidIngredient = ByteBufCodecs.optional(FluidIngredientWithAmount.STREAM_CODEC).decode(buf);
+            Either<AbstractedFluidStack, ItemStack> result = ByteBufCodecs.either(AbstractedFluidStack.STREAM_CODEC, ItemStack.STREAM_CODEC).decode(buf);
+            float experience = buf.readFloat();
+            int fermentingTime = buf.readInt();
+            int temperature = buf.readInt();
+
+            return new KegFermentingRecipe(ingredients, category, fluidIngredient, result, experience, fermentingTime, temperature);
+        }
+    }
+}

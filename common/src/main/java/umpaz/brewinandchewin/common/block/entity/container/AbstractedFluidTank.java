@@ -1,0 +1,19 @@
+package umpaz.brewinandchewin.common.block.entity.container;
+
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+
+public interface AbstractedFluidTank {
+    int getCapacity();
+    AbstractedFluidStack getAbstractedFluid();
+    void setAbstractedFluid(AbstractedFluidStack stack);
+
+    AbstractedFluidStack fill(AbstractedFluidStack fluidStack, boolean simulate);
+    AbstractedFluidStack drain(int maxDrain, boolean simulate);
+
+    boolean isEmpty();
+
+    void readFromNbt(CompoundTag tag, HolderLookup.Provider provider);
+    CompoundTag writeToNbt(HolderLookup.Provider provider);
+}
