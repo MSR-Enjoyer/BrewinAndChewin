@@ -1,9 +1,8 @@
 package umpaz.brewinandchewin.common.item;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -19,16 +18,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import oshi.jna.platform.windows.WinNT;
+import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 import vectorwing.farmersdelight.common.utility.TextUtils;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public class BoozeItem extends Item {
     private final Fluid fluid;
@@ -42,10 +37,11 @@ public class BoozeItem extends Item {
         return this.fluid;
     }
 
-    public InteractionResultHolder<ItemStack> use( Level level, Player player, InteractionHand hand ) {
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack heldStack = player.getItemInHand(hand);
-       if ( heldStack.isEdible() ) {
-          if ( player.canEat(heldStack.getFoodProperties(player).canAlwaysEat()) ) {
+       if (BrewinAndChewin.getHelper().isEdible(heldStack, player)) {
+          if ( player.canEat(BrewinAndChewin.getHelper().getFoodProperties(heldStack, player).canAlwaysEat()) ) {
              player.startUsingItem(hand);
              return InteractionResultHolder.consume(heldStack);
           }
@@ -60,7 +56,7 @@ public class BoozeItem extends Item {
 
 
     @Override
-    public int getUseDuration(ItemStack stack) {
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return 32;
     }
 
@@ -77,12 +73,12 @@ public class BoozeItem extends Item {
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity consumer) {
         if (!level.isClientSide) {
-            var tipsy = stack.getFoodProperties(consumer).getEffects().stream().filter(pair -> pair.getFirst().getEffect() == BnCEffects.TIPSY.get()).findFirst();
-            this.affectConsumer(consumer, tipsy.map(pair -> pair.getFirst().getDuration()).orElse(0), tipsy.map(pair -> pair.getFirst().getAmplifier()).orElse(-1));
+            var tipsy = BrewinAndChewin.getHelper().getFoodProperties(stack, consumer).effects().stream().filter(pair -> pair.effect().getEffect() == BnCEffects.TIPSY).findFirst();
+            this.affectConsumer(consumer, tipsy.map(pair -> pair.effect().getDuration()).orElse(0), tipsy.map(pair -> pair.effect().getAmplifier()).orElse(-1));
         }
-        ItemStack containerStack = stack.getCraftingRemainingItem();
+        ItemStack containerStack = BrewinAndChewin.getHelper().getCraftingRemainingItem(stack);
         Player player;
-        if (stack.isEdible()) {
+        if (BrewinAndChewin.getHelper().isEdible(stack, consumer)) {
             super.finishUsingItem(stack, level, consumer);
         } else {
             player = consumer instanceof Player ? (Player)consumer : null;
@@ -116,21 +112,20 @@ public class BoozeItem extends Item {
 
     //Tipsy Stuff
     public void affectConsumer(LivingEntity consumer, int duration, int potency) {
-       if (consumer.hasEffect(BnCEffects.TIPSY.get())) {
-           MobEffectInstance effect = consumer.getEffect(BnCEffects.TIPSY.get());
-           consumer.addEffect(new MobEffectInstance(BnCEffects.TIPSY.get(), effect.getDuration() == -1 ? -1 : effect.getDuration() + duration, Math.min(effect.getAmplifier() + potency + 1, 9), effect.isAmbient(), effect.isVisible(), effect.showIcon()));
+       if (consumer.hasEffect(BnCEffects.TIPSY)) {
+           MobEffectInstance effect = consumer.getEffect(BnCEffects.TIPSY);
+           consumer.addEffect(new MobEffectInstance(BnCEffects.TIPSY, effect.getDuration() == -1 ? -1 : effect.getDuration() + duration, Math.min(effect.getAmplifier() + potency + 1, 9), effect.isAmbient(), effect.isVisible(), effect.showIcon()));
        }
     }
 
-    public static final Set<Supplier<MobEffect>> RED_EFFECTS = Set.of(BnCEffects.TIPSY, () -> MobEffects.BAD_OMEN);
+    public static final Set<Holder<MobEffect>> RED_EFFECTS = Set.of(BnCEffects.TIPSY, MobEffects.BAD_OMEN);
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        TextUtils.addFoodEffectTooltip(stack, tooltip, 1.0F);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag isAdvanced) {
+        TextUtils.addFoodEffectTooltip(stack, tooltip::add, 1.0F, context.tickRate());
         for (int i = 0; i < tooltip.size(); ++i) {
             Component component = tooltip.get(i);
-            if (RED_EFFECTS.stream().anyMatch(supplier -> component.contains(Component.translatable(supplier.get().getDescriptionId())))) {
+            if (RED_EFFECTS.stream().anyMatch(holder -> component.contains(Component.translatable(holder.value().getDescriptionId())))) {
                 tooltip.set(i, component.copy().withStyle(ChatFormatting.RED));
             }
         }

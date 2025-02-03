@@ -22,22 +22,17 @@ public record SyncNumbedHeartsClientboundPacket(int entityId, float numbedHealth
         return new SyncNumbedHeartsClientboundPacket(buf.readInt(), buf.readFloat(), buf.readInt());
     }
 
-    public static class Handler {
-        public static void handle(SyncNumbedHeartsClientboundPacket packet, Supplier<NetworkEvent.Context> context) {
-            if (context.get().getDirection() != NetworkDirection.PLAY_TO_CLIENT)
+    public void handle() {
+        Minecraft.getInstance().execute(() -> {
+            Entity entity = Minecraft.getInstance().level.getEntity(entityId());
+
+            if (!(entity instanceof LivingEntity living))
                 return;
-            context.get().enqueueWork(() -> {
-                Entity entity = Minecraft.getInstance().level.getEntity(packet.entityId());
 
-                if (!(entity instanceof LivingEntity living))
-                    return;
-
-                living.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
-                    cap.setNumbedHealth(packet.numbedHealth());
-                    cap.setTicksUntilDamage(packet.ticksUntilDamage());
-                });
+            living.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
+                cap.setNumbedHealth(packet.numbedHealth());
+                cap.setTicksUntilDamage(packet.ticksUntilDamage());
             });
-            context.get().setPacketHandled(true);
-        }
+        });
     }
 }

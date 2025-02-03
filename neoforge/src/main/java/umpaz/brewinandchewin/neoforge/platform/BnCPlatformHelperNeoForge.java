@@ -8,7 +8,9 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +38,7 @@ import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 import umpaz.brewinandchewin.neoforge.container.KegFluidTank;
 import umpaz.brewinandchewin.neoforge.container.KegItemHandlerNeoForge;
 import umpaz.brewinandchewin.neoforge.container.SidedKegWrapperNeoForge;
+import umpaz.brewinandchewin.neoforge.registry.BnCCreativeTabsImpl;
 import umpaz.brewinandchewin.neoforge.registry.BnCFluidsImpl;
 import umpaz.brewinandchewin.neoforge.utility.BnCCodecs;
 import umpaz.brewinandchewin.neoforge.utility.BnCStreamCodecs;
@@ -162,5 +165,20 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     @Override
     public void initFluids() {
         BnCFluidsImpl.init();
+    }
+
+    @Override
+    public void initCreativeTab() {
+        BnCCreativeTabsImpl.init();
+    }
+
+    @Override
+    public boolean isEdible(ItemStack stack, LivingEntity entity) {
+        return stack.getFoodProperties(entity) != null;
+    }
+
+    @Override
+    public FoodProperties getFoodProperties(ItemStack stack, LivingEntity entity) {
+        return stack.getFoodProperties(entity);
     }
 }

@@ -1,13 +1,14 @@
 package umpaz.brewinandchewin.common.block.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import umpaz.brewinandchewin.common.block.CoasterBlock;
 import umpaz.brewinandchewin.common.registry.BnCBlockEntityTypes;
+import umpaz.brewinandchewin.common.registry.BnCBlocks;
 import umpaz.brewinandchewin.common.registry.BnCItems;
 import vectorwing.farmersdelight.common.block.entity.SyncedBlockEntity;
 
@@ -28,31 +30,29 @@ public class CoasterBlockEntity extends SyncedBlockEntity {
     public final NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 
     public CoasterBlockEntity(BlockPos pos, BlockState state ) {
-      super(BnCBlockEntityTypes.COASTER.get(), pos, state);
+      super(BnCBlockEntityTypes.COASTER, pos, state);
    }
 
-    public InteractionResult onUse( Level level, BlockState state, BlockPos pos, Player player, InteractionHand hand ) {
-        ItemStack heldStack = player.getItemInHand(hand);
-        ItemStack offhandStack = player.getOffhandItem();
-        if (state.getValue(CoasterBlock.INVISIBLE) && heldStack.is(BnCItems.COASTER.get())) {
+    public ItemInteractionResult onUse(ItemStack stack, Level level, BlockState state, BlockPos pos, Player player, InteractionHand hand) {
+        if (state.getValue(CoasterBlock.INVISIBLE) && state.is(BnCBlocks.COASTER)) {
             if (!player.getAbilities().instabuild)
-                heldStack.shrink(1);
+                stack.shrink(1);
             level.playSound(null, pos, SoundEvents.WOOL_PLACE, SoundSource.BLOCKS);
             level.setBlockAndUpdate(pos, state.setValue(CoasterBlock.INVISIBLE, false));
-            return InteractionResult.SUCCESS;
-        } if (state.getValue(CoasterBlock.SIZE) < 4 && (addItem(level, pos, state, heldStack, player.getAbilities().instabuild, state.getValue(CoasterBlock.SIZE)) || addItem(level, pos, state, offhandStack, player.getAbilities().instabuild, state.getValue(CoasterBlock.SIZE)))) {
-            return InteractionResult.SUCCESS;
-        } else if (!heldStack.isEmpty()) {
-            return InteractionResult.CONSUME;
+            return ItemInteractionResult.SUCCESS;
+        } if (state.getValue(CoasterBlock.SIZE) < 4 && (addItem(level, pos, state, stack, player.getAbilities().instabuild, state.getValue(CoasterBlock.SIZE)))) {
+            return ItemInteractionResult.SUCCESS;
+        } else if (!state.isAir()) {
+            return ItemInteractionResult.CONSUME;
         } else if (state.getValue(CoasterBlock.SIZE) > 0 && player.getMainHandItem().isEmpty() && hand == InteractionHand.MAIN_HAND) { //Pickup Logic
             if (player.isShiftKeyDown() && !state.getValue(INVISIBLE)) {
-                ItemStack coaster = new ItemStack(BnCItems.COASTER.get());
+                ItemStack coaster = new ItemStack(BnCItems.COASTER);
                 if (!player.getAbilities().instabuild && !player.addItem(coaster)) {
                     player.drop(coaster, false);
                 }
                 level.playSound(null, pos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS);
                 level.setBlockAndUpdate(pos, state.setValue(CoasterBlock.INVISIBLE, true));
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
             int count = state.getValue(CoasterBlock.SIZE);
             if (!player.getAbilities().instabuild && !player.addItem(inventory.get(count - 1))) {
@@ -67,9 +67,9 @@ public class CoasterBlockEntity extends SyncedBlockEntity {
             }
             level.setBlockAndUpdate(pos, replaceWith);
 
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     private boolean addItem(Level level, BlockPos pos, BlockState state, ItemStack stack, boolean instabuild, int index) {
@@ -84,18 +84,18 @@ public class CoasterBlockEntity extends SyncedBlockEntity {
     }
 
    @Override
-   public void load( CompoundTag nbt ) {
-       super.load(nbt);
-       ContainerHelper.loadAllItems(nbt, this.inventory);
+   public void loadAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
+       super.loadAdditional(nbt, provider);
+       ContainerHelper.loadAllItems(nbt, this.inventory, provider);
    }
 
    @Override
-   protected void saveAdditional( CompoundTag nbt ) {
-       super.saveAdditional(nbt);
-       ContainerHelper.saveAllItems(nbt, this.inventory);
+   protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
+       super.saveAdditional(nbt, provider);
+       ContainerHelper.saveAllItems(nbt, this.inventory, provider);
    }
 
-   @Override
+   // Implement through method override in renderer.
    public AABB getRenderBoundingBox() {
         BlockPos pos = getBlockPos();
         return AABB.of(BoundingBox.fromCorners(pos, pos.above()));

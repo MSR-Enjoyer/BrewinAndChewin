@@ -9,9 +9,9 @@
     "KegStackedContentsRecipePickerMixin",
     "LootContextAccessor",
     "LootParamsAccessor",
+    "PlayerMixin",
     "PreventTaggedEffectRemovalMixin$HotCocoa",
     "PreventTaggedEffectRemovalMixin$MilkBottle",
-    "RecipeManagerAccessor",
     "ServerPlaceRecipeAccessor",
     "StackedContentsRecipePickerAccessor",
     "StoreLootParamsMixin$LootParamsBuilderMixin",
@@ -20,6 +20,7 @@
   "client": [
     "GhostRecipeAccessor",
     "client.GuiMixin",
+    "client.LevelRendererAccessor",
     "client.RecipeBookComponentAccessor",
     "client.TipsyDrunkRendererMixin",
     "client.TipsyMouseHandlerMixin",

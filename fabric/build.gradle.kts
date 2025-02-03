@@ -16,6 +16,23 @@ repositories {
     }
 }
 
+repositories {
+    maven("https://repo.greenhouse.house/releases/") {
+        name = "Greenhouse Maven"
+    }
+    maven("https://repo.greenhouse.house/snapshots/") {
+        name = "Greenhouse Maven (Snapshots)"
+    }
+    maven("https://mvn.devos.one/snapshots/") {
+        name = "DevOS"
+    }
+    maven("https://jitpack.io/") {
+        content {
+            excludeGroup("io.github.fabricators_of_create")
+        }
+    }
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:${Versions.MINECRAFT}")
     mappings(loom.officialMojangMappings())
@@ -23,6 +40,10 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${Versions.FABRIC_LOADER}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
     modLocalRuntime("com.terraformersmc:modmenu:${Versions.MOD_MENU}")
+
+    modImplementation("vectorwing:FarmersDelight:${Versions.FARMERS_DELIGHT_REFABRICATED}") {
+        exclude(group = "net.fabricmc")
+    }
 
     modCompileOnly("squeek.appleskin:appleskin-fabric:${Versions.APPLESKIN}")
     modLocalRuntime("squeek.appleskin:appleskin-fabric:${Versions.APPLESKIN}")

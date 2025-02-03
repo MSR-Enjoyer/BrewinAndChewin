@@ -1,7 +1,6 @@
 package umpaz.brewinandchewin.common.block.entity.container;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.recipebook.ServerPlaceRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.*;
@@ -173,7 +172,7 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper, KegFermentingRecip
         this.beginPlacingRecipe();
 
         try {
-            new ServerPlaceRecipe<>(this).recipeClicked(player, recipeHolder, placeAll);
+            new KegPlaceRecipe(this, level.getRecipeManager()).recipeClicked(player, recipeHolder, placeAll);
         } finally {
             this.finishPlacingRecipe(recipeHolder);
         }

@@ -8,7 +8,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -28,8 +28,6 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import umpaz.brewinandchewin.common.registry.BnCItems;
 import vectorwing.farmersdelight.common.registry.ModParticleTypes;
 import vectorwing.farmersdelight.common.registry.ModSounds;
@@ -79,15 +77,16 @@ public class FieryFonduePotBlock extends Block {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+    protected ItemInteractionResult useItemOn(
+            ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult
+    ) {
         return this.takeServing(level, pos, state, player, hand);
     }
 
-
-    private InteractionResult takeServing(Level level, BlockPos pos, BlockState state, Player player, InteractionHand handIn) {
+    private ItemInteractionResult takeServing(Level level, BlockPos pos, BlockState state, Player player, InteractionHand handIn) {
         int servings = state.getValue(LEVEL);
         ItemStack bowl = new ItemStack(Items.BOWL);
-        ItemStack fondue = new ItemStack(BnCItems.FIERY_FONDUE.get());
+        ItemStack fondue = new ItemStack(BnCItems.FIERY_FONDUE);
         ItemStack heldStack = player.getItemInHand(handIn);
         if (heldStack.is(bowl.getItem())) {
             if (!player.getAbilities().instabuild) {
@@ -102,11 +101,11 @@ public class FieryFonduePotBlock extends Block {
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Items.BONE));
             }
 
-            level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_GENERIC, SoundSource.BLOCKS, 1.0F, 1.0F);
-            return InteractionResult.SUCCESS;
+            level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_GENERIC.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            return ItemInteractionResult.SUCCESS;
         }
         player.displayClientMessage(Component.translatable("farmersdelight.block.feast.use_container", bowl.getHoverName()), true);
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
@@ -124,13 +123,12 @@ public class FieryFonduePotBlock extends Block {
         return true;
     }
 
-    @Override
+    // NeoForge:
     public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType path) {
         return false;
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void animateTick(BlockState stateIn, Level level, BlockPos pos, RandomSource rand) {
         super.animateTick(stateIn, level, pos, rand);
         RandomSource random = level.random;

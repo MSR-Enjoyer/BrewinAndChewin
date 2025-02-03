@@ -23,6 +23,7 @@ import umpaz.brewinandchewin.common.mixin.LootParamsAccessor;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -66,7 +67,7 @@ public class AreaLocationCheckCondition implements LootItemCondition {
                         paramBuilder.withOptionalParameter(LootContextParams.BLOCK_STATE, context.getLevel().getBlockState(BlockPos.containing(offset)));
                     if (context.hasParam(LootContextParams.BLOCK_ENTITY))
                         paramBuilder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, context.getLevel().getBlockEntity(BlockPos.containing(offset)));
-                    LootContext newCtx = new LootContext.Builder(paramBuilder.create(((LootParamsParamSetAccess) originalParams).brewinandchewin$getParamSet())).create(null);
+                    LootContext newCtx = new LootContext.Builder(paramBuilder.create(((LootParamsParamSetAccess) originalParams).brewinandchewin$getParamSet())).create(Optional.empty());
                     if (composedPredicate.test(newCtx))
                         return true;
                 }

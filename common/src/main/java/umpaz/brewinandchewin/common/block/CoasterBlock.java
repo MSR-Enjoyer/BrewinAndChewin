@@ -1,10 +1,11 @@
 package umpaz.brewinandchewin.common.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -21,7 +22,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -31,7 +31,7 @@ import umpaz.brewinandchewin.common.block.entity.CoasterBlockEntity;
 import java.util.List;
 
 public class CoasterBlock extends BaseEntityBlock {
-
+    public static final MapCodec<CoasterBlock> CODEC = MapCodec.unit(CoasterBlock::new);
     public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
     public static final IntegerProperty SIZE = IntegerProperty.create("size", 0, 4);
     public static final BooleanProperty INVISIBLE = BooleanProperty.create("invisible");
@@ -40,8 +40,13 @@ public class CoasterBlock extends BaseEntityBlock {
     protected static final VoxelShape TRAY_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 1.0D, 15.0D);
 
     public CoasterBlock() {
-        super(Properties.copy(Blocks.BROWN_CARPET).sound(SoundType.WOOD).instabreak());
+        super(Properties.ofFullCopy(Blocks.BROWN_CARPET).sound(SoundType.WOOD).instabreak());
         this.registerDefaultState(this.getStateDefinition().any().setValue(ROTATION, 0).setValue(SIZE, 0).setValue(INVISIBLE, false));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -61,12 +66,12 @@ public class CoasterBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-        if (worldIn.getBlockEntity(pos) instanceof CoasterBlockEntity coasterBlockEntity) {
-            return coasterBlockEntity.onUse(worldIn, state, pos, player, handIn);
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (level.getBlockEntity(pos) instanceof CoasterBlockEntity coasterBlockEntity) {
+            return coasterBlockEntity.onUse(stack, level, state, pos, player, hand);
         }
 
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
@@ -126,12 +131,12 @@ public class CoasterBlock extends BaseEntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         if (level.getBlockEntity(pos) instanceof CoasterBlockEntity blockEntity && blockEntity.getItems().stream().anyMatch(stack -> !stack.isEmpty())) {
             List<ItemStack> stacks = blockEntity.getItems().stream().filter(stack -> !stack.isEmpty()).toList();
-            return stacks.get(stacks.size() - 1);
+            return stacks.getLast();
         }
-        return super.getCloneItemStack(state, target, level, pos, player);
+        return super.getCloneItemStack(level, pos, state);
     }
 
     @Override

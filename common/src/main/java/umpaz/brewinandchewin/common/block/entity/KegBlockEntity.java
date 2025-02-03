@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -135,10 +136,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         return fluidTank.getAbstractedFluid();
     }
 
-    public CustomData writeMeal(CustomData data, HolderLookup.Provider provider) {
-        if (getOutput().isEmpty()) return data;
-
-        CompoundTag tag = data.copyTag();
+    public CustomData writeMeal(CompoundTag tag, HolderLookup.Provider provider) {
         AbstractedItemHandler drops = BrewinAndChewin.getHelper().createKegInventory(INVENTORY_SIZE, integer -> {});
         for (int i = 0; i < INVENTORY_SIZE; ++i) {
             drops.setStackInSlot(i, i == CONTAINER_SLOT ? inventory.getStackInSlot(i) : ItemStack.EMPTY);
@@ -156,7 +154,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
     @Override
     public void saveAdditional(CompoundTag compound, HolderLookup.Provider provider) {
-        super.saveAdditional(compound);
+        super.saveAdditional(compound, provider);
         compound.put("Inventory", inventory.writeToNbt(provider));
         compound.put("FluidTank", fluidTank.writeToNbt(provider));
         compound.putInt("FermentTime", fermentTime);
@@ -176,6 +174,11 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         compound.putInt("FermentTime", fermentTime);
         compound.putInt("FermentTimeTotal", fermentTimeTotal);
         return compound;
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        components.set(DataComponents.CUSTOM_DATA, writeMeal(new CompoundTag(), level.registryAccess()));
     }
 
     public CompoundTag writeDrink(CompoundTag compound, HolderLookup.Provider provider) {

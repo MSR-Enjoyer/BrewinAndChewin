@@ -9,7 +9,9 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -79,4 +81,10 @@ public interface BnCPlatformHelper {
     ItemStack getCraftingRemainingItem(ItemStack stack);
 
     void initFluids();
+
+    void initCreativeTab();
+
+    boolean isEdible(ItemStack stack, LivingEntity entity);
+
+    FoodProperties getFoodProperties(ItemStack stack, LivingEntity entity);
 }

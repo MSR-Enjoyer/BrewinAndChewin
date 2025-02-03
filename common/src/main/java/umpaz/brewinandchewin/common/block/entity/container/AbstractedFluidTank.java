@@ -14,6 +14,8 @@ public interface AbstractedFluidTank {
 
     boolean isEmpty();
 
-    void readFromNbt(CompoundTag tag, HolderLookup.Provider provider);
-    CompoundTag writeToNbt(HolderLookup.Provider provider);
+    default void readFromNbt(CompoundTag tag, HolderLookup.Provider provider) {}
+    default CompoundTag writeToNbt(HolderLookup.Provider provider) {
+        return new CompoundTag();
+    }
 }

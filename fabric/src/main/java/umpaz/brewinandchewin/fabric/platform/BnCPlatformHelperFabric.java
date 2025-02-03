@@ -1,4 +1,4 @@
-package umpaz.brewinandchewin.platform;
+package umpaz.brewinandchewin.fabric.platform;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -6,11 +6,14 @@ import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -25,6 +28,8 @@ import umpaz.brewinandchewin.common.utility.BnCMenuConstructor;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
+import umpaz.brewinandchewin.platform.BnCPlatform;
+import umpaz.brewinandchewin.platform.BnCPlatformHelper;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -119,5 +124,15 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     @Override
     public void initFluids() {
         // TODO
+    }
+
+    @Override
+    public boolean isEdible(ItemStack stack, LivingEntity entity) {
+        return stack.has(DataComponents.FOOD);
+    }
+
+    @Override
+    public FoodProperties getFoodProperties(ItemStack stack, LivingEntity entity) {
+        return stack.get(DataComponents.FOOD);
     }
 }

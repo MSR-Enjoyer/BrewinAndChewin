@@ -42,11 +42,8 @@ public class BnCCopyMealFunction extends LootItemConditionalFunction {
     protected ItemStack run(ItemStack stack, LootContext context) {
         BlockEntity tile = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
         if (tile instanceof KegBlockEntity kegTile) {
-            CompoundTag tag = kegTile.writeMeal(stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY).copyTag());
-            CustomData data = CustomData.of(tag);
-            if (!tag.isEmpty()) {
-                stack.set(DataComponents.BLOCK_ENTITY_DATA, data);
-            }
+            CustomData data = kegTile.writeMeal(stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY).copyTag(), context.getLevel().registryAccess());
+            stack.set(DataComponents.BLOCK_ENTITY_DATA, data);
         }
         return stack;
     }

@@ -78,7 +78,7 @@ public class KegStackedContents extends StackedContents {
                 if (!ignoreFluids) {
                     if (fermentingRecipe.getFluidIngredient().isEmpty() && !kegTank.isEmpty()) {
                         List<PouringEntry> fluidContainerStacks = recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value)
-                                .filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().matches(kegTank.getAbstractedFluid())).map(r -> new PouringEntry(r.getContainer(), r.getRawFluid().amount(), r.isStrict())).toList();
+                                .filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().fluid().isSame(kegTank.getAbstractedFluid().fluid())).map(r -> new PouringEntry(r.getContainer(), r.getRawFluid().amount(), r.isStrict())).toList();
                         if (!fluidContainerStacks.isEmpty()) {
                             for (PouringEntry entry : fluidContainerStacks) {
                                 int itemAmount = kegTank.getAbstractedFluid().amount() / entry.fluidAmount();
@@ -98,7 +98,7 @@ public class KegStackedContents extends StackedContents {
 
                         if (!kegTank.isEmpty() && !fermentingRecipe.getFluidIngredient().get().ingredient().matches(kegTank.getAbstractedFluid())) {
                             List<PouringEntry> fluidContainerStacks = recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value)
-                                    .filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().matches(kegTank.getAbstractedFluid())).map(r -> new PouringEntry(r.getContainer(), r.getRawFluid().amount(), r.isStrict())).toList();
+                                    .filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().fluid().isSame(kegTank.getAbstractedFluid().fluid())).map(r -> new PouringEntry(r.getContainer(), r.getRawFluid().amount(), r.isStrict())).toList();
                             if (!fluidContainerStacks.isEmpty()) {
                                 for (PouringEntry entry : fluidContainerStacks) {
                                     int itemAmount = kegTank.getAbstractedFluid().amount() / entry.fluidAmount();

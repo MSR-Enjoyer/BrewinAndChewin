@@ -1,28 +1,15 @@
 package umpaz.brewinandchewin.common.registry;
 
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
-import vectorwing.farmersdelight.common.registry.ModBlocks;
-import vectorwing.farmersdelight.common.registry.ModItems;
+import umpaz.brewinandchewin.BrewinAndChewin;
 
 public class BnCCreativeTabs {
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS;
-    public static final RegistryObject<CreativeModeTab> TAB_BREWIN_AND_CHEWIN;
+    public static CreativeModeTab TAB_BREWIN_AND_CHEWIN;
 
-    public BnCCreativeTabs() {
-    }
-
-    static {
-        CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "brewinandchewin");
-        TAB_BREWIN_AND_CHEWIN = CREATIVE_TABS.register("brewinandchewin", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.brewinandchewin")).icon(() -> new ItemStack(BnCItems.KEG.get())).displayItems((parameters, output) -> {
-            BnCItems.CREATIVE_TAB_ITEMS.forEach((item) -> {
-                output.accept((ItemLike)item.get());
-            });
-        }).build());
+    public static void registerAll() {
+        BrewinAndChewin.getHelper().initCreativeTab();
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, BrewinAndChewin.asResource("brewinandchewin"), TAB_BREWIN_AND_CHEWIN);
     }
 }

@@ -7,6 +7,8 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import umpaz.brewinandchewin.BrewinAndChewin;
@@ -21,6 +23,8 @@ public class BnCTags {
 
     public static final TagKey<Block> FREEZE_SOURCES = modBlockTag("freeze_sources");
 
+    public static final TagKey<EntityType<?>> IMMUNE_TO_INTOXICATION = modEntityTypeTag("immune_to_intoxication");
+
     public static final TagKey<MobEffect> MILK_BOTTLE_LOW_PRIORITY = modEffectTag("low_priority/milk_bottle");
     public static final TagKey<MobEffect> HOT_COCOA_LOW_PRIORITY = modEffectTag("low_priority/hot_cocoa");
 
@@ -28,18 +32,22 @@ public class BnCTags {
 
 
     private static TagKey<Item> modItemTag(String path) {
-        return ItemTags.create(new ResourceLocation(BrewinAndChewin.MODID, path));
+        return TagKey.create(Registries.ITEM, BrewinAndChewin.asResource(path));
     }
 
     private static TagKey<Block> modBlockTag(String path) {
-        return BlockTags.create(new ResourceLocation(BrewinAndChewin.MODID, path));
+        return TagKey.create(Registries.BLOCK, BrewinAndChewin.asResource(path));
+    }
+
+    private static TagKey<EntityType<?>> modEntityTypeTag(String path) {
+        return TagKey.create(Registries.ENTITY_TYPE, BrewinAndChewin.asResource(path));
     }
 
     private static TagKey<MobEffect> modEffectTag(String path) {
-        return TagKey.create(Registries.MOB_EFFECT, new ResourceLocation(BrewinAndChewin.MODID, path));
+        return TagKey.create(Registries.MOB_EFFECT, BrewinAndChewin.asResource(path));
     }
 
     private static TagKey<DamageType> modDamageTypeTag(String path) {
-        return TagKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(BrewinAndChewin.MODID, path));
+        return TagKey.create(Registries.DAMAGE_TYPE, BrewinAndChewin.asResource(path));
     }
 }

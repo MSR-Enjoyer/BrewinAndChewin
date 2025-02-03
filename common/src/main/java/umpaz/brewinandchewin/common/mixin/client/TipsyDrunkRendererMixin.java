@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Final;
@@ -20,14 +19,14 @@ public class TipsyDrunkRendererMixin {
     @Shadow @Final
     Minecraft minecraft;
 
-    @ModifyVariable(method = "renderLevel", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3f;invert()Lorg/joml/Matrix3f;"), argsOnly = true)
+    @ModifyVariable(method = "renderLevel", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4f;mul(Lorg/joml/Matrix4fc;)Lorg/joml/Matrix4f;"))
     private PoseStack brewinandchewin$renderTipsySpin(PoseStack pose) {
         Player player = Minecraft.getInstance().player;
-        if (player.hasEffect(BnCEffects.TIPSY.get())) {
+        if (player != null && player.hasEffect(BnCEffects.TIPSY)) {
             float distortionScale = minecraft.options.screenEffectScale().get().floatValue();
             if (distortionScale > 0) {
-                int ticks = minecraft.levelRenderer.getTicks();
-                int strength = Math.min(player.getEffect(BnCEffects.TIPSY.get()).getAmplifier(), 11);
+                int ticks = ((LevelRendererAccessor)minecraft.levelRenderer).brewinandchewin$getTicks();
+                int strength = Math.min(player.getEffect(BnCEffects.TIPSY).getAmplifier(), 11);
                 float scaledStrength = strength * distortionScale;
 
                 // left and right

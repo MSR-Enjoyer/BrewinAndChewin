@@ -18,8 +18,7 @@ import net.minecraftforge.network.PacketDistributor;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.capability.RagingCapability;
 import umpaz.brewinandchewin.common.capability.TipsyNumbedHeartsCapability;
-import umpaz.brewinandchewin.common.network.BnCNetworkHandler;
-import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsPacket;
+import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsClientboundPacket;
 import umpaz.brewinandchewin.common.registry.BnCDamageTypes;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 import umpaz.brewinandchewin.common.tag.BnCTags;
@@ -120,7 +119,7 @@ public class BnCCommonEvents {
 
     @SubscribeEvent
     public static void sendClearFluidContainerTextComponents(OnDatapackSyncEvent event) {
-        BnCNetworkHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClearKegFluidContainerComponentsPacket());
+        BnCNetworkHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClearKegFluidContainerComponentsClientboundPacket());
     }
 }
 

@@ -92,7 +92,7 @@ public class NullTrueBlockStateCondition implements LootItemCondition {
             throw new UnsupportedOperationException("Could not map NullTrueBlockStateCondition.ValueMatcher to a specific instance.");
         });
 
-        public <S extends StateHolder<?, S>, T extends Comparable<T>> boolean match(S pProperties, Property<T> pPropertyTarget);
+        <S extends StateHolder<?, S>, T extends Comparable<T>> boolean match(S pProperties, Property<T> pPropertyTarget);
     }
 
     public record ExactMatcher(String value) implements ValueMatcher {

@@ -46,28 +46,28 @@ public class PizzaBlock extends Block
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.isClientSide) {
-            if (this.takeServing(level, pos, state, player, handIn).consumesAction()) {
+            if (this.takeServing(level, pos, state, player, player.getUsedItemHand()).consumesAction()) {
                 return InteractionResult.SUCCESS;
             }
         }
 
-        return this.takeServing(level, pos, state, player, handIn);
+        return this.takeServing(level, pos, state, player, player.getUsedItemHand());
     }
 
     private InteractionResult takeServing(Level level, BlockPos pos, BlockState state, Player player, InteractionHand handIn) {
         int servings = state.getValue(SERVINGS);
         ItemStack heldStack = player.getItemInHand(handIn);
-        if (heldStack.isEmpty() || heldStack.getItem().equals(BnCItems.PIZZA_SLICE.get())) {
-            if (heldStack.getItem().equals(BnCItems.PIZZA_SLICE.get()) && heldStack.getCount() < heldStack.getMaxStackSize()) {
+        if (heldStack.isEmpty() || heldStack.getItem().equals(BnCItems.PIZZA_SLICE)) {
+            if (heldStack.getItem().equals(BnCItems.PIZZA_SLICE) && heldStack.getCount() < heldStack.getMaxStackSize()) {
                 heldStack.setCount(heldStack.getCount() + 1);
             } else {
-                player.setItemInHand(handIn, new ItemStack(BnCItems.PIZZA_SLICE.get()));
+                player.setItemInHand(handIn, new ItemStack(BnCItems.PIZZA_SLICE));
             }
         }
         else {
-            popResource(level, pos, new ItemStack(BnCItems.PIZZA_SLICE.get(), 1));
+            popResource(level, pos, new ItemStack(BnCItems.PIZZA_SLICE, 1));
         }
         level.playSound(null, pos, SoundEvents.SLIME_BLOCK_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
 
@@ -104,7 +104,7 @@ public class PizzaBlock extends Block
         return true;
     }
 
-    @Override
+    // NeoForge:
     public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type) {
         return false;
     }

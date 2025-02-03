@@ -12,12 +12,14 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.material.Fluid;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.utility.BnCRectangle;
@@ -116,11 +118,11 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
 
 
     private void renderTankTooltip(GuiGraphics gui, int mouseX, int mouseY) {
-        if (isHovering(120, 19, 24, 28, mouseX, mouseY) && !this.menu.kegTank.isEmpty() && recipeBookComponent.getGhostRecipe() != null && (!(recipeBookComponent.getGhostRecipe().value() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient().isEmpty() || fermentingRecipe.getFluidIngredient().get().ingredient().matches(menu.kegTank.getFluid()))) {
-            Component containerComponent = (BnCTextUtils.getTranslation("container.keg.served_in", FLUID_CONTAINER_COMPONENTS.computeIfAbsent(menu.kegTank.getFluid().getFluid(), fluid -> {
-                MutableComponent component = MutableComponent.create(ComponentContents.EMPTY).withStyle(ChatFormatting.GRAY);
+        if (isHovering(120, 19, 24, 28, mouseX, mouseY) && !menu.kegTank.isEmpty() && recipeBookComponent.getGhostRecipe() != null && (!(recipeBookComponent.getGhostRecipe().value() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient().isEmpty() || fermentingRecipe.getFluidIngredient().get().ingredient().matches(menu.kegTank.getAbstractedFluid()))) {
+            Component containerComponent = (BnCTextUtils.getTranslation("container.keg.served_in", FLUID_CONTAINER_COMPONENTS.computeIfAbsent(menu.kegTank.getAbstractedFluid().fluid(), fluid -> {
+                MutableComponent component = MutableComponent.create(PlainTextContents.EMPTY).withStyle(ChatFormatting.GRAY);
                 int amountAdded = 0;
-                for (KegPouringRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(pouringRecipe -> pouringRecipe.getRawFluid().isSame(fluid)).sorted(Comparator.comparing(recipe -> recipe.getContainer().getItem().getDescription().getString())).toList()) {
+                for (KegPouringRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).filter(pouringRecipe -> pouringRecipe.getRawFluid().matches(menu.kegTank.getAbstractedFluid())).sorted(Comparator.comparing(recipe -> recipe.getContainer().getItem().getDescription().getString())).toList()) {
                     if (amountAdded > 0)
                         component.append(", ");
                     component.append(recipe.getContainer().getItem().getDescription().plainCopy().withStyle(ChatFormatting.GRAY));
@@ -128,8 +130,8 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
                 }
                 return component;
             }))).withStyle(ChatFormatting.GRAY);
-            Component component = MutableComponent.create(this.menu.kegTank.getFluid().getDisplayName().getContents())
-                    .append(" (%s/%s mB)".formatted(this.menu.kegTank.getFluidAmount(), this.menu.kegTank.getCapacity()));
+            Component component = MutableComponent.create(BrewinAndChewin.getHelper().getFluidDisplayName(this.menu.kegTank.getAbstractedFluid()).getContents())
+                    .append(" (%s/%s mB)".formatted(this.menu.kegTank.getAbstractedFluid().amount(), this.menu.kegTank.getCapacity()));
             gui.renderComponentTooltip(this.font, List.of(component, containerComponent), mouseX, mouseY);
         }
     }
@@ -192,11 +194,11 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
 
         // Render temperature bars
 
-        AbstractedFluidStack fluidStack = this.menu.kegTank.getFluid();
-        if (!fluidStack.isEmpty() && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient() == null && menu.kegTank.isEmpty() || fermentingRecipe.getFluidIngredient() != null && fermentingRecipe.getFluidIngredient().get().ingredient().matches(fluidStack))) {
-
+        AbstractedFluidStack fluidStack = this.menu.kegTank.getAbstractedFluid();
+        if (!fluidStack.isEmpty() && (!(recipeBookComponent.getGhostRecipe().value() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient().isEmpty() && menu.kegTank.isEmpty() || fermentingRecipe.getFluidIngredient().isPresent() && fermentingRecipe.getFluidIngredient().get().ingredient().matches(fluidStack))) {
             // Fluid
             if (BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {
+                // TODO: Move fluid rendering code to ClientPlatformHelper.
                 IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(fluidStack.getFluid());
                 ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(fluidStack);
                 if (stillTexture != null) {
@@ -209,7 +211,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
                     float green = ((tintColor >> 8) & 0xFF) / 255f;
                     float blue = (tintColor & 0xFF) / 255f;
 
-                    float capacity = Math.min(this.menu.kegTank.getCapacity(), this.menu.kegTank.getFluidAmount()) / (float) this.menu.kegTank.getCapacity();
+                    float capacity = Math.min(this.menu.kegTank.getCapacity(), this.menu.kegTank.getAbstractedFluid().amount()) / (float) this.menu.kegTank.getCapacity();
                     if (capacity > 0.57) {
                         int y1 = this.topPos + 19 + (int) (12 * (1 - ((capacity - 0.57F) / .43F)));
                         int y2 = this.topPos + 19 + 12;
@@ -226,15 +228,14 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
                     float v0 = sprite.getV0() + (vDistance * (1 - Math.min(1, (capacity / .57F))));
                     gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120, this.leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
                     gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120 + 16, this.leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
-
                 }
             }
 
             ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
-            Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
+            Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
                     ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.value().getResultItem(minecraft.level.registryAccess()))
             ).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(this.menu.kegTank.getCapacity(), this.menu.kegTank.getFluidAmount()) / kegPouringRecipe.getAmount()).orElse(1);
+            int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(this.menu.kegTank.getCapacity(), this.menu.kegTank.getAbstractedFluid().amount()) / kegPouringRecipe.getRawFluid().amount()).orElse(1);
             itemDisplay.setCount(pourCount);
             if (!itemDisplay.isEmpty()) {
                 gui.renderItem(itemDisplay, this.leftPos + 124, this.topPos + 23);
