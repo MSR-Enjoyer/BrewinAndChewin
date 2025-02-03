@@ -1,13 +1,14 @@
 package umpaz.brewinandchewin.integration.jei.transfer;
 
 import com.mojang.datafixers.util.Pair;
+import com.sun.jna.platform.win32.Winspool;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.helpers.IPlatformFluidHelper;
 import mezz.jei.api.helpers.IStackHelper;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.recipe.RecipeIngredientRole;
@@ -23,8 +24,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.Nullable;
+import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
@@ -63,7 +65,7 @@ public class FermentingTransfer {
 
         @Override
         public Optional<MenuType<KegMenu>> getMenuType() {
-            return Optional.of(BnCMenuTypes.KEG.get());
+            return Optional.of(BnCMenuTypes.KEG);
         }
 
         @Override
@@ -100,10 +102,12 @@ public class FermentingTransfer {
     public static class Handler implements IRecipeTransferHandler<KegMenu, KegFermentingPouringRecipe> {
         private final IRecipeTransferHandlerHelper helper;
         private final IStackHelper stackHelper;
+        private final IPlatformFluidHelper<?> platformFluidHelper;
 
-        public Handler(IRecipeTransferHandlerHelper helper, IStackHelper stackHelper) {
+        public Handler(IRecipeTransferHandlerHelper helper, IStackHelper stackHelper, IPlatformFluidHelper<?> platformFluidHelper) {
             this.helper = helper;
             this.stackHelper = stackHelper;
+            this.platformFluidHelper = platformFluidHelper;
         }
 
         @Override
@@ -113,7 +117,7 @@ public class FermentingTransfer {
 
         @Override
         public Optional<MenuType<KegMenu>> getMenuType() {
-            return Optional.of(BnCMenuTypes.KEG.get());
+            return Optional.of(BnCMenuTypes.KEG);
         }
 
         @Override
@@ -146,8 +150,8 @@ public class FermentingTransfer {
             TransferOperations operations = createOperations(
                     inv.availableItemStacks,
                     inputItemSlotViews,
-                    recipe.getFluidIngredient() != null ?
-                            view.getSlotViews(RecipeIngredientRole.INPUT).stream().filter(ingredientView -> ingredientView.getAllIngredients().anyMatch(ingredient -> ingredient.getIngredient(ForgeTypes.FLUID_STACK).isPresent())).findFirst().orElse(null) :
+                    recipe.getFluidIngredient().isPresent() ?
+                            view.getSlotViews(RecipeIngredientRole.INPUT).stream().filter(ingredientView -> ingredientView.getAllIngredients().anyMatch(ingredient -> ingredient.getIngredient(platformFluidHelper.getFluidIngredientType()).isPresent())).findFirst().orElse(null) :
                             null,
                     recipe,
                     menu,
@@ -173,7 +177,7 @@ public class FermentingTransfer {
             }
 
             if (doTransfer) {
-                BnCNetworkHandler.INSTANCE.send(PacketDistributor.SERVER.noArg(), new TransferKegRecipeServerboundPacket(
+                BrewinAndChewin.getHelper().sendServerbound(new TransferKegRecipeServerboundPacket(
                         recipe.getId(),
                         operations.results.stream().map(pair -> Pair.of(pair.getFirst().index, pair.getSecond().index)).toList(),
                         operations.fluidResults.stream().map(pair -> Pair.of(pair.getFirst().index, pair.getSecond())).toList(),
@@ -227,9 +231,9 @@ public class FermentingTransfer {
             Map<IRecipeSlotView, Map<ItemStack, List<SlotReference>>> relevantSlots = new IdentityHashMap<>();
             Map<ItemStack, List<SlotReference>> emptyingSlots = new IdentityHashMap<>();
             boolean hasTooMuchFluid = false;
-            int fluidCapacity = 0;
-            int largestFluidCapacity = 0;
-            int largestEmptyCapacity = 0;
+            long fluidCapacity = 0;
+            long largestFluidCapacity = 0;
+            long largestEmptyCapacity = 0;
 
             for (Map.Entry<Slot, ItemStack> slotTuple : availableItemStacks.entrySet()) {
                 for (IRecipeSlotView ingredient : requiredItemStacks) {
@@ -252,27 +256,27 @@ public class FermentingTransfer {
                 }
 
 
-                if (!menu.kegTank.isEmpty() && (!maxTransfer || recipe.getFluidIngredient() == null || !menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient()))) {
-                    List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.getFluid(slotTuple.getValue()).isFluidEqual(menu.kegTank.getFluid())).toList();
+                if (!menu.kegTank.isEmpty() && (!maxTransfer || recipe.getFluidIngredient().isEmpty() || !recipe.getFluidIngredient().get().ingredient().matches(menu.kegTank.getAbstractedFluid()))) {
+                    List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).filter(kegPouringRecipe -> kegPouringRecipe.getFluid(slotTuple.getValue()).matches(menu.kegTank.getAbstractedFluid())).toList();
                     Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                         if (pouring.isStrict())
-                            return ItemStack.isSameItemSameTags(slotTuple.getValue(), pouring.getContainer());
+                            return ItemStack.isSameItemSameComponents(slotTuple.getValue(), pouring.getContainer());
                         return ItemStack.isSameItem(slotTuple.getValue(), pouring.getContainer());
                     }).findFirst();
                     if (optionalData.isPresent()) {
-                        if (optionalData.get().getAmount() <= menu.kegTank.getFluidAmount()) {
-                            int shrinkAmount = menu.kegTank.getFluidAmount() / optionalData.get().getAmount();
+                        if (optionalData.get().getRawFluid().amount() <= menu.kegTank.getAbstractedFluid().amount()) {
+                            int shrinkAmount = (int) (menu.kegTank.getAbstractedFluid().amount() / optionalData.get().getRawFluid().amount());
                             emptyingSlots
                                     .computeIfAbsent(slotTuple.getValue(), it -> new ArrayList<>())
-                                    .add(new SlotReference(slotTuple.getKey(), slotTuple.getValue(), optionalData.get().getAmount() * shrinkAmount, shrinkAmount));
+                                    .add(new SlotReference(slotTuple.getKey(), slotTuple.getValue(), optionalData.get().getRawFluid().amount() * shrinkAmount, shrinkAmount));
                         }
-                        if (recipe.getFluidIngredient() != null && menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient())) {
-                            if (optionalData.get().getAmount() <= recipe.getFluidIngredient().getAmount() && fluidCapacity < recipe.getFluidIngredient().getAmount()) {
-                                if (optionalData.get().getAmount() > largestEmptyCapacity) {
+                        if (recipe.getFluidIngredient().isPresent() && recipe.getFluidIngredient().get().ingredient().matches(menu.kegTank.getAbstractedFluid())) {
+                            if (optionalData.get().getRawFluid().amount() <= recipe.getFluidIngredient().get().amount() && fluidCapacity < recipe.getFluidIngredient().get().amount()) {
+                                if (optionalData.get().getRawFluid().amount() > largestEmptyCapacity) {
                                     relevantSlots.remove(requiredFluidStack);
                                 }
-                                int shrinkAmount = recipe.getFluidIngredient().getAmount() / optionalData.get().getAmount();
-                                largestEmptyCapacity = optionalData.get().getAmount();
+                                int shrinkAmount = (int) (recipe.getFluidIngredient().get().amount() / optionalData.get().getRawFluid().amount());
+                                largestEmptyCapacity = optionalData.get().getRawFluid().amount();
                                 relevantSlots
                                         .computeIfAbsent(requiredFluidStack, it -> new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
                                             @Override
@@ -286,28 +290,28 @@ public class FermentingTransfer {
                                             }
                                         }))
                                         .computeIfAbsent(slotTuple.getValue(), it -> new ArrayList<>())
-                                        .add(new SlotReference(slotTuple.getKey(), optionalData.get().getResultItem(Minecraft.getInstance().level.registryAccess()).copyWithCount(shrinkAmount), optionalData.get().getAmount() * shrinkAmount, shrinkAmount));
+                                        .add(new SlotReference(slotTuple.getKey(), optionalData.get().getResultItem(Minecraft.getInstance().level.registryAccess()).copyWithCount(shrinkAmount), optionalData.get().getRawFluid().amount() * shrinkAmount, shrinkAmount));
                             }
                         }
                     }
                 }
 
-                if (recipe.getFluidIngredient() != null && !requiredFluidStack.isEmpty() && requiredFluidStack.getIngredients(ForgeTypes.FLUID_STACK).findFirst().isPresent()) {
-                    List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> kegPouringRecipe.canFill() && kegPouringRecipe.getFluid(slotTuple.getValue()).isFluidEqual(recipe.getFluidIngredient())).toList();
+                if (recipe.getFluidIngredient().isPresent() && !requiredFluidStack.isEmpty() && requiredFluidStack.getIngredients(platformFluidHelper.getFluidIngredientType()).findFirst().isPresent()) {
+                    List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).filter(kegPouringRecipe -> kegPouringRecipe.canFill() && recipe.getFluidIngredient().get().ingredient().matches(kegPouringRecipe.getFluid(slotTuple.getValue()))).toList();
                     Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                         if (pouring.isStrict())
-                            return ItemStack.isSameItemSameTags(slotTuple.getValue(), pouring.getOutput());
+                            return ItemStack.isSameItemSameComponents(slotTuple.getValue(), pouring.getOutput());
                         return ItemStack.isSameItem(slotTuple.getValue(), pouring.getOutput());
                     }).findFirst();
-                    int tankAmount = menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient()) ? menu.kegTank.getFluidAmount() : 0;
+                    long tankAmount = recipe.getFluidIngredient().get().ingredient().matches(menu.kegTank.getAbstractedFluid()) ? menu.kegTank.getAbstractedFluid().amount() : 0;
                     if (optionalData.isPresent()) {
-                        if (optionalData.get().getAmount() <= menu.kegTank.getCapacity() - tankAmount && fluidCapacity < menu.kegTank.getCapacity() - tankAmount) {
-                            if (optionalData.get().getAmount() > largestFluidCapacity) {
+                        if (optionalData.get().getRawFluid().amount() <= menu.kegTank.getFluidCapacity() - tankAmount && fluidCapacity < menu.kegTank.getFluidCapacity() - tankAmount) {
+                            if (optionalData.get().getRawFluid().amount() > largestFluidCapacity) {
                                 relevantSlots.remove(requiredFluidStack);
                             }
-                            int shrinkAmount = (recipe.getFluidIngredient().getAmount() / optionalData.get().getAmount()) - ((tankAmount % recipe.getFluidIngredient().getAmount()) / optionalData.get().getAmount());
-                            largestFluidCapacity = optionalData.get().getAmount();
-                            fluidCapacity += optionalData.get().getAmount() * shrinkAmount;
+                            int shrinkAmount = (int) ((recipe.getFluidIngredient().get().amount() / optionalData.get().getRawFluid().amount()) - ((tankAmount % recipe.getFluidIngredient().get().amount()) / optionalData.get().getRawFluid().amount()));
+                            largestFluidCapacity = optionalData.get().getRawFluid().amount();
+                            fluidCapacity += optionalData.get().getRawFluid().amount() * shrinkAmount;
                             relevantSlots
                                     .computeIfAbsent(requiredFluidStack, it -> new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
                                         @Override
@@ -321,7 +325,7 @@ public class FermentingTransfer {
                                         }
                                     }))
                                     .computeIfAbsent(slotTuple.getValue(), it -> new ArrayList<>())
-                                    .add(new SlotReference(slotTuple.getKey(), slotTuple.getValue(), optionalData.get().getAmount() * shrinkAmount, shrinkAmount));
+                                    .add(new SlotReference(slotTuple.getKey(), slotTuple.getValue(), optionalData.get().getRawFluid().amount() * shrinkAmount, shrinkAmount));
                         } else
                             hasTooMuchFluid = true;
                     }
@@ -337,7 +341,7 @@ public class FermentingTransfer {
                 for (Map.Entry<ItemStack, List<SlotReference>> foundSlots : entry.getValue().entrySet()) {
                     foundSlots.getValue().sort((o1, o2) -> {
                         int compare = o1.fluidAmount != null && o2.fluidAmount != null ?
-                                Integer.compare(o1.fluidAmount, o2.fluidAmount) :
+                                Long.compare(o1.fluidAmount, o2.fluidAmount) :
                                 Integer.compare(o1.stack.getCount(), o2.stack.getCount());
 
                         if (compare == 0) {
@@ -372,7 +376,7 @@ public class FermentingTransfer {
 
                 entry.getValue().sort((o1, o2) -> {
                     int compare = o1.fluidAmount != null && o2.fluidAmount != null ?
-                            Integer.compare(o1.fluidAmount, o2.fluidAmount) :
+                            Long.compare(o1.fluidAmount, o2.fluidAmount) :
                             Integer.compare(o1.stack.getCount(), o2.stack.getCount());
 
                     if (compare == 0) {
@@ -434,8 +438,8 @@ public class FermentingTransfer {
                 }
             }
 
-            if (requiredFluidStack != null && recipe.getFluidIngredient() != null) {
-                int amountToFill = Math.max((maxTransfer ? menu.kegTank.getCapacity() : recipe.getFluidIngredient().getAmount()) - (menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient()) ? menu.kegTank.getFluidAmount() : 0), 0);
+            if (requiredFluidStack != null && recipe.getFluidIngredient().isPresent()) {
+                long amountToFill = Math.max((maxTransfer ? menu.kegTank.getFluidCapacity() : recipe.getFluidIngredient().get().amount()) - (recipe.getFluidIngredient().get().ingredient().matches(menu.kegTank.getAbstractedFluid()) ? menu.kegTank.getAbstractedFluid().amount() : 0), 0);
 
                 if (amountToFill > 0) {
                     List<SlotReference> allMatching = bestMatches
@@ -455,7 +459,7 @@ public class FermentingTransfer {
                                 break;
                             toShrink.add(matching);
                             operations.fluidResults.add(Pair.of(matching.slot, matching.fluidAmount));
-                            amountToFill -= matching.fluidAmount;
+                            amountToFill -= matching.fluidAmount != null ? matching.fluidAmount : 0;
                         }
                         if (amountToFill > 0) {
                             operations.fluidResults.clear();
@@ -468,14 +472,14 @@ public class FermentingTransfer {
             }
 
             if (!emptyingBestMatches.isEmpty()) {
-                int amountToEmpty = menu.kegTank.getFluidAmount();
+                long amountToEmpty = menu.kegTank.getAbstractedFluid().amount();
 
                 List<SlotReference> allMatching = emptyingBestMatches
                         .stream()
                         .flatMap(pairs -> pairs.stream().filter(p -> !p.stack.isEmpty() && p.fluidAmount != null))
                         .toList();
 
-                if (allMatching.isEmpty() && !menu.kegTank.isEmpty() && (recipe.getFluidIngredient() == null || !menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient()))) {
+                if (allMatching.isEmpty() && !menu.kegTank.isEmpty() && (recipe.getFluidIngredient().isEmpty() || !recipe.getFluidIngredient().get().ingredient().matches(menu.kegTank.getAbstractedFluid()))) {
                     operations.canEmpty = false;
                 } else {
                     List<SlotReference> toShrink = new ArrayList<>();
@@ -484,9 +488,9 @@ public class FermentingTransfer {
                             break;
                         toShrink.add(matching);
                         operations.emptyingResults.add(Pair.of(matching.slot, matching.fluidAmount));
-                        amountToEmpty -= matching.fluidAmount;
+                        amountToEmpty -= matching.fluidAmount != null ? matching.fluidAmount : 0;
                     }
-                    if (amountToEmpty > 0 && !menu.kegTank.isEmpty() && (recipe.getFluidIngredient() == null || !menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient()))) {
+                    if (amountToEmpty > 0 && !menu.kegTank.isEmpty() && (recipe.getFluidIngredient().isEmpty() || !recipe.getFluidIngredient().get().ingredient().matches(menu.kegTank.getAbstractedFluid()))) {
                         operations.emptyingResults.clear();
                         operations.canEmpty = false;
                     } else
@@ -494,7 +498,7 @@ public class FermentingTransfer {
                 }
             }
 
-            if (!menu.kegTank.isEmpty() && emptyingBestMatches.isEmpty() && (recipe.getFluidIngredient() == null || !menu.kegTank.getFluid().isFluidEqual(recipe.getFluidIngredient()) || recipe.getFluidIngredient() != null && menu.kegTank.getFluidAmount() % recipe.getFluidIngredient().getAmount() != 0)) {
+            if (!menu.kegTank.isEmpty() && emptyingBestMatches.isEmpty() && (recipe.getFluidIngredient().isEmpty() || !recipe.getFluidIngredient().get().ingredient().matches(menu.kegTank.getAbstractedFluid()) || recipe.getFluidIngredient().isPresent() && menu.kegTank.getAbstractedFluid().amount() % recipe.getFluidIngredient().get().amount() != 0)) {
                 operations.canEmpty = false;
             }
 
@@ -505,14 +509,14 @@ public class FermentingTransfer {
     private record SlotReference(
             Slot slot,
             ItemStack stack,
-            @Nullable Integer fluidAmount,
+            @Nullable Long fluidAmount,
             int shrinkAmount
     ) {}
 
     public static class TransferOperations {
         public final List<Pair<Slot, Slot>> results = new ArrayList<>();
-        public final List<Pair<Slot, Integer>> fluidResults = new ArrayList<>();
-        public final List<Pair<Slot, Integer>> emptyingResults = new ArrayList<>();
+        public final List<Pair<Slot, Long>> fluidResults = new ArrayList<>();
+        public final List<Pair<Slot, Long>> emptyingResults = new ArrayList<>();
 
         public final List<IRecipeSlotView> missingItems = new ArrayList<>();
         public boolean canEmpty = true;
@@ -520,8 +524,8 @@ public class FermentingTransfer {
         public boolean invalidFluid = false;
 
         public static TransferOperations readFromIntegers(List<Pair<Integer, Integer>> resultSlots,
-                                                          List<Pair<Integer, Integer>> fluidSlots,
-                                                          List<Pair<Integer, Integer>> emptyingSlots,
+                                                          List<Pair<Integer, Long>> fluidSlots,
+                                                          List<Pair<Integer, Long>> emptyingSlots,
                                                           AbstractContainerMenu menu) {
             TransferOperations operations = new TransferOperations();
             for (Pair<Integer, Integer> resultSlot : resultSlots) {
@@ -529,14 +533,14 @@ public class FermentingTransfer {
                 int craftingSlotIndex = resultSlot.getSecond();
                 operations.results.add(Pair.of(menu.getSlot(inventorySlotIndex), menu.getSlot(craftingSlotIndex)));
             }
-            for (Pair<Integer, Integer> fluidSlot : fluidSlots) {
+            for (Pair<Integer, Long> fluidSlot : fluidSlots) {
                 int fluidSlotIndex = fluidSlot.getFirst();
-                int fluidAmount = fluidSlot.getSecond();
+                long fluidAmount = fluidSlot.getSecond();
                 operations.fluidResults.add(Pair.of(menu.getSlot(fluidSlotIndex), fluidAmount));
             }
-            for (Pair<Integer, Integer> emptyingSlot : emptyingSlots) {
+            for (Pair<Integer, Long> emptyingSlot : emptyingSlots) {
                 int emptyingSlotIndex = emptyingSlot.getFirst();
-                int fluidAmount = emptyingSlot.getSecond();
+                long fluidAmount = emptyingSlot.getSecond();
                 operations.emptyingResults.add(Pair.of(menu.getSlot(emptyingSlotIndex), fluidAmount));
             }
             return operations;

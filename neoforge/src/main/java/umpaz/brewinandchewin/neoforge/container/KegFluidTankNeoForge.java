@@ -1,20 +1,32 @@
 package umpaz.brewinandchewin.neoforge.container;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 
-public class KegFluidTank extends FluidTank implements AbstractedFluidTank {
-    public KegFluidTank(int capacity) {
+public class KegFluidTankNeoForge extends FluidTank implements AbstractedFluidTank {
+    public KegFluidTankNeoForge(int capacity) {
         super(capacity);
+    }
+
+    @Override
+    public long getFluidCapacity() {
+        return getCapacity();
     }
 
     @Override
     public AbstractedFluidStack getAbstractedFluid() {
         return new AbstractedFluidStack(fluid.getFluid(), fluid.getAmount(), fluid.getComponents(), fluid);
+    }
+
+    @Override
+    public void setAbstractedFluid(AbstractedFluidStack stack) {
+        setFluid(unwrapFluid(stack));
     }
 
     @Override
@@ -43,6 +55,9 @@ public class KegFluidTank extends FluidTank implements AbstractedFluidTank {
         if (stack.loaderSpecific() instanceof FluidStack fluidStack)
             return fluidStack;
 
-        return new FluidStack(stack.fluid().builtInRegistryHolder(), stack.amount(), stack.components().asPatch());
+        if (stack.isEmpty())
+            return FluidStack.EMPTY;
+
+        return new FluidStack(stack.fluid().builtInRegistryHolder(), stack.amount(), stack.components() instanceof PatchedDataComponentMap  patched ? patched.asPatch() : DataComponentPatch.EMPTY);
     }
 }

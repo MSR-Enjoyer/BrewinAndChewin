@@ -180,7 +180,7 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper, KegFermentingRecip
 
     @Override
     public void fillCraftSlotsStackedContents(StackedContents helper) {
-        for (int i = 0; i < inventory.getSlots(); i++) {
+        for (int i = 0; i < inventory.getSlotCount(); i++) {
             helper.accountSimpleStack(inventory.getStackInSlot(i));
         }
     }

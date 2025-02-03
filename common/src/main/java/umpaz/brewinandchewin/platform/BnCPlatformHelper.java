@@ -8,7 +8,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -17,6 +21,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.Nullable;
+import umpaz.brewinandchewin.common.attachment.RagingAttachment;
+import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedItemHandler;
@@ -42,6 +48,9 @@ public interface BnCPlatformHelper {
     }
 
     boolean isDevelopmentEnvironment();
+
+    void sendClientboundTracking(Entity tracked, CustomPacketPayload payload);
+    void sendServerbound(CustomPacketPayload payload);
 
     Component getFluidDisplayName(AbstractedFluidStack wrapper);
 
@@ -81,10 +90,17 @@ public interface BnCPlatformHelper {
     ItemStack getCraftingRemainingItem(ItemStack stack);
 
     void initFluids();
-
     void initCreativeTab();
 
     boolean isEdible(ItemStack stack, LivingEntity entity);
 
     FoodProperties getFoodProperties(ItemStack stack, LivingEntity entity);
+
+    MinecraftServer getServer();
+
+    RagingAttachment getRagingAttachment(LivingEntity entity);
+    void setRagingAttachment(LivingEntity entity, @Nullable RagingAttachment value);
+
+    TipsyHeartsAttachment getTipsyHeartsAttachment(LivingEntity entity);
+    void setTipsyHeartsAttachment(LivingEntity entity, @Nullable TipsyHeartsAttachment value);
 }

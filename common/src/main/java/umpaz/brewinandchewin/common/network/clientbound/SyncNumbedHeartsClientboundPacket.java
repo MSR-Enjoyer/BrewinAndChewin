@@ -2,24 +2,33 @@
 package umpaz.brewinandchewin.common.network.clientbound;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
-import umpaz.brewinandchewin.common.capability.TipsyNumbedHeartsCapability;
+import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
 
-import java.util.function.Supplier;
+public record SyncNumbedHeartsClientboundPacket(int entityId, float numbedHealth, int ticksUntilDamage) implements CustomPacketPayload {
+    public static final ResourceLocation ID = BrewinAndChewin.asResource("sync_numbed_hearts");
+    public static final Type<SyncNumbedHeartsClientboundPacket> TYPE = new Type<>(ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SyncNumbedHeartsClientboundPacket> STREAM_CODEC = StreamCodec.of(SyncNumbedHeartsClientboundPacket::encode, SyncNumbedHeartsClientboundPacket::new);
 
-public record SyncNumbedHeartsClientboundPacket(int entityId, float numbedHealth, int ticksUntilDamage) {
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeInt(entityId());
-        buf.writeFloat(numbedHealth());
-        buf.writeInt(ticksUntilDamage());
+    public SyncNumbedHeartsClientboundPacket(RegistryFriendlyByteBuf buf) {
+        this(buf.readInt(), buf.readFloat(), buf.readInt());
     }
 
-    public static SyncNumbedHeartsClientboundPacket decode(FriendlyByteBuf buf) {
-        return new SyncNumbedHeartsClientboundPacket(buf.readInt(), buf.readFloat(), buf.readInt());
+    public static void encode(RegistryFriendlyByteBuf buf, SyncNumbedHeartsClientboundPacket packet) {
+        buf.writeInt(packet.entityId());
+        buf.writeFloat(packet.numbedHealth());
+        buf.writeInt(packet.ticksUntilDamage());
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
     public void handle() {
@@ -29,10 +38,7 @@ public record SyncNumbedHeartsClientboundPacket(int entityId, float numbedHealth
             if (!(entity instanceof LivingEntity living))
                 return;
 
-            living.getCapability(TipsyNumbedHeartsCapability.INSTANCE).ifPresent(cap -> {
-                cap.setNumbedHealth(packet.numbedHealth());
-                cap.setTicksUntilDamage(packet.ticksUntilDamage());
-            });
+            BrewinAndChewin.getHelper().setTipsyHeartsAttachment(living, numbedHealth < 1.0E-5F ? null :new TipsyHeartsAttachment(numbedHealth, ticksUntilDamage));
         });
     }
 }

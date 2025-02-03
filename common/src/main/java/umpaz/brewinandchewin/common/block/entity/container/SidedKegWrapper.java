@@ -23,8 +23,8 @@ public abstract class SidedKegWrapper implements AbstractedItemHandler {
     }
 
     @Override
-    public int getSlots() {
-        return this.itemHandler.getSlots();
+    public int getSlotCount() {
+        return this.itemHandler.getSlotCount();
     }
 
     @NotNull

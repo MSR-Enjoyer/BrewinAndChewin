@@ -1,0 +1,24 @@
+package umpaz.brewinandchewin.fabric.utility;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import umpaz.brewinandchewin.common.utility.BnCStreamCodecs;
+
+public record AmountedFluidVariant(FluidVariant variant, long amount) {
+    public static final AmountedFluidVariant EMPTY = new AmountedFluidVariant(FluidVariant.blank(), 0);
+    public static final Codec<AmountedFluidVariant> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+            BuiltInRegistries.FLUID.byNameCodec().fieldOf("fluid").forGetter(amounted -> amounted.variant.getFluid()),
+            Codec.LONG.fieldOf("amount").forGetter(AmountedFluidVariant::amount),
+            DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(amounted -> amounted.variant.getComponents())
+    ).apply(inst, (t1, t2, t3) -> new AmountedFluidVariant(FluidVariant.of(t1, t3), t2)));
+    public static final StreamCodec<RegistryFriendlyByteBuf, AmountedFluidVariant> STREAM_CODEC = StreamCodec.composite(
+            FluidVariant.PACKET_CODEC, AmountedFluidVariant::variant,
+            BnCStreamCodecs.LONG, AmountedFluidVariant::amount,
+            AmountedFluidVariant::new
+    );
+}

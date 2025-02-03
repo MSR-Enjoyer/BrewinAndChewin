@@ -13,6 +13,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.registry.*;
 import umpaz.brewinandchewin.common.registry.BnCCreativeTabs;
+import umpaz.brewinandchewin.neoforge.registry.BnCAttachments;
 import umpaz.brewinandchewin.neoforge.registry.BnCFluidTypes;
 import umpaz.brewinandchewin.neoforge.registry.BnCLootModifiers;
 import umpaz.brewinandchewin.neoforge.platform.BnCPlatformHelperNeoForge;
@@ -22,9 +23,6 @@ public class BrewinAndChewinNeoForge {
 
     public BrewinAndChewinNeoForge(IEventBus eventBus) {
         BrewinAndChewin.setHelper(new BnCPlatformHelperNeoForge());
-        // TODO: NeoForge creative tab impl.
-        BnCCreativeTabs.CREATIVE_TABS.register(modEventBus);
-
         NeoForgeMod.enableMilkFluid();
     }
 
@@ -32,8 +30,10 @@ public class BrewinAndChewinNeoForge {
     public static class ModEvents {
         @SubscribeEvent
         public static void registerContent(RegisterEvent event) {
+            registerMethod(event, NeoForgeRegistries.Keys.ATTACHMENT_TYPES, BnCAttachments::registerAll);
             registerMethod(event, Registries.BLOCK, BnCBlocks::registerAll);
             registerMethod(event, Registries.BLOCK_ENTITY_TYPE, BnCBlockEntityTypes::registerAll);
+            registerMethod(event, Registries.CREATIVE_MODE_TAB, BnCCreativeTabs::registerAll);
             registerMethod(event, Registries.FLUID, BnCFluids::registerAll);
             registerMethod(event, NeoForgeRegistries.Keys.FLUID_TYPES, BnCFluidTypes::registerAll);
             registerMethod(event, Registries.ITEM, BnCItems::registerAll);

@@ -8,6 +8,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
@@ -44,8 +45,8 @@ public class FermentingTransferServer {
             return;
 
         Map<Slot, Pair<Slot, ItemStack>> recipeSlotToRequiredItemStack = calculateRequiredStacks(transferOperations, player);
-        List<Pair<Slot, Pair<ItemStack, Integer>>> requiredFluidStacks  = calculateRequiredFluidOrEmptyingStacks(transferOperations.fluidResults, player, Either.left(recipe));
-        List<Pair<Slot, Pair<ItemStack, Integer>>> requiredEmptyingStacks  = calculateRequiredFluidOrEmptyingStacks(transferOperations.emptyingResults, player, Either.right(kegMenu));
+        List<Pair<Slot, Pair<ItemStack, Long>>> requiredFluidStacks  = calculateRequiredFluidOrEmptyingStacks(transferOperations.fluidResults, player, Either.left(recipe));
+        List<Pair<Slot, Pair<ItemStack, Long>>> requiredEmptyingStacks  = calculateRequiredFluidOrEmptyingStacks(transferOperations.emptyingResults, player, Either.right(kegMenu));
         if (recipeSlotToRequiredItemStack == null || requiredFluidStacks == null || requiredEmptyingStacks == null)
             return;
 
@@ -83,10 +84,9 @@ public class FermentingTransferServer {
         if (recipeSlotToTakenStacks.isEmpty() && fluidSlotToTakenStacks.isEmpty() && emptyingSlotToTakenStacks.isEmpty())
             return;
 
-        boolean sameFluid = recipe.getFluidIngredient().isFluidEqual(kegMenu.kegTank.getFluid());
+        boolean sameFluid = recipe.getFluidIngredient().isEmpty() && kegMenu.kegTank.isEmpty() || recipe.getFluidIngredient().isPresent() && recipe.getFluidIngredient().get().ingredient().matches(kegMenu.kegTank.getAbstractedFluid());
 
         List<ItemStack> clearedFluidItems = extractFromFluidTank(emptyingSlotToTakenStacks, kegMenu, false, null);
-
 
         if (sameFluid && !maxTransfer)
             fluidSlotToTakenStacks = clearedFluidItems;
@@ -195,7 +195,7 @@ public class FermentingTransferServer {
     private static List<ItemStack> takeFluidOrEmptyingItemsFromInventory(
             Player player,
             KegMenu kegMenu,
-            List<Pair<Slot, Pair<ItemStack, Integer>>> requiredItemStacks,
+            List<Pair<Slot, Pair<ItemStack, Long>>> requiredItemStacks,
             List<Slot> craftingSlots,
             List<Slot> inventorySlots,
             boolean transferAsCompleteSets,
@@ -215,7 +215,7 @@ public class FermentingTransferServer {
         int fluidCapacity = 0;
 
         while (true) {
-            if (insert && fluidCapacity >= kegMenu.kegTank.getCapacity() || !insert && fluidCapacity >= kegMenu.kegTank.getFluidAmount())
+            if (insert && fluidCapacity >= kegMenu.kegTank.getFluidCapacity() || !insert && fluidCapacity >= kegMenu.kegTank.getAbstractedFluid().amount())
                 break;
 
             final Pair<List<ItemStack>, Integer> foundItemsInSet = removeOneSetOfFluidOrEmptyingItemsFromInventory(
@@ -239,7 +239,7 @@ public class FermentingTransferServer {
 
     private static Pair<List<ItemStack>, Integer> removeOneSetOfFluidOrEmptyingItemsFromInventory(
             Player player,
-            List<Pair<Slot, Pair<ItemStack, Integer>>> requiredItemStacks,
+            List<Pair<Slot, Pair<ItemStack, Long>>> requiredItemStacks,
             List<Slot> craftingSlots,
             List<Slot> inventorySlots,
             boolean transferAsCompleteSets
@@ -251,7 +251,7 @@ public class FermentingTransferServer {
         final List<ItemStack> foundItemsInSet = new ArrayList<>(requiredItemStacks.size());
         int fluidAmount = 0;
 
-        for (Pair<Slot, Pair<ItemStack, Integer>> entry : requiredItemStacks) {
+        for (Pair<Slot, Pair<ItemStack, Long>> entry : requiredItemStacks) {
             final ItemStack requiredStack = entry.getSecond().getFirst();
             final Slot hint = entry.getFirst();
 
@@ -288,7 +288,7 @@ public class FermentingTransferServer {
                 resultItemStack = itemStack;
                 result.put(slot, resultItemStack);
             } else {
-                assert ItemStack.isSameItemSameTags(resultItemStack, itemStack);
+                assert ItemStack.isSameItemSameComponents(resultItemStack, itemStack);
                 resultItemStack.grow(itemStack.getCount());
             }
             if (resultItemStack.getCount() == slot.getMaxStackSize(resultItemStack)) {
@@ -318,11 +318,11 @@ public class FermentingTransferServer {
     }
 
     @Nullable
-    private static List<Pair<Slot, Pair<ItemStack, Integer>>> calculateRequiredFluidOrEmptyingStacks(List<Pair<Slot, Integer>> slots, Player player, Either<KegFermentingRecipe, KegMenu> pouringRecipeSource) {
-        if (pouringRecipeSource.left().isPresent() && pouringRecipeSource.left().get().getFluidIngredient() == null)
+    private static List<Pair<Slot, Pair<ItemStack, Long>>> calculateRequiredFluidOrEmptyingStacks(List<Pair<Slot, Long>> slots, Player player, Either<KegFermentingRecipe, KegMenu> pouringRecipeSource) {
+        if (pouringRecipeSource.left().isPresent() && pouringRecipeSource.left().get().getFluidIngredient().isEmpty())
             return List.of();
-        List<Pair<Slot, Pair<ItemStack, Integer>>> recipeSlotToRequired = new ArrayList<>(slots.size());
-        for (Pair<Slot, Integer> inventorySlot : slots) {
+        List<Pair<Slot, Pair<ItemStack, Long>>> recipeSlotToRequired = new ArrayList<>(slots.size());
+        for (Pair<Slot, Long> inventorySlot : slots) {
             if (!inventorySlot.getFirst().mayPickup(player))
                 return null;
             final ItemStack slotStack = inventorySlot.getFirst().getItem();
@@ -331,14 +331,14 @@ public class FermentingTransferServer {
             ItemStack stack = slotStack.copy();
 
             int fluidStackAmount = 1;
-            List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> (pouringRecipeSource.left().isEmpty() || kegPouringRecipe.canFill()) && kegPouringRecipe.getFluid(stack).isFluidEqual(pouringRecipeSource.map(KegFermentingRecipe::getFluidIngredient, menu -> menu.kegTank.getFluid()))).toList();
+            List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).filter(kegPouringRecipe -> (pouringRecipeSource.left().isEmpty() || kegPouringRecipe.canFill()) && pouringRecipeSource.map(recipe -> recipe.getFluidIngredient().orElseThrow().ingredient().matches(kegPouringRecipe.getFluid(stack)), menu -> menu.kegTank.getAbstractedFluid().matches(kegPouringRecipe.getFluid(stack)))).toList();
             Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                 if (pouring.isStrict())
-                    return ItemStack.isSameItemSameTags(stack, pouringRecipeSource.map(ignored -> pouring.getOutput(), ignored -> pouring.getContainer()));
+                    return ItemStack.isSameItemSameComponents(stack, pouringRecipeSource.map(ignored -> pouring.getOutput(), ignored -> pouring.getContainer()));
                 return ItemStack.isSameItem(stack, pouringRecipeSource.map(ignored -> pouring.getOutput(), ignored -> pouring.getContainer()));
             }).findFirst();
             if (optionalData.isPresent())
-                fluidStackAmount = pouringRecipeSource.map(fermentingRecipe -> fermentingRecipe.getFluidIngredient().getAmount(), kegMenu -> kegMenu.kegTank.getFluidAmount()) / optionalData.get().getAmount();
+                fluidStackAmount = (int) (pouringRecipeSource.map(fermentingRecipe -> fermentingRecipe.getFluidIngredient().orElseThrow().amount(), kegMenu -> kegMenu.kegTank.getAbstractedFluid().amount()) / optionalData.get().getRawFluid().amount());
 
             stack.setCount(fluidStackAmount);
             recipeSlotToRequired.add(Pair.of(inventorySlot.getFirst(), Pair.of(stack, inventorySlot.getSecond())));
@@ -364,24 +364,27 @@ public class FermentingTransferServer {
             @Nullable KegFermentingRecipe recipe
     ) {
         List<ItemStack> remainderItems = new ArrayList<>();
+        if (insert && (recipe == null || recipe.getFluidIngredient().isEmpty()))
+            return remainderItems;
+
         KegBlockEntity blockEntity = kegMenu.blockEntity;
 
         for (ItemStack stack : emptyingStacks) {
-            if (insert && kegMenu.kegTank.getFluidAmount() >= (recipe != null ? recipe.getFluidIngredient().getAmount() : kegMenu.kegTank.getCapacity()))
+            if (insert && kegMenu.kegTank.getAbstractedFluid().amount() >= recipe.getFluidIngredient().orElseThrow().amount())
                 break;
             if (!insert && kegMenu.kegTank.isEmpty())
                 break;
 
             int toExtract = stack.getCount();
-            if (recipe != null && recipe.getFluidIngredient() != null) {
-                List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> (!insert || kegPouringRecipe.canFill()) && kegPouringRecipe.getFluid(stack).isFluidEqual(recipe.getFluidIngredient())).toList();
+            if (recipe != null && recipe.getFluidIngredient().isPresent()) {
+                List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).filter(kegPouringRecipe -> (!insert || kegPouringRecipe.canFill()) && recipe.getFluidIngredient().get().ingredient().matches(kegPouringRecipe.getFluid(stack))).toList();
                 Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                     if (pouring.isStrict())
-                        return ItemStack.isSameItemSameTags(stack, pouring.getOutput());
+                        return ItemStack.isSameItemSameComponents(stack, pouring.getOutput());
                     return ItemStack.isSameItem(stack, pouring.getOutput());
                 }).findFirst();
                 if (optionalData.isPresent())
-                    toExtract = recipe.getFluidIngredient().getAmount() / optionalData.get().getAmount();
+                    toExtract = (int) (recipe.getFluidIngredient().get().amount() / optionalData.get().getRawFluid().amount());
             }
             var extracted = blockEntity.extractInGui(blockEntity, stack, toExtract);
             for (ItemStack extract : extracted) {
@@ -481,7 +484,7 @@ public class FermentingTransferServer {
     private static Optional<Slot> getValidatedHintSlot(Player player, ItemStack stack, Slot hint) {
         if (hint.mayPickup(player) &&
                 !hint.getItem().isEmpty() &&
-                ItemStack.isSameItemSameTags(stack, hint.getItem())
+                ItemStack.isSameItemSameComponents(stack, hint.getItem())
         ) {
             return Optional.of(hint);
         }
@@ -493,7 +496,7 @@ public class FermentingTransferServer {
         return slots.stream()
                 .filter(slot -> {
                     ItemStack slotStack = slot.getItem();
-                    return ItemStack.isSameItemSameTags(itemStack, slotStack) &&
+                    return ItemStack.isSameItemSameComponents(itemStack, slotStack) &&
                             slot.mayPickup(player);
                 })
                 .findFirst();

@@ -7,4 +7,9 @@ public class KegItemHandlerNeoForge extends ItemStackHandler implements Abstract
     public KegItemHandlerNeoForge(int size) {
         super(size);
     }
+
+    @Override
+    public int getSlotCount() {
+        return getSlots();
+    }
 }

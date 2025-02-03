@@ -46,6 +46,9 @@ repositories {
     maven("https://maven.ryanliptak.com/") {
         name = "Ryanliptak"
     }
+    maven("https://maven.blamejared.com/") {
+        name = "Jared's maven"
+    }
     exclusiveContent {
         forRepository {
             maven("https://api.modrinth.com/maven") {

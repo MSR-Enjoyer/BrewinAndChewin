@@ -4,14 +4,8 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.joml.Vector3f;
 import umpaz.brewinandchewin.client.particle.DrunkBubbleParticleOptions;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TipsyEffect extends MobEffect {
 
@@ -20,15 +14,11 @@ public class TipsyEffect extends MobEffect {
     }
 
     @Override
-    public void applyEffectTick(LivingEntity entity, int amplifier) {
+    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
         if (entity.level().isClientSide && entity.level().random.nextInt(Math.max(13 - amplifier, 4)) == 0) {
             entity.level().addParticle(getParticle(), entity.getRandomX(1.0D), entity.getEyeY() - entity.getRandom().nextDouble() + .25d, entity.getRandomZ(1.0D), 0.0D, 0.0D, 0.0D);
         }
-    }
-
-    @Override
-    public double getAttributeModifierValue(int amplifier, AttributeModifier modifier) {
-        return super.getAttributeModifierValue(amplifier, modifier);
+        return true;
     }
 
     public ParticleOptions getParticle() {
@@ -40,7 +30,7 @@ public class TipsyEffect extends MobEffect {
     }
 
     @Override
-    public boolean isDurationEffectTick(int duration, int amplifier) {
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
         return true;
     }
 }

@@ -24,8 +24,7 @@ import umpaz.brewinandchewin.client.renderer.CoasterBlockEntityRenderer;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.fluid.BnCFluidConstants;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
-import umpaz.brewinandchewin.neoforge.BrewinAndChewinNeoForge;
-import umpaz.brewinandchewin.neoforge.platform.client.BnCClientPlatfomHelperNeoForge;
+import umpaz.brewinandchewin.neoforge.client.platform.BnCClientPlatfomHelperNeoForge;
 import umpaz.brewinandchewin.neoforge.registry.BnCFluidTypes;
 
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ import java.util.List;
 public class BrewinAndChewinNeoForgeClient {
     public BrewinAndChewinNeoForgeClient(IEventBus eventBus) {
         BrewinAndChewinClient.setHelper(new BnCClientPlatfomHelperNeoForge());
+        BrewinAndChewin.isClient = true;
     }
 
     @EventBusSubscriber(modid = BrewinAndChewin.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

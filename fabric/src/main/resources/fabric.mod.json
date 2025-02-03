@@ -19,6 +19,9 @@
     "main": [
       "umpaz.brewinandchewin.fabric.BrewinAndChewinFabric"
     ],
+    "client": [
+      "umpaz.brewinandchewin.fabric.client.BrewinAndChewinFabricClient"
+    ],
     "preLaunch": [
       "umpaz.brewinandchewin.fabric.BrewinAndChewinFabricPre"
     ]

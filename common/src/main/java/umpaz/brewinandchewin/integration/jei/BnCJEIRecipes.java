@@ -2,6 +2,7 @@ package umpaz.brewinandchewin.integration.jei;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
@@ -28,22 +29,22 @@ public class BnCJEIRecipes {
 
     public List<KegFermentingPouringRecipe> getKegRecipes() {
 
-        List<KegFermentingRecipe> ferms = recipeManager.getAllRecipesFor(BnCRecipeTypes.FERMENTING.get());
-        List<KegPouringRecipe> pours = recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get());
+        List<RecipeHolder<KegFermentingRecipe>> ferms = recipeManager.getAllRecipesFor(BnCRecipeTypes.FERMENTING);
+        List<RecipeHolder<KegPouringRecipe>> pours = recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING);
 
         List<KegFermentingPouringRecipe> kegRecipes = new ArrayList<>();
 
         // add all of ferms
-        for (KegFermentingRecipe fermentingRecipe : ferms) {
-            if (fermentingRecipe.getResultFluid() != null) {
-                for (KegPouringRecipe pouringRecipe : pours) {
-                    if (pouringRecipe.getRawFluid().isSame(fermentingRecipe.getResultFluid())) {
-                        kegRecipes.add(new KegFermentingPouringRecipe(fermentingRecipe, pouringRecipe));
+        for (RecipeHolder<KegFermentingRecipe> fermentingRecipe : ferms) {
+            if (fermentingRecipe.value().getResult().left().isPresent()) {
+                for (RecipeHolder<KegPouringRecipe> pouringRecipe : pours) {
+                    if (pouringRecipe.value().getRawFluid().matches(fermentingRecipe.value().getResult().left().get())) {
+                        kegRecipes.add(new KegFermentingPouringRecipe(fermentingRecipe.id(), fermentingRecipe.value(), pouringRecipe.value(), Minecraft.getInstance().level.registryAccess()));
                     }
                 }
             }
             else {
-                kegRecipes.add(new KegFermentingPouringRecipe(fermentingRecipe, null));
+                kegRecipes.add(new KegFermentingPouringRecipe(fermentingRecipe.id(), fermentingRecipe.value(), null, Minecraft.getInstance().level.registryAccess()));
             }
         }
 
@@ -56,8 +57,8 @@ public class BnCJEIRecipes {
       List<CheeseAgingRecipe> cheese = new ArrayList<>();
 
 
-      cheese.add(new CheeseAgingRecipe(BnCBlocks.UNRIPE_FLAXEN_CHEESE_WHEEL.get().asItem(), BnCBlocks.FLAXEN_CHEESE_WHEEL.get().asItem()));
-      cheese.add(new CheeseAgingRecipe(BnCBlocks.UNRIPE_SCARLET_CHEESE_WHEEL.get().asItem(), BnCBlocks.SCARLET_CHEESE_WHEEL.get().asItem()));
+      cheese.add(new CheeseAgingRecipe(BnCBlocks.UNRIPE_FLAXEN_CHEESE_WHEEL.asItem(), BnCBlocks.FLAXEN_CHEESE_WHEEL.asItem()));
+      cheese.add(new CheeseAgingRecipe(BnCBlocks.UNRIPE_SCARLET_CHEESE_WHEEL.asItem(), BnCBlocks.SCARLET_CHEESE_WHEEL.asItem()));
 
       // find every instance of Unripe Cheese Wheel block, and call the supplier :)
       return cheese;

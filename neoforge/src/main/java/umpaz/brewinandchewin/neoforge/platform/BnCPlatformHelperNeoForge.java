@@ -7,7 +7,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -24,7 +27,11 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
+import umpaz.brewinandchewin.common.attachment.RagingAttachment;
+import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedItemHandler;
@@ -35,13 +42,14 @@ import umpaz.brewinandchewin.common.utility.BnCMenuConstructor;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
-import umpaz.brewinandchewin.neoforge.container.KegFluidTank;
+import umpaz.brewinandchewin.neoforge.container.KegFluidTankNeoForge;
 import umpaz.brewinandchewin.neoforge.container.KegItemHandlerNeoForge;
 import umpaz.brewinandchewin.neoforge.container.SidedKegWrapperNeoForge;
+import umpaz.brewinandchewin.neoforge.registry.BnCAttachments;
 import umpaz.brewinandchewin.neoforge.registry.BnCCreativeTabsImpl;
 import umpaz.brewinandchewin.neoforge.registry.BnCFluidsImpl;
-import umpaz.brewinandchewin.neoforge.utility.BnCCodecs;
-import umpaz.brewinandchewin.neoforge.utility.BnCStreamCodecs;
+import umpaz.brewinandchewin.neoforge.utility.BnCNeoForgeCodecs;
+import umpaz.brewinandchewin.neoforge.utility.BnCNeoForgeStreamCodecs;
 import umpaz.brewinandchewin.neoforge.utility.KegRecipeWrapperNeoForge;
 import umpaz.brewinandchewin.platform.BnCPlatformHelper;
 import umpaz.brewinandchewin.platform.BnCPlatform;
@@ -67,6 +75,16 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     }
 
     @Override
+    public void sendClientboundTracking(Entity tracked, CustomPacketPayload payload) {
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(tracked, payload);
+    }
+
+    @Override
+    public void sendServerbound(CustomPacketPayload payload) {
+        PacketDistributor.sendToServer(payload);
+    }
+
+    @Override
     public Component getFluidDisplayName(AbstractedFluidStack wrapper) {
         return wrapper.loaderSpecific() instanceof FluidStack fluidStack ? fluidStack.getHoverName() : Component.translatable("");
     }
@@ -89,7 +107,7 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
 
     @Override
     public AbstractedFluidTank createKegTank(int capacity, Runnable onContentsChanged) {
-        return new KegFluidTank(capacity) {
+        return new KegFluidTankNeoForge(capacity) {
             @Override
             protected void onContentsChanged() {
                 super.onContentsChanged();
@@ -139,22 +157,22 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
 
     @Override
     public Codec<AbstractedFluidStack> getFluidStackWrapperCodec() {
-        return BnCCodecs.FLUID_STACK_WRAPPER;
+        return BnCNeoForgeCodecs.FLUID_STACK_WRAPPER;
     }
 
     @Override
     public StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidStack> getFluidStackWrapperStreamCodec() {
-        return BnCStreamCodecs.FLUID_STACK_WRAPPER;
+        return BnCNeoForgeStreamCodecs.FLUID_STACK_WRAPPER;
     }
 
     @Override
     public Codec<AbstractedFluidIngredient> getFluidIngredientWrapperCodec() {
-        return BnCCodecs.FLUID_INGREDIENT_WRAPPER;
+        return BnCNeoForgeCodecs.FLUID_INGREDIENT_WRAPPER;
     }
 
     @Override
     public StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidIngredient> getFluidIngredientWrapperStreamCodec() {
-        return BnCStreamCodecs.FLUID_INGREDIENT_WRAPPER;
+        return BnCNeoForgeStreamCodecs.FLUID_INGREDIENT_WRAPPER;
     }
 
     @Override
@@ -180,5 +198,38 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     @Override
     public FoodProperties getFoodProperties(ItemStack stack, LivingEntity entity) {
         return stack.getFoodProperties(entity);
+    }
+
+    @Override
+    public MinecraftServer getServer() {
+        return ServerLifecycleHooks.getCurrentServer();
+    }
+
+    @Override
+    public RagingAttachment getRagingAttachment(LivingEntity entity) {
+        return entity.getExistingData(BnCAttachments.RAGING).orElse(null);
+    }
+
+    @Override
+    public void setRagingAttachment(LivingEntity entity, @Nullable RagingAttachment value) {
+        if (value == null) {
+            entity.removeData(BnCAttachments.RAGING);
+            return;
+        }
+        entity.setData(BnCAttachments.RAGING, value);
+    }
+
+    @Override
+    public TipsyHeartsAttachment getTipsyHeartsAttachment(LivingEntity entity) {
+        return entity.getExistingData(BnCAttachments.TIPSY_HEARTS).orElse(null);
+    }
+
+    @Override
+    public void setTipsyHeartsAttachment(LivingEntity entity, @Nullable TipsyHeartsAttachment value) {
+        if (value == null) {
+            entity.removeData(BnCAttachments.TIPSY_HEARTS);
+            return;
+        }
+        entity.setData(BnCAttachments.TIPSY_HEARTS, value);
     }
 }

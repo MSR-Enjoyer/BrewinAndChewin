@@ -2,8 +2,10 @@ package umpaz.brewinandchewin.integration.jei.category;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
+import mezz.jei.api.gui.ingredient.IRecipeSlotDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IModIdHelper;
@@ -16,18 +18,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.utility.BnCFluidItemDisplays;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
 import umpaz.brewinandchewin.common.registry.BnCItems;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
+import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.BnCTextUtils;
 import umpaz.brewinandchewin.integration.jei.BnCJEIRecipeTypes;
 import umpaz.brewinandchewin.integration.jei.KegFermentingPouringRecipe;
@@ -40,11 +45,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPouringRecipe> {
-    public static final ResourceLocation UID = new ResourceLocation(BrewinAndChewin.MODID, "fermenting");
+    public static final ResourceLocation UID = BrewinAndChewin.asResource("fermenting");
     protected final IModIdHelper modIdHelper;
 
     protected final IDrawableAnimated arrow;
@@ -65,9 +71,9 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
     public FermentingRecipeCategory(IGuiHelper guiHelper, IModIdHelper modIdHelper) {
         this.modIdHelper = modIdHelper;
         title = BnCTextUtils.getTranslation("jei.fermenting");
-        ResourceLocation backgroundImage = new ResourceLocation(BrewinAndChewin.MODID, "textures/gui/jei/keg.png");
+        ResourceLocation backgroundImage = BrewinAndChewin.asResource("textures/gui/jei/keg.png");
         background = guiHelper.createDrawable(backgroundImage, 12, 13, 136, 56);
-        icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BnCItems.KEG.get()));
+        icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BnCItems.KEG));
         arrow = guiHelper.drawableBuilder(backgroundImage, 171, 4, 23, 16)
                 .buildAnimated(200, IDrawableAnimated.StartDirection.LEFT, false);
         cold = guiHelper.createDrawable(backgroundImage, 170, 0, 8, 3);
@@ -119,42 +125,44 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
         }
 
 
-        if (recipe.getFluidIngredient() != null) {
+        if (recipe.getFluidIngredient().isPresent()) {
+            var firstDisplayFluid = recipe.getFluidIngredient().get().ingredient().displayStacks().getFirst();
             if (BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {
                 builder.addSlot(RecipeIngredientRole.INPUT, 0, 2)
-                        .addFluidStack(recipe.getFluidIngredient().getFluid(), recipe.getFluidIngredient().getAmount())
+                        .addFluidStack(firstDisplayFluid.fluid(), firstDisplayFluid.amount(), firstDisplayFluid.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
                         .setFluidRenderer(BnCConfiguration.KEG_CAPACITY.get(), false, 26, 30)
                         .setOverlay(kegOverlay, 0, 0);
             } else
                 builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-                        .addFluidStack(recipe.getFluidIngredient().getFluid(), recipe.getFluidIngredient().getAmount(), recipe.getFluidIngredient().getTag());
+                        .addFluidStack(firstDisplayFluid.fluid(), firstDisplayFluid.amount(), firstDisplayFluid.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
 
-            ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), recipe.getFluidIngredient()).copy();
-            Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
-                    ItemStack.isSameItemSameTags(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()))
+            ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), firstDisplayFluid).copy();
+            Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
+                    ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()))
             ).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(BnCConfiguration.KEG_CAPACITY.get(), recipe.getFluidIngredient().getAmount()) / kegPouringRecipe.getAmount()).orElse(1);
+            int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(BnCConfiguration.KEG_CAPACITY.get(), recipe.getFluidIngredient().get().amount()) / kegPouringRecipe.getRawFluid().amount()).orElse(1);
             itemDisplay.setCount(pourCount);
             if (!itemDisplay.isEmpty())
                 builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 5, 5)
                         .addItemStack(itemDisplay);
         }
 
-        if (recipe.getResultFluid() != null) {
+        if (recipe.getResult().left().isPresent()) {
+            var result = recipe.getResult().left().get();
             if (BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {
                 builder.addSlot(RecipeIngredientRole.OUTPUT, 100, 2)
-                        .addFluidStack(recipe.getResultFluid(), recipe.getAmount())
+                        .addFluidStack(result.fluid(), result.amount(), result.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
                         .setFluidRenderer(BnCConfiguration.KEG_CAPACITY.get(), false, 26, 30)
                         .setOverlay(kegOverlay, 0, 0);
             } else
                 builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
-                        .addFluidStack(recipe.getResultFluid(), recipe.getAmount());
+                        .addFluidStack(result.fluid(), result.amount(), result.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
 
-            ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), new FluidStack(recipe.getResultFluid(), recipe.getAmount())).copy();
-            Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
-                    ItemStack.isSameItemSameTags(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()))
+            ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), recipe.getResult().left().get()).copy();
+            Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
+                    ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()))
             ).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(BnCConfiguration.KEG_CAPACITY.get(), recipe.getFluidIngredient().getAmount()) / kegPouringRecipe.getAmount()).orElse(1);
+            int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(BnCConfiguration.KEG_CAPACITY.get(), recipe.getFluidIngredient().get().amount()) / kegPouringRecipe.getRawFluid().amount()).orElse(1);
             itemDisplay.setCount(pourCount);
             if (!itemDisplay.isEmpty())
                 builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 105, 5)
@@ -171,6 +179,28 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
         builder.moveRecipeTransferButton(132, 43);
     }
 
+
+    @Override
+    public void onDisplayedIngredientsUpdate(KegFermentingPouringRecipe recipe, List<IRecipeSlotDrawable> recipeSlots, IFocusGroup focuses) {
+        List<AbstractedFluidStack> stacks = recipe.getFluidIngredient().get().ingredient().displayStacks();
+        AbstractedFluidStack fluidInput = stacks.get(new Random().nextInt(stacks.size() - 1));
+
+        var drawable = recipeSlots.getFirst(); // Fluid stack.
+        drawable.clearDisplayOverrides();
+        drawable.createDisplayOverrides().addFluidStack(fluidInput.fluid(), fluidInput.amount());
+
+        ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidInput).copy();
+        Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
+                ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()))
+        ).findFirst();
+        int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(BnCConfiguration.KEG_CAPACITY.get(), recipe.getFluidIngredient().get().amount()) / kegPouringRecipe.getRawFluid().amount()).orElse(1);
+        itemDisplay.setCount(pourCount);
+        if (!itemDisplay.isEmpty()) {
+            var itemDisplayDrawable = recipeSlots.get(1);
+            itemDisplayDrawable.clearDisplayOverrides();
+            itemDisplayDrawable.createDisplayOverrides().addItemStack(itemDisplay);
+        }
+    }
 
     @Override
     public void draw(KegFermentingPouringRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
@@ -198,22 +228,19 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
     }
 
     @Override
-    public List<Component> getTooltipStrings(KegFermentingPouringRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+    public void getTooltip(ITooltipBuilder tooltip, KegFermentingPouringRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         if (ClientRenderUtils.isCursorInsideBounds(67, 2, 22, 28, mouseX, mouseY)) {
-            List<Component> tooltipStrings = new ArrayList<>();
             int cookTime = recipe.getFermentTime();
             if (cookTime > 0) {
                 if (cookTime >= 1200)
-                    tooltipStrings.add(Component.translatable("gui.jei.category.smelting.time.minutes", cookTime / 1200));
+                    tooltip.add(Component.translatable("gui.jei.category.smelting.time.minutes", cookTime / 1200));
                 else
-                    tooltipStrings.add(Component.translatable("gui.jei.category.smelting.time.seconds", cookTime / 20));
+                    tooltip.add(Component.translatable("gui.jei.category.smelting.time.seconds", cookTime / 20));
             }
             float experience = recipe.getExperience();
             if (experience > 0) {
-                tooltipStrings.add(Component.translatable("gui.jei.category.smelting.experience", experience));
+                tooltip.add(Component.translatable("gui.jei.category.smelting.experience", experience));
             }
-
-            return tooltipStrings;
         } else if (ClientRenderUtils.isCursorInsideBounds(24, 38, 44, 5, mouseX, mouseY)) {
             MutableComponent key = switch (recipe.getTemperature()) {
                 case 1 -> BnCTextUtils.getTranslation("container.keg.cold");
@@ -224,14 +251,12 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
                 default -> null;
             };
             if (key != null)
-                return Collections.singletonList(key);
+                tooltip.add(key);
         } else if (ClientRenderUtils.isCursorInsideBounds(92, 39, 10, 16, mouseX, mouseY)) {
             if (recipe.getCatalyst() != null) {
-                return Collections.singletonList(Component.literal(String.valueOf(recipe.getCatalystAmount())).append(I18n.get("generic.unit.millibuckets")));
+                tooltip.add(Component.literal(String.valueOf(recipe.getCatalystAmount())).append(I18n.get("generic.unit.millibuckets")));
             }
         }
-
-        return Collections.emptyList();
     }
 
 }

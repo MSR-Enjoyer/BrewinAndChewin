@@ -18,6 +18,7 @@ object Versions {
     const val NEOFORGE_LOADER_RANGE = "[4,)"
     const val NEOFORGE_MINECRAFT_RANGE = "[1.21,1.21.2)"
 
+    const val JEI = "19.21.0.247"
     const val APPLESKIN = "mc1.21-3.0.5"
 
     const val FARMERS_DELIGHT = "1.21.1-1.2.6"

@@ -1,4 +1,4 @@
-package umpaz.brewinandchewin.neoforge.platform.client;
+package umpaz.brewinandchewin.neoforge.client.platform;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;

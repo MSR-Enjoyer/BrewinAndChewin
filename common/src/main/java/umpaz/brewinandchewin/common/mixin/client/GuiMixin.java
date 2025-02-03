@@ -14,15 +14,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.utility.BnCHudIcons;
 import umpaz.brewinandchewin.common.BnCConfiguration;
-import umpaz.brewinandchewin.common.capability.TipsyNumbedHeartsCapability;
+import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 
-import java.util.Optional;
 import java.util.Random;
 
-// Implemented via mixin because Forge doesn't let us overlay health over specific hearts.
 @Mixin(Gui.class)
 public class GuiMixin {
     @Shadow @Final
@@ -58,8 +57,8 @@ public class GuiMixin {
         if (absorptionAmount <= 0)
             brewinandchewin$completedAbsorption = false;
 
-        Optional<TipsyNumbedHeartsCapability> cap = player.getCapability(TipsyNumbedHeartsCapability.INSTANCE).resolve();
-        if (!player.hasEffect(BnCEffects.TIPSY) || cap.isEmpty() || cap.get().getNumbedHealth() <= 0 || absorptionAmount > 0 && brewinandchewin$completedAbsorption) {
+        TipsyHeartsAttachment attachment = BrewinAndChewin.getHelper().getTipsyHeartsAttachment(player);
+        if (!player.hasEffect(BnCEffects.TIPSY) || attachment == null || attachment.getNumbedHealth() <= 0 || absorptionAmount > 0 && brewinandchewin$completedAbsorption) {
             brewinandchewin$remainingHealth = 0;
             brewinandchewin$numbedAlpha = 1.0F;
             brewinandchewin$increaseNumbedAlpha = true;
@@ -76,7 +75,7 @@ public class GuiMixin {
         float renderHealth = player.getHealth();
 
         int healthStart = Mth.ceil(renderHealth / 2) - 1;
-        int healthEnd = Math.max(Mth.floor((renderHealth - cap.get().getNumbedHealth()) / 2), -1);
+        int healthEnd = Math.max(Mth.floor((renderHealth - attachment.getNumbedHealth()) / 2), -1);
 
         if (heartIndex > healthStart) {
             brewinandchewin$remainingHealth = 0;
@@ -87,16 +86,16 @@ public class GuiMixin {
         }
 
         if (heartIndex == healthStart && absorptionAmount <= 0)
-            brewinandchewin$remainingHealth = Math.min(Mth.ceil(cap.get().getNumbedHealth()) - ((float) displayHealth % 1 < cap.get().getNumbedHealth() % 1 ? 1 : 0), Mth.ceil((float) displayHealth));
+            brewinandchewin$remainingHealth = Math.min(Mth.ceil(attachment.getNumbedHealth()) - ((float) displayHealth % 1 < attachment.getNumbedHealth() % 1 ? 1 : 0), Mth.ceil((float) displayHealth));
 
         operation.call(instance, graphics, heartType, heartX, heartY, hardcore, halfHeart, blinking);
 
         if (brewinandchewin$remainingHealth <= 0)
             return;
 
-        if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && cap.get().getNumbedHealth() > 1 && cap.get().getTicksUntilDamage() < 80 && heartIndex == healthStart && absorptionAmount == 0) {
+        if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && attachment.getNumbedHealth() > 1 && attachment.getTicksUntilDamage() < 80 && heartIndex == healthStart && absorptionAmount == 0) {
             if (!Minecraft.getInstance().isPaused()) {
-                float increase = Mth.lerp((float) (80 - cap.get().getTicksUntilDamage()) / 80, 0.0F, 0.06F);
+                float increase = Mth.lerp((float) (80 - attachment.getTicksUntilDamage()) / 80, 0.0F, 0.06F);
                 brewinandchewin$numbedAlpha = Mth.clamp(brewinandchewin$numbedAlpha + (brewinandchewin$increaseNumbedAlpha ? increase : -increase), -0.01F, 1.01F);
                 if (brewinandchewin$numbedAlpha < 0.0F)
                     brewinandchewin$increaseNumbedAlpha = true;
@@ -144,8 +143,8 @@ public class GuiMixin {
                                                             @Local(argsOnly = true, ordinal = 6) int absoprtionAmount,
                                                             @Local(ordinal = 10) int heartIndex,
                                                             @Local(ordinal = 15) int fullHeart) {
-        Optional<TipsyNumbedHeartsCapability> cap = player.getCapability(TipsyNumbedHeartsCapability.INSTANCE).resolve();
-        if (!player.hasEffect(BnCEffects.TIPSY) || cap.isEmpty() || cap.get().getNumbedHealth() <= 0) {
+        TipsyHeartsAttachment attachment = BrewinAndChewin.getHelper().getTipsyHeartsAttachment(player);
+        if (!player.hasEffect(BnCEffects.TIPSY) || attachment == null || attachment.getNumbedHealth() <= 0) {
             brewinandchewin$remainingHealth = 0;
             brewinandchewin$numbedAlpha = 1.0F;
             brewinandchewin$increaseNumbedAlpha = true;
@@ -162,7 +161,7 @@ public class GuiMixin {
         float renderHealth = player.getMaxHealth() + player.getAbsorptionAmount();
 
         int healthStart = Mth.ceil(renderHealth / 2) - 1;
-        int healthEnd = Math.max(Mth.floor((renderHealth - cap.get().getNumbedHealth() - 1) / 2), -1);
+        int healthEnd = Math.max(Mth.floor((renderHealth - attachment.getNumbedHealth() - 1) / 2), -1);
 
         if (heartIndex > healthStart) {
             brewinandchewin$remainingHealth = 0;
@@ -174,7 +173,7 @@ public class GuiMixin {
 
         if (heartIndex == healthStart) {
             brewinandchewin$completedAbsorption = false;
-            brewinandchewin$remainingHealth = Math.min(Mth.ceil(cap.get().getNumbedHealth()) - ((float) displayHealth % 1 < cap.get().getNumbedHealth() % 1 ? 1 : 0), Mth.ceil((float) displayHealth));
+            brewinandchewin$remainingHealth = Math.min(Mth.ceil(attachment.getNumbedHealth()) - ((float) displayHealth % 1 < attachment.getNumbedHealth() % 1 ? 1 : 0), Mth.ceil((float) displayHealth));
         } else if (brewinandchewin$remainingHealth <= 0) {
             brewinandchewin$completedAbsorption = true;
             operation.call(instance, graphics, heartType, heartX, heartY, hardcore, halfHeart, blinking);
@@ -183,9 +182,9 @@ public class GuiMixin {
 
         operation.call(instance, graphics, heartType, heartX, heartY, hardcore, halfHeart, blinking);
 
-        if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && cap.get().getNumbedHealth() > 1 && cap.get().getTicksUntilDamage() < 80 && heartIndex == healthStart) {
+        if (BnCConfiguration.NUMBED_HEART_FLICKERING.get() && attachment.getNumbedHealth() > 1 && attachment.getTicksUntilDamage() < 80 && heartIndex == healthStart) {
             if (!Minecraft.getInstance().isPaused()) {
-                float increase = Mth.lerp((float) (80 - cap.get().getTicksUntilDamage()) / 80, 0.0F, 0.08F);
+                float increase = Mth.lerp((float) (80 - attachment.getTicksUntilDamage()) / 80, 0.0F, 0.08F);
                 brewinandchewin$numbedAlpha = Mth.clamp(brewinandchewin$numbedAlpha + (brewinandchewin$increaseNumbedAlpha ? increase : -increase), -0.01F, 1.01F);
                 if (brewinandchewin$numbedAlpha < 0.0F)
                     brewinandchewin$increaseNumbedAlpha = true;

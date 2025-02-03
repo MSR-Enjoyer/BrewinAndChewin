@@ -11,12 +11,12 @@ import umpaz.brewinandchewin.BrewinAndChewin;
 
 import javax.annotation.Nullable;
 
-public record AbstractedFluidStack(Fluid fluid, int amount, PatchedDataComponentMap components, @Nullable Object loaderSpecific) {
+public record AbstractedFluidStack(Fluid fluid, long amount, DataComponentMap components, @Nullable Object loaderSpecific) {
     public static final Codec<AbstractedFluidStack> CODEC = BrewinAndChewin.getHelper().getFluidStackWrapperCodec();
     public static final StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidStack> STREAM_CODEC = BrewinAndChewin.getHelper().getFluidStackWrapperStreamCodec();
     public static final AbstractedFluidStack EMPTY = new AbstractedFluidStack(Fluids.EMPTY, 0, new PatchedDataComponentMap(DataComponentMap.EMPTY), null);
 
-    public AbstractedFluidStack(Fluid fluid, int amount) {
+    public AbstractedFluidStack(Fluid fluid, long amount) {
         this(fluid, amount, new PatchedDataComponentMap(DataComponentMap.EMPTY), null);
     }
 

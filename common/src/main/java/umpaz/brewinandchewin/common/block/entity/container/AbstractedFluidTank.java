@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 
 public interface AbstractedFluidTank {
-    int getCapacity();
+    long getFluidCapacity();
     AbstractedFluidStack getAbstractedFluid();
     void setAbstractedFluid(AbstractedFluidStack stack);
 

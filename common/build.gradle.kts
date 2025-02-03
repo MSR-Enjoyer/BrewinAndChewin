@@ -36,6 +36,8 @@ dependencies {
     compileOnly("net.fabricmc:sponge-mixin:${Versions.FABRIC_MIXIN}")
 
     compileOnly("maven.modrinth:farmers-delight:${Versions.FARMERS_DELIGHT}")
+
+    compileOnly("mezz.jei:jei-${Versions.MINECRAFT}-common-api:${Versions.JEI}")
     compileOnly("squeek.appleskin:appleskin-neoforge:${Versions.APPLESKIN}")
 }
 

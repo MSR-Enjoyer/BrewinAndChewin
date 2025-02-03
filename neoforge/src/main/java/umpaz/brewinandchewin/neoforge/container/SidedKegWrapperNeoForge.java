@@ -10,4 +10,9 @@ public class SidedKegWrapperNeoForge extends SidedKegWrapper implements IItemHan
     public SidedKegWrapperNeoForge(AbstractedItemHandler itemHandler, @Nullable Direction side) {
         super(itemHandler, side);
     }
+
+    @Override
+    public int getSlots() {
+        return getSlotCount();
+    }
 }

@@ -45,6 +45,9 @@ dependencies {
         exclude(group = "net.fabricmc")
     }
 
+    modCompileOnly("mezz.jei:jei-${Versions.MINECRAFT}-fabric-api:${Versions.JEI}")
+    modLocalRuntime("mezz.jei:jei-${Versions.MINECRAFT}-fabric:${Versions.JEI}")
+
     modCompileOnly("squeek.appleskin:appleskin-fabric:${Versions.APPLESKIN}")
     modLocalRuntime("squeek.appleskin:appleskin-fabric:${Versions.APPLESKIN}")
 }

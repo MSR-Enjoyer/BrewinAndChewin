@@ -55,6 +55,10 @@ neoForge {
 
 dependencies {
     implementation("maven.modrinth:farmers-delight:${Versions.FARMERS_DELIGHT}")
+
+    compileOnly("mezz.jei:jei-${Versions.MINECRAFT}-neoforge-api:${Versions.JEI}")
+    runtimeOnly("mezz.jei:jei-${Versions.MINECRAFT}-neoforge:${Versions.JEI}")
+
     implementation("squeek.appleskin:appleskin-neoforge:${Versions.APPLESKIN}")
 }
 

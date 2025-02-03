@@ -14,18 +14,13 @@ public class KegRecipeWrapperNeoForge extends RecipeWrapper implements KegRecipe
         this.tank = fluidHandler;
     }
 
+    @Override
     public AbstractedFluidStack getFluid() {
         return tank.getAbstractedFluid();
     }
 
-    public int getTankCapacity() {
-        return tank.getCapacity();
-    }
-
     @Override
-    public boolean isEmpty() {
-        if (!tank.getAbstractedFluid().isEmpty())
-            return false;
-        return super.isEmpty();
+    public long getTankCapacity() {
+        return tank.getFluidCapacity();
     }
 }

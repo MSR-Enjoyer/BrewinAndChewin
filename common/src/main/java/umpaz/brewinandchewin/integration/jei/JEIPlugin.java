@@ -2,17 +2,19 @@ package umpaz.brewinandchewin.integration.jei;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.ingredients.IIngredientHelper;
+import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IClickableIngredient;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.NotImplementedException;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.gui.KegScreen;
 import umpaz.brewinandchewin.common.registry.BnCItems;
@@ -27,9 +29,8 @@ import java.util.*;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SuppressWarnings("unused")
-public class JEIPlugin implements IModPlugin
-{
-    private static final ResourceLocation ID = new ResourceLocation(BrewinAndChewin.MODID, "jei_plugin");
+public class JEIPlugin implements IModPlugin {
+    private static final ResourceLocation ID = BrewinAndChewin.asResource("jei_plugin");
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
@@ -46,42 +47,53 @@ public class JEIPlugin implements IModPlugin
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(BnCItems.KEG.get()), BnCJEIRecipeTypes.FERMENTING);
+        registration.addRecipeCatalyst(new ItemStack(BnCItems.KEG), BnCJEIRecipeTypes.FERMENTING);
     }
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-       IIngredientHelper<FluidStack> test = registration.getJeiHelpers().getIngredientManager().getIngredientHelper(ForgeTypes.FLUID_STACK);
+        IIngredientHelper<?> test = registration.getJeiHelpers().getIngredientManager().getIngredientHelper(registration.getJeiHelpers().getPlatformFluidHelper().getFluidIngredientType());
 
-       registration.addRecipeClickArea(KegScreen.class, 80, 25, 23, 17, BnCJEIRecipeTypes.FERMENTING);
+        registration.addRecipeClickArea(KegScreen.class, 80, 25, 23, 17, BnCJEIRecipeTypes.FERMENTING);
 
-       Rect2i bounds = new Rect2i(107, 18, 26, 30);
+        Rect2i bounds = new Rect2i(107, 18, 26, 30);
 
-       registration.addGuiContainerHandler(KegScreen.class, new IGuiContainerHandler<>() {
-          @Override
-          public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse( KegScreen containerScreen, double mouseX, double mouseY ) {
-             if ( bounds.contains((int) mouseX - containerScreen.getGuiLeft(), (int) mouseY - containerScreen.getGuiTop()) ) {
-                return Optional.of(new IClickableIngredient<FluidStack>() {
-                   @Override
-                   public ITypedIngredient<FluidStack> getTypedIngredient() {
-                      Optional<ITypedIngredient<FluidStack>> aef = registration.getJeiHelpers().getIngredientManager().createTypedIngredient(ForgeTypes.FLUID_STACK, containerScreen.getMenu().blockEntity.getFluidTank().getFluid());
-                      return aef.orElse(null);
-                   }
+        registration.addGuiContainerHandler(KegScreen.class, new IGuiContainerHandler<>() {
+            @Override
+            public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(KegScreen containerScreen, double mouseX, double mouseY) {
+                if (bounds.contains((int) mouseX - containerScreen.getRectangle().left(), (int) mouseY - containerScreen.getRectangle().top())) {
+                    return Optional.of(new IClickableIngredient<>() {
+                        @Override
+                        public ITypedIngredient<?> getIngredient() {
+                            Optional<ITypedIngredient<Object>> aef = registration.getJeiHelpers().getIngredientManager().createTypedIngredient((IIngredientType<Object>) registration.getJeiHelpers().getPlatformFluidHelper().getFluidIngredientType(), registration.getJeiHelpers().getPlatformFluidHelper().create(containerScreen.getMenu().kegTank.getAbstractedFluid().fluid().builtInRegistryHolder(), containerScreen.getMenu().kegTank.getAbstractedFluid().amount(), containerScreen.getMenu().kegTank.getAbstractedFluid().components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY));
+                            return aef.orElse(null);
+                        }
 
-                   @Override
-                   public Rect2i getArea() {
-                      return bounds;
-                   }
-                });
-             }
-             return Optional.empty();
-          }
-       });
+                        @Override
+                        public IIngredientType<Object> getIngredientType() {
+                            return (IIngredientType)registration.getJeiHelpers().getPlatformFluidHelper().getFluidIngredientType();
+                        }
+
+                        @Override
+                        // Not implemented because marked for removal.
+                        public ITypedIngredient<Object> getTypedIngredient() {
+                            throw new NotImplementedException("getTypedIngredient is not implemented for KegScreen.");
+                        }
+
+                        @Override
+                        public Rect2i getArea() {
+                            return bounds;
+                        }
+                    });
+                }
+                return Optional.empty();
+            }
+        });
     }
 
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-       registration.addRecipeTransferHandler(new FermentingTransfer.Handler(registration.getTransferHelper(), registration.getJeiHelpers().getStackHelper()), BnCJEIRecipeTypes.FERMENTING);
+        registration.addRecipeTransferHandler(new FermentingTransfer.Handler(registration.getTransferHelper(), registration.getJeiHelpers().getStackHelper(), registration.getJeiHelpers().getPlatformFluidHelper()), BnCJEIRecipeTypes.FERMENTING);
     }
 
     @Override

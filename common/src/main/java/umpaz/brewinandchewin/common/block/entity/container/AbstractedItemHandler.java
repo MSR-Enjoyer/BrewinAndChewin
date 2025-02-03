@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
 
 public interface AbstractedItemHandler {
-    int getSlots();
+    int getSlotCount();
     ItemStack getStackInSlot(int slot);
     void setStackInSlot(int slot, ItemStack stack);
 

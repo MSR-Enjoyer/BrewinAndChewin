@@ -2,7 +2,6 @@ package umpaz.brewinandchewin.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
@@ -144,7 +143,8 @@ public class CoasterBlockEntityRenderer implements BlockEntityRenderer<CoasterBl
 
             if (modelEntries != null) {
                 for (ModelEntry modelEntry : modelEntries) {
-                    BakedModel coasterModel = getCoasterModel(itemId, modelEntry);
+                    if (!checkModel(modelEntry))
+                        continue;;
                     int color = 0XFFFFFFFF;
                     RenderType renderType = RenderType.cutout();
                     for (int j = 0; j < modelEntry.modifiers().size(); ++j) {
@@ -158,8 +158,7 @@ public class CoasterBlockEntityRenderer implements BlockEntityRenderer<CoasterBl
                         ++tintIndex;
                         finalTintIndex = tintIndex;
                     }
-                    VertexConsumer consumer = buffer.getBuffer(renderType);
-                    BrewinAndChewinClient.getHelper().tesselateCoasterModel(entity.getLevel(), coas, entity.getBlockState(), entity.getBlockPos(), poseStack, buffer, random, entity.getBlockPos().asLong(), combinedOverlay, finalTintIndex, renderType);
+                    BrewinAndChewinClient.getHelper().tesselateCoasterModel(entity.getLevel(), modelEntry.model(), entity.getBlockState(), entity.getBlockPos(), poseStack, buffer, random, entity.getBlockPos().asLong(), combinedOverlay, finalTintIndex, renderType);
                 }
             } else {
                 poseStack.translate(0.51, 0.05, 0.5);
@@ -171,9 +170,9 @@ public class CoasterBlockEntityRenderer implements BlockEntityRenderer<CoasterBl
         }
     }
 
-    public static boolean checkModel(ResourceLocation itemId, ModelEntry modelEntry) {
+    public static boolean checkModel(ModelEntry modelEntry) {
         BakedModel model = BrewinAndChewinClient.getHelper().getModel(modelEntry.model());
-        if (model == Minecraft.getInstance().getModelManager().getMissingModel() && !ERRONEOUS_ENTRIES.contains(modelEntry.model())) {
+        if (!ERRONEOUS_ENTRIES.contains(modelEntry.model()) && model == Minecraft.getInstance().getModelManager().getMissingModel()) {
             BrewinAndChewin.LOG.error("Failed to get model '{}'", modelEntry.model());
             ERRONEOUS_ENTRIES.add(modelEntry.model());
             return false;
