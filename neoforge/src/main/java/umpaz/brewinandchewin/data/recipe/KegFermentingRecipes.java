@@ -145,14 +145,14 @@ public class KegFermentingRecipes {
               .addIngredient(Items.BROWN_MUSHROOM)
               .addIngredient(Items.PUMPKIN_SEEDS)
               .addIngredient(Items.SUGAR)
-              .unlockedByItems("has_pumpkin_seeds", Items.PUMPKIN_SEEDS)
+              .unlockedByItems("has_brown_mushroom", Items.BROWN_MUSHROOM)
               .build(output);
       KegFermentingRecipeBuilder.kegFermentingRecipe(FermentingBookCategory.MEALS, BnCFluids.SCARLET_CHEESE, 1000, NORMAL_FERMENTING, MEDIUM_EXP, 5)
               .addFluidIngredient(NeoForgeMod.MILK.get(), 1000)
               .addIngredient(Items.CRIMSON_FUNGUS)
               .addIngredient(Items.NETHER_WART)
               .addIngredient(Items.SUGAR)
-              .unlockedByItems("has_nether_wart", Items.NETHER_WART)
+              .unlockedByItems("has_crimson_fungus", Items.CRIMSON_FUNGUS)
               .build(output);
 
 

@@ -177,7 +177,7 @@ public class KegFermentingRecipeBuilder {
     }
 
     /**
-     * Unusable on Fabric.
+     * Does not have an equivalent for Fabric.
      */
     public KegFermentingRecipeBuilder addFluidIngredient(FluidIngredient ingredient, int i) {
         fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.NeoForgeIngredient(ingredient), i));
