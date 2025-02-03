@@ -1,22 +1,19 @@
 package umpaz.brewinandchewin.common.block.entity.container;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.recipebook.ServerPlaceRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.client.recipebook.BnCRecipeBook;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.registry.BnCBlocks;
@@ -27,7 +24,7 @@ import java.util.Objects;
 
 public class KegMenu extends RecipeBookMenu<KegRecipeWrapper, KegFermentingRecipe>
 {
-    public static final ResourceLocation EMPTY_CONTAINER_SLOT_TANKARD = new ResourceLocation(BrewinAndChewin.MODID, "item/empty_container_slot_tankard");
+    public static final ResourceLocation EMPTY_CONTAINER_SLOT_TANKARD = BrewinAndChewin.asResource("item/empty_container_slot_tankard");
 
     public final KegBlockEntity blockEntity;
     public final AbstractedItemHandler inventory;
@@ -59,7 +56,7 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper, KegFermentingRecip
         int borderSlotSize = 18;
         for (int row = 0; row < 2; ++row) {
             for (int column = 0; column < 2; ++column) {
-                this.addSlot(new SlotItemHandler(inventory, (row * 2) + column,
+                this.addSlot(BrewinAndChewin.getHelper().createKegSlot(inventory, (row * 2) + column,
                         inputStartX + (column * borderSlotSize),
                         inputStartY + (row * borderSlotSize)));
             }
@@ -67,15 +64,10 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper, KegFermentingRecip
 
 
         // Tankard Input
-        this.addSlot(new SlotItemHandler(inventory, 4, 91, 55)
-        {
-            public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-                return Pair.of(InventoryMenu.BLOCK_ATLAS, EMPTY_CONTAINER_SLOT_TANKARD);
-            }
-        });
+        this.addSlot(BrewinAndChewin.getHelper().createKegContainerSlot(inventory, 4, 91, 55));
 
         // Tankard Output
-        this.addSlot(new KegResultSlot(inventory, 5, 124, 55));
+        this.addSlot(BrewinAndChewin.getHelper().createKegResultSlot(inventory, 5, 124, 55));
 
 
         // Main Player Inventory
@@ -177,7 +169,14 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper, KegFermentingRecip
 
     @Override
     public void handlePlacement(boolean placeAll, RecipeHolder<?> recipe, ServerPlayer player) {
-        new KegPlaceRecipe(this, player.getServer().getRecipeManager()).recipeClicked(player, recipe, placeAll);
+        RecipeHolder<KegFermentingRecipe> recipeHolder = (RecipeHolder)recipe;
+        this.beginPlacingRecipe();
+
+        try {
+            new ServerPlaceRecipe<>(this).recipeClicked(player, recipeHolder, placeAll);
+        } finally {
+            this.finishPlacingRecipe(recipeHolder);
+        }
     }
 
     @Override
@@ -221,7 +220,7 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper, KegFermentingRecip
 
     @Override
     public RecipeBookType getRecipeBookType() {
-        return BrewinAndChewin.FERMENTING;
+        return BnCRecipeBook.FERMENTING;
     }
 
     @Override

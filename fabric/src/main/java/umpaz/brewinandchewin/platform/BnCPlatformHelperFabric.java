@@ -1,5 +1,6 @@
 package umpaz.brewinandchewin.platform;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -8,17 +9,25 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedItemHandler;
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
+import umpaz.brewinandchewin.common.block.entity.container.KegStackedContents;
 import umpaz.brewinandchewin.common.utility.BnCMenuConstructor;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
@@ -50,6 +59,26 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     @Override
     public MenuType<KegMenu> createMenuType(BnCMenuConstructor<KegMenu> constructor) {
         return new ExtendedScreenHandlerType<>(KegMenu::new, BlockPos.STREAM_CODEC);
+    }
+
+    @Override
+    public AbstractedItemHandler createKegInventory(int size, Consumer<Integer> onContentsChanged) {
+        // TODO
+    }
+
+    @Override
+    public AbstractedFluidTank createKegTank(int capacity, Runnable onContentsChanged) {
+        // TODO
+    }
+
+    @Override
+    public Slot createKegSlot(AbstractedItemHandler inventory, int slot, int x, int y, boolean canInsert, @Nullable Pair<ResourceLocation, ResourceLocation> noItemIcon) {
+        // TODO
+    }
+
+    @Override
+    public Ingredient createStrictFillPickerIngredient(List<KegStackedContents.PouringEntry> fluidOutputStacks) {
+        // TODO
     }
 
     @Override

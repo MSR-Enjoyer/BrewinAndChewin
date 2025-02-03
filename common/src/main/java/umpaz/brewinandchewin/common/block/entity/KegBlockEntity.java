@@ -29,7 +29,6 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -96,12 +95,12 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         this.kegData = createIntArray();
         this.usedRecipeTracker = new Object2IntOpenHashMap<>();
         this.checkNewRecipe = true;
-        this.recipeWrapper = new KegRecipeWrapper(inventory, fluidTank);
+        this.recipeWrapper = BrewinAndChewin.getHelper().createRecipeWrapper(inventory, fluidTank);
     }
 
     @Override
     public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
-        super.loadAdditional(compound);
+        super.loadAdditional(compound, provider);
         inventory.readFromNbt(compound.getCompound("Inventory"), provider);
         fluidTank.readFromNbt(compound.getCompound("FluidTank"), provider);
         fermentTime = compound.getInt("FermentTime");
@@ -140,7 +139,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         if (getOutput().isEmpty()) return data;
 
         CompoundTag tag = data.copyTag();
-        AbstractedItemHandler drops = new ItemStackHandler(INVENTORY_SIZE);
+        AbstractedItemHandler drops = BrewinAndChewin.getHelper().createKegInventory(INVENTORY_SIZE, integer -> {});
         for (int i = 0; i < INVENTORY_SIZE; ++i) {
             drops.setStackInSlot(i, i == CONTAINER_SLOT ? inventory.getStackInSlot(i) : ItemStack.EMPTY);
         }
@@ -635,27 +634,20 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     }
 
     private AbstractedItemHandler createHandler() {
-        return new ItemStackHandler(INVENTORY_SIZE) {
-            @Override
-            protected void onContentsChanged(int slot) {
-                if (slot >= 0 && slot < OUTPUT_SLOT) {
-                    checkNewRecipe = true;
-                }
-                inventoryChanged();
+        return BrewinAndChewin.getHelper().createKegInventory(INVENTORY_SIZE, (slot) -> {
+            if (slot >= 0 && slot < OUTPUT_SLOT) {
+                checkNewRecipe = true;
             }
-        };
+            inventoryChanged();
+        });
     }
 
     private AbstractedFluidTank createFluidTank() {
-        return new FluidTank(BnCConfiguration.KEG_CAPACITY.get()) {
-            @Override
-            protected void onContentsChanged() {
-                super.onContentsChanged();
-                setChanged();
-                inventoryChanged();
-                checkNewRecipe = true;
-            }
-        };
+        return BrewinAndChewin.getHelper().createKegTank(BnCConfiguration.KEG_CAPACITY, () -> {
+            setChanged();
+            inventoryChanged();
+            checkNewRecipe = true;
+        });
     }
 
     private ContainerData createIntArray() {

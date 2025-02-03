@@ -72,7 +72,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
             this.addRenderableWidget(new ImageButton(this.leftPos + 5, this.height / 2 - 49, 20, 18, RecipeBookComponent.RECIPE_BUTTON_SPRITES, button -> {
                 this.recipeBookComponent.toggleVisibility();
                 this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
-                button.set(this.leftPos + 5, this.height / 2 - 49);
+                button.setPosition(this.leftPos + 5, this.height / 2 - 49);
             }));
         } else {
             this.recipeBookComponent.hide();
