@@ -50,6 +50,8 @@ public class KegFluidIngredient {
 
         @Override
         public boolean matches(AbstractedFluidStack wrapper) {
+            if (displayStack.components().isEmpty())
+                return displayStack.fluid().isSame(wrapper.fluid());
             return displayStack.matches(wrapper);
         }
     }

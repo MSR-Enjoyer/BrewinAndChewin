@@ -1,6 +1,5 @@
 import umpaz.brewinandchewin.gradle.Properties
 import umpaz.brewinandchewin.gradle.Versions
-import me.modmuss50.mpp.PublishModTask
 
 plugins {
     id("conventions.common")

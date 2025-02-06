@@ -1,10 +1,6 @@
 package umpaz.brewinandchewin.common;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.Mod;
-
 // FIXME: Move config code to Greenhouse Config.
-@Mod.EventBusSubscriber
 public class BnCConfiguration {
    public static ForgeConfigSpec COMMON_CONFIG;
    public static ForgeConfigSpec CLIENT_CONFIG;
@@ -25,7 +21,6 @@ public class BnCConfiguration {
    public static ForgeConfigSpec.IntValue KEG_HOT;
    public static ForgeConfigSpec.BooleanValue KEG_BIOME_TEMP;
    public static ForgeConfigSpec.BooleanValue KEG_DIM_TEMP;
-
 
    // CLIENT
    public static final String CATEGORY_CLIENT = "client";
