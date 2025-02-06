@@ -60,12 +60,11 @@ public class CoasterBlockEntity extends SyncedBlockEntity {
             }
             BlockState replaceWith = Blocks.AIR.defaultBlockState();
             if (!state.getValue(INVISIBLE) || count > 1) {
-                inventory.set(count - 1, ItemStack.EMPTY);
-                inventoryChanged();
-                replaceWith = state
-                        .setValue(CoasterBlock.SIZE, state.getValue(CoasterBlock.SIZE) - 1);
+                replaceWith = state.setValue(CoasterBlock.SIZE, state.getValue(CoasterBlock.SIZE) - 1);
             }
             level.setBlockAndUpdate(pos, replaceWith);
+            inventory.set(count - 1, ItemStack.EMPTY);
+            inventoryChanged();
 
             return ItemInteractionResult.SUCCESS;
         }
@@ -86,13 +85,14 @@ public class CoasterBlockEntity extends SyncedBlockEntity {
    @Override
    public void loadAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
        super.loadAdditional(nbt, provider);
-       ContainerHelper.loadAllItems(nbt, this.inventory, provider);
+       inventory.clear();
+       ContainerHelper.loadAllItems(nbt, inventory, provider);
    }
 
    @Override
    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
        super.saveAdditional(nbt, provider);
-       ContainerHelper.saveAllItems(nbt, this.inventory, provider);
+       ContainerHelper.saveAllItems(nbt, inventory, provider);
    }
 
    // Implement through method override in renderer.
