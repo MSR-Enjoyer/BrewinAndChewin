@@ -18,6 +18,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.phys.AABB;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import umpaz.brewinandchewin.BrewinAndChewin;
@@ -168,6 +169,11 @@ public class CoasterBlockEntityRenderer implements BlockEntityRenderer<CoasterBl
             }
             poseStack.popPose();
         }
+    }
+
+    // TODO: Implement on Fabric.
+    public AABB getRenderBoundingBox(CoasterBlockEntity blockEntity) {
+        return blockEntity.getRenderBoundingBox();
     }
 
     public static boolean checkModel(ModelEntry modelEntry) {
