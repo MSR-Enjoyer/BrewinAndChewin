@@ -3,9 +3,9 @@
   "base_fluid": {
     "amount": 500,
     "ingredient": {
-      "amount": 1000,
       "id": "minecraft:milk"
-    }
+    },
+    "unit": "millibuckets"
   },
   "category": "meals",
   "experience": 1.0,

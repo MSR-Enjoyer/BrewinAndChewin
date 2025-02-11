@@ -75,6 +75,10 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
         return unit.orElse(FluidUnit.getLoaderUnit());
     }
 
+    public long getLoaderAmount() {
+        return getUnit().convertToLoader(fluid.amount());
+    }
+
     public Optional<ItemStack> getRawContainer(){
         return this.container;
     }

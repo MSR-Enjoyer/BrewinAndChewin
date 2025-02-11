@@ -3,9 +3,9 @@
   "base_fluid": {
     "amount": 1000,
     "ingredient": {
-      "amount": 1000,
       "id": "brewinandchewin:honey"
-    }
+    },
+    "unit": "millibuckets"
   },
   "experience": 1.0,
   "ingredients": [

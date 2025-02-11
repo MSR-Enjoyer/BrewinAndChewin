@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
+import umpaz.brewinandchewin.common.utility.FluidUnit;
 
 /**
  * look. this is only to show #{KegPouringRecipe} and @{KegFermentingRecipe
@@ -15,6 +16,8 @@ public class KegFermentingPouringRecipe extends KegFermentingRecipe {
     private final ResourceLocation id;
     private final ItemStack catalyst;
     private ItemStack output;
+    private long pouringAmount;
+    private FluidUnit pouringUnit;
 
     private final int catalystAmount;
 
@@ -29,11 +32,19 @@ public class KegFermentingPouringRecipe extends KegFermentingRecipe {
         if (pouringRecipe != null) {
             this.catalyst = pouringRecipe.getContainer();
             this.catalystAmount = pouringRecipe.getResultItem(provider).getCount();
+            this.pouringAmount = pouringRecipe.getRawFluid().amount();
+            this.pouringUnit = pouringRecipe.getUnit();
         } else {
             this.catalyst = null;
             this.catalystAmount = 0;
         }
         this.id = id;
+    }
+
+    public long getPouringLoaderAmount() {
+        if (pouringUnit == null)
+            return -1L;
+        return pouringUnit.convertToLoader(pouringAmount);
     }
 
     public ResourceLocation getId() {

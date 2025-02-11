@@ -187,7 +187,12 @@ public class KegFermentingRecipeBuilder {
     }
 
     public KegFermentingRecipeBuilder addFluidIngredient(Fluid fluid, int i) {
-        fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.Exact(fluid), i));
+        fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.Exact(fluid), i, Optional.empty()));
+        return this;
+    }
+
+    public KegFermentingRecipeBuilder addFluidIngredient(Fluid fluid, int i, FluidUnit unit) {
+        fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.Exact(fluid), i, Optional.of(unit)));
         return this;
     }
 
@@ -195,7 +200,7 @@ public class KegFermentingRecipeBuilder {
      * Does not have an equivalent for Fabric.
      */
     public KegFermentingRecipeBuilder addFluidIngredient(FluidIngredient ingredient, int i) {
-        fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.NeoForgeIngredient(ingredient), i));
+        fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.NeoForgeIngredient(ingredient), i, Optional.empty()));
         return this;
     }
 

@@ -2,6 +2,7 @@ package umpaz.brewinandchewin.neoforge.utility;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
@@ -32,7 +33,10 @@ public class KegCompatibleFluidIngredients {
             });
 
     public static class Exact implements AbstractedFluidIngredient {
-        public static final Codec<Exact> CODEC = AbstractedFluidStack.CODEC.xmap(fluidStack -> new Exact(fluidStack.fluid(), fluidStack.components() instanceof PatchedDataComponentMap patched ? patched : PatchedDataComponentMap.fromPatch(fluidStack.components(), DataComponentPatch.EMPTY)), exact -> exact.displayStack);
+        public static final Codec<Exact> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                        FluidStack.FLUID_NON_EMPTY_CODEC.fieldOf("id").forGetter(stack -> stack.displayStack.fluid().builtInRegistryHolder()),
+                        DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(fluidStack -> fluidStack.displayStack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY))
+                .apply(inst, (t1, t2) -> new Exact(t1.value(), t2)));
         public static final StreamCodec<RegistryFriendlyByteBuf, Exact> STREAM_CODEC = AbstractedFluidStack.STREAM_CODEC.map(Exact::new, exact -> exact.displayStack);
         private final AbstractedFluidStack displayStack;
 

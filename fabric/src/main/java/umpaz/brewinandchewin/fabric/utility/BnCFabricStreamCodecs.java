@@ -10,10 +10,10 @@ import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 
 public class BnCFabricStreamCodecs {
     public static final StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidStack> FLUID_STACK_WRAPPER = AmountedFluidVariant.STREAM_CODEC.map(
-            amountedFluidVariant -> new AbstractedFluidStack(amountedFluidVariant.variant().getFluid(), amountedFluidVariant.amount(), amountedFluidVariant.variant().getComponentMap(), amountedFluidVariant),
+            amountedFluidVariant -> new AbstractedFluidStack(amountedFluidVariant.variant().getFluid(), amountedFluidVariant.amount(), amountedFluidVariant.variant().getComponentMap(), amountedFluidVariant.fluidUnit(), amountedFluidVariant),
             wrapper -> {
                 if (wrapper.loaderSpecific() instanceof AmountedFluidVariant fluidVariant)
                     return fluidVariant;
-                return wrapper.isEmpty() ? AmountedFluidVariant.EMPTY : new AmountedFluidVariant(FluidVariant.of(wrapper.fluid(), wrapper.components() instanceof PatchedDataComponentMap patch ? patch.asPatch() : DataComponentPatch.EMPTY), wrapper.amount());
+                return wrapper.isEmpty() ? AmountedFluidVariant.EMPTY : new AmountedFluidVariant(FluidVariant.of(wrapper.fluid(), wrapper.components() instanceof PatchedDataComponentMap patch ? patch.asPatch() : DataComponentPatch.EMPTY), wrapper.amount(), wrapper.unit());
             });
 }

@@ -3,9 +3,9 @@
   "base_fluid": {
     "amount": 250,
     "ingredient": {
-      "amount": 1000,
       "id": "brewinandchewin:honey"
-    }
+    },
+    "unit": "millibuckets"
   },
   "category": "meals",
   "experience": 1.0,

@@ -16,6 +16,7 @@ import net.minecraft.world.level.material.Fluid;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.BnCStreamCodecs;
+import umpaz.brewinandchewin.common.utility.FluidUnit;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class KegFluidIngredient {
         }
 
         public Exact(Fluid fluid, PatchedDataComponentMap components) {
-            displayStack = new AbstractedFluidStack(fluid, 1000, components, new FluidStack(fluid.builtInRegistryHolder(), 1000, components.asPatch()));
+            displayStack = new AbstractedFluidStack(fluid, 81000L, components, FluidUnit.DROPLETS, new AmountedFluidVariant(FluidVariant.of(fluid, components.asPatch()), 81000L, FluidUnit.DROPLETS));
         }
 
         public Exact(Fluid fluid, DataComponentPatch patch) {
