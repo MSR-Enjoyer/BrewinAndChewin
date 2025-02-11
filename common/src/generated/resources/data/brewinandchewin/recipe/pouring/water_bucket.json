@@ -7,5 +7,6 @@
   "output": {
     "count": 1,
     "id": "minecraft:water_bucket"
-  }
+  },
+  "unit": "millibuckets"
 }

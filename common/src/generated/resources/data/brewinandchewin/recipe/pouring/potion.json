@@ -17,5 +17,6 @@
     "count": 1,
     "id": "minecraft:potion"
   },
-  "strict": true
+  "strict": true,
+  "unit": "millibuckets"
 }

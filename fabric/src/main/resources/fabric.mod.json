@@ -24,6 +24,9 @@
     ],
     "preLaunch": [
       "umpaz.brewinandchewin.fabric.BrewinAndChewinFabricPre"
+    ],
+    "mm:early_risers": [
+      "umpaz.brewinandchewin.fabric.BrewinAndChewinASM"
     ]
   },
   "mixins": [
@@ -34,7 +37,9 @@
     "fabricloader": "${fabric_loader_range}",
     "fabric-api": "*",
     "minecraft": "${fabric_minecraft_version_range}",
-    "java": ">=${java_version}"
+    "java": ">=${java_version}",
+    "farmersdelight": "${farmers_delight_refabricated_range}",
+    "greenhouseconfig": "${fabric_greenhouse_config_range}"
   },
   "custom": {
     "modmenu": {

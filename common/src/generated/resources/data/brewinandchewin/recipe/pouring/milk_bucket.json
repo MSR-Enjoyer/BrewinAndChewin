@@ -7,5 +7,6 @@
   "output": {
     "count": 1,
     "id": "minecraft:milk_bucket"
-  }
+  },
+  "unit": "millibuckets"
 }

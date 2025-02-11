@@ -53,7 +53,6 @@ import umpaz.brewinandchewin.common.tag.BnCTags;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 import umpaz.brewinandchewin.common.utility.BnCTextUtils;
-import umpaz.brewinandchewin.common.utility.FluidUnit;
 import vectorwing.farmersdelight.common.block.entity.SyncedBlockEntity;
 import vectorwing.farmersdelight.common.tag.ModTags;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
@@ -364,7 +363,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             if (ItemStack.isSameItem(slotIn, recipe.get().getContainer()) && // if container is same
                     recipe.get().getRawFluid().amount() <= keg.fluidTank.getAbstractedFluid().amount() && // the amount is LTE the fluid amount
                     (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(resultItem, keg.inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
-                int containerAmount = (int) Mth.clamp(Math.min(slotIn.getCount(), (keg.fluidTank.getAbstractedFluid().amount()) / recipe.get().getRawFluid().amount()), 1, maxTakeAmount);
+                int containerAmount = (int) Mth.clamp(Math.min(slotIn.getCount(), keg.fluidTank.getAbstractedFluid().unit().convertToLoader(keg.fluidTank.getAbstractedFluid().amount()) / recipe.get().getRawFluid().amount()), 1, maxTakeAmount);
                 keg.fluidTank.drain(recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getUnit(),false);
 
                 if (!isCreative) {
@@ -384,7 +383,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                     (keg.fluidTank.isEmpty() || keg.fluidTank.getAbstractedFluid().amount() < keg.fluidTank.getFluidCapacity()) && // if the result can fit in the container
                     (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(resultItem, keg.inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
                 int containerAmount = (int) Mth.clamp(Math.min(slotIn.getCount(), (keg.fluidTank.getFluidCapacity() - keg.fluidTank.getAbstractedFluid().amount()) / recipe.get().getRawFluid().amount()), 1, maxTakeAmount);
-                keg.fluidTank.fill(new AbstractedFluidStack(recipe.get().getFluid(slotIn).fluid(), recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getRawFluid().components(), recipe.get().getUnit(), null), false);
+                keg.fluidTank.fill(new AbstractedFluidStack(recipe.get().getFluid(slotIn).fluid(), recipe.get().getUnit().convertToLoader(recipe.get().getRawFluid().amount()) * containerAmount, recipe.get().getRawFluid().components(), recipe.get().getUnit(), null), false);
 
                 if (!isCreative) {
                     ItemStack recipeItem = recipe.get().getContainer();
@@ -402,7 +401,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             }
 
             if (changed) {
-                setChanged();
+                inventoryChanged();
             }
         }
 
@@ -436,6 +435,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 //                        outputs.add(slotIn);
 //                    }
 //                    setChanged();
+//                    inventoryChanged();
 //                }
 //            } else if (!keg.fluidTank.getFluid().isEmpty() && iFluidItemHandler.isFluidValid(0, keg.fluidTank.getFluid())
 //            && (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || keg.inventory.getStackInSlot(OUTPUT_SLOT).is(iFluidItemHandler.getContainer().getItem()))) {
@@ -458,6 +458,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 //                            outputs.add(slotIn);
 //                        }
 //                        setChanged();
+//                        inventoryChanged();
 //
 //                    }
 //                }

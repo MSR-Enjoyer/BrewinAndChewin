@@ -20,6 +20,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.attachment.RagingAttachment;
 import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
@@ -57,6 +58,7 @@ public interface BnCPlatformHelper {
 
     void openKegMenu(Player player, KegBlockEntity blockEntity, BlockPos pos);
 
+    BlockEntityType.BlockEntitySupplier<KegBlockEntity> supplyBlockEntity();
     MenuType<KegMenu> createMenuType(BnCMenuConstructor<KegMenu> constructor);
 
     AbstractedItemHandler createKegInventory(int size, Consumer<Integer> onContentsChanged);

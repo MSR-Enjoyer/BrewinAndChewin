@@ -13,6 +13,7 @@ object Versions {
     const val MOD_MENU = "11.0.3"
     const val FABRIC_LOADER_RANGE = ">=0.15"
     const val FABRIC_MINECRAFT_RANGE = "1.21.1"
+    const val FABRIC_ASM = "v2.3"
 
     const val NEOFORGE = "21.1.115"
     const val NEOFORGE_LOADER_RANGE = "[4,)"
@@ -20,6 +21,8 @@ object Versions {
 
     const val GREENHOUSE_CONFIG = "1.0.0-alpha.2+1.21.1"
     const val GREENHOUSE_CONFIG_TOML = "1.0.0"
+    const val GREENHOUSE_CONFIG_NEOFORGE_RANGE = "[1.0.0-alpha.2,)"
+    const val GREENHOUSE_CONFIG_FABRIC_RANGE = ">=1.0.0-alpha.2"
 
     const val JEI = "19.21.0.247"
     const val APPLESKIN = "mc1.21-3.0.5"

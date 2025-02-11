@@ -31,6 +31,14 @@ repositories {
     maven("https://maven.shedaniel.me/") {
         name = "Shedaniel"
     }
+    exclusiveContent {
+        forRepository {
+            maven("https://jitpack.io")
+        }
+        filter {
+            includeGroup("com.github.Chocohead")
+        }
+    }
 }
 
 dependencies {
@@ -59,6 +67,10 @@ dependencies {
         exclude(group = "net.fabricmc.fabric-api")
     }
     modLocalRuntime("me.shedaniel.cloth:cloth-config-fabric:${Versions.CLOTH_CONFIG}") {
+        exclude(group = "net.fabricmc.fabric-api")
+    }
+
+    modImplementation("com.github.Chocohead:Fabric-ASM:${Versions.FABRIC_ASM}") {
         exclude(group = "net.fabricmc.fabric-api")
     }
 }

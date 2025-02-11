@@ -22,10 +22,15 @@ import java.util.List;
 
 public class KegFluidIngredient {
     public static class Exact implements AbstractedFluidIngredient {
-        public static final Codec<Exact> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+        public static final Codec<Exact> DIRECT_CODEC = RecordCodecBuilder.create(inst -> inst.group(
                 BuiltInRegistries.FLUID.byNameCodec().fieldOf("fluid").forGetter(exact -> exact.displayStack.fluid()),
                 DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(exact -> exact.displayStack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
         ).apply(inst, Exact::new));
+        public static final Codec<Exact> ALTERNATIVE_CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                BuiltInRegistries.FLUID.byNameCodec().fieldOf("id").forGetter(exact -> exact.displayStack.fluid()),
+                DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(exact -> exact.displayStack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
+        ).apply(inst, Exact::new));
+        public static final Codec<Exact> CODEC = Codec.withAlternative(DIRECT_CODEC, ALTERNATIVE_CODEC);
         public static final StreamCodec<RegistryFriendlyByteBuf, Exact> STREAM_CODEC = BnCFabricStreamCodecs.FLUID_STACK_WRAPPER.map(Exact::new, exact -> exact.displayStack);
 
         private final AbstractedFluidStack displayStack;

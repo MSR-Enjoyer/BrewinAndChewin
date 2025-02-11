@@ -9,7 +9,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.DefaultCustomIngredients;
-import net.fabricmc.fabric.api.recipe.v1.ingredient.FabricIngredient;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
@@ -32,7 +31,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.entity.EntityLookup;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.attachment.RagingAttachment;
 import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
@@ -47,6 +46,7 @@ import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 import umpaz.brewinandchewin.fabric.BrewinAndChewinFabric;
+import umpaz.brewinandchewin.fabric.block.entity.KegBlockEntityFabric;
 import umpaz.brewinandchewin.fabric.container.KegFluidTankFabric;
 import umpaz.brewinandchewin.fabric.container.KegItemHandlerFabric;
 import umpaz.brewinandchewin.fabric.container.SidedKegWrapperFabric;
@@ -106,6 +106,11 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     @Override
     public void openKegMenu(Player player, KegBlockEntity blockEntity, BlockPos pos) {
         player.openMenu(blockEntity);
+    }
+
+    @Override
+    public BlockEntityType.BlockEntitySupplier<KegBlockEntity> supplyBlockEntity() {
+        return KegBlockEntityFabric::new;
     }
 
     @Override

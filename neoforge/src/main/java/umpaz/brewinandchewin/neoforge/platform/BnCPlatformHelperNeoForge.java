@@ -19,6 +19,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.crafting.CompoundIngredient;
@@ -160,6 +161,11 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     @Override
     public void openKegMenu(Player player, KegBlockEntity blockEntity, BlockPos pos) {
         player.openMenu(blockEntity, pos);
+    }
+
+    @Override
+    public BlockEntityType.BlockEntitySupplier<KegBlockEntity> supplyBlockEntity() {
+        return KegBlockEntity::new;
     }
 
     @Override

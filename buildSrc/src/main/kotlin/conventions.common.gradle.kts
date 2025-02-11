@@ -121,6 +121,10 @@ tasks {
         "curseforge_page" to Properties.CURSEFORGE_PAGE,
         "modrinth_page" to Properties.MODRINTH_PAGE,
         "sources" to Properties.GITHUB_REPO,
+        "neoforge_greenhouse_config_range" to Versions.GREENHOUSE_CONFIG_NEOFORGE_RANGE,
+        "fabric_greenhouse_config_range" to Versions.GREENHOUSE_CONFIG_FABRIC_RANGE,
+        "farmers_delight_range" to Versions.FARMERS_DELIGHT_RANGE,
+        "farmers_delight_refabricated_range" to Versions.FARMERS_DELIGHT_REFABRICATED_RANGE,
         // Gradle is a bit trigger-happy...
         "HotCocoa" to "\$HotCocoa",
         "MilkBottle" to "\$MilkBottle",
