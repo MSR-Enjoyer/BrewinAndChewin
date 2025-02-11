@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -68,10 +69,19 @@ public class CoasterBlock extends BaseEntityBlock {
     @Override
     public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof CoasterBlockEntity coasterBlockEntity) {
-            return coasterBlockEntity.onUse(stack, level, state, pos, player, hand);
+            return coasterBlockEntity.useItemOn(stack, level, state, pos, player, hand);
         }
 
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (level.getBlockEntity(pos) instanceof CoasterBlockEntity coasterBlockEntity) {
+            return coasterBlockEntity.useWithoutItem(state, level, pos, player, hitResult);
+        }
+
+        return InteractionResult.PASS;
     }
 
     @Override

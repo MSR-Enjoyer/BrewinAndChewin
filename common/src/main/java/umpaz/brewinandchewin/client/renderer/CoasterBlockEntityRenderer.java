@@ -144,7 +144,8 @@ public class CoasterBlockEntityRenderer implements BlockEntityRenderer<CoasterBl
 
             if (modelEntries != null) {
                 for (ModelEntry modelEntry : modelEntries) {
-                    if (!checkModel(modelEntry))
+                    ResourceLocation modelPath = modelEntry.model.withPath(path -> "brewinandchewin/coaster/" + path);
+                    if (!checkModel(modelPath))
                         continue;;
                     int color = 0XFFFFFFFF;
                     RenderType renderType = RenderType.cutout();
@@ -159,7 +160,7 @@ public class CoasterBlockEntityRenderer implements BlockEntityRenderer<CoasterBl
                         ++tintIndex;
                         finalTintIndex = tintIndex;
                     }
-                    BrewinAndChewinClient.getHelper().tesselateCoasterModel(entity.getLevel(), modelEntry.model(), entity.getBlockState(), entity.getBlockPos(), poseStack, buffer, random, entity.getBlockPos().asLong(), combinedOverlay, finalTintIndex, renderType);
+                    BrewinAndChewinClient.getHelper().tesselateCoasterModel(entity.getLevel(), modelPath, entity.getBlockState(), entity.getBlockPos(), poseStack, buffer, random, entity.getBlockPos().asLong(), combinedOverlay, finalTintIndex, renderType);
                 }
             } else {
                 poseStack.translate(0.51, 0.05, 0.5);
@@ -176,11 +177,11 @@ public class CoasterBlockEntityRenderer implements BlockEntityRenderer<CoasterBl
         return blockEntity.getRenderBoundingBox();
     }
 
-    public static boolean checkModel(ModelEntry modelEntry) {
-        BakedModel model = BrewinAndChewinClient.getHelper().getModel(modelEntry.model());
-        if (!ERRONEOUS_ENTRIES.contains(modelEntry.model()) && model == Minecraft.getInstance().getModelManager().getMissingModel()) {
-            BrewinAndChewin.LOG.error("Failed to get model '{}'", modelEntry.model());
-            ERRONEOUS_ENTRIES.add(modelEntry.model());
+    public static boolean checkModel(ResourceLocation path) {
+        BakedModel model = BrewinAndChewinClient.getHelper().getModel(path);
+        if (!ERRONEOUS_ENTRIES.contains(path) && (model == Minecraft.getInstance().getModelManager().getMissingModel())) {
+            BrewinAndChewin.LOG.error("Failed to get model '{}'", path.withPath(p -> p.substring(24)));
+            ERRONEOUS_ENTRIES.add(path);
             return false;
         }
         return true;

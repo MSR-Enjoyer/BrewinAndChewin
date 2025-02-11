@@ -2,6 +2,7 @@
 - Ported the mod to 1.21.1.
 - The mod now supports NeoForge and Fabric under one codebase.
   - Multiloader probably won't happen for 1.20.1, please don't ask.
+- Made improvements to vanilla recipe book integration.
 
 ## Internal
 - Swapped config solution from Forge config to Greenhouse Config.

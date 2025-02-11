@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+import umpaz.brewinandchewin.fabric.client.model.CoasterWrappedModel;
 import umpaz.brewinandchewin.platform.client.BnCClientPlatformHelper;
 
 public class BnCClientPlatformHelperFabric implements BnCClientPlatformHelper {
@@ -27,7 +28,10 @@ public class BnCClientPlatformHelperFabric implements BnCClientPlatformHelper {
 
     @Override
     public void tesselateCoasterModel(BlockAndTintGetter level, ResourceLocation modelId, BlockState state, BlockPos pos, PoseStack poseStack, MultiBufferSource buffer, RandomSource random, long seed, int packedOverlay, int tintIndex, RenderType renderType) {
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(level, Minecraft.getInstance().getModelManager().getModel(modelId), state, pos, poseStack, buffer.getBuffer(renderType), false, random, seed, packedOverlay);
+        BakedModel model  = Minecraft.getInstance().getModelManager().getModel(modelId);
+        if (model instanceof CoasterWrappedModel coasterModel)
+            coasterModel.setTintIndex(tintIndex);
+        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(level, model, state, pos, poseStack, buffer.getBuffer(renderType), false, random, seed, packedOverlay);
     }
 
     @Override

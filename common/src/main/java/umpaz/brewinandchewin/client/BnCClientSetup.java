@@ -43,13 +43,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class BnCClientSetup {
-
-    public static void init() {
-        BnCTextureModifiers.init();
-    }
 
     public static void registerBlockEntityRenderers(BiConsumer<BlockEntityType<?>, BlockEntityRendererProvider> consumer) {
         consumer.accept(BnCBlockEntityTypes.COASTER, CoasterBlockEntityRenderer::new);

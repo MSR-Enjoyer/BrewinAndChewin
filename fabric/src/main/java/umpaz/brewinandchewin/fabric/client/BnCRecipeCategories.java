@@ -24,5 +24,6 @@ public class BnCRecipeCategories {
             }
             return BnCRecipeBook.FERMENTING_DRINKS.get();
         });
+        RecipeBookRegistry.registerRecipeCategoryFinder(BnCRecipeTypes.KEG_POURING, recipeHolder -> null);
     }
 }

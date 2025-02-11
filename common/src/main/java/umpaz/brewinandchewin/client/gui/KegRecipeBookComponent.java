@@ -89,6 +89,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                     return;
                 List<AbstractedFluidStack> ingredients = ingredient.get().ingredient().displayStacks();
                 AbstractedFluidStack fluidStack = ingredients.get(Mth.floor(((GhostRecipeAccessor)ghostRecipe).brewinandchewin$getTime() / 30.0F) % ingredients.size());
+                fluidStack = new AbstractedFluidStack(fluidStack.fluid(), ingredient.get().amount(), fluidStack.components(), ingredient.get().unit().orElse(FluidUnit.getLoaderUnit()), fluidStack.loaderSpecific());
                 if (!kegMenu.kegTank.getAbstractedFluid().fluid().isSame(fluidStack.fluid()))
                     renderTankTooltip(gui, renderX, renderY, mouseX, mouseY, fluidStack);
             }
@@ -162,8 +163,10 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
     }
 
     private void renderTankTooltip(GuiGraphics gui, int renderX, int renderY, int mouseX, int mouseY, AbstractedFluidStack stack) {
-        if (isHovering(108, 19, 24, 28, mouseX - renderX, mouseY - renderY) && menu instanceof KegMenu kegMenu && !kegMenu.kegTank.isEmpty() ) {
-            gui.renderTooltip(minecraft.font, BrewinAndChewin.getHelper().getFluidDisplayName(stack), mouseX, mouseY);
+        if (isHovering(120, 19,  24, 28, mouseX - renderX, mouseY - renderY) && menu instanceof KegMenu kegMenu && !kegMenu.kegTank.isEmpty()) {
+            Component component = MutableComponent.create(BrewinAndChewin.getHelper().getFluidDisplayName(stack).getContents())
+                    .append((BnCConfiguration.CLIENT_CONFIG.get().displayUnit().shortFormat(" (%s/%s") + ")").formatted(FluidUnit.convert(stack.amount(), stack.unit(), BnCConfiguration.CLIENT_CONFIG.get().displayUnit()), FluidUnit.convert(kegMenu.kegTank.getFluidCapacity(), FluidUnit.getLoaderUnit(), BnCConfiguration.CLIENT_CONFIG.get().displayUnit())));
+            gui.renderComponentTooltip(minecraft.font, List.of(component), mouseX, mouseY);
         }
     }
 

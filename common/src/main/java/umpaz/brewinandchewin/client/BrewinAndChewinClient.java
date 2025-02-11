@@ -1,5 +1,6 @@
 package umpaz.brewinandchewin.client;
 
+import umpaz.brewinandchewin.client.renderer.texture.BnCTextureModifiers;
 import umpaz.brewinandchewin.platform.client.BnCClientPlatformHelper;
 
 public class BrewinAndChewinClient {
@@ -11,5 +12,6 @@ public class BrewinAndChewinClient {
 
     public static void init(BnCClientPlatformHelper helper) {
         BrewinAndChewinClient.helper = helper;
+        BnCTextureModifiers.init();
     }
 }

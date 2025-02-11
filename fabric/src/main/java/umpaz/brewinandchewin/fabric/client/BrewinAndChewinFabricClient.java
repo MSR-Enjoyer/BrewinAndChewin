@@ -28,6 +28,7 @@ import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientbo
 import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
 import umpaz.brewinandchewin.common.registry.BnCFluids;
 import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
+import umpaz.brewinandchewin.fabric.client.model.CoasterWrappedModel;
 import umpaz.brewinandchewin.fabric.client.platform.BnCClientPlatformHelperFabric;
 
 import java.util.concurrent.CompletableFuture;
@@ -67,11 +68,18 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
         });
         PreparableModelLoadingPlugin.register(BnCClientSetup::getModels, (data, context) -> {
             context.addModels(data.stream().map(resourceLocation -> resourceLocation.withPath(path -> "brewinandchewin/coaster/" + path)).toList());
+            context.addModels(BrewinAndChewin.asResource("block/coaster"), BrewinAndChewin.asResource("block/coaster_tray"));
             context.resolveModel().register(context1 -> {
                 if (context1.id().getPath().startsWith("brewinandchewin/coaster/") && BnCClientSetup.MODELS.contains(context1.id().withPath(string -> string.substring(24)))) {
                     return context1.getOrLoadModel(context1.id().withPath(string -> string.substring(24)));
                 }
                 return null;
+            });
+            context.modifyModelAfterBake().register((model, context1) -> {
+                if (context1.resourceId() != null && context1.resourceId().getPath().startsWith("brewinandchewin/coaster/") && BnCClientSetup.MODELS.contains(context1.resourceId().withPath(string -> string.substring(24)))) {
+                    return new CoasterWrappedModel(model);
+                }
+                return model;
             });
         });
         BnCRecipeCategories.init();
