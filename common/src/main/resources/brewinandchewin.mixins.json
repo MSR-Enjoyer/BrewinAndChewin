@@ -19,6 +19,7 @@
   ],
   "client": [
     "GhostRecipeAccessor",
+    "TipsyMouseHandlerMixin",
     "client.GuiMixin",
     "client.LevelRendererAccessor",
     "client.ModelBakeryAccessor",

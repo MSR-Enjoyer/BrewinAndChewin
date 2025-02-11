@@ -6,7 +6,7 @@ object Properties {
     const val ARCHIVES_NAME = "BrewinAndChewin"
     const val MOD_ID = "brewinandchewin"
     val MOD_AUTHORS = listOf("Probleyes", "Umpaz", "MerchantPug")
-    const val DESCRIPTION = "A cool ass mod!"
+    const val DESCRIPTION = "Fermenting addon for Farmer's Delight."
     const val LICENSE = "MPL-2.0"
 
     const val CURSEFORGE_PAGE = "https://www.curseforge.com/minecraft/mc-mods/brewin-and-chewin"

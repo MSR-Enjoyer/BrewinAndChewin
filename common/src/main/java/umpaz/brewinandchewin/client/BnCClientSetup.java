@@ -7,10 +7,8 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.resources.model.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -30,7 +28,9 @@ import umpaz.brewinandchewin.client.particle.RagingParticle;
 import umpaz.brewinandchewin.client.renderer.CoasterBlockEntityRenderer;
 import umpaz.brewinandchewin.client.renderer.texture.BnCTextureModifiers;
 import umpaz.brewinandchewin.client.renderer.texture.modifier.TextureModifier;
+import umpaz.brewinandchewin.client.utility.IdentifiableListener;
 import umpaz.brewinandchewin.common.block.entity.CoasterBlockEntity;
+import umpaz.brewinandchewin.common.mixin.client.ModelBakeryAccessor;
 import umpaz.brewinandchewin.common.registry.BnCBlockEntityTypes;
 import umpaz.brewinandchewin.common.registry.BnCBlocks;
 import umpaz.brewinandchewin.client.utility.BnCFluidItemDisplays;
@@ -38,10 +38,7 @@ import umpaz.brewinandchewin.common.registry.BnCParticleTypes;
 import vectorwing.farmersdelight.client.particle.SteamParticle;
 
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
@@ -54,7 +51,7 @@ public class BnCClientSetup {
         BnCTextureModifiers.init();
     }
 
-    public static void onRegisterRenderers(BiConsumer<BlockEntityType<?>, BlockEntityRendererProvider> consumer) {
+    public static void registerBlockEntityRenderers(BiConsumer<BlockEntityType<?>, BlockEntityRendererProvider> consumer) {
         consumer.accept(BnCBlockEntityTypes.COASTER, CoasterBlockEntityRenderer::new);
     }
 
@@ -67,11 +64,7 @@ public class BnCClientSetup {
         consumer.accept(BnCParticleTypes.RAGING_STAGE_4, RagingParticle.Factory::new);
     }
 
-    public static void registerKegTooltipComponent(BiConsumer<Class<KegTooltip.KegTooltipComponent>, Function<KegTooltip.KegTooltipComponent, ? extends ClientTooltipComponent>> consumer) {
-        consumer.accept(KegTooltip.KegTooltipComponent.class, KegTooltip::new);
-    }
-
-    public static void registerReloadListeners(Consumer<PreparableReloadListener> consumer) {
+    public static void registerReloadListeners(Consumer<IdentifiableListener> consumer) {
         consumer.accept(BnCFluidItemDisplays.Loader.INSTANCE);
     }
 
@@ -106,34 +99,35 @@ public class BnCClientSetup {
         }, BnCBlocks.COASTER);
     }
 
-    public static List<ResourceLocation> getModels(ResourceManager manager, Executor executor) {
-        ArrayList<ResourceLocation> models = new ArrayList<>();
+    public static final Set<ResourceLocation> MODELS = new HashSet<>();
 
-        for (Map.Entry<ResourceLocation, Resource> resourceEntry : manager.listResources("brewinandchewin/coaster", fileName -> fileName.getPath().endsWith(".json")).entrySet()) {
-            models.addAll(CompletableFuture.supplyAsync(() -> {
-                try {
-                    Reader reader = resourceEntry.getValue().openAsReader();
-                    JsonElement json = JsonParser.parseReader(reader);
-                    reader.close();
-                    if (json instanceof JsonObject jsonObject) {
-                        ResourceLocation itemId = ResourceLocation.CODEC.decode(JsonOps.INSTANCE, jsonObject.get("item")).getOrThrow().getFirst();
-                        List<CoasterBlockEntityRenderer.ModelEntry> modelEntries = CoasterBlockEntityRenderer.ModelEntry.LIST_CODEC.decode(JsonOps.INSTANCE, jsonObject.get("models")).getOrThrow().getFirst();
-                        CoasterBlockEntityRenderer.addToModelMap(itemId, modelEntries);
-                        return modelEntries.stream().map(CoasterBlockEntityRenderer.ModelEntry::model).toList();
+    public static CompletableFuture<List<ResourceLocation>> getModels(ResourceManager manager, Executor executor) {
+        return CompletableFuture.supplyAsync(() -> {
+            ArrayList<ResourceLocation> models = new ArrayList<>();
+
+            for (Map.Entry<ResourceLocation, Resource> resourceEntry : manager.listResources("brewinandchewin/coaster", fileName -> fileName.getPath().endsWith(".json")).entrySet()) {
+                models.addAll(CompletableFuture.supplyAsync(() -> {
+                    try {
+                        Reader reader = resourceEntry.getValue().openAsReader();
+                        JsonElement json = JsonParser.parseReader(reader);
+                        reader.close();
+                        if (json instanceof JsonObject jsonObject) {
+                            ResourceLocation itemId = ResourceLocation.CODEC.decode(JsonOps.INSTANCE, jsonObject.get("item")).getOrThrow().getFirst();
+                            List<CoasterBlockEntityRenderer.ModelEntry> modelEntries = CoasterBlockEntityRenderer.ModelEntry.LIST_CODEC.decode(JsonOps.INSTANCE, jsonObject.get("models")).getOrThrow().getFirst();
+                            CoasterBlockEntityRenderer.addToModelMap(itemId, modelEntries);
+                            return modelEntries.stream().map(CoasterBlockEntityRenderer.ModelEntry::model).toList();
+                        }
+                    } catch (Exception ex) {
+                        BrewinAndChewin.LOG.error("Unexpected error in Brewin' And Chewin' coaster model JSON \"{}\". {}", resourceEntry.getKey(), ex);
+                        return List.<ResourceLocation>of();
                     }
-                } catch (Exception ex) {
-                    BrewinAndChewin.LOG.error("Unexpected error in Brewin' And Chewin' coaster model JSON \"{}\". {}", resourceEntry.getKey(), ex);
+                    BrewinAndChewin.LOG.error("Unexpected error in Brewin' And Chewin' coaster model JSON: {}.", resourceEntry.getKey());
                     return List.<ResourceLocation>of();
-                }
-                BrewinAndChewin.LOG.error("Unexpected error in Brewin' And Chewin' coaster model JSON: {}.", resourceEntry.getKey());
-                return List.<ResourceLocation>of();
-            }, executor).join());
-        }
-        return models.stream().filter(Objects::nonNull).toList();
-    }
-
-    @FunctionalInterface
-    public interface ColorGetter {
-        int getColor(BlockState state, Level level, BlockPos pos, int tintIndex);
+                }, executor).join());
+            }
+            List<ResourceLocation> modelPaths = models.stream().filter(Objects::nonNull).toList();
+            MODELS.addAll(modelPaths);
+            return modelPaths;
+        });
     }
 }

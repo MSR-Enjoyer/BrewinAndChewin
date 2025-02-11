@@ -39,7 +39,7 @@ public class BnCFluidItemDisplays {
         return ItemStack.EMPTY;
     }
 
-    public static class Loader extends SimplePreparableReloadListener<Map<Fluid, FluidBasedItemStack>> {
+    public static class Loader extends SimplePreparableReloadListener<Map<Fluid, FluidBasedItemStack>> implements IdentifiableListener {
         public static final Loader INSTANCE = new Loader();
         private static final Gson GSON = new GsonBuilder().create();
 
@@ -76,6 +76,11 @@ public class BnCFluidItemDisplays {
         @Override
         protected void apply(Map<Fluid, FluidBasedItemStack> obj, ResourceManager resourceManager, ProfilerFiller profiler) {
             FLUID_TYPE_TO_ITEM_MAP.putAll(obj);
+        }
+
+        @Override
+        public ResourceLocation getId() {
+            return BrewinAndChewin.asResource("coaster_models");
         }
     }
 

@@ -17,6 +17,7 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import umpaz.brewinandchewin.client.BnCClientSetup;
 import umpaz.brewinandchewin.client.BrewinAndChewinClient;
 import umpaz.brewinandchewin.client.gui.KegScreen;
+import umpaz.brewinandchewin.client.gui.KegTooltip;
 import umpaz.brewinandchewin.common.mixin.client.ModelBakeryAccessor;
 import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
 import umpaz.brewinandchewin.neoforge.client.model.CoasterWrappedModel;
@@ -130,7 +131,7 @@ public class BrewinAndChewinNeoForgeClient {
 
         @SubscribeEvent
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            BnCClientSetup.onRegisterRenderers(event::registerBlockEntityRenderer);
+            BnCClientSetup.registerBlockEntityRenderers(event::registerBlockEntityRenderer);
         }
 
         @SubscribeEvent
@@ -140,7 +141,7 @@ public class BrewinAndChewinNeoForgeClient {
 
         @SubscribeEvent
         public static void registerKegTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
-            BnCClientSetup.registerKegTooltipComponent(event::register);
+            event.register(KegTooltip.KegTooltipComponent.class, KegTooltip::new);
         }
 
         @SubscribeEvent
@@ -156,7 +157,7 @@ public class BrewinAndChewinNeoForgeClient {
         @SubscribeEvent
         public static void registerModels(ModelEvent.RegisterAdditional event) {
             CoasterBlockEntityRenderer.resetCache();
-            MODELS.addAll(BnCClientSetup.getModels(Minecraft.getInstance().getResourceManager(), Runnable::run));
+            MODELS.addAll(BnCClientSetup.getModels(Minecraft.getInstance().getResourceManager(), Runnable::run).join());
             event.register(ModelResourceLocation.standalone(BrewinAndChewin.asResource("block/coaster")));
             event.register(ModelResourceLocation.standalone(BrewinAndChewin.asResource("block/coaster_tray")));
         }
