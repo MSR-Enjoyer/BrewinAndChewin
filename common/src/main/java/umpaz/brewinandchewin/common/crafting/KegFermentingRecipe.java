@@ -56,7 +56,10 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
         this.tab = tab;
         this.fluidIngredient = fluidIngredient;
         this.unit = unit;
-        this.result = result;
+        if (unit.isPresent() && result.left().isPresent())
+            this.result = Either.left(new AbstractedFluidStack(result.left().get().fluid(), result.left().get().amount(), result.left().get().components(), unit.get(), result.left().get().loaderSpecific()));
+        else
+            this.result = result;
         this.experience = experience;
         this.fermentTime = fermentTime;
         this.temperature = temperature;
@@ -131,7 +134,7 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
         if (result.right().isPresent())
             return result.right().get().copy();
         if (result.left().isPresent())
-            return BnCRecipeUtils.getPouredItemFromFluid(new AbstractedFluidStack(result.left().get().fluid(), BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), result.left().get().components(), BnCConfiguration.COMMON_CONFIG.get().keg().capacityUnit(), null));
+            return BnCRecipeUtils.getPouredItemFromFluid(new AbstractedFluidStack(result.left().get().fluid(), BnCConfiguration.COMMON_CONFIG.get().keg().localizedCapacity(), result.left().get().components(), BnCConfiguration.COMMON_CONFIG.get().keg().capacityUnit(), null));
         return ItemStack.EMPTY;
     }
 

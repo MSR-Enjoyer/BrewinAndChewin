@@ -207,7 +207,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
                     return ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(minecraft.level.registryAccess()));
                 return ItemStack.isSameItem(itemDisplay, kegPouringRecipe.getResultItem(minecraft.level.registryAccess()));
             }).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int)(Math.min(this.menu.kegTank.getFluidCapacity(), this.menu.kegTank.getAbstractedFluid().amount()) / kegPouringRecipe.getRawFluid().amount())).orElse(1);
+            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int)(Math.min(this.menu.kegTank.getFluidCapacity(), this.menu.kegTank.getAbstractedFluid().amount()) / kegPouringRecipe.getLoaderAmount())).orElse(1);
             itemDisplay.setCount(pourCount);
             if (!itemDisplay.isEmpty()) {
                 gui.renderItem(itemDisplay, this.leftPos + 124, this.topPos + 23);

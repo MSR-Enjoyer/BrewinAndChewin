@@ -37,14 +37,14 @@ public enum FluidUnit implements StringRepresentable {
     }
 
     public long convertToLoader(long value) {
-        return converToLoader(value, this);
+        return convertToLoader(value, this);
     }
 
     public static FluidUnit getLoaderUnit() {
         return BrewinAndChewin.getHelper().getPlatform() == BnCPlatform.NEOFORGE ? MILLIBUCKETS : DROPLETS;
     }
 
-    public static long converToLoader(long value, FluidUnit unit) {
+    public static long convertToLoader(long value, FluidUnit unit) {
         return convert(value, unit, getLoaderUnit());
     }
 

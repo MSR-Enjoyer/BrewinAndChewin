@@ -6,4 +6,5 @@
 ## Internal
 - Swapped config solution from Forge config to Greenhouse Config.
 - Updated recipe code to match 1.21.1 specifics, such as allowing NeoForge fluid ingredients.
+  - Unfortunately, I cannot extensively document the changes right now, as they swept across the entire mod. Hopefully I'll get to working on the wiki soon - Pug.
 - Removed the maximum of 10000mB for Keg capacity in the configuration.

@@ -124,7 +124,7 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
             if (BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg()) {
                 builder.addSlot(RecipeIngredientRole.INPUT, 0, 2)
                         .addFluidStack(firstDisplayFluid.fluid(), recipe.getFluidIngredient().get().amount(), firstDisplayFluid.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
-                        .setFluidRenderer(BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), false, 26, 30)
+                        .setFluidRenderer(BnCConfiguration.COMMON_CONFIG.get().keg().localizedCapacity(), false, 26, 30)
                         .setOverlay(kegOverlay, 0, 0);
             } else
                 builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
@@ -136,7 +136,7 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
                         return ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
                     return ItemStack.isSameItem(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
             }).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int)(Math.min(BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), recipe.getFluidIngredient().get().loaderAmount()) / kegPouringRecipe.getLoaderAmount())).orElse(1);
+            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int)(Math.min(BnCConfiguration.COMMON_CONFIG.get().keg().localizedCapacity(), recipe.getFluidIngredient().get().loaderAmount()) / kegPouringRecipe.getLoaderAmount())).orElse(1);
             itemDisplay.setCount(pourCount);
             if (!itemDisplay.isEmpty())
                 builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 5, 5)
@@ -148,14 +148,14 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
             if (BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg()) {
                 builder.addSlot(RecipeIngredientRole.OUTPUT, 100, 2)
                         .addFluidStack(result.fluid(), recipe.getUnit().convertToLoader(result.amount()), result.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
-                        .setFluidRenderer(BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), false, 26, 30)
+                        .setFluidRenderer(BnCConfiguration.COMMON_CONFIG.get().keg().localizedCapacity(), false, 26, 30)
                         .setOverlay(kegOverlay, 0, 0);
             } else
                 builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
                         .addFluidStack(result.fluid(), recipe.getUnit().convertToLoader(result.amount()), result.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
 
             ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), recipe.getResult().left().get()).copy();
-            int pourCount = recipe.getPouringLoaderAmount() == -1L ? 1 : (int)(Math.min(BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), recipe.getFluidIngredient().get().loaderAmount()) / recipe.getPouringLoaderAmount());
+            int pourCount = recipe.getPouringLoaderAmount() == -1L ? 1 : (int)(Math.min(BnCConfiguration.COMMON_CONFIG.get().keg().localizedCapacity(), recipe.getFluidIngredient().get().loaderAmount()) / recipe.getPouringLoaderAmount());
             itemDisplay.setCount(pourCount);
             if (!itemDisplay.isEmpty())
                 builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 105, 5)
@@ -185,7 +185,7 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
 
             ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidInput).copy();
 
-            int pourCount = recipe.getPouringLoaderAmount() == -1L ? 1 : (int) (Math.min(BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), recipe.getUnit().convertToLoader(recipe.getFluidIngredient().get().amount())) / recipe.getPouringLoaderAmount());
+            int pourCount = recipe.getPouringLoaderAmount() == -1L ? 1 : (int) (Math.min(BnCConfiguration.COMMON_CONFIG.get().keg().localizedCapacity(), recipe.getUnit().convertToLoader(recipe.getFluidIngredient().get().amount())) / recipe.getPouringLoaderAmount());
             itemDisplay.setCount(pourCount);
             if (!itemDisplay.isEmpty()) {
                 var itemDisplayDrawable = recipeSlots.get(1);

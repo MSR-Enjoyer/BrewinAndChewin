@@ -21,7 +21,6 @@ public class BrewinAndChewin {
 
     public static void init(BnCPlatformHelper helper) {
         BrewinAndChewin.helper = helper;
-
         BnCConfiguration.init();
     }
 

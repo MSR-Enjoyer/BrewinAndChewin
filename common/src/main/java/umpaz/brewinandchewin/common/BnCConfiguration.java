@@ -94,9 +94,9 @@ public class BnCConfiguration {
             );
 
             /**
-             * The fluid capacity appropriated for the mod loader.
+             * The fluid capacity localized for the mod loader.
              */
-            public long appropriatedCapacity() {
+            public long localizedCapacity() {
                 return capacityUnit.convertToLoader(capacity);
             }
 

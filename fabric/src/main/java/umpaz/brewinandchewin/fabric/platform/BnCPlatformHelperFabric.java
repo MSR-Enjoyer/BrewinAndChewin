@@ -52,10 +52,7 @@ import umpaz.brewinandchewin.fabric.container.KegItemHandlerFabric;
 import umpaz.brewinandchewin.fabric.container.SidedKegWrapperFabric;
 import umpaz.brewinandchewin.fabric.registry.BnCCreativeTabsImpl;
 import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
-import umpaz.brewinandchewin.fabric.utility.BnCFabricCodecs;
-import umpaz.brewinandchewin.fabric.utility.BnCFabricStreamCodecs;
-import umpaz.brewinandchewin.fabric.utility.KegFluidIngredient;
-import umpaz.brewinandchewin.fabric.utility.KegRecipeWrapperFabric;
+import umpaz.brewinandchewin.fabric.utility.*;
 import umpaz.brewinandchewin.platform.BnCPlatform;
 import umpaz.brewinandchewin.platform.BnCPlatformHelper;
 
@@ -100,7 +97,7 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
     @Override
     public Component getFluidDisplayName(AbstractedFluidStack wrapper) {
-        return FluidVariantAttributes.getName((FluidVariant)wrapper.loaderSpecific());
+        return FluidVariantAttributes.getName(((AmountedFluidVariant)wrapper.loaderSpecific()).variant());
     }
 
     @Override

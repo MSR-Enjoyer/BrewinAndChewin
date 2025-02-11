@@ -3,6 +3,7 @@ package umpaz.brewinandchewin.fabric.client;
 import io.github.fabricators_of_create.porting_lib.event.client.ColorHandlersCallback;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.PreparableModelLoadingPlugin;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
@@ -22,6 +23,9 @@ import umpaz.brewinandchewin.client.BrewinAndChewinClient;
 import umpaz.brewinandchewin.client.gui.KegScreen;
 import umpaz.brewinandchewin.client.gui.KegTooltip;
 import umpaz.brewinandchewin.common.fluid.BnCFluidConstants;
+import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsClientboundPacket;
+import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
+import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
 import umpaz.brewinandchewin.common.registry.BnCFluids;
 import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
 import umpaz.brewinandchewin.fabric.client.platform.BnCClientPlatformHelperFabric;
@@ -73,7 +77,13 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
         BnCRecipeCategories.init();
         registerFluidRenderers();
     }
-    
+
+    private static void registerNetwork() {
+        ClientPlayNetworking.registerGlobalReceiver(ClearKegFluidContainerComponentsClientboundPacket.TYPE, (payload, context) -> payload.handle());
+        ClientPlayNetworking.registerGlobalReceiver(SyncNumbedHeartsClientboundPacket.TYPE, (payload, context) -> payload.handle());
+        ClientPlayNetworking.registerGlobalReceiver(SyncRagingStacksClientboundPacket.TYPE, (payload, context) -> payload.handle());
+    }
+
     public static void registerFluidRenderers() {
         FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.HONEY, BnCFluids.FLOWING_HONEY, createHoneyRenderHandler(BnCFluidConstants.Colors.DEFAULT));
 

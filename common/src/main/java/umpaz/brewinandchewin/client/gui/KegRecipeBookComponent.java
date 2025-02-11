@@ -137,6 +137,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                 if (fluidIngredient.isPresent() && !fluidIngredient.get().ingredient().displayStacks().isEmpty()) {
                     var ingredients = fluidIngredient.get().ingredient().displayStacks();
                     AbstractedFluidStack fluidStack = ingredients.get(Mth.floor(((GhostRecipeAccessor)ghostRecipe).brewinandchewin$getTime() / 30.0F) % ingredients.size());
+                    fluidStack = new AbstractedFluidStack(fluidStack.fluid(), fluidIngredient.get().amount(), fluidStack.components(), fluidIngredient.get().unit().orElse(FluidUnit.getLoaderUnit()), null);
                     if (!kegMenu.kegTank.isEmpty() || fluidStack != null && !kegMenu.kegTank.getAbstractedFluid().fluid().isSame(fluidStack.fluid())) {
                         if (fluidStack != null && BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg())
                             BrewinAndChewinClient.getHelper().renderFluidInKeg(fluidStack, gui, leftPos + 120, topPos + 19);
@@ -144,7 +145,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
 
                         if (fluidStack != null) {
                             ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
-                            int pourCount = (int) (Math.min(fermentingRecipe.getFluidIngredient().get().amount(), kegMenu.kegTank.getFluidCapacity()) / FluidUnit.convert(250L, FluidUnit.MILLIBUCKETS, FluidUnit.getLoaderUnit()));
+                            int pourCount = (int) (Math.min(fermentingRecipe.getFluidIngredient().get().loaderAmount(), kegMenu.kegTank.getFluidCapacity()) / FluidUnit.convert(250L, FluidUnit.MILLIBUCKETS, FluidUnit.getLoaderUnit()));
                             itemDisplay.setCount(pourCount);
                             if (!itemDisplay.isEmpty()) {
                                 int itemX = leftPos + 124;

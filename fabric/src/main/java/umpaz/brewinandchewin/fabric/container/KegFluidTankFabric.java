@@ -4,8 +4,10 @@ import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.base.SingleFluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.nbt.CompoundTag;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.FluidUnit;
@@ -35,9 +37,12 @@ public class KegFluidTankFabric extends SingleFluidStorage implements Abstracted
 
     @Override
     public void setAbstractedFluid(AbstractedFluidStack stack) {
-        AmountedFluidVariant unwrapped = unwrapFluid(stack);
-        variant = unwrapped.variant();
-        amount = unwrapped.amount();
+        try (Transaction t = TransferUtil.getTransaction()) {
+            extract(variant, capacity, t);
+            AmountedFluidVariant variant = unwrapFluid(stack);
+            insert(variant.variant(), FluidUnit.convertToLoader(stack.amount(), stack.unit()), t);
+            t.commit();
+        }
     }
 
     @Override
@@ -62,6 +67,18 @@ public class KegFluidTankFabric extends SingleFluidStorage implements Abstracted
                 t.commit();
             return stack;
         }
+    }
+
+    @Override
+    public void readFromNbt(CompoundTag tag, HolderLookup.Provider provider) {
+        readNbt(tag, provider);
+    }
+
+    @Override
+    public CompoundTag writeToNbt(HolderLookup.Provider provider) {
+        CompoundTag tag = new CompoundTag();
+        writeNbt(tag, provider);
+        return tag;
     }
 
     @Override

@@ -11,6 +11,5 @@ public class BrewinAndChewinClient {
 
     public static void init(BnCClientPlatformHelper helper) {
         BrewinAndChewinClient.helper = helper;
-
     }
 }

@@ -1,9 +1,14 @@
 package umpaz.brewinandchewin.fabric.container;
 
+import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandlerContainer;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedItemHandler;
+import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
 
 public class KegItemHandlerFabric extends ItemStackHandlerContainer implements AbstractedItemHandler {
@@ -19,8 +24,14 @@ public class KegItemHandlerFabric extends ItemStackHandlerContainer implements A
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (simulate) {
-            // TODO: Handle simulated extraction.
-            return ItemStack.EMPTY;
+            try (Transaction t = TransferUtil.getTransaction()) {
+                ItemVariant variant = getVariantInSlot(slot);
+                long extractedAmount = extract(variant, amount, t);
+
+                ItemStack stack = getItem(slot);
+                stack.shrink((int)extractedAmount);
+                return stack;
+            }
         }
         return removeItem(slot, amount);
     }
@@ -28,5 +39,15 @@ public class KegItemHandlerFabric extends ItemStackHandlerContainer implements A
     @Override
     public boolean isItemValid(int slot, ItemStack stack) {
         return isItemValid(slot, ItemVariant.of(stack), stack.getCount());
+    }
+
+    @Override
+    public void readFromNbt(CompoundTag tag, HolderLookup.Provider provider) {
+        deserializeNBT(provider, tag);
+    }
+
+    @Override
+    public CompoundTag writeToNbt(HolderLookup.Provider provider) {
+        return serializeNBT(provider);
     }
 }

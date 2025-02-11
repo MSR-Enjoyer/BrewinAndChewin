@@ -649,7 +649,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     }
 
     private AbstractedFluidTank createFluidTank() {
-        return BrewinAndChewin.getHelper().createKegTank(BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), () -> {
+        return BrewinAndChewin.getHelper().createKegTank(BnCConfiguration.COMMON_CONFIG.get().keg().localizedCapacity(), () -> {
             setChanged();
             inventoryChanged();
             checkNewRecipe = true;
