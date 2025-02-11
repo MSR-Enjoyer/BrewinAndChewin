@@ -97,7 +97,7 @@ public class BnCConfiguration {
              * The fluid capacity appropriated for the mod loader.
              */
             public long appropriatedCapacity() {
-                return FluidUnit.convert(capacity, capacityUnit, FluidUnit.getLoaderUnit());
+                return capacityUnit.convertToLoader(capacity);
             }
 
             public static final Codec<Keg> CODEC = RecordCodecBuilder.create(inst -> inst.group(
@@ -221,15 +221,28 @@ public class BnCConfiguration {
     }
 
 
-    public record Client(boolean numbedHeartFlickering, boolean intoxicationFoodOverlay,
+    public record Client(FluidUnit displayUnit,
+                         boolean numbedHeartFlickering, boolean intoxicationFoodOverlay,
                          boolean scrambleChat, boolean scrambleName, boolean scrambleSign,
                          boolean renderFluidInKeg) {
         public static final Client DEFAULT = new Client(
+                FluidUnit.getLoaderUnit(),
                 true, true,
                 true, true, true,
                 true
         );
         private static final Codec<Client> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                GreenhouseConfigCodecs.defaultFieldCodec(
+                        GreenhouseConfigCodecs.commentedCodec(
+                                FluidUnit.CODEC,
+                                "Which unit the fluid display in the keg should use.",
+                                "Should be either 'millibuckets' or 'droplets'",
+                                "1mB = 81 droplets",
+                                "Default: " + DEFAULT.displayUnit().getSerializedName()
+                        ),
+                        "fluidDisplayUnit",
+                        DEFAULT.displayUnit()
+                ).forGetter(Client::displayUnit),
                 GreenhouseConfigCodecs.defaultFieldCodec(
                         GreenhouseConfigCodecs.commentedCodec(
                                 Codec.BOOL,

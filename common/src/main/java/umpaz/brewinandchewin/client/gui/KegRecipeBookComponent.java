@@ -17,6 +17,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.client.BrewinAndChewinClient;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.KegStackedContents;
@@ -137,39 +138,8 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                     var ingredients = fluidIngredient.get().ingredient().displayStacks();
                     AbstractedFluidStack fluidStack = ingredients.get(Mth.floor(((GhostRecipeAccessor)ghostRecipe).brewinandchewin$getTime() / 30.0F) % ingredients.size());
                     if (!kegMenu.kegTank.isEmpty() || fluidStack != null && !kegMenu.kegTank.getAbstractedFluid().fluid().isSame(fluidStack.fluid())) {
-                        if (fluidStack != null && BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg()) {
-                            // FIXME: Platform Fluid Display
-//                            IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(fluidStack.fluid());
-//                            ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(fluidStack);
-//                            if (stillTexture != null) {
-//                                TextureAtlasSprite sprite =
-//                                        this.minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture);
-//                                int tintColor = fluidTypeExtensions.getTintColor(fluidStack);
-//
-//                                float alpha = ((tintColor >> 24) & 0xFF) / 255f / 3f;
-//                                float red = ((tintColor >> 16) & 0xFF) / 255f;
-//                                float green = ((tintColor >> 8) & 0xFF) / 255f;
-//                                float blue = (tintColor & 0xFF) / 255f;
-//
-//                                float capacity = (float) fermentingRecipe.getFluidIngredient().getAmount() / kegMenu.kegTank.getCapacity();
-//                                if (capacity > 0.57F) {
-//                                    int y1 = topPos + 19 + (int) (12 * (1 - ((capacity - 0.57F) / .43F)));
-//                                    int y2 = topPos + 19 + 12;
-//                                    float topCapacity = (capacity - 0.57F) / 0.43F;
-//                                    float vDistance = sprite.getV1() - sprite.getV0();
-//                                    float v0 = sprite.getV0() + (0.25F * vDistance) + (0.75F * vDistance * (1 - topCapacity));
-//                                    gui.innerBlit(sprite.atlasLocation(), leftPos + 120, leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
-//                                    gui.innerBlit(sprite.atlasLocation(), leftPos + 120 + 16, leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
-//                                }
-//
-//                                int y1 = topPos + 31 + (int) (16 * (1 - Math.min(1, (capacity / .57F))));
-//                                int y2 = topPos + 31 + 16;
-//                                float vDistance = sprite.getV1() - sprite.getV0();
-//                                float v0 = sprite.getV0() + (vDistance * (1 - Math.min(1, (capacity / .57F))));
-//                                gui.innerBlit(sprite.atlasLocation(), leftPos + 120, leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
-//                                gui.innerBlit(sprite.atlasLocation(), leftPos + 120 + 16, leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
-//                            }
-                        }
+                        if (fluidStack != null && BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg())
+                            BrewinAndChewinClient.getHelper().renderFluidInKeg(fluidStack, gui, leftPos + 120, topPos + 19);
                         gui.fill(leftPos + 120, topPos + 19, leftPos + 120 + 16 + 8, topPos + 31 + 16, 822018048);
 
                         if (fluidStack != null) {

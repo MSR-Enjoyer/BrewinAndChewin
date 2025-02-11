@@ -13,19 +13,19 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 
 public enum FluidUnit implements StringRepresentable {
-    MILLIBUCKETS("millibuckets", l -> l + "mB", l -> l + " millibuckets",1),
+    MILLIBUCKETS("millibuckets", l -> l + " mB", l -> l + " millibuckets",1),
     DROPLETS("droplets", l -> l + " droplets", l -> l + " droplets",81);
 
     private final String name;
-    private final Function<Long, String> shortFormFormatFunc;
-    private final Function<Long, String> longFormFormatFunc;
+    private final Function<String, String> shortFormFormatFunc;
+    private final Function<String, String> longFormFormatFunc;
     private final long oneMb;
 
     public static final Codec<FluidUnit> CODEC = StringRepresentable.fromEnum(FluidUnit::values);
     public static final IntFunction<FluidUnit> BY_ID = ByIdMap.continuous(Enum::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
     public static final StreamCodec<ByteBuf, FluidUnit> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, Enum::ordinal);
 
-    FluidUnit(String name, Function<Long, String> shortFormFormatFunc, Function<Long, String> longFormFormatFunc, long oneMb) {
+    FluidUnit(String name, Function<String, String> shortFormFormatFunc, Function<String, String> longFormFormatFunc, long oneMb) {
         this.name = name;
         this.shortFormFormatFunc = shortFormFormatFunc;
         this.longFormFormatFunc = longFormFormatFunc;
@@ -54,11 +54,11 @@ public enum FluidUnit implements StringRepresentable {
         return value / originalUnit.oneMb * newUnit.oneMb;
     }
 
-    public String shortFormat(long value) {
+    public String shortFormat(String value) {
         return shortFormFormatFunc.apply(value);
     }
 
-    public String longFormat(long value) {
+    public String longFormat(String value) {
         return longFormFormatFunc.apply(value);
     }
 

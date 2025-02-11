@@ -43,12 +43,14 @@ public class BnCRecipeBookNeoForge {
         event.registerRecipeCategoryFinder(BnCRecipeTypes.KEG_POURING, recipe -> RecipeBookCategories.UNKNOWN);
     }
 
-    public static Object getRecipeCategoryItemStacks(int idx, Class<?> type) {
-        return switch (idx) {
-            case 0 -> Lazy.of(() -> List.of(new ItemStack(Items.COMPASS)));
-            case 1 -> Lazy.of(() -> List.of(new ItemStack(BnCItems.BEER)));
-            case 2 -> Lazy.of(() -> List.of(new ItemStack(BnCItems.UNRIPE_FLAXEN_CHEESE_WHEEL)));
-            default -> throw new IllegalArgumentException("Unexpected parameter index: " + idx);
-        };
+    public static Object getSearchRecipeCategoryItemStacks(int idx, Class<?> type) {
+        return Lazy.of(() -> List.of(new ItemStack(Items.COMPASS)));
+    }
+
+    public static Object getDrinksRecipeCategoryItemStacks(int idx, Class<?> type) {
+        return Lazy.of(() -> List.of(new ItemStack(BnCItems.BEER)));
+    }
+    public static Object getMealsRecipeCategoryItemStacks(int idx, Class<?> type) {
+        return Lazy.of(() -> List.of(new ItemStack(BnCItems.UNRIPE_FLAXEN_CHEESE_WHEEL)));
     }
 }

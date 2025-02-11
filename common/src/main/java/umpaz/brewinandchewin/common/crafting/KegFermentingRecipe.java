@@ -114,10 +114,11 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
             if (!itemstack.isEmpty()) {
                 ++i;
                 inputs.add(itemstack);
-            }
+            } else
+                inputs.add(ItemStack.EMPTY);
         }
         CraftingInput input = CraftingInput.of(2, 2, inputs);
-        return i == this.inputItems.size() && pattern.matches(input) && (fluidIngredient.isEmpty() && inv.getFluid().isEmpty() || fluidIngredient.isPresent() && !inv.getFluid().isEmpty() && fluidIngredient.get().ingredient().matches(inv.getFluid()) && inv.getFluid().amount() % fluidIngredient.get().amount() == 0);
+        return i == this.inputItems.stream().filter(ingredient -> !ingredient.isEmpty()).toList().size() && pattern.matches(input) && (fluidIngredient.isEmpty() && inv.getFluid().isEmpty() || fluidIngredient.isPresent() && !inv.getFluid().isEmpty() && fluidIngredient.get().ingredient().matches(inv.getFluid()) && inv.getFluid().amount() % fluidIngredient.get().amount() == 0);
     }
 
     @Override
@@ -149,6 +150,11 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
         return new ItemStack(BnCItems.KEG);
     }
 
+    @Override
+    public boolean isIncomplete() {
+        NonNullList<Ingredient> nonnulllist = getIngredients();
+        return nonnulllist.isEmpty() || nonnulllist.stream().allMatch(Ingredient::isEmpty);
+    }
 
     @Override
     public boolean equals(Object o) {

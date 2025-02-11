@@ -262,7 +262,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             if (fluidTank.isEmpty()) // make sure the fluid is empty
                 return Optional.empty();
         } else {
-            if (recipe.get().value().getFluidIngredient().get().ingredient().matches(fluidTank.getAbstractedFluid()))
+            if (!recipe.get().value().getFluidIngredient().get().ingredient().matches(fluidTank.getAbstractedFluid()))
                 return Optional.empty(); // make sure the fluid is the same
             if (fluidTank.getAbstractedFluid().amount() % recipe.get().value().getFluidIngredient().get().amount() != 0) // make sure the fluid amount is a multiple of the recipe amount
                 return Optional.empty();
@@ -284,7 +284,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         }
 
         if (checkNewRecipe) {
-            Optional<RecipeHolder<KegFermentingRecipe>> recipe = level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.FERMENTING).stream().filter(a -> a.value().matches(inventoryWrapper, level) && (a.value().getFluidIngredient().isEmpty() || a.value().getFluidIngredient().get().ingredient().matches(this.fluidTank.getAbstractedFluid()))).findFirst();
+            Optional<RecipeHolder<KegFermentingRecipe>> recipe = level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.FERMENTING).stream().filter(a -> a.value().matches(inventoryWrapper, level)).findFirst();
             if (recipe.isPresent()) {
                 ResourceLocation newRecipeID = recipe.get().id();
                 if (lastRecipeID != null && !lastRecipeID.equals(newRecipeID)) {

@@ -16,7 +16,9 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import umpaz.brewinandchewin.client.BnCClientSetup;
 import umpaz.brewinandchewin.client.BrewinAndChewinClient;
+import umpaz.brewinandchewin.client.gui.KegScreen;
 import umpaz.brewinandchewin.common.mixin.client.ModelBakeryAccessor;
+import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
 import umpaz.brewinandchewin.neoforge.client.model.CoasterWrappedModel;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.renderer.CoasterBlockEntityRenderer;
@@ -36,6 +38,11 @@ public class BrewinAndChewinNeoForgeClient {
 
     @EventBusSubscriber(modid = BrewinAndChewin.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ModEvents {
+        @SubscribeEvent
+        public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+            event.register(BnCMenuTypes.KEG, KegScreen::new);
+        }
+
         @SubscribeEvent
         public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
             event.registerFluidType(createHoneyExtension(BnCFluidConstants.Colors.DEFAULT), BnCFluidTypes.HONEY);

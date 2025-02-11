@@ -3,6 +3,7 @@ package umpaz.brewinandchewin.common.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -12,7 +13,6 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.block.entity.container.KegStackedContents;
@@ -48,8 +48,8 @@ public class KegStackedContentsRecipePickerMixin {
         return true;
     }
 
-    @ModifyVariable(method = "tryPick", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/item/crafting/Recipe;getIngredients()Lnet/minecraft/core/NonNullList;"))
-    private List<Ingredient> brewinandchewin$addExtraFluidContextToPick(List<Ingredient> original) {
+    @ModifyExpressionValue(method = "tryPick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/crafting/Recipe;getIngredients()Lnet/minecraft/core/NonNullList;"))
+    private NonNullList<Ingredient> brewinandchewin$addExtraFluidContextToPick(NonNullList<Ingredient> original) {
         if ((StackedContents.RecipePicker)(Object)this instanceof KegStackedContents.RecipePicker kegRecipePicker && recipe instanceof KegFermentingRecipe fermentingRecipe) {
             AbstractedFluidTank kegTank = kegRecipePicker.getOuter().menu.kegTank;
             if (fermentingRecipe.getFluidIngredient().isEmpty()) {
@@ -65,7 +65,7 @@ public class KegStackedContentsRecipePickerMixin {
                         ingredients.clear();
 
                     ingredients.add(ingredient);
-                    return ingredients;
+                    return NonNullList.of(Ingredient.EMPTY, ingredients.toArray(Ingredient[]::new));
                 }
             } else if (fermentingRecipe.getFluidIngredient().isPresent()) {
                 List<Ingredient> ingredients = new ArrayList<>(original);
@@ -108,7 +108,7 @@ public class KegStackedContentsRecipePickerMixin {
                     }
                 }
 
-                return ingredients;
+                return NonNullList.of(Ingredient.EMPTY, ingredients.toArray(Ingredient[]::new));
             }
         }
         return original;
