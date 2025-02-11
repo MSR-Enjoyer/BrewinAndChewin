@@ -138,7 +138,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                     var ingredients = fluidIngredient.get().ingredient().displayStacks();
                     AbstractedFluidStack fluidStack = ingredients.get(Mth.floor(((GhostRecipeAccessor)ghostRecipe).brewinandchewin$getTime() / 30.0F) % ingredients.size());
                     fluidStack = new AbstractedFluidStack(fluidStack.fluid(), fluidIngredient.get().amount(), fluidStack.components(), fluidIngredient.get().unit().orElse(FluidUnit.getLoaderUnit()), null);
-                    if (!kegMenu.kegTank.isEmpty() || fluidStack != null && !kegMenu.kegTank.getAbstractedFluid().fluid().isSame(fluidStack.fluid())) {
+                    if (!kegMenu.kegTank.isEmpty() && !kegMenu.kegTank.getAbstractedFluid().fluid().isSame(fluidStack.fluid())) {
                         if (fluidStack != null && BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg())
                             BrewinAndChewinClient.getHelper().renderFluidInKeg(fluidStack, gui, leftPos + 120, topPos + 19);
                         gui.fill(leftPos + 120, topPos + 19, leftPos + 120 + 16 + 8, topPos + 31 + 16, 822018048);
