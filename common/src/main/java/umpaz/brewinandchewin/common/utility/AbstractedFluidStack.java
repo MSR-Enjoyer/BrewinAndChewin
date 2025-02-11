@@ -7,17 +7,16 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
 
-import javax.annotation.Nullable;
-
-public record AbstractedFluidStack(Fluid fluid, long amount, DataComponentMap components, @Nullable Object loaderSpecific) {
+public record AbstractedFluidStack(Fluid fluid, long amount, DataComponentMap components, FluidUnit unit, @Nullable Object loaderSpecific) {
     public static final Codec<AbstractedFluidStack> CODEC = BrewinAndChewin.getHelper().getFluidStackWrapperCodec();
     public static final StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidStack> STREAM_CODEC = BrewinAndChewin.getHelper().getFluidStackWrapperStreamCodec();
-    public static final AbstractedFluidStack EMPTY = new AbstractedFluidStack(Fluids.EMPTY, 0, new PatchedDataComponentMap(DataComponentMap.EMPTY), null);
+    public static final AbstractedFluidStack EMPTY = new AbstractedFluidStack(Fluids.EMPTY, 0, new PatchedDataComponentMap(DataComponentMap.EMPTY), FluidUnit.getLoaderUnit(), null);
 
     public AbstractedFluidStack(Fluid fluid, long amount) {
-        this(fluid, amount, new PatchedDataComponentMap(DataComponentMap.EMPTY), null);
+        this(fluid, amount, new PatchedDataComponentMap(DataComponentMap.EMPTY), FluidUnit.getLoaderUnit(), null);
     }
 
     public boolean isEmpty() {

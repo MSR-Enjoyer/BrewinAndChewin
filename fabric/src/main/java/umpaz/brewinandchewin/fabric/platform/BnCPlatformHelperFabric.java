@@ -2,9 +2,14 @@ package umpaz.brewinandchewin.fabric.platform;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
+import io.github.fabricators_of_create.porting_lib.transfer.item.SlotItemHandler;
+import io.github.fabricators_of_create.porting_lib.transfer.item.SlottedStackStorage;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.recipe.v1.ingredient.DefaultCustomIngredients;
+import net.fabricmc.fabric.api.recipe.v1.ingredient.FabricIngredient;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
@@ -44,11 +49,13 @@ import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 import umpaz.brewinandchewin.fabric.BrewinAndChewinFabric;
 import umpaz.brewinandchewin.fabric.container.KegFluidTankFabric;
 import umpaz.brewinandchewin.fabric.container.KegItemHandlerFabric;
+import umpaz.brewinandchewin.fabric.container.SidedKegWrapperFabric;
 import umpaz.brewinandchewin.fabric.registry.BnCCreativeTabsImpl;
 import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
 import umpaz.brewinandchewin.fabric.utility.BnCFabricCodecs;
 import umpaz.brewinandchewin.fabric.utility.BnCFabricStreamCodecs;
 import umpaz.brewinandchewin.fabric.utility.KegFluidIngredient;
+import umpaz.brewinandchewin.fabric.utility.KegRecipeWrapperFabric;
 import umpaz.brewinandchewin.platform.BnCPlatform;
 import umpaz.brewinandchewin.platform.BnCPlatformHelper;
 
@@ -70,6 +77,11 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     @Override
     public boolean isDevelopmentEnvironment() {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
+    }
+
+    @Override
+    public void sendClientbound(ServerPlayer player, CustomPacketPayload payload) {
+        ServerPlayNetworking.send(player, payload);
     }
 
     @Override
@@ -113,7 +125,7 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     }
 
     @Override
-    public AbstractedFluidTank createKegTank(int capacity, Runnable onContentsChanged) {
+    public AbstractedFluidTank createKegTank(long capacity, Runnable onContentsChanged) {
         return new KegFluidTankFabric(capacity) {
             @Override
             protected void onFinalCommit() {
@@ -125,22 +137,36 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
     @Override
     public Slot createKegSlot(AbstractedItemHandler inventory, int slot, int x, int y, boolean canInsert, @Nullable Pair<ResourceLocation, ResourceLocation> noItemIcon) {
-        // TODO
+        return new SlotItemHandler((SlottedStackStorage) inventory, slot, x, y) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return canInsert && super.mayPlace(stack);
+            }
+
+            @Override
+            public @Nullable Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+                return noItemIcon;
+            }
+        };
     }
 
     @Override
     public Ingredient createStrictFillPickerIngredient(List<KegStackedContents.PouringEntry> fluidOutputStacks) {
-        // TODO
+        return DefaultCustomIngredients.all(fluidOutputStacks.stream().map(p -> {
+            if (p.strict())
+                return DefaultCustomIngredients.components(p.stack());
+            return Ingredient.of(p.stack().getItem());
+        }).toArray(Ingredient[]::new));
     }
 
     @Override
     public KegRecipeWrapper createRecipeWrapper(AbstractedItemHandler itemHandler, AbstractedFluidTank fluidTank) {
-        // TODO
+        return new KegRecipeWrapperFabric((ItemStackHandler)itemHandler, fluidTank);
     }
 
     @Override
     public SidedKegWrapper createSidedKegWrapper(AbstractedItemHandler inventory, Direction direction) {
-        // TODO
+        return new SidedKegWrapperFabric(inventory, direction);
     }
 
     @Override

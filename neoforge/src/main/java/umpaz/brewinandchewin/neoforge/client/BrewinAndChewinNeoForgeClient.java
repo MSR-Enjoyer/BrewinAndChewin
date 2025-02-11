@@ -1,29 +1,26 @@
 package umpaz.brewinandchewin.neoforge.client;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.RecipeBookCategories;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.event.RegisterRecipeBookCategoriesEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import umpaz.brewinandchewin.client.BnCClientSetup;
 import umpaz.brewinandchewin.client.BrewinAndChewinClient;
-import umpaz.brewinandchewin.data.model.CoasterWrappedModel;
-import umpaz.brewinandchewin.client.recipebook.BnCRecipeBook;
-import umpaz.brewinandchewin.client.recipebook.FermentingBookCategory;
+import umpaz.brewinandchewin.common.mixin.client.ModelBakeryAccessor;
+import umpaz.brewinandchewin.neoforge.client.model.CoasterWrappedModel;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.renderer.CoasterBlockEntityRenderer;
-import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.fluid.BnCFluidConstants;
-import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.neoforge.client.platform.BnCClientPlatfomHelperNeoForge;
 import umpaz.brewinandchewin.neoforge.registry.BnCFluidTypes;
 
@@ -33,7 +30,7 @@ import java.util.List;
 @Mod(value = BrewinAndChewin.MODID, dist = Dist.CLIENT)
 public class BrewinAndChewinNeoForgeClient {
     public BrewinAndChewinNeoForgeClient(IEventBus eventBus) {
-        BrewinAndChewinClient.setHelper(new BnCClientPlatfomHelperNeoForge());
+        BrewinAndChewinClient.init(new BnCClientPlatfomHelperNeoForge());
         BrewinAndChewin.isClient = true;
     }
 
@@ -122,27 +119,32 @@ public class BrewinAndChewinNeoForgeClient {
             };
         }
 
+        private static final List<ResourceLocation> MODELS = new ArrayList<>();
+
         @SubscribeEvent
-        public static void registerRecipeBooks(RegisterRecipeBookCategoriesEvent event) {
-            event.registerBookCategories(BnCRecipeBook.FERMENTING, ImmutableList.of(BnCRecipeBook.FERMENTING_SEARCH.get(), BnCRecipeBook.FERMENTING_DRINKS.get(), BnCRecipeBook.FERMENTING_MEALS.get()));
-            event.registerAggregateCategory(BnCRecipeBook.FERMENTING_SEARCH.get(), ImmutableList.of(BnCRecipeBook.FERMENTING_DRINKS.get(), BnCRecipeBook.FERMENTING_MEALS.get()));
-            event.registerRecipeCategoryFinder(BnCRecipeTypes.FERMENTING, recipe ->
-            {
-                if (recipe.value() instanceof KegFermentingRecipe fermentingRecipe) {
-                    FermentingBookCategory tab = fermentingRecipe.getRecipeBookCategory();
-                    if (tab != null) {
-                        return switch (tab) {
-                            case MEALS -> BnCRecipeBook.FERMENTING_MEALS.get();
-                            case DRINKS -> BnCRecipeBook.FERMENTING_DRINKS.get();
-                        };
-                    }
-                }
-                return null;
-            });
-            event.registerRecipeCategoryFinder(BnCRecipeTypes.KEG_POURING, recipe -> RecipeBookCategories.UNKNOWN);
+        public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            BnCClientSetup.onRegisterRenderers(event::registerBlockEntityRenderer);
         }
 
-        private static final List<ResourceLocation> MODELS = new ArrayList<>();
+        @SubscribeEvent
+        public static void registerParticles(RegisterParticleProvidersEvent event) {
+            BnCClientSetup.registerParticles(event::registerSpriteSet);
+        }
+
+        @SubscribeEvent
+        public static void registerKegTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
+            BnCClientSetup.registerKegTooltipComponent(event::register);
+        }
+
+        @SubscribeEvent
+        public static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
+            BnCClientSetup.registerReloadListeners(event::registerReloadListener);
+        }
+
+        @SubscribeEvent
+        public static void registerColorHandlers(RegisterColorHandlersEvent.Block event) {
+            BnCClientSetup.registerColorHandlers(event::register);
+        }
 
         @SubscribeEvent
         public static void registerModels(ModelEvent.RegisterAdditional event) {
@@ -155,9 +157,16 @@ public class BrewinAndChewinNeoForgeClient {
         @SubscribeEvent
         public static void modifyBakingResult(ModelEvent.ModifyBakingResult event) {
             for (ResourceLocation entry : MODELS) {
-                event.getModels().put(ModelResourceLocation.standalone(entry.withPath(path -> "brewinandchewin/coaster/" + path)), new CoasterWrappedModel(event.getModels().get(entry)));
+                event.getModels().put(ModelResourceLocation.standalone(entry.withPath(path -> "brewinandchewin/coaster/" + path)), new CoasterWrappedModel(bakeModel(event, entry)));
             }
             MODELS.clear();
+        }
+
+        private static BakedModel bakeModel(ModelEvent.ModifyBakingResult event, ResourceLocation path) {
+            UnbakedModel unbaked = ((ModelBakeryAccessor)event.getModelBakery()).brewinandchewin$getModel(path);
+            unbaked.resolveParents(location -> ((ModelBakeryAccessor)event.getModelBakery()).brewinandchewin$getModel(location));
+            ModelResourceLocation modelResource = ModelResourceLocation.standalone(path);
+            return unbaked.bake(event.getModelBakery().new ModelBakerImpl((rl, material) -> material.sprite(), modelResource), event.getTextureGetter(), BlockModelRotation.X0_Y0);
         }
     }
 }

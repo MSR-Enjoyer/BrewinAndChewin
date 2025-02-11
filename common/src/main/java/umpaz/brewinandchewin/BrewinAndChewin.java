@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.platform.BnCPlatformHelper;
 
 public class BrewinAndChewin {
@@ -18,8 +19,10 @@ public class BrewinAndChewin {
         return helper;
     }
 
-    public static void setHelper(BnCPlatformHelper helper) {
+    public static void init(BnCPlatformHelper helper) {
         BrewinAndChewin.helper = helper;
+
+        BnCConfiguration.init();
     }
 
     public static ResourceLocation asResource(String path) {

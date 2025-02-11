@@ -21,12 +21,11 @@
     "GhostRecipeAccessor",
     "client.GuiMixin",
     "client.LevelRendererAccessor",
+    "client.ModelBakeryAccessor",
     "client.RecipeBookComponentAccessor",
     "client.TipsyDrunkRendererMixin",
-    "client.TipsyMouseHandlerMixin",
     "client.TipsySignRendererMixin$TipsyCanvasSignRenderMixin",
-    "client.TipsySignRendererMixin$TipsySignRenderMixin",
-    "client.integration.appleskin.HUDOverlayHandlerAccessor"
+    "client.TipsySignRendererMixin$TipsySignRenderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

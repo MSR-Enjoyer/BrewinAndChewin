@@ -1,0 +1,20 @@
+{
+  "criteria": {
+    "has_rice_wine": {
+      "conditions": {
+        "items": [
+          {
+            "items": "brewinandchewin:rice_wine"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_rice_wine"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

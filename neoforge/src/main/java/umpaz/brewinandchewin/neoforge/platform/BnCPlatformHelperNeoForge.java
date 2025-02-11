@@ -10,6 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -50,6 +51,7 @@ import umpaz.brewinandchewin.neoforge.registry.BnCCreativeTabsImpl;
 import umpaz.brewinandchewin.neoforge.registry.BnCFluidsImpl;
 import umpaz.brewinandchewin.neoforge.utility.BnCNeoForgeCodecs;
 import umpaz.brewinandchewin.neoforge.utility.BnCNeoForgeStreamCodecs;
+import umpaz.brewinandchewin.neoforge.utility.KegCompatibleFluidIngredients;
 import umpaz.brewinandchewin.neoforge.utility.KegRecipeWrapperNeoForge;
 import umpaz.brewinandchewin.platform.BnCPlatformHelper;
 import umpaz.brewinandchewin.platform.BnCPlatform;
@@ -72,6 +74,11 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     @Override
     public boolean isDevelopmentEnvironment() {
         return !FMLLoader.isProduction();
+    }
+
+    @Override
+    public void sendClientbound(ServerPlayer player, CustomPacketPayload payload) {
+        PacketDistributor.sendToPlayer(player, payload);
     }
 
     @Override
@@ -106,8 +113,8 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     }
 
     @Override
-    public AbstractedFluidTank createKegTank(int capacity, Runnable onContentsChanged) {
-        return new KegFluidTankNeoForge(capacity) {
+    public AbstractedFluidTank createKegTank(long capacity, Runnable onContentsChanged) {
+        return new KegFluidTankNeoForge((int) capacity) {
             @Override
             protected void onContentsChanged() {
                 super.onContentsChanged();
@@ -172,7 +179,7 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
 
     @Override
     public StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidIngredient> getFluidIngredientWrapperStreamCodec() {
-        return BnCNeoForgeStreamCodecs.FLUID_INGREDIENT_WRAPPER;
+        return KegCompatibleFluidIngredients.FLUID_INGREDIENT_WRAPPER;
     }
 
     @Override

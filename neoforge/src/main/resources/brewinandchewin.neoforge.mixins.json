@@ -3,7 +3,8 @@
   "minVersion": "0.8",
   "package": "umpaz.brewinandchewin.neoforge.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [
+  "client": [
+    "TipsyMouseHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

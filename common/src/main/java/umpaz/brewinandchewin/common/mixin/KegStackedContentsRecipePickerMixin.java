@@ -73,7 +73,7 @@ public class KegStackedContentsRecipePickerMixin {
                 if (kegRecipePicker.getOuter().shouldIgnoreItems())
                     ingredients.clear();
 
-                int tankAmount = kegTank.getAbstractedFluid().amount();
+                long tankAmount = kegTank.getAbstractedFluid().amount();
 
                 if (!kegTank.isEmpty() && !fermentingRecipe.getFluidIngredient().get().ingredient().matches(kegTank.getAbstractedFluid())) {
                     List<KegStackedContents.PouringEntry> fluidContainerStacks = kegRecipePicker.getOuter().recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value)
@@ -92,10 +92,10 @@ public class KegStackedContentsRecipePickerMixin {
 
                 if (!kegTank.isEmpty() && fermentingRecipe.getFluidIngredient().get().ingredient().matches(kegTank.getAbstractedFluid()) || tankAmount < fermentingRecipe.getFluidIngredient().get().amount()) {
                     List<KegStackedContents.PouringEntry> fluidOutputStacks = kegRecipePicker.getOuter().recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).filter(kegPouringRecipe -> kegPouringRecipe.canFill() && fermentingRecipe.getFluidIngredient().get().ingredient().matches(kegPouringRecipe.getRawFluid())).map(r -> new KegStackedContents.PouringEntry(r.getOutput(), r.getRawFluid().amount(), r.isStrict())).collect(Collectors.toCollection(ArrayList::new));
-                    int finalTankAmount = tankAmount;
+                    long finalTankAmount = tankAmount;
                     fluidOutputStacks.removeIf(entry -> {
-                        int itemAmount = (Math.max(fermentingRecipe.getFluidIngredient().get().amount(), entry.fluidAmount() - finalTankAmount) / entry.fluidAmount()) - ((finalTankAmount % fermentingRecipe.getFluidIngredient().get().amount()) / entry.fluidAmount());
-                        return itemAmount <= 0 || (itemAmount * entry.fluidAmount()) + finalTankAmount > kegTank.getCapacity();
+                        int itemAmount = (int) ((Math.max(fermentingRecipe.getFluidIngredient().get().amount(), entry.fluidAmount() - finalTankAmount) / entry.fluidAmount()) - ((finalTankAmount % fermentingRecipe.getFluidIngredient().get().amount()) / entry.fluidAmount()));
+                        return itemAmount <= 0 || (itemAmount * entry.fluidAmount()) + finalTankAmount > kegTank.getFluidCapacity();
                     });
                     if (!fluidOutputStacks.isEmpty()) {
                         Ingredient ingredient = Ingredient.of(fluidOutputStacks.stream().map(KegStackedContents.PouringEntry::stack).toArray(ItemStack[]::new));

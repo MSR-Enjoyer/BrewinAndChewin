@@ -1,0 +1,20 @@
+{
+  "criteria": {
+    "has_bloody_mary": {
+      "conditions": {
+        "items": [
+          {
+            "items": "brewinandchewin:bloody_mary"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_bloody_mary"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,24 +1,17 @@
 package umpaz.brewinandchewin.client.utility;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.serialization.Codec;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.JsonOps;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ResourceLocationException;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -33,22 +26,14 @@ import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BnCFluidItemDisplays {
     private static final Map<Fluid, FluidBasedItemStack> FLUID_TYPE_TO_ITEM_MAP = new HashMap<>();
-    private static final Codec<ItemStack> SINGLE_ITEM_CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            BuiltInRegistries.ITEM.holderByNameCodec().fieldOf("id").forGetter(ItemStack::getItemHolder),
-            DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(ItemStack::getComponentsPatch)
-    ).apply(inst, (item, components) ->
-            new ItemStack(item, 1, components)));
 
-    public static ItemStack getFluidItemDisplay(RegistryAccess access, AbstractedFluidStack fluid) {
+    public static ItemStack getFluidItemDisplay(HolderLookup.Provider lookup, AbstractedFluidStack fluid) {
         if (FLUID_TYPE_TO_ITEM_MAP.containsKey(fluid.fluid()))
-            return FLUID_TYPE_TO_ITEM_MAP.get(fluid.fluid()).getStack(RegistryOps.create(NbtOps.INSTANCE, access), fluid);
+            return FLUID_TYPE_TO_ITEM_MAP.get(fluid.fluid()).getStack(lookup, fluid);
         if (fluid.fluid().getBucket() != Items.AIR)
             return fluid.fluid().getBucket().getDefaultInstance();
         return ItemStack.EMPTY;
@@ -80,7 +65,7 @@ public class BnCFluidItemDisplays {
                             Fluid fluid = BuiltInRegistries.FLUID.get(fluidLocation);
                             map.put(fluid, FluidBasedItemStack.createFromJson(e.getValue(), fluid));
                         }
-                    } catch (IllegalArgumentException | IOException | JsonParseException | ResourceLocationException ex) {
+                    } catch (IllegalArgumentException | IllegalStateException | IOException | JsonParseException | ResourceLocationException ex) {
                         BrewinAndChewin.LOG.error("Couldn't parse fluid item display JSON at location '{}' from pack '{}'. ", entry.getKey(), resource.sourcePackId(), ex);
                     }
                 }
@@ -94,177 +79,21 @@ public class BnCFluidItemDisplays {
         }
     }
 
-    // TODO: Putting this in my pocket and saving this for later like rocket fuel...
-    public record FluidBasedItemStack(Fluid fluid, Map<List<TagReference>, List<TagReference>> fluidTagKeyToItemTagKey, Tag raw) {
-        private static final HashMap<CompoundTag, ItemStack> CACHE = new HashMap<>(32);
+    public record FluidBasedItemStack(Fluid fluid, FluidItemComponentRemapper dataComponentRemapper) {
+        private static final HashMap<Pair<Fluid, DataComponentMap>, ItemStack> CACHE = new HashMap<>(32);
 
         private static FluidBasedItemStack createFromJson(JsonElement json, Fluid fluid) {
-            Tag tag = JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json);
-            return new FluidBasedItemStack(fluid, getTagKeys(tag), tag);
+            return new FluidBasedItemStack(fluid, FluidItemComponentRemapper.CODEC.decode(JsonOps.INSTANCE, json).getOrThrow().getFirst());
         }
 
-        private static Map<List<TagReference>, List<TagReference>> getTagKeys(Tag tag) {
-            Map<List<TagReference>, List<TagReference>> map = new HashMap<>();
-            List<TagReference> fluidKeys = new ArrayList<>();
-            if (tag instanceof CompoundTag compoundTag) {
-                for (String key : compoundTag.getAllKeys()) {
-                    if (compoundTag.get(key) instanceof CompoundTag innerTag) {
-                        fluidKeys.add(TagReference.createObject(key));
-                        if (innerTag.contains("brewinandchewin:fluid_tag", Tag.TAG_STRING)) {
-                            map.put(fluidKeys, TagReference.createFromString(innerTag.getString("brewinandchewin:fluid_tag")));
-                            fluidKeys = new ArrayList<>();
-                            continue;
-                        } else {
-                            map.putAll(getTagKeys(innerTag));
-                        }
-                    } else {
-                        map.putAll(getTagKeys(compoundTag.get(key)));
-                    }
-                    fluidKeys.clear();
-                }
-            } else if (tag instanceof ListTag listTag) {
-                for (int i = 0; i < listTag.size(); ++i) {
-                    if (listTag.get(i) instanceof CompoundTag innerTag) {
-                        fluidKeys.add(TagReference.createArrayValue(i));
-                        if (innerTag.contains("brewinandchewin:fluid_tag", Tag.TAG_STRING)) {
-                            map.put(fluidKeys, TagReference.createFromString(innerTag.getString("brewinandchewin:fluid_tag")));
-                            fluidKeys = new ArrayList<>();
-                            continue;
-                        } else {
-                            map.putAll(getTagKeys(innerTag));
-                        }
-                    } else {
-                        map.putAll(getTagKeys(listTag.get(i)));
-                    }
-                    fluidKeys.clear();
-                }
-            }
-            return ImmutableMap.copyOf(map);
-        }
+        private ItemStack getStack(HolderLookup.Provider lookup, AbstractedFluidStack stack) {
+            var pair = Pair.of(stack.fluid(), stack.components());
+            if (CACHE.containsKey(pair))
+                return CACHE.get(pair);
 
-        private ItemStack getStack(RegistryOps<Tag> ops, AbstractedFluidStack stack) {
-            CompoundTag tag = new CompoundTag();
-            tag.putString("id", ForgeRegistries.FLUIDS.getKey(stack.getFluid()).toString());
-            if (stack.getTag() != null)
-                tag.put("tag", stack.getTag());
-            if (CACHE.containsKey(tag)) {
-                return CACHE.get(tag);
-            }
-            if (raw() instanceof CompoundTag compoundTag) {
-                CompoundTag output = compoundTag.copy();
-                for (Map.Entry<List<TagReference>, List<TagReference>> entry : fluidTagKeyToItemTagKey.entrySet())
-                    encodeTag(entry.getKey(), entry.getValue(), stack, output);
-                ItemStack item = SINGLE_ITEM_CODEC.decode(ops, output).getOrThrow(false, BrewinAndChewin.LOG::error).getFirst();
-                CACHE.put(tag, item);
-                return item;
-            }
-            ItemStack item = ForgeRegistries.ITEMS.getCodec().xmap(ItemStack::new, ItemStack::getItem).decode(ops, raw()).getOrThrow(false, BrewinAndChewin.LOG::error).getFirst();
-            CACHE.put(tag, item);
+            ItemStack item = dataComponentRemapper.convert(lookup, stack);
+            CACHE.put(pair, item);
             return item;
-        }
-
-        private void encodeTag(List<TagReference> fluidKeys, List<TagReference> itemKeys, AbstractedFluidStack stack, CompoundTag output) {
-            if (!output.contains("tag"))
-                return;
-            Tag current = output.get("tag");
-            for (int i = 0; i < itemKeys.size(); ++i) {
-                TagReference key = itemKeys.get(i);
-                if (i == itemKeys.size() - 1) {
-                    Tag newElement = getTagFromFluidStack(stack, fluidKeys);
-                    if (key.isArrayValue()) {
-                        if (current instanceof ListTag listTag) {
-                            listTag.set(key.index(), newElement);
-                        } else {
-                            throw new RuntimeException("Unable to map tag " + String.join(".", itemKeys.stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", itemKeys.stream().map(TagReference::key).toList()) + " is not a list tag.");
-                        }
-                    } else {
-                        if (current instanceof CompoundTag compoundTag) {
-                            compoundTag.put(key.key(), newElement);
-                        } else {
-                            throw new RuntimeException("Unable to map tag " + String.join(".", itemKeys.stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", itemKeys.stream().map(TagReference::key).toList()) + " is not a compound tag.");
-                        }
-                    }
-                    break;
-                }
-                if (key.isArrayValue())
-                    if (current instanceof ListTag listTag) {
-                        if (listTag.size() < key.index()) {
-                            current = listTag.get(key.index());
-                        } else {
-                            throw new RuntimeException("Unable to find tag " + String.join(".", itemKeys.subList(0, i).stream().map(TagReference::key).toList()) + " in output json.");
-                        }
-                    } else {
-                        throw new RuntimeException("Unable to map tag " + String.join(".", itemKeys.subList(0, i).stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", String.join(".", itemKeys.subList(0, i).stream().map(TagReference::key).toList())) + " is not a list tag.");
-                    }
-                else {
-                    if (current instanceof CompoundTag compoundTag) {
-                        if (compoundTag.contains(key.key())) {
-                            current = compoundTag.get(key.key());
-                        } else {
-                            throw new RuntimeException("Unable to find tag " + String.join(".", itemKeys.subList(0, i).stream().map(TagReference::key).toList()) + " in output json.");
-                        }
-                    } else {
-                        throw new RuntimeException("Unable to map tag " + String.join(".", itemKeys.subList(0, i).stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", String.join(".", itemKeys.subList(0, i).stream().map(TagReference::key).toList())) + " is not a compound tag.");
-                    }
-                }
-            }
-        }
-
-        private Tag getTagFromFluidStack(AbstractedFluidStack stack, List<TagReference> fluidKeys) {
-            if (stack.getTag() == null)
-                throw new RuntimeException("Fluid Stack " + ForgeRegistries.FLUIDS.getKey(stack.getFluid()) + " does not have the specified tag.");
-
-            Tag fluidTag = stack.getTag();
-            Tag returnValue = new CompoundTag();
-            for (int i = 0; i < fluidKeys.size(); ++i) {
-                TagReference key = fluidKeys.get(i);
-                if (i == fluidKeys.size() - 1) {
-                    if (key.isArrayValue()) {
-                        if (fluidTag instanceof ListTag listTag) {
-                            if (listTag.size() < key.index()) {
-                                returnValue = listTag.get(key.index());
-                            } else {
-                                throw new RuntimeException("Unable to find tag " + String.join(".", fluidKeys.stream().map(TagReference::key).toList()) + " in fluid stack.");
-                            }
-                        } else {
-                            throw new RuntimeException("Unable to map tag " + String.join(".", fluidKeys.stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", fluidKeys.stream().map(TagReference::key).toList()) + " is not a list tag.");
-                        }
-                    } else {
-                        if (fluidTag instanceof CompoundTag compoundTag) {
-                            if (compoundTag.contains(key.key())) {
-                                returnValue = compoundTag.get(key.key());
-                            } else {
-                                throw new RuntimeException("Unable to find tag " + String.join(".", fluidKeys.stream().map(TagReference::key).toList()) + " in fluid stack.");
-                            }
-                        } else {
-                            throw new RuntimeException("Unable to map tag " + String.join(".", fluidKeys.stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", fluidKeys.stream().map(TagReference::key).toList()) + " is not a compound tag.");
-                        }
-                    }
-                    break;
-                }
-                if (key.isArrayValue())
-                    if (fluidTag instanceof ListTag listTag) {
-                        if (listTag.size() < key.index()) {
-                            fluidTag = listTag.get(key.index());
-                        } else {
-                            throw new RuntimeException("Unable to find tag " + String.join(".", fluidKeys.subList(0, i).stream().map(TagReference::key).toList()) + " in fluid stack.");
-                        }
-                    } else {
-                        throw new RuntimeException("Unable to map tag " + String.join(".", fluidKeys.subList(0, i).stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", fluidKeys.subList(0, i).stream().map(TagReference::key).toList()) + " is not a list tag.");
-                    }
-                else {
-                    if (fluidTag instanceof CompoundTag compoundTag) {
-                        if (compoundTag.contains(key.key())) {
-                            fluidTag = compoundTag.get(key.key());
-                        } else {
-                            throw new RuntimeException("Unable to find tag " + String.join(".", fluidKeys.subList(0, i).stream().map(TagReference::key).toList()) + " in fluid stack.");
-                        }
-                    } else {
-                        throw new RuntimeException("Unable to map tag " + String.join(".", fluidKeys.subList(0, i).stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", fluidKeys.subList(0, i).stream().map(TagReference::key).toList()) + " is not a compound tag.");
-                    }
-                }
-            }
-            return returnValue;
         }
     }
 }

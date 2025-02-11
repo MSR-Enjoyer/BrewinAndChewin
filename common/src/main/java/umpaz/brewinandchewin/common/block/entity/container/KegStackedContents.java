@@ -9,13 +9,13 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
+import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.mixin.StackedContentsRecipePickerAccessor;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -81,7 +81,7 @@ public class KegStackedContents extends StackedContents {
                                 .filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().fluid().isSame(kegTank.getAbstractedFluid().fluid())).map(r -> new PouringEntry(r.getContainer(), r.getRawFluid().amount(), r.isStrict())).toList();
                         if (!fluidContainerStacks.isEmpty()) {
                             for (PouringEntry entry : fluidContainerStacks) {
-                                int itemAmount = kegTank.getAbstractedFluid().amount() / entry.fluidAmount();
+                                int itemAmount = (int) (kegTank.getAbstractedFluid().amount() / entry.fluidAmount());
                                 stackCountRequirements.put(StackedContents.getStackingIndex(entry.stack()), itemAmount);
                             }
                             Ingredient extractIngredient = Ingredient.of(fluidContainerStacks.stream().map(PouringEntry::stack).toArray(ItemStack[]::new));
@@ -94,14 +94,14 @@ public class KegStackedContents extends StackedContents {
                         List<PouringEntry> fluidOutputStacks = recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value)
                                 .filter(kegPouringRecipe -> kegPouringRecipe.canFill() && fermentingRecipe.getFluidIngredient().get().ingredient().matches(kegPouringRecipe.getRawFluid())).map(r -> new PouringEntry(r.getOutput(), r.getRawFluid().amount(), r.isStrict())).collect(Collectors.toCollection(ArrayList::new));
 
-                        int tankAmount = kegTank.getAbstractedFluid().amount();
+                        long tankAmount = kegTank.getAbstractedFluid().amount();
 
                         if (!kegTank.isEmpty() && !fermentingRecipe.getFluidIngredient().get().ingredient().matches(kegTank.getAbstractedFluid())) {
                             List<PouringEntry> fluidContainerStacks = recipeManager.getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value)
                                     .filter(kegPouringRecipe -> kegPouringRecipe.getRawFluid().fluid().isSame(kegTank.getAbstractedFluid().fluid())).map(r -> new PouringEntry(r.getContainer(), r.getRawFluid().amount(), r.isStrict())).toList();
                             if (!fluidContainerStacks.isEmpty()) {
                                 for (PouringEntry entry : fluidContainerStacks) {
-                                    int itemAmount = kegTank.getAbstractedFluid().amount() / entry.fluidAmount();
+                                    int itemAmount = (int) (kegTank.getAbstractedFluid().amount() / entry.fluidAmount());
                                     tankAmount -= itemAmount * entry.fluidAmount();
                                     stackCountRequirements.put(StackedContents.getStackingIndex(entry.stack()), itemAmount);
                                 }
@@ -115,8 +115,8 @@ public class KegStackedContents extends StackedContents {
 
                         if (!kegTank.isEmpty() && !fermentingRecipe.getFluidIngredient().get().ingredient().matches(kegTank.getAbstractedFluid()) || tankAmount < fermentingRecipe.getFluidIngredient().get().amount()) {
                             for (PouringEntry entry : List.copyOf(fluidOutputStacks)) {
-                                int itemAmount = (Math.max(fermentingRecipe.getFluidIngredient().get().amount(), entry.fluidAmount() - tankAmount) / entry.fluidAmount()) - ((tankAmount % fermentingRecipe.getFluidIngredient().get().amount()) / entry.fluidAmount());
-                                if (itemAmount <= 0 || (itemAmount * entry.fluidAmount()) + tankAmount > kegTank.getCapacity())
+                                int itemAmount = (int) ((Math.max(fermentingRecipe.getFluidIngredient().get().amount(), entry.fluidAmount() - tankAmount) / entry.fluidAmount()) - ((tankAmount % fermentingRecipe.getFluidIngredient().get().amount()) / entry.fluidAmount()));
+                                if (itemAmount <= 0 || (itemAmount * entry.fluidAmount()) + tankAmount > kegTank.getFluidCapacity())
                                     fluidOutputStacks.remove(entry);
                                 else
                                     stackCountRequirements.put(StackedContents.getStackingIndex(entry.stack()), itemAmount);
@@ -169,5 +169,5 @@ public class KegStackedContents extends StackedContents {
         }
     }
 
-    public record PouringEntry(ItemStack stack, int fluidAmount, boolean strict) {}
+    public record PouringEntry(ItemStack stack, long fluidAmount, boolean strict) {}
 }

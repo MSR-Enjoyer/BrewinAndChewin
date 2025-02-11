@@ -24,17 +24,18 @@ import vectorwing.farmersdelight.common.utility.TextUtils;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class BoozeItem extends Item {
-    private final Fluid fluid;
+    private final Supplier<Fluid> fluid;
 
-    public BoozeItem(Fluid fluid, Properties properties) {
+    public BoozeItem(Supplier<Fluid> fluid, Properties properties) {
         super(properties);
         this.fluid = fluid;
     }
 
     public Fluid getFluid() {
-        return this.fluid;
+        return this.fluid.get();
     }
 
     @Override
@@ -118,14 +119,14 @@ public class BoozeItem extends Item {
        }
     }
 
-    public static final Set<Holder<MobEffect>> RED_EFFECTS = Set.of(BnCEffects.TIPSY, MobEffects.BAD_OMEN);
+    public static final Set<Supplier<Holder<MobEffect>>> RED_EFFECTS = Set.of(() -> BnCEffects.TIPSY, () -> MobEffects.BAD_OMEN);
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag isAdvanced) {
         TextUtils.addFoodEffectTooltip(stack, tooltip::add, 1.0F, context.tickRate());
         for (int i = 0; i < tooltip.size(); ++i) {
             Component component = tooltip.get(i);
-            if (RED_EFFECTS.stream().anyMatch(holder -> component.contains(Component.translatable(holder.value().getDescriptionId())))) {
+            if (RED_EFFECTS.stream().anyMatch(holder -> component.contains(Component.translatable(holder.get().value().getDescriptionId())))) {
                 tooltip.set(i, component.copy().withStyle(ChatFormatting.RED));
             }
         }

@@ -10,8 +10,7 @@ import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class RagingParticle extends TextureSheetParticle {
     private static final RandomSource RANDOM = RandomSource.create();
@@ -40,7 +39,7 @@ public class RagingParticle extends TextureSheetParticle {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ParticleRenderType getRenderType() {
         return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
@@ -73,7 +72,7 @@ public class RagingParticle extends TextureSheetParticle {
 
         @Override
         public Particle createParticle(T typeIn, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            return new RagingParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.size(), spriteSet);
+            return new RagingParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getScale(), spriteSet);
         }
     }
 }

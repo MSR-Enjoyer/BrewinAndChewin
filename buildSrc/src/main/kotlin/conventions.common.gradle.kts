@@ -57,6 +57,7 @@ repositories {
         }
         filter { includeGroup("maven.modrinth") }
     }
+    mavenLocal()
 }
 
 dependencies {
@@ -119,7 +120,14 @@ tasks {
         "java_version" to Versions.JAVA,
         "curseforge_page" to Properties.CURSEFORGE_PAGE,
         "modrinth_page" to Properties.MODRINTH_PAGE,
-        "sources" to Properties.GITHUB_REPO
+        "sources" to Properties.GITHUB_REPO,
+        // Gradle is a bit trigger-happy...
+        "HotCocoa" to "\$HotCocoa",
+        "MilkBottle" to "\$MilkBottle",
+        "LootParamsBuilderMixin" to "\$LootParamsBuilderMixin",
+        "LootParamsMixin" to "\$LootParamsMixin",
+        "TipsyCanvasSignRenderMixin" to "\$TipsyCanvasSignRenderMixin",
+        "TipsySignRenderMixin" to "\$TipsySignRenderMixin"
     )
 
     val processResourcesTasks = listOf("processResources", "processTestResources", "processDatagenResources")

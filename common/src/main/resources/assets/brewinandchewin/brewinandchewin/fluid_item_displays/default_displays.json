@@ -1,8 +1,8 @@
 {
   "minecraft:water": {
     "id": "minecraft:potion",
-    "tag": {
-      "Potion": "minecraft:water"
+    "components": {
+      "minecraft:potion_contents": "minecraft:water"
     }
   },
   "minecraft:milk": "farmersdelight:milk_bottle",
@@ -26,11 +26,10 @@
   "brewinandchewin:flaxen_cheese": "brewinandchewin:unripe_flaxen_cheese_wheel",
   "brewinandchewin:scarlet_cheese": "brewinandchewin:unripe_scarlet_cheese_wheel",
   "create:potion": {
-    "id": "minecraft:potion",
-    "tag": {
-      "Potion": {
-        "brewinandchewin:fluid_tag": "Potion"
-      }
+    "base": "minecraft:potion",
+    "functions": {
+      "from": "minecraft:potion_contents",
+      "to": "minecraft:potion_contents"
     },
     "optional": true
   },

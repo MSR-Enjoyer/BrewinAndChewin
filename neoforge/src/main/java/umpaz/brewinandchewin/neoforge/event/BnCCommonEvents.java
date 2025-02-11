@@ -18,22 +18,42 @@ import umpaz.brewinandchewin.common.attachment.RagingAttachment;
 import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
 import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsClientboundPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
+import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
 import umpaz.brewinandchewin.common.registry.BnCDamageTypes;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 import umpaz.brewinandchewin.common.tag.BnCTags;
+import umpaz.brewinandchewin.neoforge.registry.BnCAttachments;
+
+import java.util.Optional;
 
 @EventBusSubscriber(modid = BrewinAndChewin.MODID)
 public class BnCCommonEvents {
     @SubscribeEvent
     public static void onPlayerJoinLevel(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer)
-            serverPlayer.getCapability(TipsyHeartsAttachment.INSTANCE).ifPresent(cap -> cap.syncToPlayer(serverPlayer));
+        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+            if (serverPlayer.hasData(BnCAttachments.TIPSY_HEARTS)) {
+                TipsyHeartsAttachment attachment = serverPlayer.getData(BnCAttachments.TIPSY_HEARTS);
+                BrewinAndChewin.getHelper().sendClientboundTracking(serverPlayer, new SyncNumbedHeartsClientboundPacket(serverPlayer.getId(), attachment.getNumbedHealth(), attachment.getTicksUntilDamage()));
+            }
+            if (serverPlayer.hasData(BnCAttachments.RAGING)) {
+                RagingAttachment attachment = serverPlayer.getData(BnCAttachments.RAGING);
+                BrewinAndChewin.getHelper().sendClientboundTracking(serverPlayer, new SyncRagingStacksClientboundPacket(serverPlayer.getId(), Optional.of(attachment.getStacks())));
+            }
+        }
     }
 
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event) {
-        if (event.getTarget() instanceof LivingEntity living && event.getEntity() instanceof ServerPlayer serverPlayer && event.getEntity().hasData())
-            BrewinAndChewin.getHelper().sendClientboundTracking(living, new SyncNumbedHeartsClientboundPacket(living.getId(), attachment.getNumbedHealth(), attachment.getTicksUntilDamage()));
+        if (event.getTarget() instanceof LivingEntity living && event.getEntity() instanceof ServerPlayer serverPlayer) {
+            if (event.getTarget().hasData(BnCAttachments.TIPSY_HEARTS)) {
+                TipsyHeartsAttachment attachment = event.getTarget().getData(BnCAttachments.TIPSY_HEARTS);
+                BrewinAndChewin.getHelper().sendClientbound(serverPlayer, new SyncNumbedHeartsClientboundPacket(living.getId(), attachment.getNumbedHealth(), attachment.getTicksUntilDamage()));
+            }
+            if (event.getTarget().hasData(BnCAttachments.RAGING)) {
+                RagingAttachment attachment = event.getTarget().getData(BnCAttachments.RAGING);
+                BrewinAndChewin.getHelper().sendClientbound(serverPlayer, new SyncRagingStacksClientboundPacket(living.getId(), Optional.of(attachment.getStacks())));
+            }
+        }
     }
 
     @SubscribeEvent
@@ -76,7 +96,7 @@ public class BnCCommonEvents {
                 PacketDistributor.sendToPlayersTrackingEntity(target, new SyncNumbedHeartsClientboundPacket(target.getId(), numbedHealth, ticksUntilDamage));
             }
         }
-        if (attacker instanceof LivingEntity living && (!(living instanceof Player player) || player.getAttackStrengthScale(0.0F) > 0.8F) && living.hasEffect(BnCEffects.RAGING.get()) && event.getSource().is(BnCTags.TRIGGERS_RAGING)) {
+        if (attacker instanceof LivingEntity living && (!(living instanceof Player player) || player.getAttackStrengthScale(0.0F) > 0.8F) && living.hasEffect(BnCEffects.RAGING) && event.getSource().is(BnCTags.TRIGGERS_RAGING)) {
             RagingAttachment attachment = BrewinAndChewin.getHelper().getRagingAttachment(living);
             if (attachment != null) {
                 int stacks = Math.min(4, attachment.getStacks() + 1);

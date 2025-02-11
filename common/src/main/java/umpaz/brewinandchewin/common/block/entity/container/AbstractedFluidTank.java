@@ -3,6 +3,7 @@ package umpaz.brewinandchewin.common.block.entity.container;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+import umpaz.brewinandchewin.common.utility.FluidUnit;
 
 public interface AbstractedFluidTank {
     long getFluidCapacity();
@@ -10,7 +11,7 @@ public interface AbstractedFluidTank {
     void setAbstractedFluid(AbstractedFluidStack stack);
 
     AbstractedFluidStack fill(AbstractedFluidStack fluidStack, boolean simulate);
-    AbstractedFluidStack drain(int maxDrain, boolean simulate);
+    AbstractedFluidStack drain(long maxDrain, FluidUnit unit, boolean simulate);
 
     boolean isEmpty();
 

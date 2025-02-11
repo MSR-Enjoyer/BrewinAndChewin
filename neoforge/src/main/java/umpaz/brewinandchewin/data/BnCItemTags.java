@@ -25,10 +25,10 @@ public class BnCItemTags extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        this.registerModTags();
+        this.registerModTags(provider);
     }
 
-    private void registerModTags() {
+    private void registerModTags(HolderLookup.Provider provider) {
         tag(BnCTags.FERMENTED_DRINKS)
                 .add(BnCItems.BEER)
                 .add(BnCItems.VODKA)
@@ -50,12 +50,12 @@ public class BnCItemTags extends ItemTagsProvider {
                 .add(BnCItems.FLAXEN_CHEESE_WEDGE)
                 .add(BnCItems.SCARLET_CHEESE_WEDGE);
         tag(BnCTags.PIZZA_TOPPINGS)
-                .addTag(CommonTags.FOODS_COOKED_BACON).addTag(CommonTags.FOODS_COOKED_BEEF).addTag(CommonTags.FOODS_COOKED_COD).addTag(CommonTags.FOODS_COOKED_MUTTON).addTag(CommonTags.FOODS_COOKED_PORK)
                 .add(Items.BROWN_MUSHROOM).add(Items.RED_MUSHROOM)
-                .add(Items.CARROT).add(Items.BEETROOT).add(ModItems.CABBAGE_LEAF.get()).add(ModItems.ONION.get());
-        tag(BnCTags.HORROR_MEATS).addTag(CommonTags.FOODS_RAW_BEEF).addTag(CommonTags.FOODS_RAW_CHICKEN);
-        tag(BnCTags.RAW_MEATS).addTag(CommonTags.FOODS_RAW_BACON).addTag(CommonTags.FOODS_RAW_BEEF).addTag(CommonTags.FOODS_RAW_CHICKEN)
-                .addTag(CommonTags.FOODS_RAW_MUTTON).addTag(CommonTags.FOODS_RAW_PORK).add(Items.ROTTEN_FLESH);
+                .add(Items.CARROT).add(Items.BEETROOT).add(ModItems.CABBAGE_LEAF.get()).add(ModItems.ONION.get())
+                .addOptionalTag(CommonTags.FOODS_COOKED_BACON).addOptionalTag(CommonTags.FOODS_COOKED_BEEF).addOptionalTag(CommonTags.FOODS_COOKED_COD).addOptionalTag(CommonTags.FOODS_COOKED_MUTTON).addOptionalTag(CommonTags.FOODS_COOKED_PORK);
+        tag(BnCTags.HORROR_MEATS).addOptionalTag(CommonTags.FOODS_RAW_BEEF).addOptionalTag(CommonTags.FOODS_RAW_CHICKEN);
+        tag(BnCTags.RAW_MEATS).add(Items.ROTTEN_FLESH).addOptionalTag(CommonTags.FOODS_RAW_BACON).addOptionalTag(CommonTags.FOODS_RAW_BEEF).addOptionalTag(CommonTags.FOODS_RAW_CHICKEN)
+                .addOptionalTag(CommonTags.FOODS_RAW_MUTTON).addOptionalTag(CommonTags.FOODS_RAW_PORK);
         tag(BnCCompatTags.ORIGINS_MEAT)
                 .add(BnCItems.JERKY)
                 .add(BnCItems.KIPPERS)

@@ -21,6 +21,6 @@ public class BnCEffects {
         INTOXICATION = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, BrewinAndChewin.asResource("intoxication"), new IntoxicationEffect());
         SWEET_HEART = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, BrewinAndChewin.asResource("sweet_heart"), new SweetHeartEffect());
         RAGING = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, BrewinAndChewin.asResource("raging"), new RagingEffect());
-        INTOXICATION = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, BrewinAndChewin.asResource("tipsy"), new TipsyEffect());
+        TIPSY = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, BrewinAndChewin.asResource("tipsy"), new TipsyEffect());
     }
 }

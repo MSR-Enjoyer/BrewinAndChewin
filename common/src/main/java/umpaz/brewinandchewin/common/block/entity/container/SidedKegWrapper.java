@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class SidedKegWrapper implements AbstractedItemHandler {
     protected final AbstractedItemHandler itemHandler;
-    private final Direction side;
+    protected final Direction side;
 
     public SidedKegWrapper(AbstractedItemHandler itemHandler, @Nullable Direction side) {
         this.itemHandler = itemHandler;
@@ -18,7 +18,7 @@ public abstract class SidedKegWrapper implements AbstractedItemHandler {
     }
 
     @Override
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+    public boolean isItemValid(int slot, ItemStack stack) {
         return this.itemHandler.isItemValid(slot, stack);
     }
 

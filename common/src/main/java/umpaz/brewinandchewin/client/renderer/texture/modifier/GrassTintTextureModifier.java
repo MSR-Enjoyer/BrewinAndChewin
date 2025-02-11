@@ -1,6 +1,6 @@
 package umpaz.brewinandchewin.client.renderer.texture.modifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +11,7 @@ import umpaz.brewinandchewin.BrewinAndChewin;
 
 public class GrassTintTextureModifier implements TextureModifier {
     public static final ResourceLocation ID = BrewinAndChewin.asResource("grass_tint");
-    public static final Codec<GrassTintTextureModifier> CODEC = Codec.unit(GrassTintTextureModifier::new);
+    public static final MapCodec<GrassTintTextureModifier> CODEC = MapCodec.unit(GrassTintTextureModifier::new);
 
     @Override
     public int color(BlockAndTintGetter level, BlockState state, BlockPos pos, ItemStack stack, int previous) {
@@ -24,7 +24,7 @@ public class GrassTintTextureModifier implements TextureModifier {
     }
 
     @Override
-    public Codec<? extends TextureModifier> codec() {
+    public MapCodec<? extends TextureModifier> codec() {
         return CODEC;
     }
 }

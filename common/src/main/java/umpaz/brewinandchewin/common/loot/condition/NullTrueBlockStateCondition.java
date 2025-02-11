@@ -77,6 +77,22 @@ public class NullTrueBlockStateCondition implements LootItemCondition {
             this.value = value;
         }
 
+        public static PropertyMatcher exact(String name, String value) {
+            return new PropertyMatcher(name, new ExactMatcher(value));
+        }
+
+        public static PropertyMatcher min(String name, String min) {
+            return new PropertyMatcher(name, new RangedMatcher(Optional.of(min), Optional.empty()));
+        }
+
+        public static PropertyMatcher max(String name, String max) {
+            return new PropertyMatcher(name, new RangedMatcher(Optional.empty(), Optional.of(max)));
+        }
+
+        public static PropertyMatcher ranged(String name, String min, String max) {
+            return new PropertyMatcher(name, new RangedMatcher(Optional.of(min), Optional.of(max)));
+        }
+
         public <S extends StateHolder<?, S>> boolean match(StateDefinition<?, S> pProperties, S pPropertyToMatch) {
             Property<?> property = pProperties.getProperty(this.name);
             return property == null || value.match(pPropertyToMatch, property);
@@ -96,6 +112,7 @@ public class NullTrueBlockStateCondition implements LootItemCondition {
     }
 
     public record ExactMatcher(String value) implements ValueMatcher {
+        public static final Codec<ExactMatcher> CODEC = Codec.STRING.xmap(ExactMatcher::new, ExactMatcher::value);
         public <S extends StateHolder<?, S>, T extends Comparable<T>> boolean match(S pProperties, Property<T> pProperty) {
             T t = pProperties.getValue(pProperty);
             Optional<T> optional = pProperty.getValue(value);

@@ -40,14 +40,14 @@ public record TransferKegRecipeServerboundPacket(ResourceLocation recipeId,
         );
     }
 
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeResourceLocation(recipeId);
-        BnCStreamCodecs.INT_PAIR_LIST.encode(buf, resultSlots);
-        BnCStreamCodecs.INT_LONG_PAIR_LIST.encode(buf, fluidSlots);
-        BnCStreamCodecs.INT_LONG_PAIR_LIST.encode(buf, emptyingSlots);
-        ByteBufCodecs.INT.apply(ByteBufCodecs.list()).encode(buf, craftingSlots);
-        ByteBufCodecs.INT.apply(ByteBufCodecs.list()).encode(buf, inventorySlots);
-        buf.writeBoolean(maxTransfer);
+    public static void encode(FriendlyByteBuf buf, TransferKegRecipeServerboundPacket packet) {
+        buf.writeResourceLocation(packet.recipeId);
+        BnCStreamCodecs.INT_PAIR_LIST.encode(buf, packet.resultSlots);
+        BnCStreamCodecs.INT_LONG_PAIR_LIST.encode(buf, packet.fluidSlots);
+        BnCStreamCodecs.INT_LONG_PAIR_LIST.encode(buf, packet.emptyingSlots);
+        ByteBufCodecs.INT.apply(ByteBufCodecs.list()).encode(buf, packet.craftingSlots);
+        ByteBufCodecs.INT.apply(ByteBufCodecs.list()).encode(buf, packet.inventorySlots);
+        buf.writeBoolean(packet.maxTransfer);
     }
 
     @Override
@@ -55,10 +55,8 @@ public record TransferKegRecipeServerboundPacket(ResourceLocation recipeId,
         return TYPE;
     }
 
-    public void handle(MinecraftServer server, ServerPlayer sender) {
-        server.execute(() -> {
-            if (sender == null)
-                return;
+    public void handle(ServerPlayer sender) {
+        sender.server.execute(() -> {
             var recipe = sender.getServer().getRecipeManager().byKey(recipeId());
             if (recipe.isEmpty() || !(recipe.get().value() instanceof KegFermentingRecipe kegFermentingRecipe))
                 return;

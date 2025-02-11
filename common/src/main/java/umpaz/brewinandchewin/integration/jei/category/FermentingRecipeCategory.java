@@ -13,7 +13,6 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
@@ -34,21 +33,17 @@ import umpaz.brewinandchewin.common.registry.BnCItems;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.BnCTextUtils;
+import umpaz.brewinandchewin.common.utility.FluidUnit;
 import umpaz.brewinandchewin.integration.jei.BnCJEIRecipeTypes;
 import umpaz.brewinandchewin.integration.jei.KegFermentingPouringRecipe;
 import vectorwing.farmersdelight.common.utility.ClientRenderUtils;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
 public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPouringRecipe> {
     public static final ResourceLocation UID = BrewinAndChewin.asResource("fermenting");
     protected final IModIdHelper modIdHelper;
@@ -127,20 +122,20 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
 
         if (recipe.getFluidIngredient().isPresent()) {
             var firstDisplayFluid = recipe.getFluidIngredient().get().ingredient().displayStacks().getFirst();
-            if (BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {
+            if (BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg()) {
                 builder.addSlot(RecipeIngredientRole.INPUT, 0, 2)
-                        .addFluidStack(firstDisplayFluid.fluid(), firstDisplayFluid.amount(), firstDisplayFluid.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
-                        .setFluidRenderer(BnCConfiguration.KEG_CAPACITY.get(), false, 26, 30)
+                        .addFluidStack(firstDisplayFluid.fluid(), recipe.getFluidIngredient().get().amount(), firstDisplayFluid.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
+                        .setFluidRenderer(BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), false, 26, 30)
                         .setOverlay(kegOverlay, 0, 0);
             } else
                 builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-                        .addFluidStack(firstDisplayFluid.fluid(), firstDisplayFluid.amount(), firstDisplayFluid.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
+                        .addFluidStack(firstDisplayFluid.fluid(), recipe.getFluidIngredient().get().amount(), firstDisplayFluid.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
 
             ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), firstDisplayFluid).copy();
             Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
                     ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()))
             ).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(BnCConfiguration.KEG_CAPACITY.get(), recipe.getFluidIngredient().get().amount()) / kegPouringRecipe.getRawFluid().amount()).orElse(1);
+            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int)(Math.min(BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), recipe.getFluidIngredient().get().amount()) / kegPouringRecipe.getRawFluid().amount())).orElse(1);
             itemDisplay.setCount(pourCount);
             if (!itemDisplay.isEmpty())
                 builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 5, 5)
@@ -149,10 +144,10 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
 
         if (recipe.getResult().left().isPresent()) {
             var result = recipe.getResult().left().get();
-            if (BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {
+            if (BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg()) {
                 builder.addSlot(RecipeIngredientRole.OUTPUT, 100, 2)
                         .addFluidStack(result.fluid(), result.amount(), result.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
-                        .setFluidRenderer(BnCConfiguration.KEG_CAPACITY.get(), false, 26, 30)
+                        .setFluidRenderer(BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), false, 26, 30)
                         .setOverlay(kegOverlay, 0, 0);
             } else
                 builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
@@ -162,7 +157,7 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
             Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
                     ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()))
             ).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(BnCConfiguration.KEG_CAPACITY.get(), recipe.getFluidIngredient().get().amount()) / kegPouringRecipe.getRawFluid().amount()).orElse(1);
+            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int)(Math.min(BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), recipe.getFluidIngredient().get().amount()) / kegPouringRecipe.getRawFluid().amount())).orElse(1);
             itemDisplay.setCount(pourCount);
             if (!itemDisplay.isEmpty())
                 builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 105, 5)
@@ -182,23 +177,25 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
 
     @Override
     public void onDisplayedIngredientsUpdate(KegFermentingPouringRecipe recipe, List<IRecipeSlotDrawable> recipeSlots, IFocusGroup focuses) {
-        List<AbstractedFluidStack> stacks = recipe.getFluidIngredient().get().ingredient().displayStacks();
-        AbstractedFluidStack fluidInput = stacks.get(new Random().nextInt(stacks.size() - 1));
+        if (recipe.getFluidIngredient().isPresent() && recipe.getFluidIngredient().get().ingredient().displayStacks().size() > 1) {
+            List<AbstractedFluidStack> stacks = recipe.getFluidIngredient().get().ingredient().displayStacks();
+            AbstractedFluidStack fluidInput = stacks.get(new Random().nextInt(stacks.size()));
 
-        var drawable = recipeSlots.getFirst(); // Fluid stack.
-        drawable.clearDisplayOverrides();
-        drawable.createDisplayOverrides().addFluidStack(fluidInput.fluid(), fluidInput.amount());
+            var drawable = recipeSlots.getFirst(); // Fluid stack.
+            drawable.clearDisplayOverrides();
+            drawable.createDisplayOverrides().addFluidStack(fluidInput.fluid(), fluidInput.amount(), fluidInput.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
 
-        ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidInput).copy();
-        Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
-                ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()))
-        ).findFirst();
-        int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(BnCConfiguration.KEG_CAPACITY.get(), recipe.getFluidIngredient().get().amount()) / kegPouringRecipe.getRawFluid().amount()).orElse(1);
-        itemDisplay.setCount(pourCount);
-        if (!itemDisplay.isEmpty()) {
-            var itemDisplayDrawable = recipeSlots.get(1);
-            itemDisplayDrawable.clearDisplayOverrides();
-            itemDisplayDrawable.createDisplayOverrides().addItemStack(itemDisplay);
+            ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidInput).copy();
+            Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
+                    ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()))
+            ).findFirst();
+            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int) (Math.min(BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), recipe.getFluidIngredient().get().amount()) / kegPouringRecipe.getRawFluid().amount())).orElse(1);
+            itemDisplay.setCount(pourCount);
+            if (!itemDisplay.isEmpty()) {
+                var itemDisplayDrawable = recipeSlots.get(1);
+                itemDisplayDrawable.clearDisplayOverrides();
+                itemDisplayDrawable.createDisplayOverrides().addItemStack(itemDisplay);
+            }
         }
     }
 

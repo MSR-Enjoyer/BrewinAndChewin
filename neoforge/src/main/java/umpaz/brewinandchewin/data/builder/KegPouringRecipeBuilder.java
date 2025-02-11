@@ -9,14 +9,18 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
+import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+import umpaz.brewinandchewin.common.utility.FluidUnit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class KegPouringRecipeBuilder {
     private ItemStack container;
     private final Fluid fluid;
     private final int amount;
+    private Optional<FluidUnit> unit = Optional.empty();
     private final ItemStack output;
     private final boolean strict;
     private final boolean filling;
@@ -45,6 +49,16 @@ public class KegPouringRecipeBuilder {
 
     public static KegPouringRecipeBuilder kegPouringRecipe(Fluid fluid, int amount, ItemLike output, boolean filling) {
         return new KegPouringRecipeBuilder(fluid, amount, output.asItem().getDefaultInstance(), false, filling);
+    }
+
+    /**
+     * Used for multi-loader implementation to make sure you can have just the one recipe.
+     *
+     * @param unit The unit to use for this fluid.
+     */
+    public KegPouringRecipeBuilder setFluidUnit(FluidUnit unit) {
+        this.unit = Optional.of(unit);
+        return this;
     }
 
     public KegPouringRecipeBuilder withContainer(ItemLike container) {
@@ -80,7 +94,7 @@ public class KegPouringRecipeBuilder {
         if (!output.hasCraftingRemainingItem() && container == null)
             throw new IllegalStateException("Pouring Recipe " + id + " must specify a container as the output does not have a remainder.");
 
-        consumerIn.accept(id, new KegPouringRecipe(container, fluid, amount, output, strict, filling), null);
+        consumerIn.accept(id, new KegPouringRecipe(new AbstractedFluidStack(fluid, amount), Optional.ofNullable(container), output, unit, strict, filling), null);
 
         // TODO: Create recipe compat when Create updates.
 //        if (ForgeRegistries.ITEMS.getKey(output.getItem()).getNamespace().equals("create") || !includeCreateRecipes)

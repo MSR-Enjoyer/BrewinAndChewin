@@ -13,6 +13,7 @@ authors="${neoforge_mod_authors}"
 description='''
 ${mod_description}
 '''
+enumExtensions="brewinandchewin_extensions.json"
 
 [[mixins]]
 config = "${mod_id}.mixins.json"

@@ -1,0 +1,20 @@
+{
+  "criteria": {
+    "has_mead": {
+      "conditions": {
+        "items": [
+          {
+            "items": "brewinandchewin:mead"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_mead"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -8,10 +8,10 @@ import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 
 public class BnCFabricCodecs {
     public static final Codec<AbstractedFluidStack> FLUID_VARIANT_WRAPPER = AmountedFluidVariant.CODEC.xmap(
-            fluidVariant -> new AbstractedFluidStack(fluidVariant.variant().getFluid(), fluidVariant.amount(), fluidVariant.variant().getComponentMap(), fluidVariant),
+            fluidVariant -> new AbstractedFluidStack(fluidVariant.variant().getFluid(), fluidVariant.amount(), fluidVariant.variant().getComponentMap(), fluidVariant.fluidUnit(), fluidVariant),
             wrapper -> {
                 if (wrapper.loaderSpecific() instanceof AmountedFluidVariant fluidVariant)
                     return fluidVariant;
-                return wrapper.isEmpty() ? AmountedFluidVariant.EMPTY : new AmountedFluidVariant(FluidVariant.of(wrapper.fluid(), wrapper.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY), wrapper.amount());
+                return wrapper.isEmpty() ? AmountedFluidVariant.EMPTY : new AmountedFluidVariant(FluidVariant.of(wrapper.fluid(), wrapper.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY), wrapper.amount(), wrapper.unit());
             });
 }

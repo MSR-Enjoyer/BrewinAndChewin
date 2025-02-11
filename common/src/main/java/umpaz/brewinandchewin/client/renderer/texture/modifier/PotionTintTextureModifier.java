@@ -1,6 +1,6 @@
 package umpaz.brewinandchewin.client.renderer.texture.modifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
@@ -13,7 +13,7 @@ import umpaz.brewinandchewin.BrewinAndChewin;
 
 public class PotionTintTextureModifier implements TextureModifier {
     public static final ResourceLocation ID = BrewinAndChewin.asResource("potion_tint");
-    public static final Codec<PotionTintTextureModifier> CODEC = Codec.unit(PotionTintTextureModifier::new);
+    public static final MapCodec<PotionTintTextureModifier> CODEC = MapCodec.unit(PotionTintTextureModifier::new);
 
     @Override
     public int color(BlockAndTintGetter level, BlockState state, BlockPos pos, ItemStack stack, int previous) {
@@ -30,7 +30,7 @@ public class PotionTintTextureModifier implements TextureModifier {
     }
 
     @Override
-    public Codec<? extends TextureModifier> codec() {
+    public MapCodec<? extends TextureModifier> codec() {
         return CODEC;
     }
 }

@@ -1,16 +1,12 @@
 package umpaz.brewinandchewin.client.gui;
 
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
@@ -38,10 +34,10 @@ public class KegTooltip implements ClientTooltipComponent {
    @Override
    public int getWidth( Font font ) {
       if ( !mealStack.isEmpty() ) {
-         MutableComponent textServingsOf = mealStack.getAmount() == 250
+         MutableComponent textServingsOf = mealStack.amount() == 250
                  ? TextUtils.getTranslation("tooltip.cooking_pot.single_serving")
-                 : TextUtils.getTranslation("tooltip.cooking_pot.many_servings", mealStack.getAmount() / 250);
-         return Math.max(font.width(textServingsOf), font.width(mealStack.getDisplayName()) + 20);
+                 : TextUtils.getTranslation("tooltip.cooking_pot.many_servings", mealStack.amount() / 250);
+         return Math.max(font.width(textServingsOf), font.width(BrewinAndChewin.getHelper().getFluidDisplayName(mealStack)) + 20);
       }
       else {
          return font.width(TextUtils.getTranslation("tooltip.cooking_pot.empty"));
@@ -54,20 +50,21 @@ public class KegTooltip implements ClientTooltipComponent {
 
       ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), mealStack);
       if (itemDisplay.isEmpty()) {
-          IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(mealStack.getFluid());
-          ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(mealStack);
-          if ( stillTexture == null )
-              return;
-
-          TextureAtlasSprite sprite =
-                  Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture);
-          int tintColor = fluidTypeExtensions.getTintColor(mealStack);
-
-          float alpha = ( ( tintColor >> 24 ) & 0xFF ) / 255f;
-          float red = ( ( tintColor >> 16 ) & 0xFF ) / 255f;
-          float green = ( ( tintColor >> 8 ) & 0xFF ) / 255f;
-          float blue = ( tintColor & 0xFF ) / 255f;
-          gui.blit(mouseX, mouseY + 9, 0, 16, 16, sprite, red, green, blue, alpha);
+          // FIXME: Handle fluid displays.
+//          IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(mealStack.fluid());
+//          ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(mealStack);
+//          if ( stillTexture == null )
+//              return;
+//
+//          TextureAtlasSprite sprite =
+//                  Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture);
+//          int tintColor = fluidTypeExtensions.getTintColor(mealStack);
+//
+//          float alpha = ( ( tintColor >> 24 ) & 0xFF ) / 255f;
+//          float red = ( ( tintColor >> 16 ) & 0xFF ) / 255f;
+//          float green = ( ( tintColor >> 8 ) & 0xFF ) / 255f;
+//          float blue = ( tintColor & 0xFF ) / 255f;
+//          gui.blit(mouseX, mouseY + 9, 0, 16, 16, sprite, red, green, blue, alpha);
           return;
       }
       gui.renderItem(itemDisplay, mouseX, mouseY + 9);

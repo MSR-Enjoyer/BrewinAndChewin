@@ -1,7 +1,7 @@
 package umpaz.brewinandchewin.gradle
 
 object Versions {
-    const val MOD = "1.0.0"
+    const val MOD = "4.0.0"
 
     const val MINECRAFT = "1.21.1"
     const val PARCHMENT_MINECRAFT = "1.21"
@@ -18,8 +18,12 @@ object Versions {
     const val NEOFORGE_LOADER_RANGE = "[4,)"
     const val NEOFORGE_MINECRAFT_RANGE = "[1.21,1.21.2)"
 
+    const val GREENHOUSE_CONFIG = "1.0.0-alpha.2+1.21.1"
+    const val GREENHOUSE_CONFIG_TOML = "1.0.0"
+
     const val JEI = "19.21.0.247"
     const val APPLESKIN = "mc1.21-3.0.5"
+    const val CLOTH_CONFIG = "15.0.140"
 
     const val FARMERS_DELIGHT = "1.21.1-1.2.6"
     const val FARMERS_DELIGHT_RANGE = "[1.2.6,)"

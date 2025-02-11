@@ -4,7 +4,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -52,11 +54,11 @@ public class BnCClientSetup {
         BnCTextureModifiers.init();
     }
 
-    public static void onRegisterRenderers(BiConsumer<BlockEntityType<?>, Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<?>>> consumer) {
+    public static void onRegisterRenderers(BiConsumer<BlockEntityType<?>, BlockEntityRendererProvider> consumer) {
         consumer.accept(BnCBlockEntityTypes.COASTER, CoasterBlockEntityRenderer::new);
     }
 
-    public static void registerParticles(BiConsumer<ParticleType<?>, Function<SpriteSet, ParticleProvider<?>>> consumer) {
+    public static void registerParticles(BiConsumer<ParticleType<?>, ParticleEngine.SpriteParticleRegistration> consumer) {
         consumer.accept(BnCParticleTypes.FOG, SteamParticle.Factory::new);
         consumer.accept(BnCParticleTypes.DRUNK_BUBBLE, DrunkBubbleParticle.Factory::new);
         consumer.accept(BnCParticleTypes.RAGING_STAGE_1, RagingParticle.Factory::new);
@@ -73,9 +75,9 @@ public class BnCClientSetup {
         consumer.accept(BnCFluidItemDisplays.Loader.INSTANCE);
     }
 
-    public static void registerColorHandlers(BiConsumer<ColorGetter, Block> consumer) {
+    public static void registerColorHandlers(BiConsumer<BlockColor, Block> consumer) {
         consumer.accept((state, level, pos, pTintIndex) -> {
-            if (level.getBlockEntity(pos) instanceof CoasterBlockEntity blockEntity) {
+            if (level != null && pos != null && level.getBlockEntity(pos) instanceof CoasterBlockEntity blockEntity) {
                 int tintIndex = -1;
                 int count = (int) blockEntity.getItems().stream().filter(i -> !i.isEmpty()).count();
                 for (int i = 0; i < count; i++) {

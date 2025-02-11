@@ -1,0 +1,20 @@
+{
+  "criteria": {
+    "has_crimson_fungus": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:crimson_fungus"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_crimson_fungus"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

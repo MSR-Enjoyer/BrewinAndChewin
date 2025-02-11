@@ -34,6 +34,9 @@ dependencies {
     annotationProcessor("io.github.llamalad7:mixinextras-common:${Versions.MIXIN_EXTRAS}")
     compileOnly("net.fabricmc:sponge-mixin:${Versions.FABRIC_MIXIN}")
 
+    compileOnly("house.greenhouse:greenhouseconfig:${Versions.GREENHOUSE_CONFIG}-common-mojmap")
+    compileOnly("house.greenhouse:greenhouseconfig_toml:${Versions.GREENHOUSE_CONFIG_TOML}")
+
     compileOnly("maven.modrinth:farmers-delight:${Versions.FARMERS_DELIGHT}")
 
     compileOnly("mezz.jei:jei-${Versions.MINECRAFT}-common-api:${Versions.JEI}")

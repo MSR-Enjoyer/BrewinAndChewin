@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.material.Fluid;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.client.BrewinAndChewinClient;
 import umpaz.brewinandchewin.client.utility.BnCRectangle;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
@@ -70,7 +71,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
         this.titleLabelX = 38;
         this.recipeBookComponent.init(this.width, this.height, this.minecraft, this.widthTooNarrow, this.menu);
         this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
-        if (BnCConfiguration.ENABLE_RECIPE_BOOK_KEG.get()) {
+        if (BnCConfiguration.COMMON_CONFIG.get().recipeBook().enabled()) {
             this.addRenderableWidget(new ImageButton(this.leftPos + 5, this.height / 2 - 49, 20, 18, RecipeBookComponent.RECIPE_BUTTON_SPRITES, button -> {
                 this.recipeBookComponent.toggleVisibility();
                 this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
@@ -93,7 +94,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
 
     @Override
     public void render(GuiGraphics gui, final int mouseX, final int mouseY, float partialTicks) {
-        this.renderBackground(gui);
+        this.renderBackground(gui, mouseX, mouseY, partialTicks);
         if (this.recipeBookComponent.isVisible() && this.widthTooNarrow) {
             this.renderBg(gui, partialTicks, mouseX, mouseY);
             this.recipeBookComponent.render(gui, mouseX, mouseY, partialTicks);
@@ -131,13 +132,13 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
                 return component;
             }))).withStyle(ChatFormatting.GRAY);
             Component component = MutableComponent.create(BrewinAndChewin.getHelper().getFluidDisplayName(this.menu.kegTank.getAbstractedFluid()).getContents())
-                    .append(" (%s/%s mB)".formatted(this.menu.kegTank.getAbstractedFluid().amount(), this.menu.kegTank.getCapacity()));
+                    .append(" (%s/%s mB)".formatted(this.menu.kegTank.getAbstractedFluid().amount(), this.menu.kegTank.getFluidCapacity()));
             gui.renderComponentTooltip(this.font, List.of(component, containerComponent), mouseX, mouseY);
         }
     }
 
     private void renderTemperatureTooltip(GuiGraphics gui, int mouseX, int mouseY) {
-        if ( this.isHovering(35, 54, 42, 5, mouseX, mouseY) && (!(recipeBookComponent.getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe) || KegBlockEntity.isValidTemp(menu.getKegTemperature(), fermentingRecipe.getTemperature()))) {
+        if ( this.isHovering(35, 54, 42, 5, mouseX, mouseY) && (!(recipeBookComponent.getGhostRecipe().value() instanceof KegFermentingRecipe fermentingRecipe) || KegBlockEntity.isValidTemp(menu.getKegTemperature(), fermentingRecipe.getTemperature()))) {
             List<Component> tooltip = new ArrayList<>();
             MutableComponent key = switch (menu.getKegTemperature()) {
                 case 1 -> BnCTextUtils.getTranslation("container.keg.cold");
@@ -197,45 +198,45 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
         AbstractedFluidStack fluidStack = this.menu.kegTank.getAbstractedFluid();
         if (!fluidStack.isEmpty() && (!(recipeBookComponent.getGhostRecipe().value() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient().isEmpty() && menu.kegTank.isEmpty() || fermentingRecipe.getFluidIngredient().isPresent() && fermentingRecipe.getFluidIngredient().get().ingredient().matches(fluidStack))) {
             // Fluid
-            if (BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {
+            if (BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg()) {
                 // TODO: Move fluid rendering code to ClientPlatformHelper.
-                IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(fluidStack.getFluid());
-                ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(fluidStack);
-                if (stillTexture != null) {
-                    TextureAtlasSprite sprite =
-                            this.minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture);
-                    int tintColor = fluidTypeExtensions.getTintColor(fluidStack);
-
-                    float alpha = ((tintColor >> 24) & 0xFF) / 255f;
-                    float red = ((tintColor >> 16) & 0xFF) / 255f;
-                    float green = ((tintColor >> 8) & 0xFF) / 255f;
-                    float blue = (tintColor & 0xFF) / 255f;
-
-                    float capacity = Math.min(this.menu.kegTank.getCapacity(), this.menu.kegTank.getAbstractedFluid().amount()) / (float) this.menu.kegTank.getCapacity();
-                    if (capacity > 0.57) {
-                        int y1 = this.topPos + 19 + (int) (12 * (1 - ((capacity - 0.57F) / .43F)));
-                        int y2 = this.topPos + 19 + 12;
-                        float topCapacity = (capacity - 0.57F) / 0.43F;
-                        float vDistance = sprite.getV1() - sprite.getV0();
-                        float v0 = sprite.getV0() + (0.25F * vDistance) + (0.75F * vDistance * (1 - topCapacity));
-                        gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120, this.leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
-                        gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120 + 16, this.leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
-
-                    }
-                    int y1 = this.topPos + 31 + (int) (16 * (1 - Math.min(1, (capacity / .57F))));
-                    int y2 = this.topPos + 31 + 16;
-                    float vDistance = sprite.getV1() - sprite.getV0();
-                    float v0 = sprite.getV0() + (vDistance * (1 - Math.min(1, (capacity / .57F))));
-                    gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120, this.leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
-                    gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120 + 16, this.leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
-                }
+//                IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(fluidStack.getFluid());
+//                ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(fluidStack);
+//                if (stillTexture != null) {
+//                    TextureAtlasSprite sprite =
+//                            this.minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture);
+//                    int tintColor = fluidTypeExtensions.getTintColor(fluidStack);
+//
+//                    float alpha = ((tintColor >> 24) & 0xFF) / 255f;
+//                    float red = ((tintColor >> 16) & 0xFF) / 255f;
+//                    float green = ((tintColor >> 8) & 0xFF) / 255f;
+//                    float blue = (tintColor & 0xFF) / 255f;
+//
+//                    float capacity = Math.min(this.menu.kegTank.getCapacity(), this.menu.kegTank.getAbstractedFluid().amount()) / (float) this.menu.kegTank.getFluidCapacity();
+//                    if (capacity > 0.57) {
+//                        int y1 = this.topPos + 19 + (int) (12 * (1 - ((capacity - 0.57F) / .43F)));
+//                        int y2 = this.topPos + 19 + 12;
+//                        float topCapacity = (capacity - 0.57F) / 0.43F;
+//                        float vDistance = sprite.getV1() - sprite.getV0();
+//                        float v0 = sprite.getV0() + (0.25F * vDistance) + (0.75F * vDistance * (1 - topCapacity));
+//                        gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120, this.leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
+//                        gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120 + 16, this.leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
+//
+//                    }
+//                    int y1 = this.topPos + 31 + (int) (16 * (1 - Math.min(1, (capacity / .57F))));
+//                    int y2 = this.topPos + 31 + 16;
+//                    float vDistance = sprite.getV1() - sprite.getV0();
+//                    float v0 = sprite.getV0() + (vDistance * (1 - Math.min(1, (capacity / .57F))));
+//                    gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120, this.leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
+//                    gui.innerBlit(sprite.atlasLocation(), this.leftPos + 120 + 16, this.leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
+//                }
             }
 
             ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
             Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe ->
-                    ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.value().getResultItem(minecraft.level.registryAccess()))
+                    ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(minecraft.level.registryAccess()))
             ).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> Math.min(this.menu.kegTank.getCapacity(), this.menu.kegTank.getAbstractedFluid().amount()) / kegPouringRecipe.getRawFluid().amount()).orElse(1);
+            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int)(Math.min(this.menu.kegTank.getFluidCapacity(), this.menu.kegTank.getAbstractedFluid().amount()) / kegPouringRecipe.getRawFluid().amount())).orElse(1);
             itemDisplay.setCount(pourCount);
             if (!itemDisplay.isEmpty()) {
                 gui.renderItem(itemDisplay, this.leftPos + 124, this.topPos + 23);

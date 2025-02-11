@@ -2,11 +2,7 @@ package umpaz.brewinandchewin.client.particle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.SimpleParticleType;
-import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class DrunkBubbleParticle extends TextureSheetParticle {
    protected DrunkBubbleParticle( ClientLevel level, double x, double y, double z, double motionX, double motionY, double motionZ ) {
@@ -23,7 +19,7 @@ public class DrunkBubbleParticle extends TextureSheetParticle {
    }
 
    @Override
-   @Nonnull
+   @NotNull
    public ParticleRenderType getRenderType() {
       return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
    }

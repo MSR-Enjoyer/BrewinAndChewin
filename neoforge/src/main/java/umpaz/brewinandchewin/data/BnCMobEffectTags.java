@@ -1,13 +1,13 @@
 package umpaz.brewinandchewin.data;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
-import umpaz.brewinandchewin.neoforge.BrewinAndChewinNeoForge;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 import umpaz.brewinandchewin.common.tag.BnCTags;
 
@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class BnCMobEffectTags extends IntrinsicHolderTagsProvider<MobEffect>
 {
     public BnCMobEffectTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-        super(output, Registries.MOB_EFFECT, lookupProvider, mobEffect -> ForgeRegistries.MOB_EFFECTS.getResourceKey(mobEffect).orElseThrow(), BrewinAndChewinNeoForge.MODID, existingFileHelper);
+        super(output, Registries.MOB_EFFECT, lookupProvider, mobEffect -> BuiltInRegistries.MOB_EFFECT.getResourceKey(mobEffect).orElseThrow(), BrewinAndChewin.MODID, existingFileHelper);
     }
 
     @Override
@@ -27,6 +27,6 @@ public class BnCMobEffectTags extends IntrinsicHolderTagsProvider<MobEffect>
 
     protected void registerModTags() {
         tag(BnCTags.MILK_BOTTLE_LOW_PRIORITY)
-                .add(BnCEffects.TIPSY.get());
+                .add(BnCEffects.TIPSY.value());
     }
 }

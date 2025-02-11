@@ -6,6 +6,9 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
   ],
+  "client": [
+    "TipsyMouseHandlerMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

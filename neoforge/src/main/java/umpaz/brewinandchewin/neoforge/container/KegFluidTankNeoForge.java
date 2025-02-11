@@ -8,6 +8,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+import umpaz.brewinandchewin.common.utility.FluidUnit;
 
 public class KegFluidTankNeoForge extends FluidTank implements AbstractedFluidTank {
     public KegFluidTankNeoForge(int capacity) {
@@ -21,7 +22,7 @@ public class KegFluidTankNeoForge extends FluidTank implements AbstractedFluidTa
 
     @Override
     public AbstractedFluidStack getAbstractedFluid() {
-        return new AbstractedFluidStack(fluid.getFluid(), fluid.getAmount(), fluid.getComponents(), fluid);
+        return new AbstractedFluidStack(fluid.getFluid(), fluid.getAmount(), fluid.getComponents(), FluidUnit.MILLIBUCKETS, fluid);
     }
 
     @Override
@@ -36,9 +37,10 @@ public class KegFluidTankNeoForge extends FluidTank implements AbstractedFluidTa
     }
 
     @Override
-    public AbstractedFluidStack drain(int maxDrain, boolean simulate) {
-        FluidStack fluid = drain(maxDrain, simulate ? FluidAction.SIMULATE : FluidAction.EXECUTE);
-        return new AbstractedFluidStack(fluid.getFluid(), fluid.getAmount(), fluid.getComponents(), fluid);
+    public AbstractedFluidStack drain(long maxDrain, FluidUnit unit, boolean simulate) {
+        int newAmount = (int) unit.convertToLoader(maxDrain);
+        FluidStack fluid = drain(newAmount, simulate ? FluidAction.SIMULATE : FluidAction.EXECUTE);
+        return new AbstractedFluidStack(fluid.getFluid(), fluid.getAmount(), fluid.getComponents(), FluidUnit.MILLIBUCKETS, fluid);
     }
 
     @Override
@@ -58,6 +60,6 @@ public class KegFluidTankNeoForge extends FluidTank implements AbstractedFluidTa
         if (stack.isEmpty())
             return FluidStack.EMPTY;
 
-        return new FluidStack(stack.fluid().builtInRegistryHolder(), stack.amount(), stack.components() instanceof PatchedDataComponentMap  patched ? patched.asPatch() : DataComponentPatch.EMPTY);
+        return new FluidStack(stack.fluid().builtInRegistryHolder(), (int) stack.unit().convertToLoader(stack.amount()), stack.components() instanceof PatchedDataComponentMap  patched ? patched.asPatch() : DataComponentPatch.EMPTY);
     }
 }

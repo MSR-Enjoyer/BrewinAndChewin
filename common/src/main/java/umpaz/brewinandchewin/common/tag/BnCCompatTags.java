@@ -1,5 +1,6 @@
 package umpaz.brewinandchewin.common.tag;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -11,6 +12,6 @@ public class BnCCompatTags {
     public static final TagKey<Item> ORIGINS_MEAT = compatItemTag("origins", "meat");
 
     private static TagKey<Item> compatItemTag(String namespace, String path) {
-        return ItemTags.create(new ResourceLocation(namespace, path));
+        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(namespace, path));
     }
 }

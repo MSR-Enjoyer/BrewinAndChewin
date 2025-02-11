@@ -17,6 +17,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.client.BrewinAndChewinClient;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 import vectorwing.farmersdelight.common.registry.ModEffects;
@@ -34,7 +35,7 @@ public class BnCHUDOverlays {
     private static float tipsyTransparencyModifier = 0.0F;
 
     @SubscribeEvent(priority = EventPriority.LOW) // We want this to run after more important pre events.
-    public void onRenderGuiOverlayPost(RenderGuiLayerEvent.Pre event) {
+    public static void onRenderGuiOverlayPost(RenderGuiLayerEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
 
         if (mc.player == null)
@@ -80,7 +81,7 @@ public class BnCHUDOverlays {
     }
 
     public static void renderIntoxicationOverlay(Gui gui, RenderGuiLayerEvent.Pre event) {
-        if (!BnCConfiguration.INTOXICATION_FOOD_OVERLAY.get()) {
+        if (!BnCConfiguration.CLIENT_CONFIG.get().intoxicationFoodOverlay()) {
             return;
         }
 

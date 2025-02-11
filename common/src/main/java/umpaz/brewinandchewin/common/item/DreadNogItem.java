@@ -13,9 +13,10 @@ import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.utility.BnCTextUtils;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class DreadNogItem extends BoozeItem {
-    public DreadNogItem(Fluid fluid, Properties properties) {
+    public DreadNogItem(Supplier<Fluid> fluid, Properties properties) {
         super(fluid, properties);
     }
 

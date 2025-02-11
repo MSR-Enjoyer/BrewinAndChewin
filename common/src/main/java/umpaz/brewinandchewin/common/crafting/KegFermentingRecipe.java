@@ -24,6 +24,7 @@ import umpaz.brewinandchewin.common.registry.BnCRecipeSerializers;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.common.utility.BnCRecipeUtils;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+import umpaz.brewinandchewin.common.utility.FluidUnit;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
     private final ShapedRecipePattern pattern;
 
     private final Optional<FluidIngredientWithAmount> fluidIngredient;
+    private final Optional<FluidUnit> unit;
 
     private final FermentingBookCategory tab;
 
@@ -48,11 +50,12 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
     private final int fermentTime;
     private final int temperature;
 
-    public KegFermentingRecipe(NonNullList<Ingredient> inputItems, FermentingBookCategory tab, Optional<FluidIngredientWithAmount> fluidIngredient, Either<AbstractedFluidStack, ItemStack> result, float experience, int fermentTime, int temperature) {
+    public KegFermentingRecipe(NonNullList<Ingredient> inputItems, FermentingBookCategory tab, Optional<FluidIngredientWithAmount> fluidIngredient, Optional<FluidUnit> unit, Either<AbstractedFluidStack, ItemStack> result, float experience, int fermentTime, int temperature) {
         this.inputItems = inputItems;
         this.pattern = new ShapedRecipePattern(2, 2, inputItems, Optional.empty());
         this.tab = tab;
         this.fluidIngredient = fluidIngredient;
+        this.unit = unit;
         this.result = result;
         this.experience = experience;
         this.fermentTime = fermentTime;
@@ -70,6 +73,14 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
 
     public Optional<FluidIngredientWithAmount> getFluidIngredient() {
         return fluidIngredient;
+    }
+
+    public Optional<FluidUnit> getRawUnit() {
+        return unit;
+    }
+
+    public FluidUnit getUnit() {
+        return unit.orElse(FluidUnit.getLoaderUnit());
     }
 
     public Either<AbstractedFluidStack, ItemStack> getResult() {
@@ -119,7 +130,7 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
         if (result.right().isPresent())
             return result.right().get().copy();
         if (result.left().isPresent())
-            return BnCRecipeUtils.getPouredItemFromFluid(new AbstractedFluidStack(result.left().get().fluid(), BnCConfiguration.KEG_CAPACITY.get(), result.left().get().components()));
+            return BnCRecipeUtils.getPouredItemFromFluid(new AbstractedFluidStack(result.left().get().fluid(), BnCConfiguration.COMMON_CONFIG.get().keg().appropriatedCapacity(), result.left().get().components(), BnCConfiguration.COMMON_CONFIG.get().keg().capacityUnit(), null));
         return ItemStack.EMPTY;
     }
 
@@ -165,6 +176,7 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
                 Ingredient.CODEC.listOf(1, 4).xmap(ingredients -> NonNullList.of(Ingredient.EMPTY, ingredients.toArray(Ingredient[]::new)), Function.identity()).fieldOf("ingredients").forGetter(KegFermentingRecipe::getIngredients),
                 FermentingBookCategory.CODEC.optionalFieldOf("category", FermentingBookCategory.DRINKS).forGetter(KegFermentingRecipe::getRecipeBookCategory),
                 FluidIngredientWithAmount.CODEC.optionalFieldOf("base_fluid").forGetter(KegFermentingRecipe::getFluidIngredient),
+                FluidUnit.CODEC.optionalFieldOf("unit").forGetter(KegFermentingRecipe::getRawUnit),
                 Codec.either(AbstractedFluidStack.CODEC, ItemStack.CODEC).fieldOf("result").forGetter(KegFermentingRecipe::getResult),
                 Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(KegFermentingRecipe::getExperience),
                 Codec.INT.optionalFieldOf("fermenting_time", 9600).forGetter(KegFermentingRecipe::getFermentTime),
@@ -187,6 +199,7 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
             Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(4)).encode(buf, recipe.getIngredients());
             FermentingBookCategory.STREAM_CODEC.encode(buf, recipe.getRecipeBookCategory());
             ByteBufCodecs.optional(FluidIngredientWithAmount.STREAM_CODEC).encode(buf, recipe.getFluidIngredient());
+            ByteBufCodecs.optional(FluidUnit.STREAM_CODEC).encode(buf, recipe.getRawUnit());
             ByteBufCodecs.either(AbstractedFluidStack.STREAM_CODEC, ItemStack.STREAM_CODEC).encode(buf, recipe.getResult());
             buf.writeFloat(recipe.getExperience());
             buf.writeInt(recipe.getFermentTime());
@@ -197,12 +210,13 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
             NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY, Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(4)).decode(buf).toArray(Ingredient[]::new));
             FermentingBookCategory category = FermentingBookCategory.STREAM_CODEC.decode(buf);
             Optional<FluidIngredientWithAmount> fluidIngredient = ByteBufCodecs.optional(FluidIngredientWithAmount.STREAM_CODEC).decode(buf);
+            Optional<FluidUnit> fluidUnit = ByteBufCodecs.optional(FluidUnit.STREAM_CODEC).decode(buf);
             Either<AbstractedFluidStack, ItemStack> result = ByteBufCodecs.either(AbstractedFluidStack.STREAM_CODEC, ItemStack.STREAM_CODEC).decode(buf);
             float experience = buf.readFloat();
             int fermentingTime = buf.readInt();
             int temperature = buf.readInt();
 
-            return new KegFermentingRecipe(ingredients, category, fluidIngredient, result, experience, fermentingTime, temperature);
+            return new KegFermentingRecipe(ingredients, category, fluidIngredient, fluidUnit, result, experience, fermentingTime, temperature);
         }
     }
 }

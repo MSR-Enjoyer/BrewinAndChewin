@@ -22,7 +22,9 @@ public class BnCMixinConfigPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         if (mixinClassName.contains(".integration."))
-            return BrewinAndChewin.getHelper().isModLoadedEarly(mixinClassName.split(".integration.", 2)[1].split("\\.", 2)[0]);
+            // FIXME: Not everybody will have AppleSkin. Replace this.
+//            return BrewinAndChewin.getHelper().isModLoadedEarly(mixinClassName.split(".integration.", 2)[1].split("\\.", 2)[0]);
+            return true;
         return true;
     }
 

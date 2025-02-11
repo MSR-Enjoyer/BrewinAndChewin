@@ -18,11 +18,8 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
 public class CopyDrinkFunction extends LootItemConditionalFunction
 {
     public static final MapCodec<CopyDrinkFunction> CODEC = RecordCodecBuilder.mapCodec(inst ->

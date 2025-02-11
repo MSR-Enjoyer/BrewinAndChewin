@@ -9,9 +9,8 @@ public class BrewinAndChewinClient {
         return helper;
     }
 
-    public static void setHelper(BnCClientPlatformHelper helper) {
-        if (BrewinAndChewinClient.helper != null)
-            return;
+    public static void init(BnCClientPlatformHelper helper) {
         BrewinAndChewinClient.helper = helper;
+
     }
 }

@@ -2,6 +2,7 @@ package umpaz.brewinandchewin.fabric.utility;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.fabricators_of_create.porting_lib.fluids.FluidStack;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
@@ -14,6 +15,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.material.Fluid;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+import umpaz.brewinandchewin.common.utility.BnCStreamCodecs;
 
 import java.util.List;
 
@@ -23,16 +25,16 @@ public class KegFluidIngredient {
                 BuiltInRegistries.FLUID.byNameCodec().fieldOf("fluid").forGetter(exact -> exact.displayStack.fluid()),
                 DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(exact -> exact.displayStack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
         ).apply(inst, Exact::new));
-        public static final StreamCodec<RegistryFriendlyByteBuf, Exact> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.registry(Registries.FLUID), exact -> exact.displayStack.fluid(),
-                DataComponentPatch.STREAM_CODEC, exact -> exact.displayStack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY,
-                Exact::new
-        );
+        public static final StreamCodec<RegistryFriendlyByteBuf, Exact> STREAM_CODEC = BnCFabricStreamCodecs.FLUID_STACK_WRAPPER.map(Exact::new, exact -> exact.displayStack);
 
         private final AbstractedFluidStack displayStack;
 
+        private Exact(AbstractedFluidStack displayStack) {
+            this.displayStack = displayStack;
+        }
+
         public Exact(Fluid fluid, PatchedDataComponentMap components) {
-            displayStack = new AbstractedFluidStack(fluid, 1000, components, FluidVariant.of(fluid.builtInRegistryHolder().value(), components.asPatch()));
+            displayStack = new AbstractedFluidStack(fluid, 1000, components, new FluidStack(fluid.builtInRegistryHolder(), 1000, components.asPatch()));
         }
 
         public Exact(Fluid fluid, DataComponentPatch patch) {

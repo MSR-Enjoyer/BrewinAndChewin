@@ -1,0 +1,20 @@
+{
+  "criteria": {
+    "has_raw_meat": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#brewinandchewin:raw_meats"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_raw_meat"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

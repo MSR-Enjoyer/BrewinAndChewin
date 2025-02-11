@@ -49,6 +49,7 @@ public interface BnCPlatformHelper {
 
     boolean isDevelopmentEnvironment();
 
+    void sendClientbound(ServerPlayer player, CustomPacketPayload payload);
     void sendClientboundTracking(Entity tracked, CustomPacketPayload payload);
     void sendServerbound(CustomPacketPayload payload);
 
@@ -60,7 +61,7 @@ public interface BnCPlatformHelper {
 
     AbstractedItemHandler createKegInventory(int size, Consumer<Integer> onContentsChanged);
 
-    AbstractedFluidTank createKegTank(int capacity, Runnable onContentsChanged);
+    AbstractedFluidTank createKegTank(long capacity, Runnable onContentsChanged);
 
     default Slot createKegSlot(AbstractedItemHandler inventory, int slot, int x, int y) {
         return createKegSlot(inventory, slot, x, y, true, null);

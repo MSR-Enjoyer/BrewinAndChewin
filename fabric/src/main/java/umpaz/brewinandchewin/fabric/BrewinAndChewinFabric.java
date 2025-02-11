@@ -24,7 +24,6 @@ public class BrewinAndChewinFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        BnCItems.registerAll();
         registerContents();
         registerCompostables();
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {

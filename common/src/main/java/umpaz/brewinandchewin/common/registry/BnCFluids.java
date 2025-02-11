@@ -87,8 +87,8 @@ public class BnCFluids {
         Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("flowing_steel_toe_stout"), FLOWING_STEEL_TOE_STOUT);
         Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("dread_nog"), DREAD_NOG);
         Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("flowing_dread_nog"), FLOWING_DREAD_NOG);
-        Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("dread_nog"), SACCHARINE_RUM);
-        Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("flowing_dread_nog"), FLOWING_SACCHARINE_RUM);
+        Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("saccharine_rum"), SACCHARINE_RUM);
+        Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("flowing_saccharine_rum"), FLOWING_SACCHARINE_RUM);
         Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("pale_jane"), PALE_JANE);
         Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("flowing_pale_jane"), FLOWING_PALE_JANE);
         Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("salty_folly"), SALTY_FOLLY);

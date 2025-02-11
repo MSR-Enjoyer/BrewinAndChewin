@@ -36,38 +36,38 @@ public class BnCItems {
 
     public static final Item TANKARD = new Item(new Item.Properties());
 
-    public static final Item BEER = new BoozeItem(BnCFluids.BEER, new Item.Properties()
+    public static final Item BEER = new BoozeItem(() -> BnCFluids.BEER, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.BEER));
-    public static final Item VODKA = new BoozeItem(BnCFluids.VODKA, new Item.Properties()
+    public static final Item VODKA = new BoozeItem(() -> BnCFluids.VODKA, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.VODKA));
-    public static final Item MEAD = new BoozeItem(BnCFluids.MEAD, new Item.Properties()
+    public static final Item MEAD = new BoozeItem(() -> BnCFluids.MEAD, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.MEAD));
-    public static final Item RICE_WINE = new BoozeItem(BnCFluids.RICE_WINE, new Item.Properties()
+    public static final Item RICE_WINE = new BoozeItem(() -> BnCFluids.RICE_WINE, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.RICE_WINE));
-    public static final Item EGG_GROG = new BoozeItem(BnCFluids.EGG_GROG, new Item.Properties()
+    public static final Item EGG_GROG = new BoozeItem(() -> BnCFluids.EGG_GROG, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.EGG_GROG));
-    public static final Item STRONGROOT_ALE = new BoozeItem(BnCFluids.STRONGROOT_ALE, new Item.Properties()
+    public static final Item STRONGROOT_ALE = new BoozeItem(() -> BnCFluids.STRONGROOT_ALE, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.STRONGROOT_ALE));
-    public static final Item SACCHARINE_RUM = new BoozeItem(BnCFluids.SACCHARINE_RUM, new Item.Properties()
+    public static final Item SACCHARINE_RUM = new BoozeItem(() -> BnCFluids.SACCHARINE_RUM, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.SACCHARINE_RUM));
-    public static final Item PALE_JANE = new BoozeItem(BnCFluids.PALE_JANE, new Item.Properties()
+    public static final Item PALE_JANE = new BoozeItem(() -> BnCFluids.PALE_JANE, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.PALE_JANE));
-    public static final Item SALTY_FOLLY = new BoozeItem(BnCFluids.SALTY_FOLLY, new Item.Properties()
+    public static final Item SALTY_FOLLY = new BoozeItem(() -> BnCFluids.SALTY_FOLLY, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.SALTY_FOLLY));
-    public static final Item STEEL_TOE_STOUT = new BoozeItem(BnCFluids.STEEL_TOE_STOUT, new Item.Properties()
+    public static final Item STEEL_TOE_STOUT = new BoozeItem(() -> BnCFluids.STEEL_TOE_STOUT, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.STEEL_TOE_STOUT));
-    public static final Item GLITTERING_GRENADINE = new BoozeItem(BnCFluids.GLITTERING_GRENADINE, new Item.Properties()
+    public static final Item GLITTERING_GRENADINE = new BoozeItem(() -> BnCFluids.GLITTERING_GRENADINE, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.GLITTERING_GRENADINE));
-    public static final Item BLOODY_MARY = new BoozeItem(BnCFluids.BLOODY_MARY,  new Item.Properties()
+    public static final Item BLOODY_MARY = new BoozeItem(() -> BnCFluids.BLOODY_MARY,  new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.BLOODY_MARY));
-    public static final Item RED_RUM = new BoozeItem(BnCFluids.RED_RUM, new Item.Properties()
+    public static final Item RED_RUM = new BoozeItem(() -> BnCFluids.RED_RUM, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.RED_RUM));
-    public static final Item WITHERING_DROSS = new BoozeItem(BnCFluids.WITHERING_DROSS, new Item.Properties()
+    public static final Item WITHERING_DROSS = new BoozeItem(() -> BnCFluids.WITHERING_DROSS, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.WITHERING_DROSS));
-    public static final Item DREAD_NOG = new DreadNogItem(BnCFluids.DREAD_NOG, new Item.Properties()
+    public static final Item DREAD_NOG = new DreadNogItem(() -> BnCFluids.DREAD_NOG, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.DREAD_NOG));
 
-    public static final Item KOMBUCHA = new BoozeItem(BnCFluids.KOMBUCHA, new Item.Properties()
+    public static final Item KOMBUCHA = new BoozeItem(() -> BnCFluids.KOMBUCHA, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.KOMBUCHA));
 
     public static final Item KIMCHI = new ConsumableItem(new Item.Properties().food(BnCFoods.KIMCHI));

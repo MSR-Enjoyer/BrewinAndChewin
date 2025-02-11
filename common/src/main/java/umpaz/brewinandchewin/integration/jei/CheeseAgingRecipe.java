@@ -14,19 +14,18 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public class CheeseAgingRecipe implements Recipe<RecipeInput> {
+    private final Item before;
+    private final Item after;
 
-   Item before;
-   Item after;
+    public CheeseAgingRecipe(Item before, Item after) {
+        this.before = before;
+        this.after = after;
+    }
 
-   public CheeseAgingRecipe( Item before, Item after ) {
-      this.before = before;
-      this.after = after;
-   }
-
-   @Override
-   public boolean matches( RecipeInput recipeWrapper, Level level ) {
-      return false;
-   }
+    @Override
+    public boolean matches(RecipeInput recipeWrapper, Level level) {
+        return false;
+    }
 
     @Override
     public ItemStack assemble(RecipeInput input, HolderLookup.Provider registries) {
@@ -34,14 +33,9 @@ public class CheeseAgingRecipe implements Recipe<RecipeInput> {
     }
 
     @Override
-   public ItemStack assemble( RecipeInput recipeWrapper, RegistryAccess registryAccess ) {
-      return null;
-   }
-
-   @Override
-   public boolean canCraftInDimensions( int i, int i1 ) {
-      return false;
-   }
+    public boolean canCraftInDimensions(int i, int i1) {
+        return false;
+    }
 
     @Override
     public ItemStack getResultItem(HolderLookup.Provider registries) {
@@ -49,24 +43,19 @@ public class CheeseAgingRecipe implements Recipe<RecipeInput> {
     }
 
     @Override
-   public NonNullList<Ingredient> getIngredients() {
-      NonNullList<Ingredient> retVal = NonNullList.create();
-      retVal.add(Ingredient.of(this.before));
-      return retVal;
-   }
+    public NonNullList<Ingredient> getIngredients() {
+        NonNullList<Ingredient> retVal = NonNullList.create();
+        retVal.add(Ingredient.of(this.before));
+        return retVal;
+    }
 
-   @Override
-   public ResourceLocation getId() {
-      return null;
-   }
+    @Override
+    public RecipeSerializer<?> getSerializer() {
+        return null;
+    }
 
-   @Override
-   public RecipeSerializer<?> getSerializer() {
-      return null;
-   }
-
-   @Override
-   public RecipeType<?> getType() {
-      return null;
-   }
+    @Override
+    public RecipeType<?> getType() {
+        return null;
+    }
 }

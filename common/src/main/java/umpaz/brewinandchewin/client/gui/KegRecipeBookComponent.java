@@ -6,22 +6,21 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.KegStackedContents;
 import umpaz.brewinandchewin.client.utility.BnCFluidItemDisplays;
-import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.common.crafting.FluidIngredientWithAmount;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
@@ -31,9 +30,8 @@ import umpaz.brewinandchewin.common.mixin.client.RecipeBookComponentAccessor;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.common.utility.BnCTextUtils;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+import umpaz.brewinandchewin.common.utility.FluidUnit;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,7 +70,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
         return ghostRecipe.getRecipe();
     }
 
-    @Nonnull
+    @NotNull
     protected Component getRecipeFilterName() {
         return FILTER_NAME;
     }
@@ -90,7 +88,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                     return;
                 List<AbstractedFluidStack> ingredients = ingredient.get().ingredient().displayStacks();
                 AbstractedFluidStack fluidStack = ingredients.get(Mth.floor(((GhostRecipeAccessor)ghostRecipe).brewinandchewin$getTime() / 30.0F) % ingredients.size());
-                if (!kegMenu.kegTank.getFluid().getFluid().isSame(fluidStack.fluid()))
+                if (!kegMenu.kegTank.getAbstractedFluid().fluid().isSame(fluidStack.fluid()))
                     renderTankTooltip(gui, renderX, renderY, mouseX, mouseY, fluidStack);
             }
         }
@@ -138,44 +136,45 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                 if (fluidIngredient.isPresent() && !fluidIngredient.get().ingredient().displayStacks().isEmpty()) {
                     var ingredients = fluidIngredient.get().ingredient().displayStacks();
                     AbstractedFluidStack fluidStack = ingredients.get(Mth.floor(((GhostRecipeAccessor)ghostRecipe).brewinandchewin$getTime() / 30.0F) % ingredients.size());
-                    if (!kegMenu.kegTank.isEmpty() || fluidStack != null && !kegMenu.kegTank.getFluid().getFluid().isSame(fluidStack.fluid())) {
-                        if (fluidStack != null && BnCConfiguration.RENDER_FLUID_IN_KEG.get()) {
-                            IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(fluidStack.fluid());
-                            ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(fluidStack);
-                            if (stillTexture != null) {
-                                TextureAtlasSprite sprite =
-                                        this.minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture);
-                                int tintColor = fluidTypeExtensions.getTintColor(fluidStack);
-
-                                float alpha = ((tintColor >> 24) & 0xFF) / 255f / 3f;
-                                float red = ((tintColor >> 16) & 0xFF) / 255f;
-                                float green = ((tintColor >> 8) & 0xFF) / 255f;
-                                float blue = (tintColor & 0xFF) / 255f;
-
-                                float capacity = (float) fermentingRecipe.getFluidIngredient().getAmount() / kegMenu.kegTank.getCapacity();
-                                if (capacity > 0.57F) {
-                                    int y1 = topPos + 19 + (int) (12 * (1 - ((capacity - 0.57F) / .43F)));
-                                    int y2 = topPos + 19 + 12;
-                                    float topCapacity = (capacity - 0.57F) / 0.43F;
-                                    float vDistance = sprite.getV1() - sprite.getV0();
-                                    float v0 = sprite.getV0() + (0.25F * vDistance) + (0.75F * vDistance * (1 - topCapacity));
-                                    gui.innerBlit(sprite.atlasLocation(), leftPos + 120, leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
-                                    gui.innerBlit(sprite.atlasLocation(), leftPos + 120 + 16, leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
-                                }
-
-                                int y1 = topPos + 31 + (int) (16 * (1 - Math.min(1, (capacity / .57F))));
-                                int y2 = topPos + 31 + 16;
-                                float vDistance = sprite.getV1() - sprite.getV0();
-                                float v0 = sprite.getV0() + (vDistance * (1 - Math.min(1, (capacity / .57F))));
-                                gui.innerBlit(sprite.atlasLocation(), leftPos + 120, leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
-                                gui.innerBlit(sprite.atlasLocation(), leftPos + 120 + 16, leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
-                            }
+                    if (!kegMenu.kegTank.isEmpty() || fluidStack != null && !kegMenu.kegTank.getAbstractedFluid().fluid().isSame(fluidStack.fluid())) {
+                        if (fluidStack != null && BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg()) {
+                            // FIXME: Platform Fluid Display
+//                            IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(fluidStack.fluid());
+//                            ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(fluidStack);
+//                            if (stillTexture != null) {
+//                                TextureAtlasSprite sprite =
+//                                        this.minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture);
+//                                int tintColor = fluidTypeExtensions.getTintColor(fluidStack);
+//
+//                                float alpha = ((tintColor >> 24) & 0xFF) / 255f / 3f;
+//                                float red = ((tintColor >> 16) & 0xFF) / 255f;
+//                                float green = ((tintColor >> 8) & 0xFF) / 255f;
+//                                float blue = (tintColor & 0xFF) / 255f;
+//
+//                                float capacity = (float) fermentingRecipe.getFluidIngredient().getAmount() / kegMenu.kegTank.getCapacity();
+//                                if (capacity > 0.57F) {
+//                                    int y1 = topPos + 19 + (int) (12 * (1 - ((capacity - 0.57F) / .43F)));
+//                                    int y2 = topPos + 19 + 12;
+//                                    float topCapacity = (capacity - 0.57F) / 0.43F;
+//                                    float vDistance = sprite.getV1() - sprite.getV0();
+//                                    float v0 = sprite.getV0() + (0.25F * vDistance) + (0.75F * vDistance * (1 - topCapacity));
+//                                    gui.innerBlit(sprite.atlasLocation(), leftPos + 120, leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
+//                                    gui.innerBlit(sprite.atlasLocation(), leftPos + 120 + 16, leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
+//                                }
+//
+//                                int y1 = topPos + 31 + (int) (16 * (1 - Math.min(1, (capacity / .57F))));
+//                                int y2 = topPos + 31 + 16;
+//                                float vDistance = sprite.getV1() - sprite.getV0();
+//                                float v0 = sprite.getV0() + (vDistance * (1 - Math.min(1, (capacity / .57F))));
+//                                gui.innerBlit(sprite.atlasLocation(), leftPos + 120, leftPos + 120 + 16, y1, y2, 0, sprite.getU0(), sprite.getU1(), v0, sprite.getV1(), red, green, blue, alpha);
+//                                gui.innerBlit(sprite.atlasLocation(), leftPos + 120 + 16, leftPos + 120 + 16 + 8, y1, y2, 0, sprite.getU0(), sprite.getU0() + 0.5F * (sprite.getU1() - sprite.getU0()), v0, sprite.getV1(), red, green, blue, alpha);
+//                            }
                         }
                         gui.fill(leftPos + 120, topPos + 19, leftPos + 120 + 16 + 8, topPos + 31 + 16, 822018048);
 
                         if (fluidStack != null) {
                             ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
-                            int pourCount = Math.min(fermentingRecipe.getFluidIngredient().get().amount(), kegMenu.kegTank.getCapacity()) / 250;
+                            int pourCount = (int) (Math.min(fermentingRecipe.getFluidIngredient().get().amount(), kegMenu.kegTank.getFluidCapacity()) / FluidUnit.convert(250L, FluidUnit.MILLIBUCKETS, FluidUnit.getLoaderUnit()));
                             itemDisplay.setCount(pourCount);
                             if (!itemDisplay.isEmpty()) {
                                 int itemX = leftPos + 124;
@@ -198,7 +197,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
     }
 
     private void renderTemperatureTooltip(GuiGraphics gui, int renderX, int renderY, int mouseX, int mouseY) {
-        if (isHovering(34, 54, 43, 5, mouseX - renderX, mouseY - renderY) && menu instanceof KegMenu kegMenu && getGhostRecipe() instanceof KegFermentingRecipe fermentingRecipe && !KegBlockEntity.isValidTemp(kegMenu.getKegTemperature(), fermentingRecipe.getTemperature())) {
+        if (isHovering(34, 54, 43, 5, mouseX - renderX, mouseY - renderY) && menu instanceof KegMenu kegMenu && getGhostRecipe().value() instanceof KegFermentingRecipe fermentingRecipe && !KegBlockEntity.isValidTemp(kegMenu.getKegTemperature(), fermentingRecipe.getTemperature())) {
             MutableComponent key = switch (fermentingRecipe.getTemperature()) {
                 case 1 -> BnCTextUtils.getTranslation("container.keg.cold");
                 case 2 -> BnCTextUtils.getTranslation("container.keg.chilly");

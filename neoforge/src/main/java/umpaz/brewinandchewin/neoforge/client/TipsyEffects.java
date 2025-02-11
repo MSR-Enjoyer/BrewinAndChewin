@@ -12,6 +12,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientChatReceivedEvent;
 import net.neoforged.neoforge.client.event.RenderNameTagEvent;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.client.BrewinAndChewinClient;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 import umpaz.brewinandchewin.neoforge.client.integration.IntoxicationAppleSkinCompatNeoForge;
@@ -25,10 +26,10 @@ import java.util.stream.Collectors;
 public class TipsyEffects {
     @SubscribeEvent
     public static void whatsYourName(RenderNameTagEvent event) {
-        if (BnCConfiguration.NAME_SCRAMBLE.get())
+        if (BnCConfiguration.CLIENT_CONFIG.get().scrambleName())
             if (Minecraft.getInstance().player != null) {
-                if (Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.LEVEL_NAME_SCRAMBLE.get()) {
-                    int amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() - BnCConfiguration.LEVEL_NAME_SCRAMBLE.get();
+                if (Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelNameScramble()) {
+                    int amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() - BnCConfiguration.COMMON_CONFIG.get().root().levelNameScramble();
                     StringBuilder textBuilder = new StringBuilder(event.getContent().getString());
                     RandomSource random = Minecraft.getInstance().player.getRandom();
                     int amount = (int) ((amplifier + 1) * ((textBuilder.length()) / 10f)) + random.nextInt(5);
@@ -61,14 +62,14 @@ public class TipsyEffects {
     // TODO: Ditch the Forge event so we can use the MODIFIED chat trust level.
     @SubscribeEvent
     public static void iCanHear(ClientChatReceivedEvent.Player event) {
-        if (BnCConfiguration.CHAT_SCRAMBLE.get()) {
+        if (BnCConfiguration.CLIENT_CONFIG.get().scrambleChat()) {
             Player player = Minecraft.getInstance().level.getPlayerByUUID(event.getSender());
             if (player != null)
-                if (player.hasEffect(BnCEffects.TIPSY) && player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.LEVEL_CHAT_SCRAMBLE.get()) {
+                if (player.hasEffect(BnCEffects.TIPSY) && player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble()) {
                     StringBuilder textBuilder = new StringBuilder(event.getMessage().getString());
                     int afterPlayerName = (textBuilder.indexOf("[") == 0 || textBuilder.indexOf("<") == 0) ? textBuilder.indexOf(" ") + 1 : 0;
 
-                    int amplifier = player.getEffect(BnCEffects.TIPSY).getAmplifier() - BnCConfiguration.LEVEL_CHAT_SCRAMBLE.get();
+                    int amplifier = player.getEffect(BnCEffects.TIPSY).getAmplifier() - BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble();
                     int amnt = (int) ((amplifier + 1) * ((textBuilder.length() - afterPlayerName) / 10f)) + player.getRandom().nextInt(5);
                     for (int i = 0; i < amnt; i++) {
                         // pick a random word

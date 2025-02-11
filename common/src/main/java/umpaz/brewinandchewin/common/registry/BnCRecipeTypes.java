@@ -23,6 +23,6 @@ public class BnCRecipeTypes {
 
     public static void registerAll() {
         Registry.register(BuiltInRegistries.RECIPE_TYPE, BrewinAndChewin.asResource("fermenting"), FERMENTING);
-        Registry.register(BuiltInRegistries.RECIPE_TYPE, BrewinAndChewin.asResource("fermenting"), KEG_POURING);
+        Registry.register(BuiltInRegistries.RECIPE_TYPE, BrewinAndChewin.asResource("keg_pouring"), KEG_POURING);
     }
 }

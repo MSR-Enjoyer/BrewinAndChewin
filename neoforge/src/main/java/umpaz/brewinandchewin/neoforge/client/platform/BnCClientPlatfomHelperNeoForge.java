@@ -12,7 +12,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import umpaz.brewinandchewin.data.model.CoasterWrappedModel;
+import umpaz.brewinandchewin.neoforge.client.model.CoasterWrappedModel;
 import umpaz.brewinandchewin.platform.client.BnCClientPlatformHelper;
 
 public class BnCClientPlatfomHelperNeoForge implements BnCClientPlatformHelper {

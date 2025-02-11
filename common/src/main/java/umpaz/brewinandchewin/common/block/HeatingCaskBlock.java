@@ -22,9 +22,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
-
-import javax.annotation.Nullable;
 
 public class HeatingCaskBlock extends Block {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;

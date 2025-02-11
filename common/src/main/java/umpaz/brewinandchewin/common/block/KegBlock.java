@@ -30,13 +30,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedItemHandler;
 import umpaz.brewinandchewin.common.registry.BnCBlockEntityTypes;
-import vectorwing.farmersdelight.common.utility.MathUtils;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -161,7 +160,8 @@ public class KegBlock extends BaseEntityBlock implements SimpleWaterloggedBlock 
         if (tileEntity instanceof KegBlockEntity) {
             AbstractedItemHandler inventory = ((KegBlockEntity) tileEntity).getInventory();
             // FIXME: Use our own helper method.
-            return MathUtils.calcRedstoneFromItemHandler(inventory);
+//            return MathUtils.calcRedstoneFromItemHandler(inventory);
+            return 15;
         }
         return 0;
     }

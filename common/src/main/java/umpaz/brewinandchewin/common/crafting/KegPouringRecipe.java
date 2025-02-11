@@ -16,6 +16,7 @@ import umpaz.brewinandchewin.common.registry.BnCItems;
 import umpaz.brewinandchewin.common.registry.BnCRecipeSerializers;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+import umpaz.brewinandchewin.common.utility.FluidUnit;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
 import java.util.Objects;
@@ -25,16 +26,17 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
     private final AbstractedFluidStack fluid;
     private final Optional<ItemStack> container;
     private final ItemStack output;
+    private final Optional<FluidUnit> unit;
     private final boolean strict;
     private final boolean filling;
 
-    public KegPouringRecipe(AbstractedFluidStack fluid, Optional<ItemStack> container, ItemStack output, boolean strict, boolean filling) {
+    public KegPouringRecipe(AbstractedFluidStack fluid, Optional<ItemStack> container, ItemStack output, Optional<FluidUnit> unit, boolean strict, boolean filling) {
         if (container.isEmpty() && BrewinAndChewin.getHelper().getCraftingRemainingItem(output).isEmpty())
             throw new UnsupportedOperationException("'container' field must be specified as the output item stack doesn't have a crafting remainder item.");
-
         this.fluid = fluid;
         this.container = container;
         this.output = output;
+        this.unit = unit;
         this.strict = strict;
         this.filling = filling;
     }
@@ -63,6 +65,14 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
 
     public ItemStack getContainer(){
         return this.container.orElse(BrewinAndChewin.getHelper().getCraftingRemainingItem(output));
+    }
+
+    public Optional<FluidUnit> getRawUnit() {
+        return unit;
+    }
+
+    public FluidUnit getUnit() {
+        return unit.orElse(FluidUnit.getLoaderUnit());
     }
 
     public Optional<ItemStack> getRawContainer(){
@@ -133,6 +143,7 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
                 AbstractedFluidStack.CODEC.fieldOf("fluid").forGetter(KegPouringRecipe::getRawFluid),
                 ItemStack.CODEC.optionalFieldOf("container").forGetter(KegPouringRecipe::getRawContainer),
                 ItemStack.CODEC.fieldOf("output").forGetter(KegPouringRecipe::getOutput),
+                FluidUnit.CODEC.optionalFieldOf("unit").forGetter(KegPouringRecipe::getRawUnit),
                 Codec.BOOL.optionalFieldOf("strict", false).forGetter(KegPouringRecipe::isStrict),
                 Codec.BOOL.optionalFieldOf("can_fill", true).forGetter(KegPouringRecipe::canFill)
         ).apply(inst, KegPouringRecipe::new));
@@ -153,6 +164,7 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
             AbstractedFluidStack.STREAM_CODEC.encode(buf, recipe.getRawFluid());
             ByteBufCodecs.optional(ItemStack.STREAM_CODEC).encode(buf, recipe.getRawContainer());
             ItemStack.STREAM_CODEC.encode(buf, recipe.getOutput());
+            ByteBufCodecs.optional(FluidUnit.STREAM_CODEC).encode(buf, recipe.getRawUnit());
             ByteBufCodecs.BOOL.encode(buf, recipe.isStrict());
             ByteBufCodecs.BOOL.encode(buf, recipe.canFill());
         }
@@ -161,10 +173,11 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
             AbstractedFluidStack fluid = AbstractedFluidStack.STREAM_CODEC.decode(buf);
             Optional<ItemStack> container = ByteBufCodecs.optional(ItemStack.STREAM_CODEC).decode(buf);
             ItemStack output = ItemStack.STREAM_CODEC.decode(buf);
+            Optional<FluidUnit> unit = ByteBufCodecs.optional(FluidUnit.STREAM_CODEC).decode(buf);
             boolean strict = buf.readBoolean();
             boolean canFill = buf.readBoolean();
 
-            return new KegPouringRecipe(fluid, container, output, strict, canFill);
+            return new KegPouringRecipe(fluid, container, output, unit, strict, canFill);
         }
     }
 }

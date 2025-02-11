@@ -14,9 +14,6 @@ repositories {
         name = "TerraformersMC"
         url = uri("https://maven.terraformersmc.com/")
     }
-}
-
-repositories {
     maven("https://repo.greenhouse.house/releases/") {
         name = "Greenhouse Maven"
     }
@@ -31,6 +28,9 @@ repositories {
             excludeGroup("io.github.fabricators_of_create")
         }
     }
+    maven("https://maven.shedaniel.me/") {
+        name = "Shedaniel"
+    }
 }
 
 dependencies {
@@ -41,6 +41,11 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
     modLocalRuntime("com.terraformersmc:modmenu:${Versions.MOD_MENU}")
 
+    modApi("house.greenhouse:greenhouseconfig:${Versions.GREENHOUSE_CONFIG}-fabric")
+    include("house.greenhouse:greenhouseconfig:${Versions.GREENHOUSE_CONFIG}-fabric")
+    api("house.greenhouse:greenhouseconfig_toml:${Versions.GREENHOUSE_CONFIG_TOML}")
+    include("house.greenhouse:greenhouseconfig_toml:${Versions.GREENHOUSE_CONFIG_TOML}")
+
     modImplementation("vectorwing:FarmersDelight:${Versions.FARMERS_DELIGHT_REFABRICATED}") {
         exclude(group = "net.fabricmc")
     }
@@ -50,6 +55,12 @@ dependencies {
 
     modCompileOnly("squeek.appleskin:appleskin-fabric:${Versions.APPLESKIN}")
     modLocalRuntime("squeek.appleskin:appleskin-fabric:${Versions.APPLESKIN}")
+    modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:${Versions.CLOTH_CONFIG}") {
+        exclude(group = "net.fabricmc.fabric-api")
+    }
+    modLocalRuntime("me.shedaniel.cloth:cloth-config-fabric:${Versions.CLOTH_CONFIG}") {
+        exclude(group = "net.fabricmc.fabric-api")
+    }
 }
 
 loom {
@@ -69,6 +80,7 @@ loom {
         named("client") {
             client()
             configName = "Fabric Client"
+            runDir = "./runs/client"
             setSource(sourceSets["test"])
             ideConfigGenerated(true)
             vmArgs("-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true")
@@ -76,19 +88,10 @@ loom {
         named("server") {
             server()
             configName = "Fabric Server"
+            runDir = "./runs/server"
             setSource(sourceSets["test"])
             ideConfigGenerated(true)
             vmArgs("-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true")
-        }
-        register("datagen") {
-            server()
-            configName = "Fabric Datagen"
-            setSource(sourceSets["test"])
-            ideConfigGenerated(true)
-            vmArg("-Dfabric-api.datagen")
-            vmArg("-Dfabric-api.datagen.output-dir=${file("../common/src/generated/resources")}")
-            vmArg("-Dfabric-api.datagen.modid=${Properties.MOD_ID}")
-            runDir("build/datagen")
         }
     }
 }

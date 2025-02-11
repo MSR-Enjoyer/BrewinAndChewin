@@ -7,6 +7,6 @@ import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 public class BrewinAndChewinFabricPre implements PreLaunchEntrypoint {
     @Override
     public void onPreLaunch() {
-        BrewinAndChewin.setHelper(new BnCPlatformHelperFabric());
+        BrewinAndChewin.init(new BnCPlatformHelperFabric());
     }
 }

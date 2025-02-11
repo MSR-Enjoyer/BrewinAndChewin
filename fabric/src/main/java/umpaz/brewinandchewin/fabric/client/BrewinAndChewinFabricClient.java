@@ -8,7 +8,7 @@ import umpaz.brewinandchewin.fabric.client.platform.BnCClientPlatformHelperFabri
 public class BrewinAndChewinFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        BrewinAndChewinClient.setHelper(new BnCClientPlatformHelperFabric());
+        BrewinAndChewinClient.init(new BnCClientPlatformHelperFabric());
         BrewinAndChewin.isClient = true;
     }
 }

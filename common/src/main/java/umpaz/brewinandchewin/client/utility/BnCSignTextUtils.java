@@ -15,17 +15,19 @@ public class BnCSignTextUtils {
 
     public static SignText signRenderer(SignText signText) {
         Player player = Minecraft.getInstance().player;
-        if (!BnCConfiguration.SIGN_SCRAMBLE.get() || player == null) {
+        if (!BnCConfiguration.CLIENT_CONFIG.get().scrambleSign() || player == null) {
             return signText;
         }
-        if (player.hasEffect(BnCEffects.TIPSY.get()) && player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() >= BnCConfiguration.LEVEL_SIGN_SCRAMBLE.get()) {
+        int minScrambleAmplifier = BnCConfiguration.COMMON_CONFIG.get().root().levelSignScramble();
+
+        if (player.hasEffect(BnCEffects.TIPSY) && player.getEffect(BnCEffects.TIPSY).getAmplifier() >= minScrambleAmplifier) {
             Random random = new Random(0);
             for (int i = 0; i < 4; i++) {
                 Component line = signText.getMessage(i, false);
                 if (line.getString().length() <= 1) continue;
                 StringBuilder text = new StringBuilder(line.getString());
-                int amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY.get()).getAmplifier() - BnCConfiguration.LEVEL_SIGN_SCRAMBLE.get();
-                int amount = (int) ((amplifier + 1) * (text.length() / (10f - BnCConfiguration.LEVEL_SIGN_SCRAMBLE.get()))) + random.nextInt(5);
+                int amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() - minScrambleAmplifier;
+                int amount = (int) ((amplifier + 1) * (text.length() / (10f - minScrambleAmplifier))) + random.nextInt(5);
                 for (int j = 0; j < amount; j++) {
                     // pick a random word
                     String[] words = text.toString().split(" ");

@@ -4,8 +4,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
-
 public interface AbstractedItemHandler {
     int getSlotCount();
     ItemStack getStackInSlot(int slot);
@@ -15,7 +13,7 @@ public interface AbstractedItemHandler {
 
     ItemStack extractItem(int slot, int amount, boolean simulate);
 
-    boolean isItemValid(int slot, @Nonnull ItemStack stack);
+    boolean isItemValid(int slot, ItemStack stack);
     int getSlotLimit(int slot);
 
     default void readFromNbt(CompoundTag tag, HolderLookup.Provider provider) {}

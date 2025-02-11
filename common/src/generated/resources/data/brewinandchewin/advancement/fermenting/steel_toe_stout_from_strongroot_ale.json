@@ -1,0 +1,20 @@
+{
+  "criteria": {
+    "has_strongroot_ale": {
+      "conditions": {
+        "items": [
+          {
+            "items": "brewinandchewin:strongroot_ale"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_strongroot_ale"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

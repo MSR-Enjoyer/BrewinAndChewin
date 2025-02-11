@@ -28,7 +28,7 @@ public class KegItem extends BlockItem {
 
    @Override
    public int getBarWidth(ItemStack stack) {
-      return Math.min(1 + getServingCount(stack) / 77, 13);
+      return (int) Math.min(1 + getServingCount(stack) / 77, 13);
    }
 
    @Override
@@ -42,7 +42,7 @@ public class KegItem extends BlockItem {
       return Optional.of(new KegTooltip.KegTooltipComponent(mealStack));
    }
 
-   private static int getServingCount( ItemStack stack ) {
+   private static long getServingCount( ItemStack stack ) {
       CustomData nbt = stack.get(DataComponents.BLOCK_ENTITY_DATA);
       if (nbt == null) {
          return 0;

@@ -43,6 +43,17 @@ neoForge {
             sourceSet = sourceSets["test"]
             jvmArguments.set(setOf("-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true"))
         }
+        create("data") {
+            data()
+            ideName = "NeoForge Datagen (:${project.name})"
+            gameDirectory.set(file("runs/datagen"))
+            programArguments.addAll(
+                "--mod", Properties.MOD_ID,
+                "--output", file("../common/src/generated/resources").absolutePath,
+                "--all"
+            )
+            sourceSet = sourceSets["test"]
+        }
     }
 
     mods {
@@ -54,6 +65,11 @@ neoForge {
 }
 
 dependencies {
+    api("house.greenhouse:greenhouseconfig:${Versions.GREENHOUSE_CONFIG}-neoforge")
+    jarJar("house.greenhouse:greenhouseconfig:${Versions.GREENHOUSE_CONFIG}-neoforge")
+    api("house.greenhouse:greenhouseconfig_toml:${Versions.GREENHOUSE_CONFIG_TOML}")
+    jarJar("house.greenhouse:greenhouseconfig_toml:${Versions.GREENHOUSE_CONFIG_TOML}")
+
     implementation("maven.modrinth:farmers-delight:${Versions.FARMERS_DELIGHT}")
 
     compileOnly("mezz.jei:jei-${Versions.MINECRAFT}-neoforge-api:${Versions.JEI}")

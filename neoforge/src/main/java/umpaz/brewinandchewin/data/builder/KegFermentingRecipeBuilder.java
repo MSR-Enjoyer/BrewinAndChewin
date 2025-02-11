@@ -26,15 +26,18 @@ import umpaz.brewinandchewin.common.crafting.FluidIngredientWithAmount;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.client.recipebook.FermentingBookCategory;
+import umpaz.brewinandchewin.common.utility.FluidUnit;
 import umpaz.brewinandchewin.neoforge.utility.KegCompatibleFluidIngredients;
 
 import java.util.Optional;
 
 public class KegFermentingRecipeBuilder {
-    private final NonNullList<Ingredient> ingredients = NonNullList.createWithCapacity(4);
+    private int ingredientCount = 0;
+    private final NonNullList<Ingredient> ingredients = NonNullList.withSize(4, Ingredient.EMPTY);
     private final FermentingBookCategory tab;
 
     private Optional<FluidIngredientWithAmount> fluidIngredient = Optional.empty();
+    private Optional<FluidUnit> unit = Optional.empty();
     private Either<AbstractedFluidStack, ItemStack> result = null;
 
     private final int fermentingTime;
@@ -76,12 +79,25 @@ public class KegFermentingRecipeBuilder {
         return i;
     }
 
+    /**
+     * Used for multi-loader implementation to make sure you can have just the one recipe.
+     *
+     * @param unit The unit to use for this fluid.
+     */
+    public KegFermentingRecipeBuilder setFluidUnit(FluidUnit unit) {
+        if (result.left().isPresent() && result.left().get().unit() != unit) {
+            throw new UnsupportedOperationException("You need to set your fluid unit after your result.");
+        }
+        this.unit = Optional.of(unit);
+        return this;
+    }
+
     private void setResult(Fluid fluid) {
         result = Either.left(new AbstractedFluidStack(fluid, amount));
     }
 
     private void setResult(FluidStack fluid) {
-        result = Either.left(new AbstractedFluidStack(fluid.getFluid(), fluid.getAmount(), fluid.getComponents(), fluid));
+        result = Either.left(new AbstractedFluidStack(fluid.getFluid(), fluid.getAmount(), fluid.getComponents(), unit.orElse(FluidUnit.getLoaderUnit()), fluid));
     }
 
     private void setResult(Item item) {
@@ -102,9 +118,7 @@ public class KegFermentingRecipeBuilder {
     }
 
     public KegFermentingRecipeBuilder addIngredient(ItemLike itemIn, int quantity) {
-        for (int i = 0; i < quantity; ++i) {
-            addIngredient(Ingredient.of(itemIn));
-        }
+        addIngredient(Ingredient.of(itemIn), quantity);
         return this;
     }
 
@@ -114,7 +128,8 @@ public class KegFermentingRecipeBuilder {
 
     public KegFermentingRecipeBuilder addIngredient(Ingredient ingredientIn, int quantity) {
         for (int i = 0; i < quantity; ++i) {
-            ingredients.add(ingredientIn);
+            ingredients.set(ingredientCount, ingredientIn);
+            ++ingredientCount;
         }
         return this;
     }
@@ -193,7 +208,7 @@ public class KegFermentingRecipeBuilder {
                     .requirements(AdvancementRequirements.Strategy.OR);
             advancementId = id.withPath(path -> "recipes/" + path);
         }
-        consumerIn.accept(id, new KegFermentingRecipe(ingredients, tab, fluidIngredient, result, experience, fermentingTime, temperature), advancementId == null ? null : builtAdvancement);
+        consumerIn.accept(id, new KegFermentingRecipe(ingredients, tab, fluidIngredient, unit, result, experience, fermentingTime, temperature), advancementId == null ? null : builtAdvancement);
     }
 
 }

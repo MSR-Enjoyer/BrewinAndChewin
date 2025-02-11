@@ -8,7 +8,6 @@ import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IClickableIngredient;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
@@ -22,12 +21,9 @@ import umpaz.brewinandchewin.integration.jei.category.CheeseRecipeCategory;
 import umpaz.brewinandchewin.integration.jei.category.FermentingRecipeCategory;
 import umpaz.brewinandchewin.integration.jei.transfer.FermentingTransfer;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
 @JeiPlugin
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
 @SuppressWarnings("unused")
 public class JEIPlugin implements IModPlugin {
     private static final ResourceLocation ID = BrewinAndChewin.asResource("jei_plugin");
