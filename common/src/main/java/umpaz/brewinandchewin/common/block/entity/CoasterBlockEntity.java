@@ -36,7 +36,7 @@ public class CoasterBlockEntity extends SyncedBlockEntity {
    }
 
     public ItemInteractionResult useItemOn(ItemStack stack, Level level, BlockState state, BlockPos pos, Player player, InteractionHand hand) {
-        if (state.getValue(CoasterBlock.INVISIBLE) && state.is(BnCBlocks.COASTER)) {
+        if (state.getValue(CoasterBlock.INVISIBLE) && stack.is(BnCItems.COASTER)) {
             if (!player.getAbilities().instabuild)
                 stack.shrink(1);
             level.playSound(null, pos, SoundEvents.WOOL_PLACE, SoundSource.BLOCKS);
