@@ -12,6 +12,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
@@ -38,7 +39,7 @@ public class BnCHUDOverlays {
     private static float tipsyTransparencyModifier = 0.0F;
 
     public static void init(IEventBus modBus) {
-        modBus.addListener(BnCHUDOverlays::register);
+        modBus.addListener(EventPriority.LOW, BnCHUDOverlays::register);
         NeoForge.EVENT_BUS.addListener(BnCHUDOverlays::onRenderGuiOverlayPost);
     }
 
@@ -131,7 +132,7 @@ public class BnCHUDOverlays {
 
             float effectiveHungerOfBar = (float) player.getFoodData().getFoodLevel() / 2.0F - (float) i;
 
-            ResourceLocation texture = player.hasEffect(ModEffects.NOURISHMENT) ? NOURISHMENT_ICONS_TEXTURE : getIntoxicationSprite(effectiveHungerOfBar < 1.0F);
+            ResourceLocation texture = player.hasEffect(ModEffects.NOURISHMENT) ? NOURISHMENT_ICONS_TEXTURE : getIntoxicationSprite(effectiveHungerOfBar >= 0.5F && effectiveHungerOfBar < 1.0F);
 
             if (player.hasEffect(ModEffects.NOURISHMENT)) {
                 boolean isPlayerHealingWithSaturationAndNourishment =
@@ -144,17 +145,17 @@ public class BnCHUDOverlays {
 
                 if (effectiveHungerOfBar >= 1.0F) {
                     graphics.blit(texture, x, y, 18 + naturalHealingOffset, 0, 9, 9);
-                } else if ((double) effectiveHungerOfBar >= (double) 0.5F) {
+                } else if (effectiveHungerOfBar >= 0.5F) {
                     graphics.blit(texture, x, y, 9 + naturalHealingOffset, 0, 9, 9);
                 }
-                return;
+                continue;
             }
 
-            graphics.blit(FOOD_EMPTY_INTOXICATION_TEXTURE, x, y, 0, 0, 9, 9);
+            graphics.blitSprite(FOOD_EMPTY_INTOXICATION_TEXTURE, x, y, 9, 9);
 
             if (effectiveHungerOfBar >= 1.0F) {
                 graphics.blitSprite(texture, x, y, 9, 9);
-            } else if ((double) effectiveHungerOfBar >= (double) 0.5F) {
+            } else if (effectiveHungerOfBar >= 0.5F) {
                 graphics.blitSprite(texture, x, y, 9, 9);
             }
         }
