@@ -7,7 +7,7 @@ import umpaz.brewinandchewin.common.registry.BnCEffects;
 public class IntoxicationAppleSkinCompatFabric {
     public static void init() {
         FoodValuesEvent.EVENT.register(event -> {
-            if (event.player.hasEffect(BnCEffects.INTOXICATION)) {
+            if (event.player != null && event.player.hasEffect(BnCEffects.INTOXICATION)) {
                 event.modifiedFoodComponent = new FoodProperties(
                         event.modifiedFoodComponent.nutrition(),
                         0.0F,
