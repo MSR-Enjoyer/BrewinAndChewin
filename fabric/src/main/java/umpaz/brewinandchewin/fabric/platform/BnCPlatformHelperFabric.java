@@ -34,6 +34,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.attachment.RagingAttachment;
 import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
@@ -255,5 +256,15 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     @Override
     public Object createLoaderFluidStack(AbstractedFluidStack abstracted) {
         return new AmountedFluidVariant(FluidVariant.of(abstracted.fluid(), abstracted.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY), abstracted.amount(), abstracted.unit());
+    }
+
+    @Override
+    public Fluid getMilkFluid() {
+        return BnCFluidsImpl.MILK;
+    }
+
+    @Override
+    public Fluid getFlowingMilkFluid() {
+        return BnCFluidsImpl.FLOWING_MILK;
     }
 }

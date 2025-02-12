@@ -5,7 +5,14 @@
       "minecraft:potion_contents": "minecraft:water"
     }
   },
-  "minecraft:milk": "farmersdelight:milk_bottle",
+  "minecraft:milk": {
+    "id": "farmersdelight:milk_bottle",
+    "optional": true
+  },
+  "brewinandchewin:milk": {
+    "id": "farmersdelight:milk_bottle",
+    "optional": true
+  },
   "brewinandchewin:honey": "minecraft:honey_bottle",
   "brewinandchewin:beer": "brewinandchewin:beer",
   "brewinandchewin:vodka": "brewinandchewin:vodka",

@@ -35,6 +35,7 @@ import umpaz.brewinandchewin.common.registry.BnCRecipeSerializers;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.fabric.fluid.BnCFluidVariantAttributeHandler;
 import umpaz.brewinandchewin.fabric.registry.BnCAttachments;
+import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
 import umpaz.brewinandchewin.fabric.registry.BnCLootModifiers;
 
 import java.util.Optional;
@@ -119,6 +120,8 @@ public class BrewinAndChewinFabric implements ModInitializer {
     }
 
     private static void registerFluidAttributeHandlers() {
+        FluidVariantAttributes.register(BnCFluidsImpl.MILK, BnCFluidVariantAttributeHandler.INSTANCE);
+        FluidVariantAttributes.register(BnCFluidsImpl.FLOWING_MILK, BnCFluidVariantAttributeHandler.INSTANCE);
         FluidVariantAttributes.register(BnCFluids.HONEY, BnCFluidVariantAttributeHandler.INSTANCE);
         FluidVariantAttributes.register(BnCFluids.FLOWING_HONEY, BnCFluidVariantAttributeHandler.INSTANCE);
 

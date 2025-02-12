@@ -71,9 +71,11 @@ public class KegPouringRecipes {
                 .setFluidUnit(FluidUnit.MILLIBUCKETS)
                 .build(consumer);
 
+        /* Separated into loader impl.
         KegPouringRecipeBuilder.kegPouringRecipe(NeoForgeMod.MILK.get(), 250, ModItems.MILK_BOTTLE.get())
                 .setFluidUnit(FluidUnit.MILLIBUCKETS)
                 .build(consumer);
+         */
         KegPouringRecipeBuilder.kegPouringRecipe(Fluids.WATER, 250, Items.POTION.getDefaultInstance(), true)
                 .setFluidUnit(FluidUnit.MILLIBUCKETS)
                 .withContainer(Items.GLASS_BOTTLE)
@@ -84,9 +86,11 @@ public class KegPouringRecipes {
         KegPouringRecipeBuilder.kegPouringRecipe(Fluids.WATER, 1000, Items.WATER_BUCKET)
                 .setFluidUnit(FluidUnit.MILLIBUCKETS)
                 .build(consumer);
+        /* Separated into loader impl.
         KegPouringRecipeBuilder.kegPouringRecipe(NeoForgeMod.MILK.get(), 1000, Items.MILK_BUCKET)
                 .setFluidUnit(FluidUnit.MILLIBUCKETS)
                 .build(consumer);
+         */
 
         KegPouringRecipeBuilder.kegPouringRecipe(BnCFluids.FLAXEN_CHEESE, 1000, BnCItems.UNRIPE_FLAXEN_CHEESE_WHEEL, false)
                 .setFluidUnit(FluidUnit.MILLIBUCKETS)

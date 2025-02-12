@@ -21,6 +21,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.attachment.RagingAttachment;
 import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
@@ -108,4 +110,7 @@ public interface BnCPlatformHelper {
     void setTipsyHeartsAttachment(LivingEntity entity, @Nullable TipsyHeartsAttachment value);
 
     Object createLoaderFluidStack(AbstractedFluidStack abstracted);
+
+    Fluid getMilkFluid();
+    Fluid getFlowingMilkFluid();
 }

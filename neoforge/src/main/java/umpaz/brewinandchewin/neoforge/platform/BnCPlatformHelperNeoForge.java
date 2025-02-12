@@ -22,8 +22,11 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.crafting.CompoundIngredient;
 import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
@@ -251,5 +254,15 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     @Override
     public Object createLoaderFluidStack(AbstractedFluidStack abstracted) {
         return new FluidStack(abstracted.fluid().builtInRegistryHolder(), (int) abstracted.unit().convertToLoader(abstracted.amount()), abstracted.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
+    }
+
+    @Override
+    public Fluid getMilkFluid() {
+        return NeoForgeMod.MILK.get();
+    }
+
+    @Override
+    public Fluid getFlowingMilkFluid() {
+        return NeoForgeMod.FLOWING_MILK.get();
     }
 }

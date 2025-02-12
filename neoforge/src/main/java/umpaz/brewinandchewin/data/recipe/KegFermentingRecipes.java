@@ -56,6 +56,7 @@ public class KegFermentingRecipes {
               .addIngredient(Items.SWEET_BERRIES)
               .unlockedByItems("has_tankard", BnCItems.TANKARD)
               .build(output);
+      /* Separated into loader impl.
       KegFermentingRecipeBuilder.kegFermentingRecipe(FermentingBookCategory.DRINKS, BnCFluids.EGG_GROG, 1000, NORMAL_FERMENTING, MEDIUM_EXP)
               .addFluidIngredient(NeoForgeMod.MILK.get(), 1000, FluidUnit.MILLIBUCKETS)
               .setFluidUnit(FluidUnit.MILLIBUCKETS)
@@ -64,6 +65,7 @@ public class KegFermentingRecipes {
               .addIngredient(Items.SUGAR)
               .unlockedByItems("has_tankard", BnCItems.TANKARD)
               .build(output);
+       */
       KegFermentingRecipeBuilder.kegFermentingRecipe(FermentingBookCategory.DRINKS, BnCFluids.STRONGROOT_ALE, 1000, FAST_FERMENTING, MEDIUM_EXP)
               .addFluidIngredient(BnCFluids.BEER, 1000, FluidUnit.MILLIBUCKETS)
               .setFluidUnit(FluidUnit.MILLIBUCKETS)
@@ -156,6 +158,7 @@ public class KegFermentingRecipes {
               .addIngredient(Items.BONE)
               .unlockedByItems("has_salty_folly", BnCItems.SALTY_FOLLY)
               .build(output);
+      /* Separated into loader impl.
       KegFermentingRecipeBuilder.kegFermentingRecipe(FermentingBookCategory.MEALS, BnCFluids.FLAXEN_CHEESE, 1000, NORMAL_FERMENTING, MEDIUM_EXP, 4)
               .addFluidIngredient(NeoForgeMod.MILK.get(), 1000, FluidUnit.MILLIBUCKETS)
               .setFluidUnit(FluidUnit.MILLIBUCKETS)
@@ -172,6 +175,7 @@ public class KegFermentingRecipes {
               .addIngredient(Items.SUGAR)
               .unlockedByItems("has_crimson_fungus", Items.CRIMSON_FUNGUS)
               .build(output);
+       */
 
 
       KegFermentingRecipeBuilder.kegFermentingRecipe(FermentingBookCategory.MEALS, BnCItems.JERKY, 3, NORMAL_FERMENTING, MEDIUM_EXP, 4)
@@ -205,6 +209,7 @@ public class KegFermentingRecipes {
               .unlockedByItems("has_sea_pickle", Items.SEA_PICKLE)
               .build(output);
 
+      /* Separated into loader impl.
       KegFermentingRecipeBuilder.kegFermentingRecipe(FermentingBookCategory.MEALS, BnCItems.COCOA_FUDGE, 1, NORMAL_FERMENTING, MEDIUM_EXP, 2)
               .addFluidIngredient(NeoForgeMod.MILK.get(), 500, FluidUnit.MILLIBUCKETS)
               .setFluidUnit(FluidUnit.MILLIBUCKETS)
@@ -213,6 +218,7 @@ public class KegFermentingRecipes {
               .addIngredient(Items.COCOA_BEANS)
               .unlockedByItems("has_cocoa_beans", Items.COCOA_BEANS)
               .build(output);
+       */
    }
 
 

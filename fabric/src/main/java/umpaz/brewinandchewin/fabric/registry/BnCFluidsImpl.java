@@ -1,11 +1,22 @@
 
 package umpaz.brewinandchewin.fabric.registry;
 
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.registry.BnCFluids;
 import umpaz.brewinandchewin.fabric.fluid.BnCFluidFabric;
 
 public class BnCFluidsImpl {
+    public static FlowingFluid MILK = new BnCFluidFabric.Source(() -> BnCFluidsImpl.FLOWING_MILK);
+    public static FlowingFluid FLOWING_MILK = new BnCFluidFabric.Flowing(() -> BnCFluidsImpl.MILK);
+
     public static void init() {
+        Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("milk"), MILK);
+        Registry.register(BuiltInRegistries.FLUID, BrewinAndChewin.asResource("flowing_milk"), FLOWING_MILK);
+
         BnCFluids.HONEY = new BnCFluidFabric.Source(() -> BnCFluids.FLOWING_HONEY);
         BnCFluids.FLOWING_HONEY = new BnCFluidFabric.Flowing(() -> BnCFluids.HONEY);
         BnCFluids.BEER = new BnCFluidFabric.Source(() -> BnCFluids.FLOWING_BEER);

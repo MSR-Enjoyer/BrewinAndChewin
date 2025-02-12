@@ -20,7 +20,7 @@ public class BnCFluidConstants {
     
     public static class Colors {
         public static final int DEFAULT = 0xFFFFFFFF;
-        
+
         public static final int BEER = 0xFFFBB117;
         public static final int VODKA = 0xFFE7FDF6;
         public static final int MEAD = 0xFFFFD32D;

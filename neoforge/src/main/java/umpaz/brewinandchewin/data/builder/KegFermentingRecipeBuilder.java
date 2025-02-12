@@ -9,7 +9,9 @@ import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -196,6 +198,16 @@ public class KegFermentingRecipeBuilder {
         return this;
     }
 
+    public KegFermentingRecipeBuilder addFluidIngredient(HolderSet<Fluid> fluid, int i) {
+        fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.Tag(fluid), i, Optional.empty()));
+        return this;
+    }
+
+    public KegFermentingRecipeBuilder addFluidIngredient(HolderSet<Fluid> fluid, int i, FluidUnit unit) {
+        fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.Tag(fluid), i, Optional.of(unit)));
+        return this;
+    }
+
     /**
      * Does not have an equivalent for Fabric.
      */
@@ -205,15 +217,17 @@ public class KegFermentingRecipeBuilder {
     }
 
     public void build(RecipeOutput consumerIn, ResourceLocation id) {
-        ResourceLocation advancementId = null;
-        AdvancementHolder builtAdvancement = advancement.build(id);
+        ResourceLocation advancementId = id.withPath(path -> "recipes/" + path);
+        AdvancementHolder builtAdvancement = advancement.build(advancementId);
         if (!builtAdvancement.value().criteria().isEmpty()) {
             advancement.parent(ResourceLocation.withDefaultNamespace("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
                     .rewards(AdvancementRewards.Builder.recipe(id))
                     .requirements(AdvancementRequirements.Strategy.OR);
-            advancementId = id.withPath(path -> "recipes/" + path);
-        }
-        consumerIn.accept(id, new KegFermentingRecipe(ingredients, tab, fluidIngredient, unit, result, experience, fermentingTime, temperature), advancementId == null ? null : builtAdvancement);
+            advancement.rewards(AdvancementRewards.Builder.recipe(id));
+            builtAdvancement = advancement.build(advancementId);
+        } else
+            builtAdvancement = null;
+        consumerIn.accept(id, new KegFermentingRecipe(ingredients, tab, fluidIngredient, unit, result, experience, fermentingTime, temperature), builtAdvancement);
     }
 
 }

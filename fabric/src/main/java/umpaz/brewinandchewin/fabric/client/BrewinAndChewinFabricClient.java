@@ -30,6 +30,7 @@ import umpaz.brewinandchewin.common.registry.BnCFluids;
 import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
 import umpaz.brewinandchewin.fabric.client.model.CoasterWrappedModel;
 import umpaz.brewinandchewin.fabric.client.platform.BnCClientPlatformHelperFabric;
+import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -83,6 +84,7 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
             });
         });
         BnCRecipeCategories.init();
+        registerNetwork();
         registerFluidRenderers();
     }
 
@@ -93,36 +95,39 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
     }
 
     public static void registerFluidRenderers() {
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluidsImpl.MILK, BnCFluidsImpl.FLOWING_MILK,
+                new SimpleFluidRenderHandler(
+                        BrewinAndChewin.asResource("block/milk_still"),
+                        BrewinAndChewin.asResource("block/milk_flowing")
+                ));
         FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.HONEY, BnCFluids.FLOWING_HONEY, createHoneyRenderHandler(BnCFluidConstants.Colors.DEFAULT));
 
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.BEER, BnCFluids.FLOWING_BEER, createAlcoholExtension(BnCFluidConstants.Colors.BEER));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.VODKA, BnCFluids.FLOWING_VODKA, createAlcoholExtension(BnCFluidConstants.Colors.VODKA));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.BEER, BnCFluids.FLOWING_BEER, createWaterExtension(BnCFluidConstants.Colors.BEER));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.VODKA, BnCFluids.FLOWING_VODKA, createWaterExtension(BnCFluidConstants.Colors.VODKA));
         FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.MEAD, BnCFluids.FLOWING_MEAD, createHoneyRenderHandler(BnCFluidConstants.Colors.MEAD));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.EGG_GROG, BnCFluids.FLOWING_EGG_GROG, createAlcoholExtension(BnCFluidConstants.Colors.EGG_GROG));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.STRONGROOT_ALE, BnCFluids.FLOWING_STRONGROOT_ALE, createAlcoholExtension(BnCFluidConstants.Colors.STRONGROOT_ALE));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.RICE_WINE, BnCFluids.FLOWING_RICE_WINE, createAlcoholExtension(BnCFluidConstants.Colors.RICE_WINE));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.GLITTERING_GRENADINE, BnCFluids.FLOWING_GLITTERING_GRENADINE, createAlcoholExtension(BnCFluidConstants.Colors.GLITTERING_GRENADINE));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.STEEL_TOE_STOUT, BnCFluids.FLOWING_STEEL_TOE_STOUT, createAlcoholExtension(BnCFluidConstants.Colors.STEEL_TOE_STOUT));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.DREAD_NOG, BnCFluids.FLOWING_DREAD_NOG, createAlcoholExtension(BnCFluidConstants.Colors.DREAD_NOG));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.KOMBUCHA, BnCFluids.FLOWING_KOMBUCHA, createAlcoholExtension(BnCFluidConstants.Colors.KOMBUCHA));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.SACCHARINE_RUM, BnCFluids.FLOWING_SACCHARINE_RUM, createAlcoholExtension(BnCFluidConstants.Colors.SACCHARINE_RUM));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.PALE_JANE, BnCFluids.FLOWING_PALE_JANE, createAlcoholExtension(BnCFluidConstants.Colors.PALE_JANE));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.SALTY_FOLLY, BnCFluids.FLOWING_SALTY_FOLLY, createAlcoholExtension(BnCFluidConstants.Colors.SALTY_FOLLY));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.BLOODY_MARY, BnCFluids.FLOWING_BLOODY_MARY, createAlcoholExtension(BnCFluidConstants.Colors.BLOODY_MARY));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.RED_RUM, BnCFluids.FLOWING_RED_RUM, createAlcoholExtension(BnCFluidConstants.Colors.RED_RUM));
-        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.WITHERING_DROSS, BnCFluids.FLOWING_WITHERING_DROSS, createAlcoholExtension(BnCFluidConstants.Colors.WITHERING_DROSS));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.EGG_GROG, BnCFluids.FLOWING_EGG_GROG, createWaterExtension(BnCFluidConstants.Colors.EGG_GROG));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.STRONGROOT_ALE, BnCFluids.FLOWING_STRONGROOT_ALE, createWaterExtension(BnCFluidConstants.Colors.STRONGROOT_ALE));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.RICE_WINE, BnCFluids.FLOWING_RICE_WINE, createWaterExtension(BnCFluidConstants.Colors.RICE_WINE));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.GLITTERING_GRENADINE, BnCFluids.FLOWING_GLITTERING_GRENADINE, createWaterExtension(BnCFluidConstants.Colors.GLITTERING_GRENADINE));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.STEEL_TOE_STOUT, BnCFluids.FLOWING_STEEL_TOE_STOUT, createWaterExtension(BnCFluidConstants.Colors.STEEL_TOE_STOUT));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.DREAD_NOG, BnCFluids.FLOWING_DREAD_NOG, createWaterExtension(BnCFluidConstants.Colors.DREAD_NOG));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.KOMBUCHA, BnCFluids.FLOWING_KOMBUCHA, createWaterExtension(BnCFluidConstants.Colors.KOMBUCHA));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.SACCHARINE_RUM, BnCFluids.FLOWING_SACCHARINE_RUM, createWaterExtension(BnCFluidConstants.Colors.SACCHARINE_RUM));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.PALE_JANE, BnCFluids.FLOWING_PALE_JANE, createWaterExtension(BnCFluidConstants.Colors.PALE_JANE));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.SALTY_FOLLY, BnCFluids.FLOWING_SALTY_FOLLY, createWaterExtension(BnCFluidConstants.Colors.SALTY_FOLLY));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.BLOODY_MARY, BnCFluids.FLOWING_BLOODY_MARY, createWaterExtension(BnCFluidConstants.Colors.BLOODY_MARY));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.RED_RUM, BnCFluids.FLOWING_RED_RUM, createWaterExtension(BnCFluidConstants.Colors.RED_RUM));
+        FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.WITHERING_DROSS, BnCFluids.FLOWING_WITHERING_DROSS, createWaterExtension(BnCFluidConstants.Colors.WITHERING_DROSS));
 
         FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.FLAXEN_CHEESE, BnCFluids.FLOWING_FLAXEN_CHEESE,
                 new SimpleFluidRenderHandler(
                         BnCFluidConstants.Textures.FLAXEN_STILL_TEXTURE,
-                        BnCFluidConstants.Textures.FLAXEN_FLOWING_TEXTURE,
-                        BnCFluidConstants.Colors.DEFAULT
+                        BnCFluidConstants.Textures.FLAXEN_FLOWING_TEXTURE
                 ));
         FluidRenderHandlerRegistry.INSTANCE.register(BnCFluids.SCARLET_CHEESE, BnCFluids.FLOWING_SCARLET_CHEESE,
                 new SimpleFluidRenderHandler(
                         BnCFluidConstants.Textures.SCARLET_STILL_TEXTURE,
-                        BnCFluidConstants.Textures.SCARLET_FLOWING_TEXTURE,
-                        BnCFluidConstants.Colors.DEFAULT
+                        BnCFluidConstants.Textures.SCARLET_FLOWING_TEXTURE
                 ));
     }
 
@@ -134,7 +139,7 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
         );
     }
     
-    private static FluidRenderHandler createAlcoholExtension(int color) {
+    private static FluidRenderHandler createWaterExtension(int color) {
         return new SimpleFluidRenderHandler(
                 BnCFluidConstants.Textures.FLUID_STILL_TEXTURE,
                 BnCFluidConstants.Textures.FLUID_FLOWING_TEXTURE, 

@@ -108,15 +108,17 @@ public class BnCCookingPotRecipeBuilder{
     }
 
     public void build(RecipeOutput output, ResourceLocation id) {
-        ResourceLocation advancementId = null;
-        AdvancementHolder builtAdvancement = advancement.build(id);
+        ResourceLocation advancementId = id.withPath(path -> "recipes/" + path);
+        AdvancementHolder builtAdvancement = advancement.build(advancementId);
         if (!builtAdvancement.value().criteria().isEmpty()) {
             advancement.parent(ResourceLocation.withDefaultNamespace("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
                     .rewards(AdvancementRewards.Builder.recipe(id))
                     .requirements(AdvancementRequirements.Strategy.OR);
-            advancementId = id.withPath(path -> "recipes/" + path);
-        }
-        output.accept(id, new CookingPotRecipe("", tab, ingredients, result, container,  experience, cookingTime), advancementId == null ? null : builtAdvancement);
+            advancement.rewards(AdvancementRewards.Builder.recipe(id));
+            builtAdvancement = advancement.build(advancementId);
+        } else
+            builtAdvancement = null;
+        output.accept(id, new CookingPotRecipe("", tab, ingredients, result, container,  experience, cookingTime), builtAdvancement);
     }
 
 }

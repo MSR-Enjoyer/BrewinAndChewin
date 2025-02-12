@@ -124,6 +124,11 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
     }
 
     @Override
+    public boolean isSpecial() {
+        return true;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(fluid, container, output, strict, filling);
     }
