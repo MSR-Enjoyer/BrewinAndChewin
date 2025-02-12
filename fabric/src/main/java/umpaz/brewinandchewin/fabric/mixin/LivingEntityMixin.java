@@ -1,5 +1,6 @@
 package umpaz.brewinandchewin.fabric.mixin;
 
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -7,7 +8,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -19,16 +19,15 @@ import umpaz.brewinandchewin.common.mixin.LivingEntityAccessor;
 import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
 import umpaz.brewinandchewin.common.registry.BnCDamageTypes;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
+import umpaz.brewinandchewin.common.registry.BnCParticleTypes;
 import umpaz.brewinandchewin.common.tag.BnCTags;
 import umpaz.brewinandchewin.fabric.access.PlayerPreHurtAttackStrengthAccess;
+import umpaz.brewinandchewin.fabric.utility.BnCAttachments;
+
+import java.util.List;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
-
-    @Shadow public abstract boolean attackable();
-
-    @Shadow protected abstract void actuallyHurt(DamageSource damageSource, float damageAmount);
-
     @Inject(method = "tick", at = @At("HEAD"))
     private void brewinandchewin$tickLivingEntity(CallbackInfo ci) {
         LivingEntity living = (LivingEntity)(Object)this;
@@ -85,5 +84,17 @@ public abstract class LivingEntityMixin {
         if (attacker instanceof PlayerPreHurtAttackStrengthAccess access)
             access.brewinandchewin$resetPreHurtAttackStrengthScale();
         return original;
+    }
+
+    @ModifyVariable(method = "updateSynchronizedMobEffectParticles", at = @At(value = "INVOKE_ASSIGN", target = "Ljava/util/stream/Stream;toList()Ljava/util/List;"))
+    private List<ParticleOptions> brewinandchewin$setToRagingParticles(List<ParticleOptions> original) {
+        LivingEntity living = (LivingEntity)(Object)this;
+        return original.stream().map(particleOptions -> {
+            if (particleOptions.getType() == BnCParticleTypes.RAGING_STAGE_1) {
+                RagingAttachment attachment = living.getAttached(BnCAttachments.RAGING);
+                return RagingAttachment.getParticleType(attachment != null ? attachment.getStacks() : 0, 0.75F);
+            }
+            return particleOptions;
+        }).toList();
     }
 }
