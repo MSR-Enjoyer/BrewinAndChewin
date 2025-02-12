@@ -15,10 +15,9 @@ public class IntoxicationCancelSaturationMixin implements FoodDataEntityAccess {
     @Unique
     private LivingEntity brewinandchewin$entity;
 
-    @ModifyVariable(method = "eat(IF)V", at = @At("HEAD"), argsOnly = true, index = 2)
+    @ModifyVariable(method = "add", at = @At("HEAD"), argsOnly = true, index = 2)
     private float brewinandchewin$disableSaturation(float value) {
-        if (brewinandchewin$entity != null && brewinandchewin$entity.hasEffect(BnCEffects.INTOXICATION)) {
-            brewinandchewin$entity = null;
+        if (brewinandchewin$entity != null && brewinandchewin$entity.hasEffect(BnCEffects.INTOXICATION) && value > 0.0F) {
             return 0.0F;
         }
         return value;

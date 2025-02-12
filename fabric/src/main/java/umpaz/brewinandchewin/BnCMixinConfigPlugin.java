@@ -1,5 +1,5 @@
 
-package umpaz.brewinandchewin.common;
+package umpaz.brewinandchewin;
 
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;

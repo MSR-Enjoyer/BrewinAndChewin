@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "umpaz.brewinandchewin.common.mixin",
-  "plugin": "umpaz.brewinandchewin.common.BnCMixinConfigPlugin",
+  "plugin": "umpaz.brewinandchewin.BnCMixinConfigPlugin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "brewinandchewin.refmap.json",
   "mixins": [

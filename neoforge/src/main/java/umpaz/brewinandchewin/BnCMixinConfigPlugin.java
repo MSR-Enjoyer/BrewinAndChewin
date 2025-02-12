@@ -1,4 +1,4 @@
-package umpaz.brewinandchewin.common;
+package umpaz.brewinandchewin;
 
 import net.neoforged.fml.loading.FMLLoader;
 import org.objectweb.asm.tree.ClassNode;

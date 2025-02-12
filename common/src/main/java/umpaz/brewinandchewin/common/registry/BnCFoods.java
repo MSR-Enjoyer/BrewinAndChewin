@@ -111,7 +111,6 @@ public class BnCFoods {
             .nutrition(2).saturationModifier(0.6F).build();
     public static final FoodProperties JERKY = (new FoodProperties.Builder())
             .nutrition(3).saturationModifier(0.7F).fast().build();
-    // TODO: Consider Pickled Pickles' removal for the time being.
     public static final FoodProperties PICKLED_PICKLES = (new FoodProperties.Builder())
             .nutrition(4).saturationModifier(0.3F).build();
     public static final FoodProperties KIPPERS = (new FoodProperties.Builder())
