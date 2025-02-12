@@ -70,8 +70,6 @@ public class GuiMixin {
         Random rand = new Random();
         rand.setSeed(ticks * 312871L);
 
-        RenderSystem.enableBlend();
-
         float renderHealth = player.getHealth();
 
         int healthStart = Mth.ceil(renderHealth / 2) - 1;
@@ -106,7 +104,10 @@ public class GuiMixin {
             brewinandchewin$numbedAlpha = 1.0F;
             brewinandchewin$increaseNumbedAlpha = true;
         }
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, brewinandchewin$numbedAlpha);
+        RenderSystem.disableDepthTest();
+        RenderSystem.depthMask(false);
+        RenderSystem.enableBlend();
+        graphics.setColor(1.0F, 1.0F, 1.0F, brewinandchewin$numbedAlpha);
 
         if (heartIndex == healthStart && halfHeart) {
             graphics.blitSprite(BnCHudIcons.getTipsyHalfHeartTexture(false, hardcore), heartX, heartY, 9, 9);
@@ -119,7 +120,10 @@ public class GuiMixin {
             brewinandchewin$remainingHealth -= 2;
         }
 
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.disableBlend();
+        RenderSystem.depthMask(true);
+        RenderSystem.enableDepthTest();
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     @WrapOperation(method = "renderHearts", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderHeart(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Gui$HeartType;IIZZZ)V", ordinal = 1))
@@ -151,8 +155,6 @@ public class GuiMixin {
         int ticks = minecraft.gui.getGuiTicks();
         Random rand = new Random();
         rand.setSeed(ticks * 312871L);
-
-        RenderSystem.enableBlend();
 
         float renderHealth = player.getMaxHealth() + player.getAbsorptionAmount();
 
@@ -191,7 +193,10 @@ public class GuiMixin {
             brewinandchewin$numbedAlpha = 1.0F;
             brewinandchewin$increaseNumbedAlpha = true;
         }
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, brewinandchewin$numbedAlpha);
+        RenderSystem.disableDepthTest();
+        RenderSystem.depthMask(false);
+        RenderSystem.enableBlend();
+        graphics.setColor(1.0F, 1.0F, 1.0F, brewinandchewin$numbedAlpha);
 
         if (heartIndex == healthStart && halfHeart) {
             graphics.blitSprite(BnCHudIcons.getTipsyHalfHeartTexture(true, hardcore), heartX, heartY, 9, 9);
@@ -204,6 +209,9 @@ public class GuiMixin {
             brewinandchewin$remainingHealth -= 2;
         }
 
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.disableBlend();
+        RenderSystem.depthMask(true);
+        RenderSystem.enableDepthTest();
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 }
