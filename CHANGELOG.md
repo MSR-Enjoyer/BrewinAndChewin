@@ -9,6 +9,7 @@
   - `brewinandchewin:horror_meats` -> `brewinandchewin:foods/horror_meat`
   - `brewinandchewin:raw_meats` -> `brewinandchewin:foods/jerky_meat`
   - `brewinandchewin:pizza_toppings` -> `brewinandchewin:foods/pizza_topping`
+- Delayed damage from Tipsy now bypasses most forms of damage reduction.
 
 ## Internal
 - Swapped config solution from Forge config to Greenhouse Config.

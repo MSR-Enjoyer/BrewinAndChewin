@@ -1,4 +1,4 @@
-package umpaz.brewinandchewin.fabric.mixin;
+package umpaz.brewinandchewin.fabric.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.DeltaTracker;
@@ -14,6 +14,6 @@ import umpaz.brewinandchewin.fabric.client.gui.BnCHUDOverlays;
 public class GameRendererMixin {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", shift = At.Shift.AFTER))
     private void brewinandchewin$renderScreen(DeltaTracker delta, boolean bl, CallbackInfo ci, @Local GuiGraphics gui) {
-        BnCHUDOverlays.TipsyOverlay.render(gui, delta);
+        BnCHUDOverlays.TipsyOverlay.INSTANCE.render(gui, delta);
     }
 }

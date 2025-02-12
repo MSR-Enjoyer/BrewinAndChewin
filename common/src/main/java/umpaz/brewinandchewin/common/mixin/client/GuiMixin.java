@@ -44,8 +44,8 @@ public class GuiMixin {
                                                    int heartX,
                                                    int heartY,
                                                    boolean hardcore,
-                                                   boolean halfHeart,
                                                    boolean blinking,
+                                                   boolean halfHeart,
                                                    Operation<Void> operation,
                                                    @Local(argsOnly = true) Player player,
                                                    @Local(argsOnly = true) float maxHealth,
@@ -62,7 +62,7 @@ public class GuiMixin {
             brewinandchewin$remainingHealth = 0;
             brewinandchewin$numbedAlpha = 1.0F;
             brewinandchewin$increaseNumbedAlpha = true;
-            operation.call(instance, graphics, heartType, heartX, heartY, hardcore, halfHeart, blinking);
+            operation.call(instance, graphics, heartType, heartX, heartY, hardcore, blinking, halfHeart);
             return;
         }
 
@@ -79,14 +79,14 @@ public class GuiMixin {
             brewinandchewin$remainingHealth = 0;
             brewinandchewin$numbedAlpha = 1.0F;
             brewinandchewin$increaseNumbedAlpha = true;
-            operation.call(instance, graphics, heartType, heartX, heartY, hardcore, halfHeart, blinking);
+            operation.call(instance, graphics, heartType, heartX, heartY, hardcore, blinking, halfHeart);
             return;
         }
 
         if (heartIndex == healthStart && absorptionAmount <= 0)
             brewinandchewin$remainingHealth = Math.min(Mth.ceil(attachment.getNumbedHealth()) - ((float) displayHealth % 1 < attachment.getNumbedHealth() % 1 ? 1 : 0), Mth.ceil((float) displayHealth));
 
-        operation.call(instance, graphics, heartType, heartX, heartY, hardcore, halfHeart, blinking);
+        operation.call(instance, graphics, heartType, heartX, heartY, hardcore, blinking, halfHeart);
 
         if (brewinandchewin$remainingHealth <= 0)
             return;
@@ -133,8 +133,8 @@ public class GuiMixin {
                                                             int heartX,
                                                             int heartY,
                                                             boolean hardcore,
-                                                            boolean halfHeart,
                                                             boolean blinking,
+                                                            boolean halfHeart,
                                                             Operation<Void> operation,
                                                             @Local(argsOnly = true) Player player,
                                                             @Local(argsOnly = true) float maxHealth,
@@ -148,7 +148,7 @@ public class GuiMixin {
             brewinandchewin$remainingHealth = 0;
             brewinandchewin$numbedAlpha = 1.0F;
             brewinandchewin$increaseNumbedAlpha = true;
-            operation.call(instance, graphics, heartType, heartX, heartY, hardcore, halfHeart, blinking);
+            operation.call(instance, graphics, heartType, heartX, heartY, hardcore, blinking, halfHeart);
             return;
         }
 
@@ -165,7 +165,7 @@ public class GuiMixin {
             brewinandchewin$remainingHealth = 0;
             brewinandchewin$numbedAlpha = 1.0F;
             brewinandchewin$increaseNumbedAlpha = true;
-            operation.call(instance, graphics, heartType, heartX, heartY, hardcore, halfHeart, blinking);
+            operation.call(instance, graphics, heartType, heartX, heartY, hardcore, blinking, halfHeart);
             return;
         }
 
@@ -174,11 +174,11 @@ public class GuiMixin {
             brewinandchewin$remainingHealth = Math.min(Mth.ceil(attachment.getNumbedHealth()) - ((float) displayHealth % 1 < attachment.getNumbedHealth() % 1 ? 1 : 0), Mth.ceil((float) displayHealth));
         } else if (brewinandchewin$remainingHealth <= 0) {
             brewinandchewin$completedAbsorption = true;
-            operation.call(instance, graphics, heartType, heartX, heartY, hardcore, halfHeart, blinking);
+            operation.call(instance, graphics, heartType, heartX, heartY, hardcore, blinking, halfHeart);
             return;
         }
 
-        operation.call(instance, graphics, heartType, heartX, heartY, hardcore, halfHeart, blinking);
+        operation.call(instance, graphics, heartType, heartX, heartY, hardcore, blinking, halfHeart);
 
         if (BnCConfiguration.CLIENT_CONFIG.get().numbedHeartFlickering() && attachment.getNumbedHealth() > 1 && attachment.getTicksUntilDamage() < 80 && heartIndex == healthStart) {
             if (!Minecraft.getInstance().isPaused()) {

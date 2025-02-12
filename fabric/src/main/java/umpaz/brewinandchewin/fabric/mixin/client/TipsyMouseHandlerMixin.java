@@ -1,4 +1,4 @@
-package umpaz.brewinandchewin.fabric.mixin;
+package umpaz.brewinandchewin.fabric.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;
@@ -59,9 +59,9 @@ public class TipsyMouseHandlerMixin {
                 double tipsyDelta = Math.min(1 + minecraft.player.getEffect(BnCEffects.TIPSY).getAmplifier(), 10) / 10.0;
 
                 if (minecraft.options.getCameraType().isFirstPerson() && minecraft.player.isScoping())
-                    return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * g * Math.max(1.0, tipsyDelta * 4.5));
+                    return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * g * Math.max(1.0, tipsyDelta * 4.5 * tipsyDelta));
 
-                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * f * Math.max(1.0, tipsyDelta * 4.5));
+                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * f * Math.max(1.0, tipsyDelta * 4.5 * tipsyDelta));
             }
         }
         brewinandchewin$smoothTurnY.reset();

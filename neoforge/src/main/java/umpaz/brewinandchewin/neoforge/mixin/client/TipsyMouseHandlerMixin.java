@@ -1,4 +1,4 @@
-package umpaz.brewinandchewin.neoforge.mixin;
+package umpaz.brewinandchewin.neoforge.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;

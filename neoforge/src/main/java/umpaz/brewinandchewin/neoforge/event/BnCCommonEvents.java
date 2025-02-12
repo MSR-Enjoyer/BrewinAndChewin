@@ -6,8 +6,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.living.EffectParticleModificationEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -102,6 +104,7 @@ public class BnCCommonEvents {
             float numbedHealth = Math.min(attachment.getNumbedHealth() + event.getNewDamage(), maximumNumbedHealth);
             if (numbedHealth - attachment.getNumbedHealth() <= target.getHealth())
                 event.setNewDamage(event.getNewDamage() - (numbedHealth - attachment.getNumbedHealth()));
+            numbedHealth = numbedHealth - event.getContainer().getReduction(DamageContainer.Reduction.ARMOR) - event.getContainer().getReduction(DamageContainer.Reduction.ENCHANTMENTS) - event.getContainer().getReduction(DamageContainer.Reduction.MOB_EFFECTS);
             int ticksUntilDamage = 200 + 20 * amplifier;
             attachment.setNumbedHealth(numbedHealth);
             attachment.setTicksUntilDamage(ticksUntilDamage);

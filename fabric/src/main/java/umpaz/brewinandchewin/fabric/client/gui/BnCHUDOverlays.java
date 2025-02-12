@@ -3,15 +3,18 @@ package umpaz.brewinandchewin.fabric.client.gui;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
+import squeek.appleskin.client.HUDOverlayHandler;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
@@ -20,7 +23,7 @@ import vectorwing.farmersdelight.common.registry.ModEffects;
 import java.util.Random;
 
 public class BnCHUDOverlays {
-    protected static int foodIconsOffset;
+    public static int foodIconsOffset;
     private static final ResourceLocation NOURISHMENT_ICONS_TEXTURE = ResourceLocation.fromNamespaceAndPath("farmersdelight", "textures/gui/fd_icons.png");
 
     public static final ResourceLocation FOOD_EMPTY_INTOXICATION_TEXTURE = BrewinAndChewin.asResource("hud/food_empty_intoxication");
@@ -32,15 +35,24 @@ public class BnCHUDOverlays {
     private static float tipsyTransparencyModifier = 0.0F;
 
     public static void init() {
-        HudRenderCallback.EVENT.register(IntoxicationOverlay::render);
+        HudRenderCallback.EVENT.register(IntoxicationOverlay.INSTANCE::render);
     }
 
-    public static class TipsyOverlay {
-        public static final ResourceLocation PHASE = BrewinAndChewin.asResource("tipsy_overlay");
+    public abstract static class BaseOverlay implements LayeredDraw.Layer {
+        public boolean shouldRenderOverlay(Minecraft minecraft, Player player, GuiGraphics gui, DeltaTracker delta) {
+            return !minecraft.options.hideGui && minecraft.gameMode != null && minecraft.gameMode.canHurtPlayer();
+        }
+    }
 
-        public static void render(GuiGraphics gui, DeltaTracker delta) {
+    public static class TipsyOverlay extends BaseOverlay {
+        public static final TipsyOverlay INSTANCE = new TipsyOverlay();
+
+        protected TipsyOverlay() {}
+
+        @Override
+        public void render(GuiGraphics gui, DeltaTracker delta) {
             Minecraft mc = Minecraft.getInstance();
-            if (!mc.player.hasEffect(MobEffects.CONFUSION) && mc.player.hasEffect(BnCEffects.TIPSY)) {
+            if (shouldRenderOverlay(mc, mc.player, gui, delta)) {
                 MobEffectInstance effect = mc.player.getEffect(BnCEffects.TIPSY);
                 float distortionScale = mc.options.screenEffectScale().get().floatValue();
                 float tipsyScale = Math.min((1 + effect.getAmplifier()) / 10.0F * 0.4F, 0.4F);
@@ -52,6 +64,38 @@ public class BnCHUDOverlays {
                     tipsyTransparencyModifier = 0.0F;
             } else
                 tipsyTransparencyModifier = 0.0F;
+        }
+
+        @Override
+        public boolean shouldRenderOverlay(Minecraft minecraft, Player player, GuiGraphics gui, DeltaTracker delta) {
+            return !player.hasEffect(MobEffects.CONFUSION) && player.hasEffect(BnCEffects.TIPSY);
+        }
+    }
+
+    public static class IntoxicationOverlay extends BaseOverlay {
+        public static final IntoxicationOverlay INSTANCE = new IntoxicationOverlay();
+
+        protected IntoxicationOverlay() {}
+
+        @Override
+        public void render(GuiGraphics gui, DeltaTracker deltaTracker) {
+            if (!BnCConfiguration.CLIENT_CONFIG.get().intoxicationFoodOverlay())
+                return;
+
+            Minecraft minecraft = Minecraft.getInstance();
+            Player player = minecraft.player;
+
+            if (!shouldRenderOverlay(minecraft, player, gui, deltaTracker))
+                return;
+            int top = foodIconsOffset;
+            int right = minecraft.getWindow().getGuiScaledWidth() / 2 + 91;
+
+            drawIntoxicationOverlay(player, minecraft, gui, right, top);
+        }
+
+        @Override
+        public boolean shouldRenderOverlay(Minecraft minecraft, Player player, GuiGraphics guiGraphics, DeltaTracker guiTicks) {
+            return super.shouldRenderOverlay(minecraft, player, guiGraphics, guiTicks) && player != null && player.hasEffect(BnCEffects.INTOXICATION);
         }
     }
 
@@ -69,23 +113,6 @@ public class BnCHUDOverlays {
         RenderSystem.disableBlend();
         RenderSystem.depthMask(true);
         RenderSystem.enableDepthTest();
-    }
-
-    public static class IntoxicationOverlay{
-        public static void render(GuiGraphics gui, DeltaTracker delta) {
-            if (!BnCConfiguration.CLIENT_CONFIG.get().intoxicationFoodOverlay())
-                return;
-
-            Minecraft minecraft = Minecraft.getInstance();
-            Player player = minecraft.player;
-
-            if (player == null || !player.hasEffect(BnCEffects.INTOXICATION))
-                return;
-            int top = minecraft.getWindow().getGuiScaledHeight() - foodIconsOffset;
-            int right = minecraft.getWindow().getGuiScaledWidth() / 2 + 91;
-
-            drawIntoxicationOverlay(player, minecraft, gui, right, top);
-        }
     }
 
     public static void drawIntoxicationOverlay(Player player, Minecraft minecraft, GuiGraphics graphics, int right, int top) {
@@ -130,6 +157,9 @@ public class BnCHUDOverlays {
         }
 
         RenderSystem.disableBlend();
+
+        if (FabricLoader.getInstance().isModLoaded("appleskin"))
+            HUDOverlayHandler.INSTANCE.onRenderFood(graphics, player, top, right);
     }
 
     private static ResourceLocation getIntoxicationSprite(boolean half) {
