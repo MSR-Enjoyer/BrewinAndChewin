@@ -3,6 +3,7 @@
 - The mod now supports NeoForge and Fabric under one codebase.
   - Multiloader probably won't happen for 1.20.1, please don't ask.
 - Made improvements to vanilla recipe book integration.
+- Removed the fallback fluid rendering from the keg's tooltip if an item isn't present. You're likely to have an associated item.
 
 ## Internal
 - Swapped config solution from Forge config to Greenhouse Config.
