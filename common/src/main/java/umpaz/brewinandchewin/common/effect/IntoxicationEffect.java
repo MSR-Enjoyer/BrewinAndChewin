@@ -11,6 +11,7 @@ public class IntoxicationEffect extends MobEffect
         super(MobEffectCategory.HARMFUL, 14531138);
     }
 
+    // TODO: Implement Undead not being allowed to be intoxicated.
     public static boolean canBeIntoxicated(LivingEntity entity) {
         return entity.getType().is(BnCTags.IMMUNE_TO_INTOXICATION);
     }

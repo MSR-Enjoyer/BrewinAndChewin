@@ -20,6 +20,7 @@ import umpaz.brewinandchewin.client.gui.KegScreen;
 import umpaz.brewinandchewin.client.gui.KegTooltip;
 import umpaz.brewinandchewin.common.mixin.client.ModelBakeryAccessor;
 import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
+import umpaz.brewinandchewin.neoforge.client.gui.BnCHUDOverlays;
 import umpaz.brewinandchewin.neoforge.client.model.CoasterWrappedModel;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.renderer.CoasterBlockEntityRenderer;
@@ -34,6 +35,7 @@ import java.util.List;
 public class BrewinAndChewinNeoForgeClient {
     public BrewinAndChewinNeoForgeClient(IEventBus eventBus) {
         BrewinAndChewinClient.init(new BnCClientPlatfomHelperNeoForge());
+        BnCHUDOverlays.init(eventBus);
         BrewinAndChewin.isClient = true;
     }
 

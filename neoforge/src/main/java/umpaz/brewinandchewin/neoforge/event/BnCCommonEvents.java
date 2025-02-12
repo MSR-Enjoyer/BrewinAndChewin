@@ -88,16 +88,17 @@ public class BnCCommonEvents {
         if (target.hasEffect(BnCEffects.TIPSY) && !event.getSource().is(BnCDamageTypes.CARDIAC_ARREST)) {
             int amplifier = target.getEffect(BnCEffects.TIPSY).getAmplifier();
             float maximumNumbedHealth = Mth.clamp(Mth.floor((2 + (amplifier * 1.6F)) / 2) * 2, 1, target.getMaxHealth() - 2);
-            TipsyHeartsAttachment attachment = BrewinAndChewin.getHelper().getTipsyHeartsAttachment(target);
-            if (attachment != null) {
-                float numbedHealth = Math.min(attachment.getNumbedHealth() + event.getNewDamage(), maximumNumbedHealth);
-                if (numbedHealth - attachment.getNumbedHealth() <= target.getHealth())
-                    event.setNewDamage(event.getNewDamage() - (numbedHealth - attachment.getNumbedHealth()));
-                int ticksUntilDamage = 200 + 20 * amplifier;
-                attachment.setNumbedHealth(numbedHealth);
-                attachment.setTicksUntilDamage(ticksUntilDamage);
-                PacketDistributor.sendToPlayersTrackingEntity(target, new SyncNumbedHeartsClientboundPacket(target.getId(), numbedHealth, ticksUntilDamage));
+            if (BrewinAndChewin.getHelper().getTipsyHeartsAttachment(target) == null) {
+                BrewinAndChewin.getHelper().setTipsyHeartsAttachment(event.getEntity(), new TipsyHeartsAttachment(0, 0));
             }
+            TipsyHeartsAttachment attachment = BrewinAndChewin.getHelper().getTipsyHeartsAttachment(target);
+            float numbedHealth = Math.min(attachment.getNumbedHealth() + event.getNewDamage(), maximumNumbedHealth);
+            if (numbedHealth - attachment.getNumbedHealth() <= target.getHealth())
+                event.setNewDamage(event.getNewDamage() - (numbedHealth - attachment.getNumbedHealth()));
+            int ticksUntilDamage = 200 + 20 * amplifier;
+            attachment.setNumbedHealth(numbedHealth);
+            attachment.setTicksUntilDamage(ticksUntilDamage);
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SyncNumbedHeartsClientboundPacket(target.getId(), numbedHealth, ticksUntilDamage));
         }
         if (attacker instanceof LivingEntity living && (!(living instanceof Player player) || player.getAttackStrengthScale(0.0F) > 0.8F) && living.hasEffect(BnCEffects.RAGING) && event.getSource().is(BnCTags.TRIGGERS_RAGING)) {
             if (BrewinAndChewin.getHelper().getRagingAttachment(living) == null)

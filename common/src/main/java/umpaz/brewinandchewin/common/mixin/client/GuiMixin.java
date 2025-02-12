@@ -108,18 +108,14 @@ public class GuiMixin {
         }
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, brewinandchewin$numbedAlpha);
 
-        int textureYOffset = 0;
-        if (player.level().getLevelData().isHardcore())
-            textureYOffset += 18;
-
         if (heartIndex == healthStart && halfHeart) {
             graphics.blitSprite(BnCHudIcons.getTipsyHalfHeartTexture(false, hardcore), heartX, heartY, 9, 9);
             brewinandchewin$remainingHealth -= 1;
         } else if (heartIndex == healthStart && renderHealth % 2 < 1 && brewinandchewin$remainingHealth == 1 || heartIndex == healthEnd && brewinandchewin$remainingHealth == 1) {
-            graphics.blit(BnCHudIcons.getTipsyRightHeartTexture(false, hardcore), heartX, heartY, 18, 9 + textureYOffset, 9, 9);
+            graphics.blitSprite(BnCHudIcons.getTipsyRightHeartTexture(false, hardcore), heartX, heartY, 9, 9);
             brewinandchewin$remainingHealth -= 1;
         } else {
-            graphics.blit(BnCHudIcons.getTipsyFullHeartTexture(false, hardcore), heartX, heartY, 9, 9 + textureYOffset, 9, 9);
+            graphics.blitSprite(BnCHudIcons.getTipsyFullHeartTexture(false, hardcore), heartX, heartY, 9, 9);
             brewinandchewin$remainingHealth -= 2;
         }
 
