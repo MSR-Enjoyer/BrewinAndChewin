@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +29,8 @@ import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientbo
 import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
 import umpaz.brewinandchewin.common.registry.BnCFluids;
 import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
+import umpaz.brewinandchewin.fabric.client.gui.BnCHUDOverlays;
+import umpaz.brewinandchewin.fabric.client.integration.IntoxicationAppleSkinCompatFabric;
 import umpaz.brewinandchewin.fabric.client.model.CoasterWrappedModel;
 import umpaz.brewinandchewin.fabric.client.platform.BnCClientPlatformHelperFabric;
 import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
@@ -40,6 +43,10 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         BrewinAndChewinClient.init(new BnCClientPlatformHelperFabric());
         BrewinAndChewin.isClient = true;
+
+        BnCHUDOverlays.init();
+        if (FabricLoader.getInstance().isModLoaded("appleskin"))
+            IntoxicationAppleSkinCompatFabric.init();
 
         MenuScreens.register(BnCMenuTypes.KEG, KegScreen::new);
         BnCClientSetup.registerBlockEntityRenderers(BlockEntityRenderers::register);

@@ -67,7 +67,7 @@ public class BnCCommonEvents {
                 if (attachment.getTicksUntilDamage() > 0)
                     attachment.setTicksUntilDamage(attachment.getTicksUntilDamage() - 1);
 
-                if (attachment.getTicksUntilDamage() <= 0 || !living.hasEffect(BnCEffects.TIPSY) && !living.level().isClientSide) {
+                if ((attachment.getTicksUntilDamage() <= 0 || !living.hasEffect(BnCEffects.TIPSY)) && !living.level().isClientSide()) {
                     float health = living.getHealth() + living.getAbsorptionAmount();
                     int remainingHealth = Mth.ceil(Math.min(attachment.getNumbedHealth() - (health % 1 > attachment.getNumbedHealth() % 1 ? 1 : 0), health));
                     if (remainingHealth > 0)
