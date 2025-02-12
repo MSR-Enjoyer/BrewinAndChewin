@@ -13,7 +13,7 @@ public class BnCTags {
 
     public static final TagKey<Item> FERMENTED_DRINKS = modItemTag("fermented_drinks");
     public static final TagKey<Item> FOOD_HORROR_MEAT = modItemTag("foods/horror_meat");
-    public static final TagKey<Item> FOOD_RAW_MEAT = modItemTag("foods/raw_meat");
+    public static final TagKey<Item> FOOD_JERKY_MEAT = modItemTag("foods/jerky_meat");
     public static final TagKey<Item> FOOD_PIZZA_TOPPING = modItemTag("foods/pizza_topping");
     public static final TagKey<Item> FOOD_CHEESE_WEDGE = modItemTag("foods/cheese_wedge");
 
