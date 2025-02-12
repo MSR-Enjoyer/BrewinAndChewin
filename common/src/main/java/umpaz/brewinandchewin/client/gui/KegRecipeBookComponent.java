@@ -157,6 +157,8 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                             gui.renderItemDecorations(minecraft.font, itemDisplay, itemX, itemY);
                         }
                     }
+                } else if (fluidIngredient.isEmpty() && !kegMenu.kegTank.isEmpty()) {
+                    gui.fill(leftPos + 120, topPos + 19, leftPos + 120 + 16 + 8, topPos + 31 + 16, 822018048);
                 }
             }
         }
