@@ -29,5 +29,5 @@ public interface BnCClientPlatformHelper {
                                int tintIndex,
                                RenderType renderType);
 
-    void renderFluidInKeg(AbstractedFluidStack stack, GuiGraphics graphics, int x, int y);
+    void renderFluidInKeg(AbstractedFluidStack stack, GuiGraphics graphics, int x, int y, float alphaModifier);
 }

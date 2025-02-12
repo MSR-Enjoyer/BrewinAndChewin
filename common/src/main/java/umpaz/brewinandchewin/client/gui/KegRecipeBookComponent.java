@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -142,8 +143,10 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                     AbstractedFluidStack fluidStack = ingredients.get(Mth.floor(((GhostRecipeAccessor)ghostRecipe).brewinandchewin$getTime() / 30.0F) % ingredients.size());
                     fluidStack = new AbstractedFluidStack(fluidStack.fluid(), fluidIngredient.get().amount(), fluidStack.components(), fluidIngredient.get().unit().orElse(FluidUnit.getLoaderUnit()), null);
                     if (kegMenu.kegTank.isEmpty() || !kegMenu.kegTank.getAbstractedFluid().fluid().isSame(fluidStack.fluid())) {
-                        if (BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg())
-                            BrewinAndChewinClient.getHelper().renderFluidInKeg(fluidStack, gui, leftPos + 120, topPos + 19);
+                        if (BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg()) {
+                            BrewinAndChewinClient.getHelper().renderFluidInKeg(fluidStack, gui, leftPos + 120, topPos + 19, 0.6F);
+                            gui.fill(RenderType.guiGhostRecipeOverlay(), leftPos + 120, topPos + 19, leftPos + 120 + 16 + 8, topPos + 31 + 16, 822083583);
+                        }
                         gui.fill(leftPos + 120, topPos + 19, leftPos + 120 + 16 + 8, topPos + 31 + 16, 822018048);
 
                         ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
@@ -171,7 +174,14 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
             List<Component> components = new ArrayList<>(List.of(component));
             if (BnCConfiguration.CLIENT_CONFIG.get().oppositeFluidDisplay() == BnCConfiguration.Client.DisplaySettings.ADVANCED_TOOLTIPS && minecraft.options.advancedItemTooltips || BnCConfiguration.CLIENT_CONFIG.get().oppositeFluidDisplay() == BnCConfiguration.Client.DisplaySettings.ALWAYS) {
                 FluidUnit opposite = FluidUnit.getOpposite(BnCConfiguration.CLIENT_CONFIG.get().displayUnit());
-                components.add(MutableComponent.create(Component.literal((opposite.shortFormat(("(%s/%s")) + ")").formatted(FluidUnit.convert(stack.amount(), stack.unit(), opposite), FluidUnit.convert(kegMenu.kegTank.getFluidCapacity(), FluidUnit.getLoaderUnit(), opposite))).getContents()).withStyle(ChatFormatting.DARK_GRAY));
+                components.add(MutableComponent.create(Component.literal((opposite.shortFormat(("(%s/%s")) + ")").formatted(FluidUnit.convert(stack.amount(), stack.unit(), opposite), FluidUnit.convert(kegMenu.kegTank.getFluidCapacity(), FluidUnit.getLoaderUnit(), opposite))).getContents()));
+            }
+            if (minecraft.options.advancedItemTooltips) {
+                ResourceLocation fluidId = stack.fluid().builtInRegistryHolder().key().location();
+                components.add(Component.literal(fluidId.toString()).withStyle(ChatFormatting.DARK_GRAY));
+                if (!stack.components().isEmpty()) {
+                    components.add(Component.translatable("item.components", stack.components().size()).withStyle(ChatFormatting.DARK_GRAY));
+                }
             }
             gui.renderComponentTooltip(minecraft.font, components, mouseX, mouseY);
         }

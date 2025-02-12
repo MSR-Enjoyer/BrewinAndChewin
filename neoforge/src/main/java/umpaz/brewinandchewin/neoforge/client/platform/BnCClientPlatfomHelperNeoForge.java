@@ -40,7 +40,7 @@ public class BnCClientPlatfomHelperNeoForge implements BnCClientPlatformHelper {
     }
 
     @Override
-    public void renderFluidInKeg(AbstractedFluidStack stack, GuiGraphics gui, int x, int y) {
+    public void renderFluidInKeg(AbstractedFluidStack stack, GuiGraphics gui, int x, int y, float alphaModifier) {
         IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(stack.fluid());
         FluidStack fluidStack = (FluidStack) stack.loaderSpecific();
         if (fluidStack == null)
@@ -49,7 +49,7 @@ public class BnCClientPlatfomHelperNeoForge implements BnCClientPlatformHelper {
         TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture);
         int tintColor = fluidTypeExtensions.getTintColor(fluidStack);
 
-        float alpha = ((tintColor >> 24) & 0xFF) / 255f;
+        float alpha = ((tintColor >> 24) & 0xFF) / 255f * alphaModifier;
         float red = ((tintColor >> 16) & 0xFF) / 255f;
         float green = ((tintColor >> 8) & 0xFF) / 255f;
         float blue = (tintColor & 0xFF) / 255f;

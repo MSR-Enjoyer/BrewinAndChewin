@@ -8,15 +8,12 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -137,7 +134,14 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
             List<Component> components = new ArrayList<>(List.of(component, containerComponent));
             if (BnCConfiguration.CLIENT_CONFIG.get().oppositeFluidDisplay() == BnCConfiguration.Client.DisplaySettings.ADVANCED_TOOLTIPS && minecraft.options.advancedItemTooltips || BnCConfiguration.CLIENT_CONFIG.get().oppositeFluidDisplay() == BnCConfiguration.Client.DisplaySettings.ALWAYS) {
                 FluidUnit opposite = FluidUnit.getOpposite(BnCConfiguration.CLIENT_CONFIG.get().displayUnit());
-                components.add(MutableComponent.create(Component.literal((opposite.shortFormat(("(%s/%s")) + ")").formatted(FluidUnit.convert(menu.kegTank.getAbstractedFluid().amount(), FluidUnit.getLoaderUnit(), opposite), FluidUnit.convert(menu.kegTank.getAbstractedFluid().amount(), FluidUnit.getLoaderUnit(), opposite))).getContents()).withStyle(ChatFormatting.DARK_GRAY));
+                components.add(MutableComponent.create(Component.literal((opposite.shortFormat(("(%s/%s")) + ")").formatted(FluidUnit.convert(menu.kegTank.getAbstractedFluid().amount(), FluidUnit.getLoaderUnit(), opposite), FluidUnit.convert(menu.kegTank.getAbstractedFluid().amount(), FluidUnit.getLoaderUnit(), opposite))).getContents()));
+            }
+            if (minecraft.options.advancedItemTooltips) {
+                ResourceLocation fluidId = menu.kegTank.getAbstractedFluid().fluid().builtInRegistryHolder().key().location();
+                components.add(Component.literal(fluidId.toString()).withStyle(ChatFormatting.DARK_GRAY));
+                if (!menu.kegTank.getAbstractedFluid().components().isEmpty()) {
+                    components.add(Component.translatable("item.components", menu.kegTank.getAbstractedFluid().components().size()).withStyle(ChatFormatting.DARK_GRAY));
+                }
             }
             gui.renderComponentTooltip(this.font, components, mouseX, mouseY);
         }
@@ -204,7 +208,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
         AbstractedFluidStack fluidStack = this.menu.kegTank.getAbstractedFluid();
         if (!fluidStack.isEmpty() && (recipeBookComponent.getGhostRecipe() == null || !(recipeBookComponent.getGhostRecipe().value() instanceof KegFermentingRecipe fermentingRecipe) || fermentingRecipe.getFluidIngredient().isEmpty() && menu.kegTank.isEmpty() || fermentingRecipe.getFluidIngredient().isPresent() && fermentingRecipe.getFluidIngredient().get().ingredient().matches(fluidStack))) {
             if (BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg())
-                BrewinAndChewinClient.getHelper().renderFluidInKeg(fluidStack, gui, leftPos + 120, topPos + 19);
+                BrewinAndChewinClient.getHelper().renderFluidInKeg(fluidStack, gui, leftPos + 120, topPos + 19, 1.0F);
 
             ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
             Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe -> {
