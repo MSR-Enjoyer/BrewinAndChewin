@@ -17,19 +17,18 @@
     "ServerPlaceRecipeAccessor",
     "StackedContentsRecipePickerAccessor",
     "StoreLootParamsMixin$LootParamsBuilderMixin",
-    "StoreLootParamsMixin$LootParamsMixin",
-    "client.integration.appleskin.HUDOverlayHandlerMixin"
+    "StoreLootParamsMixin$LootParamsMixin"
   ],
   "client": [
-    "GhostRecipeAccessor",
-    "TipsyMouseHandlerMixin",
+    "client.GhostRecipeAccessor",
     "client.GuiMixin",
     "client.LevelRendererAccessor",
     "client.ModelBakeryAccessor",
     "client.RecipeBookComponentAccessor",
     "client.TipsyDrunkRendererMixin",
     "client.TipsySignRendererMixin$TipsyCanvasSignRenderMixin",
-    "client.TipsySignRendererMixin$TipsySignRenderMixin"
+    "client.TipsySignRendererMixin$TipsySignRenderMixin",
+    "client.integration.appleskin.HUDOverlayHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

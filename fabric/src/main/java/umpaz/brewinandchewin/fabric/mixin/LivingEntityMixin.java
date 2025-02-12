@@ -36,7 +36,7 @@ public abstract class LivingEntityMixin {
             if (attachment.getTicksUntilDamage() > 0)
                 attachment.setTicksUntilDamage(attachment.getTicksUntilDamage() - 1);
 
-            if (attachment.getTicksUntilDamage() <= 0 || !living.hasEffect(BnCEffects.TIPSY) && !living.level().isClientSide) {
+            if ((attachment.getTicksUntilDamage() <= 0 || !living.hasEffect(BnCEffects.TIPSY)) && !living.level().isClientSide()) {
                 float health = living.getHealth() + living.getAbsorptionAmount();
                 int remainingHealth = Mth.ceil(Math.min(attachment.getNumbedHealth() - (health % 1 > attachment.getNumbedHealth() % 1 ? 1 : 0), health));
                 if (remainingHealth > 0)
@@ -56,16 +56,17 @@ public abstract class LivingEntityMixin {
             if (target.hasEffect(BnCEffects.TIPSY) && !source.is(BnCDamageTypes.CARDIAC_ARREST)) {
                 int amplifier = target.getEffect(BnCEffects.TIPSY).getAmplifier();
                 float maximumNumbedHealth = Mth.clamp(Mth.floor((2 + (amplifier * 1.6F)) / 2) * 2, 1, target.getMaxHealth() - 2);
-                TipsyHeartsAttachment attachment = BrewinAndChewin.getHelper().getTipsyHeartsAttachment(target);
-                if (attachment != null) {
-                    float numbedHealth = Math.min(attachment.getNumbedHealth() + original, maximumNumbedHealth);
-                    if (numbedHealth - attachment.getNumbedHealth() <= target.getHealth())
-                        original = original - (numbedHealth - attachment.getNumbedHealth());
-                    int ticksUntilDamage = 200 + 20 * amplifier;
-                    attachment.setNumbedHealth(numbedHealth);
-                    attachment.setTicksUntilDamage(ticksUntilDamage);
-                    BrewinAndChewin.getHelper().sendClientboundTracking(target, new SyncNumbedHeartsClientboundPacket(target.getId(), numbedHealth, ticksUntilDamage));
+                if (BrewinAndChewin.getHelper().getTipsyHeartsAttachment(target) == null) {
+                    BrewinAndChewin.getHelper().setTipsyHeartsAttachment(target, new TipsyHeartsAttachment(0, 0));
                 }
+                TipsyHeartsAttachment attachment = BrewinAndChewin.getHelper().getTipsyHeartsAttachment(target);
+                float numbedHealth = Math.min(attachment.getNumbedHealth() + original, maximumNumbedHealth);
+                if (numbedHealth - attachment.getNumbedHealth() <= target.getHealth())
+                    original = original - (numbedHealth - attachment.getNumbedHealth());
+                int ticksUntilDamage = 200 + 20 * amplifier;
+                attachment.setNumbedHealth(numbedHealth);
+                attachment.setTicksUntilDamage(ticksUntilDamage);
+                BrewinAndChewin.getHelper().sendClientboundTracking(target, new SyncNumbedHeartsClientboundPacket(target.getId(), numbedHealth, ticksUntilDamage));
             }
             if (attacker instanceof LivingEntity living && (!(living instanceof PlayerPreHurtAttackStrengthAccess player) || player.brewinandchewin$getPreHurtAttackStrengthScale() > 0.8F) && living.hasEffect(BnCEffects.RAGING) && source.is(BnCTags.TRIGGERS_RAGING)) {
                 if (BrewinAndChewin.getHelper().getRagingAttachment(living) == null)

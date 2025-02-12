@@ -27,7 +27,7 @@ import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.common.crafting.FluidIngredientWithAmount;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
-import umpaz.brewinandchewin.common.mixin.GhostRecipeAccessor;
+import umpaz.brewinandchewin.common.mixin.client.GhostRecipeAccessor;
 import umpaz.brewinandchewin.common.mixin.client.RecipeBookComponentAccessor;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.common.utility.BnCTextUtils;

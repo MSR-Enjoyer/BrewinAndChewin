@@ -4,6 +4,7 @@
   "package": "umpaz.brewinandchewin.neoforge.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "TipsyMouseHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
