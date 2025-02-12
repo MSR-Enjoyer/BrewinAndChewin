@@ -258,7 +258,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         if (recipe.isEmpty())
             return Optional.empty();
         if (recipe.get().value().getFluidIngredient().isEmpty()) { // if the recipe does not require a fluid
-            if (fluidTank.isEmpty()) // make sure the fluid is empty
+            if (!fluidTank.isEmpty()) // make sure the fluid is empty
                 return Optional.empty();
         } else {
             if (!recipe.get().value().getFluidIngredient().get().ingredient().matches(fluidTank.getAbstractedFluid()))
@@ -272,16 +272,6 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     private Optional<RecipeHolder<KegFermentingRecipe>> getMatchingRecipe(KegRecipeWrapper inventoryWrapper) {
         if (level == null) return Optional.empty();
 
-        if (lastRecipeID != null) {
-            Optional<RecipeHolder<KegFermentingRecipe>> recipe = level.getRecipeManager()
-                    .getRecipeFor(BnCRecipeTypes.FERMENTING, inventoryWrapper, level, lastRecipeID);
-            if (recipe.isPresent()) {
-                if (recipe.get().value().matches(inventoryWrapper, level)) {
-                    return Optional.of(recipe.get());
-                }
-            }
-        }
-
         if (checkNewRecipe) {
             Optional<RecipeHolder<KegFermentingRecipe>> recipe = level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.FERMENTING).stream().filter(a -> a.value().matches(inventoryWrapper, level)).findFirst();
             if (recipe.isPresent()) {
@@ -293,8 +283,16 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                 return recipe;
             }
         }
-
         checkNewRecipe = false;
+
+        if (lastRecipeID != null) {
+            Optional<RecipeHolder<KegFermentingRecipe>> recipe = level.getRecipeManager()
+                    .getRecipeFor(BnCRecipeTypes.FERMENTING, inventoryWrapper, level, lastRecipeID);
+            if (recipe.isPresent() && recipe.get().value().matches(inventoryWrapper, level)) {
+                return recipe;
+            }
+        }
+
         return Optional.empty();
     }
 
