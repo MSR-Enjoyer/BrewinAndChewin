@@ -35,6 +35,7 @@ import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.AbstractedItemHandler;
 import umpaz.brewinandchewin.common.registry.BnCBlockEntityTypes;
+import umpaz.brewinandchewin.common.utility.BnCMathUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -159,9 +160,7 @@ public class KegBlock extends BaseEntityBlock implements SimpleWaterloggedBlock 
         BlockEntity tileEntity = level.getBlockEntity(pos);
         if (tileEntity instanceof KegBlockEntity) {
             AbstractedItemHandler inventory = ((KegBlockEntity) tileEntity).getInventory();
-            // FIXME: Use our own helper method.
-//            return MathUtils.calcRedstoneFromItemHandler(inventory);
-            return 15;
+            return BnCMathUtils.redstoneFromItemHandler(inventory);
         }
         return 0;
     }
