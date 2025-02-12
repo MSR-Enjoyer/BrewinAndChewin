@@ -15,7 +15,9 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -41,6 +43,7 @@ import umpaz.brewinandchewin.common.block.entity.container.AbstractedItemHandler
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.common.block.entity.container.KegStackedContents;
 import umpaz.brewinandchewin.common.block.entity.container.SidedKegWrapper;
+import umpaz.brewinandchewin.common.crafting.FluidIngredientWithAmount;
 import umpaz.brewinandchewin.common.utility.BnCMenuConstructor;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
@@ -183,12 +186,12 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
     @Override
     public Codec<AbstractedFluidIngredient> getFluidIngredientWrapperCodec() {
-        return KegFluidIngredient.Exact.CODEC.xmap(exact -> exact, abstractedFluidIngredient -> (KegFluidIngredient.Exact) abstractedFluidIngredient);
+        return KegFluidIngredient.CODEC;
     }
 
     @Override
     public StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidIngredient> getFluidIngredientWrapperStreamCodec() {
-        return KegFluidIngredient.Exact.STREAM_CODEC.map(exact -> exact, abstractedFluidIngredient -> (KegFluidIngredient.Exact) abstractedFluidIngredient);
+        return KegFluidIngredient.STREAM_CODEC;
     }
 
     @Override
@@ -223,21 +226,34 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
     @Override
     public RagingAttachment getRagingAttachment(LivingEntity entity) {
-        return null;
+        return entity.getAttachedOrElse(BnCAttachments.RAGING, new RagingAttachment(0, 0));
     }
 
     @Override
     public void setRagingAttachment(LivingEntity entity, @Nullable RagingAttachment value) {
-
+        if (value == null) {
+            entity.removeAttached(BnCAttachments.RAGING);
+            return;
+        }
+        entity.setAttached(BnCAttachments.RAGING, value);
     }
 
     @Override
     public TipsyHeartsAttachment getTipsyHeartsAttachment(LivingEntity entity) {
-        return null;
+        return entity.getAttachedOrElse(BnCAttachments.TIPSY_HEARTS, new TipsyHeartsAttachment(0.0F, 0));
     }
 
     @Override
     public void setTipsyHeartsAttachment(LivingEntity entity, @Nullable TipsyHeartsAttachment value) {
+        if (value == null) {
+            entity.removeAttached(BnCAttachments.TIPSY_HEARTS);
+            return;
+        }
+        entity.setAttached(BnCAttachments.TIPSY_HEARTS, value);
+    }
 
+    @Override
+    public Object createLoaderFluidStack(AbstractedFluidStack abstracted) {
+        return new AmountedFluidVariant(FluidVariant.of(abstracted.fluid(), abstracted.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY), abstracted.amount(), abstracted.unit());
     }
 }

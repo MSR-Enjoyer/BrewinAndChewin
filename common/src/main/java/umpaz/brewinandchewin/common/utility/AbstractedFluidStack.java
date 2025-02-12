@@ -10,10 +10,24 @@ import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
 
-public record AbstractedFluidStack(Fluid fluid, long amount, DataComponentMap components, FluidUnit unit, @Nullable Object loaderSpecific) {
+public class AbstractedFluidStack {
     public static final Codec<AbstractedFluidStack> CODEC = BrewinAndChewin.getHelper().getFluidStackWrapperCodec();
     public static final StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidStack> STREAM_CODEC = BrewinAndChewin.getHelper().getFluidStackWrapperStreamCodec();
     public static final AbstractedFluidStack EMPTY = new AbstractedFluidStack(Fluids.EMPTY, 0, new PatchedDataComponentMap(DataComponentMap.EMPTY), FluidUnit.getLoaderUnit(), null);
+
+    private final Fluid fluid;
+    private final long amount;
+    private final DataComponentMap components;
+    private final FluidUnit unit;
+    private Object loaderSpecific;
+
+    public AbstractedFluidStack(Fluid fluid, long amount, DataComponentMap components, FluidUnit unit, Object loaderSpecific) {
+        this.fluid = fluid;
+        this.amount = amount;
+        this.components = components;
+        this.unit = unit;
+        this.loaderSpecific = loaderSpecific;
+    }
 
     public AbstractedFluidStack(Fluid fluid, long amount) {
         this(fluid, amount, new PatchedDataComponentMap(DataComponentMap.EMPTY), FluidUnit.getLoaderUnit(), null);
@@ -27,8 +41,26 @@ public record AbstractedFluidStack(Fluid fluid, long amount, DataComponentMap co
         return fluid == other.fluid && components.equals(other.components);
     }
 
-    @Override
     public Fluid fluid() {
         return isEmpty() ? Fluids.EMPTY : fluid;
+    }
+
+    public long amount() {
+        return amount;
+    }
+
+    public DataComponentMap components() {
+        return components;
+    }
+
+    public FluidUnit unit() {
+        return unit;
+    }
+
+    public Object loaderSpecific() {
+        if (loaderSpecific == null)
+            loaderSpecific = BrewinAndChewin.getHelper().createLoaderFluidStack(this);
+
+        return loaderSpecific;
     }
 }

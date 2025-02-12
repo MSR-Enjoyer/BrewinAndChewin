@@ -106,4 +106,6 @@ public interface BnCPlatformHelper {
 
     TipsyHeartsAttachment getTipsyHeartsAttachment(LivingEntity entity);
     void setTipsyHeartsAttachment(LivingEntity entity, @Nullable TipsyHeartsAttachment value);
+
+    Object createLoaderFluidStack(AbstractedFluidStack abstracted);
 }

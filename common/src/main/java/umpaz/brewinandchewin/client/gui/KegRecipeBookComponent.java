@@ -1,6 +1,7 @@
 package umpaz.brewinandchewin.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -33,6 +34,7 @@ import umpaz.brewinandchewin.common.utility.BnCTextUtils;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.FluidUnit;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -139,22 +141,20 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                     var ingredients = fluidIngredient.get().ingredient().displayStacks();
                     AbstractedFluidStack fluidStack = ingredients.get(Mth.floor(((GhostRecipeAccessor)ghostRecipe).brewinandchewin$getTime() / 30.0F) % ingredients.size());
                     fluidStack = new AbstractedFluidStack(fluidStack.fluid(), fluidIngredient.get().amount(), fluidStack.components(), fluidIngredient.get().unit().orElse(FluidUnit.getLoaderUnit()), null);
-                    if (!kegMenu.kegTank.isEmpty() && !kegMenu.kegTank.getAbstractedFluid().fluid().isSame(fluidStack.fluid())) {
-                        if (fluidStack != null && BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg())
+                    if (kegMenu.kegTank.isEmpty() || !kegMenu.kegTank.getAbstractedFluid().fluid().isSame(fluidStack.fluid())) {
+                        if (BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg())
                             BrewinAndChewinClient.getHelper().renderFluidInKeg(fluidStack, gui, leftPos + 120, topPos + 19);
                         gui.fill(leftPos + 120, topPos + 19, leftPos + 120 + 16 + 8, topPos + 31 + 16, 822018048);
 
-                        if (fluidStack != null) {
-                            ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
-                            int pourCount = (int) (Math.min(fermentingRecipe.getFluidIngredient().get().loaderAmount(), kegMenu.kegTank.getFluidCapacity()) / FluidUnit.convert(250L, FluidUnit.MILLIBUCKETS, FluidUnit.getLoaderUnit()));
-                            itemDisplay.setCount(pourCount);
-                            if (!itemDisplay.isEmpty()) {
-                                int itemX = leftPos + 124;
-                                int itemY = topPos + 23;
-                                gui.renderItem(itemDisplay, itemX, itemY);
-                                gui.fill(RenderType.guiGhostRecipeOverlay(), itemX, itemY, itemX + 16, itemY + 16, 822083583);
-                                gui.renderItemDecorations(minecraft.font, itemDisplay, itemX, itemY);
-                            }
+                        ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
+                        int pourCount = (int) (Math.min(fermentingRecipe.getFluidIngredient().get().loaderAmount(), kegMenu.kegTank.getFluidCapacity()) / FluidUnit.convert(250L, FluidUnit.MILLIBUCKETS, FluidUnit.getLoaderUnit()));
+                        itemDisplay.setCount(pourCount);
+                        if (!itemDisplay.isEmpty()) {
+                            int itemX = leftPos + 124;
+                            int itemY = topPos + 23;
+                            gui.renderItem(itemDisplay, itemX, itemY);
+                            gui.fill(RenderType.guiGhostRecipeOverlay(), itemX, itemY, itemX + 16, itemY + 16, 822083583);
+                            gui.renderItemDecorations(minecraft.font, itemDisplay, itemX, itemY);
                         }
                     }
                 }
@@ -163,10 +163,15 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
     }
 
     private void renderTankTooltip(GuiGraphics gui, int renderX, int renderY, int mouseX, int mouseY, AbstractedFluidStack stack) {
-        if (isHovering(120, 19,  24, 28, mouseX - renderX, mouseY - renderY) && menu instanceof KegMenu kegMenu && !kegMenu.kegTank.isEmpty()) {
+        if (isHovering(120, 19,  24, 28, mouseX - renderX, mouseY - renderY) && menu instanceof KegMenu kegMenu && (kegMenu.kegTank.isEmpty() || !kegMenu.kegTank.getAbstractedFluid().fluid().isSame(stack.fluid()))) {
             Component component = MutableComponent.create(BrewinAndChewin.getHelper().getFluidDisplayName(stack).getContents())
                     .append((BnCConfiguration.CLIENT_CONFIG.get().displayUnit().shortFormat(" (%s/%s") + ")").formatted(FluidUnit.convert(stack.amount(), stack.unit(), BnCConfiguration.CLIENT_CONFIG.get().displayUnit()), FluidUnit.convert(kegMenu.kegTank.getFluidCapacity(), FluidUnit.getLoaderUnit(), BnCConfiguration.CLIENT_CONFIG.get().displayUnit())));
-            gui.renderComponentTooltip(minecraft.font, List.of(component), mouseX, mouseY);
+            List<Component> components = new ArrayList<>(List.of(component));
+            if (BnCConfiguration.CLIENT_CONFIG.get().oppositeFluidDisplay() == BnCConfiguration.Client.DisplaySettings.ADVANCED_TOOLTIPS && minecraft.options.advancedItemTooltips || BnCConfiguration.CLIENT_CONFIG.get().oppositeFluidDisplay() == BnCConfiguration.Client.DisplaySettings.ALWAYS) {
+                FluidUnit opposite = FluidUnit.getOpposite(BnCConfiguration.CLIENT_CONFIG.get().displayUnit());
+                components.add(MutableComponent.create(Component.literal((opposite.shortFormat(("(%s/%s")) + ")").formatted(FluidUnit.convert(stack.amount(), stack.unit(), opposite), FluidUnit.convert(kegMenu.kegTank.getFluidCapacity(), FluidUnit.getLoaderUnit(), opposite))).getContents()).withStyle(ChatFormatting.DARK_GRAY));
+            }
+            gui.renderComponentTooltip(minecraft.font, components, mouseX, mouseY);
         }
     }
 

@@ -4,6 +4,8 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -180,12 +182,12 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
 
     @Override
     public Codec<AbstractedFluidIngredient> getFluidIngredientWrapperCodec() {
-        return BnCNeoForgeCodecs.FLUID_INGREDIENT_WRAPPER;
+        return KegCompatibleFluidIngredients.CODEC;
     }
 
     @Override
     public StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidIngredient> getFluidIngredientWrapperStreamCodec() {
-        return KegCompatibleFluidIngredients.FLUID_INGREDIENT_WRAPPER;
+        return KegCompatibleFluidIngredients.STREAM_CODEC;
     }
 
     @Override
@@ -244,5 +246,10 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
             return;
         }
         entity.setData(BnCAttachments.TIPSY_HEARTS, value);
+    }
+
+    @Override
+    public Object createLoaderFluidStack(AbstractedFluidStack abstracted) {
+        return new FluidStack(abstracted.fluid().builtInRegistryHolder(), (int) abstracted.unit().convertToLoader(abstracted.amount()), abstracted.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
     }
 }

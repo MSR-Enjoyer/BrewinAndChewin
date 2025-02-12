@@ -40,6 +40,12 @@ public enum FluidUnit implements StringRepresentable {
         return convertToLoader(value, this);
     }
 
+    public static FluidUnit getOpposite(FluidUnit unit) {
+        if (unit == DROPLETS)
+            return MILLIBUCKETS;
+        return DROPLETS;
+    }
+
     public static FluidUnit getLoaderUnit() {
         return BrewinAndChewin.getHelper().getPlatform() == BnCPlatform.NEOFORGE ? MILLIBUCKETS : DROPLETS;
     }

@@ -11,6 +11,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.utility.FluidUnit;
 import umpaz.brewinandchewin.platform.BnCPlatform;
@@ -221,12 +223,12 @@ public class BnCConfiguration {
     }
 
 
-    public record Client(FluidUnit displayUnit,
+    public record Client(FluidUnit displayUnit, DisplaySettings oppositeFluidDisplay,
                          boolean numbedHeartFlickering, boolean intoxicationFoodOverlay,
                          boolean scrambleChat, boolean scrambleName, boolean scrambleSign,
                          boolean renderFluidInKeg) {
         public static final Client DEFAULT = new Client(
-                FluidUnit.getLoaderUnit(),
+                FluidUnit.MILLIBUCKETS, platformSpecificValue(DisplaySettings.NEVER, DisplaySettings.ADVANCED_TOOLTIPS),
                 true, true,
                 true, true, true,
                 true
@@ -243,6 +245,16 @@ public class BnCConfiguration {
                         "fluidDisplayUnit",
                         DEFAULT.displayUnit()
                 ).forGetter(Client::displayUnit),
+                GreenhouseConfigCodecs.defaultFieldCodec(
+                        GreenhouseConfigCodecs.commentedCodec(
+                                DisplaySettings.CODEC,
+                                "When the opposite fluid display unit should be shown.",
+                                "Should be one of 'never', 'advanced_tooltips' or 'always'",
+                                "Default: " + DEFAULT.oppositeFluidDisplay().getSerializedName()
+                        ),
+                        "oppositeFluidDisplay",
+                        DEFAULT.oppositeFluidDisplay()
+                ).forGetter(Client::oppositeFluidDisplay),
                 GreenhouseConfigCodecs.defaultFieldCodec(
                         GreenhouseConfigCodecs.commentedCodec(
                                 Codec.BOOL,
@@ -298,6 +310,25 @@ public class BnCConfiguration {
                         DEFAULT.renderFluidInKeg()
                 ).forGetter(Client::scrambleSign)
         ).apply(inst, Client::new));
+
+        public enum DisplaySettings implements StringRepresentable {
+            NEVER("never"),
+            ADVANCED_TOOLTIPS("advanced_tooltips"),
+            ALWAYS("always");
+
+            public static final Codec<DisplaySettings> CODEC = StringRepresentable.fromEnum(DisplaySettings::values);
+
+            final String name;
+
+            DisplaySettings(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public @NotNull String getSerializedName() {
+                return name;
+            }
+        }
     }
 
     private static <T> T platformSpecificValue(T neoForge, T fabric) {

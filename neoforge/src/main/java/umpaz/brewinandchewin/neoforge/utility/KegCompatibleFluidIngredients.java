@@ -2,12 +2,13 @@ package umpaz.brewinandchewin.neoforge.utility;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -19,15 +20,29 @@ import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.FluidUnit;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class KegCompatibleFluidIngredients {
-    public static final StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidIngredient> FLUID_INGREDIENT_WRAPPER = ByteBufCodecs.either(KegCompatibleFluidIngredients.Exact.STREAM_CODEC, KegCompatibleFluidIngredients.NeoForgeIngredient.STREAM_CODEC)
-            .map(Either::unwrap, wrapper -> {
-                if (wrapper instanceof KegCompatibleFluidIngredients.Exact exact)
-                    return Either.left(exact);
-                if (wrapper instanceof KegCompatibleFluidIngredients.NeoForgeIngredient neoForgeIngredient)
+    public static final Codec<AbstractedFluidIngredient> CODEC = Codec.either(Codec.either(Exact.CODEC, Tag.CODEC), NeoForgeIngredient.CODEC)
+            .xmap(either -> either.map(Either::unwrap, neoForgeIngredient -> neoForgeIngredient), wrapper -> {
+                if (wrapper instanceof Exact exact)
+                    return Either.left(Either.left(exact));
+                if (wrapper instanceof Tag tag)
+                    return Either.left(Either.right(tag));
+                if (wrapper instanceof NeoForgeIngredient neoForgeIngredient)
+                    return Either.right(neoForgeIngredient);
+                throw new UnsupportedOperationException("Unsupported wrapped fluid ingredient class.");
+            });
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidIngredient> STREAM_CODEC = ByteBufCodecs.either(ByteBufCodecs.either(Exact.STREAM_CODEC, Tag.STREAM_CODEC), NeoForgeIngredient.STREAM_CODEC)
+            .map(either -> either.map(Either::unwrap, neoForgeIngredient -> neoForgeIngredient), wrapper -> {
+                if (wrapper instanceof Exact exact)
+                    return Either.left(Either.left(exact));
+                if (wrapper instanceof Tag tag)
+                    return Either.left(Either.right(tag));
+                if (wrapper instanceof NeoForgeIngredient neoForgeIngredient)
                     return Either.right(neoForgeIngredient);
                 throw new UnsupportedOperationException("Unsupported wrapped fluid ingredient class.");
             });
@@ -66,6 +81,52 @@ public class KegCompatibleFluidIngredients {
             if (displayStack.components().isEmpty())
                 return displayStack.fluid().isSame(wrapper.fluid());
             return displayStack.matches(wrapper);
+        }
+    }
+
+    public static class Tag implements AbstractedFluidIngredient {
+        public static final Codec<Tag> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                RegistryCodecs.homogeneousList(Registries.FLUID).fieldOf("tag").forGetter(tag -> tag.fluidTag),
+                DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(tag -> tag.components instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
+        ).apply(inst, Tag::new));
+        public static final StreamCodec<RegistryFriendlyByteBuf, Tag> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.holderSet(Registries.FLUID), tag -> tag.fluidTag,
+                DataComponentPatch.STREAM_CODEC, tag -> tag.components.asPatch(),
+                Tag::new
+        );
+
+        private final HolderSet<Fluid> fluidTag;
+        private final PatchedDataComponentMap components;
+        private final List<AbstractedFluidStack> fluidStacks = new ArrayList<>();
+
+        public Tag(HolderSet<Fluid> fluidTag, PatchedDataComponentMap components) {
+            this.fluidTag = fluidTag;
+            this.components = components;
+        }
+
+        public Tag(HolderSet<Fluid> fluid, DataComponentPatch patch) {
+            this(fluid, PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, patch));
+        }
+
+        public Tag(HolderSet<Fluid> fluid) {
+            this(fluid, new PatchedDataComponentMap(DataComponentMap.EMPTY));
+        }
+
+        @Override
+        public List<AbstractedFluidStack> displayStacks() {
+            if (fluidTag.size() > 0 && fluidStacks.isEmpty()) {
+                for (Holder<Fluid> fluidHolder :  fluidTag) {
+                    fluidStacks.add(new AbstractedFluidStack(fluidHolder.value(), 1000, components, FluidUnit.MILLIBUCKETS, new FluidStack(fluidHolder, 1000, components.asPatch())));
+                }
+            }
+            return fluidStacks;
+        }
+
+        @Override
+        public boolean matches(AbstractedFluidStack wrapper) {
+            if (components.isEmpty())
+                return fluidTag.contains(wrapper.fluid().builtInRegistryHolder());
+            return fluidTag.contains(wrapper.fluid().builtInRegistryHolder()) && wrapper.components().equals(components);
         }
     }
 

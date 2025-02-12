@@ -1,9 +1,12 @@
 package umpaz.brewinandchewin.fabric.utility;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.fabricators_of_create.porting_lib.fluids.FluidStack;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
@@ -15,12 +18,29 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.material.Fluid;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
-import umpaz.brewinandchewin.common.utility.BnCStreamCodecs;
 import umpaz.brewinandchewin.common.utility.FluidUnit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class KegFluidIngredient {
+    public static final Codec<AbstractedFluidIngredient> CODEC = Codec.either(Exact.CODEC, Tag.CODEC)
+            .xmap(Either::unwrap, wrapper -> {
+                if (wrapper instanceof Exact exact)
+                    return Either.left(exact);
+                if (wrapper instanceof Tag neoForgeIngredient)
+                    return Either.right(neoForgeIngredient);
+                throw new UnsupportedOperationException("Unsupported wrapped fluid ingredient class.");
+            });
+    public static final StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidIngredient> STREAM_CODEC = ByteBufCodecs.either(Exact.STREAM_CODEC, Tag.STREAM_CODEC)
+            .map(Either::unwrap, wrapper -> {
+                if (wrapper instanceof Exact exact)
+                    return Either.left(exact);
+                if (wrapper instanceof Tag neoForgeIngredient)
+                    return Either.right(neoForgeIngredient);
+                throw new UnsupportedOperationException("Unsupported wrapped fluid ingredient class.");
+            });
+
     public static class Exact implements AbstractedFluidIngredient {
         public static final Codec<Exact> DIRECT_CODEC = RecordCodecBuilder.create(inst -> inst.group(
                 BuiltInRegistries.FLUID.byNameCodec().fieldOf("fluid").forGetter(exact -> exact.displayStack.fluid()),
@@ -61,6 +81,52 @@ public class KegFluidIngredient {
             if (displayStack.components().isEmpty())
                 return displayStack.fluid().isSame(wrapper.fluid());
             return displayStack.matches(wrapper);
+        }
+    }
+
+    public static class Tag implements AbstractedFluidIngredient {
+        public static final Codec<Tag> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                RegistryCodecs.homogeneousList(Registries.FLUID).fieldOf("tag").forGetter(tag -> tag.fluidTag),
+                DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(tag -> tag.components instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY)
+        ).apply(inst, Tag::new));
+        public static final StreamCodec<RegistryFriendlyByteBuf, Tag> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.holderSet(Registries.FLUID), tag -> tag.fluidTag,
+                DataComponentPatch.STREAM_CODEC, tag -> tag.components.asPatch(),
+                Tag::new
+        );
+
+        private final HolderSet<Fluid> fluidTag;
+        private final PatchedDataComponentMap components;
+        private final List<AbstractedFluidStack> fluidStacks = new ArrayList<>();
+
+        public Tag(HolderSet<Fluid> fluidTag, PatchedDataComponentMap components) {
+            this.fluidTag = fluidTag;
+            this.components = components;
+        }
+
+        public Tag(HolderSet<Fluid> fluid, DataComponentPatch patch) {
+            this(fluid, PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, patch));
+        }
+
+        public Tag(HolderSet<Fluid> fluid) {
+            this(fluid, new PatchedDataComponentMap(DataComponentMap.EMPTY));
+        }
+
+        @Override
+        public List<AbstractedFluidStack> displayStacks() {
+            if (fluidTag.size() > 0 && fluidStacks.isEmpty()) {
+                for (Holder<Fluid> fluidHolder :  fluidTag) {
+                    fluidStacks.add(new AbstractedFluidStack(fluidHolder.value(), 81000L, components, FluidUnit.DROPLETS, new AmountedFluidVariant(FluidVariant.of(fluidHolder.value(), components.asPatch()), 81000L, FluidUnit.DROPLETS)));
+                }
+            }
+            return fluidStacks;
+        }
+
+        @Override
+        public boolean matches(AbstractedFluidStack wrapper) {
+            if (components.isEmpty())
+                return fluidTag.contains(wrapper.fluid().builtInRegistryHolder());
+            return fluidTag.contains(wrapper.fluid().builtInRegistryHolder()) && wrapper.components().equals(components);
         }
     }
 }
