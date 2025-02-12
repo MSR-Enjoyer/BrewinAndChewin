@@ -51,7 +51,7 @@ public class DrunkBubbleParticle extends TextureSheetParticle {
 
       @Override
       public Particle createParticle( DrunkBubbleParticleOptions typeIn, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed ) {
-         DrunkBubbleParticle particle = new DrunkBubbleParticle(level, x, y + 0.3D, z, xSpeed, ySpeed, zSpeed);
+         DrunkBubbleParticle particle = new DrunkBubbleParticle(level, x, y + 0.3D, z, 0.0, 0.002, 0.0);
          particle.setAlpha(0.6F);
          particle.setColor(typeIn.getColor().x, typeIn.getColor().y, typeIn.getColor().z);
          particle.scale(typeIn.getScale());

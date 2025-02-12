@@ -7,6 +7,8 @@
   "mixins": [
     "IntoxicationCancelSaturationMixin",
     "KegStackedContentsRecipePickerMixin",
+    "LivingEntityAccessor",
+    "LivingEntityMixin",
     "LootContextAccessor",
     "LootParamsAccessor",
     "PlayerMixin",
@@ -15,7 +17,8 @@
     "ServerPlaceRecipeAccessor",
     "StackedContentsRecipePickerAccessor",
     "StoreLootParamsMixin$LootParamsBuilderMixin",
-    "StoreLootParamsMixin$LootParamsMixin"
+    "StoreLootParamsMixin$LootParamsMixin",
+    "client.integration.appleskin.HUDOverlayHandlerMixin"
   ],
   "client": [
     "GhostRecipeAccessor",

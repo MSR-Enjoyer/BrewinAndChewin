@@ -1,14 +1,22 @@
 package umpaz.brewinandchewin.fabric;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.*;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.MushroomCow;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.ComposterBlock;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.common.attachment.RagingAttachment;
+import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
 import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsClientboundPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
@@ -29,6 +37,8 @@ import umpaz.brewinandchewin.fabric.fluid.BnCFluidVariantAttributeHandler;
 import umpaz.brewinandchewin.fabric.registry.BnCAttachments;
 import umpaz.brewinandchewin.fabric.registry.BnCLootModifiers;
 
+import java.util.Optional;
+
 public class BrewinAndChewinFabric implements ModInitializer {
     private static MinecraftServer server;
 
@@ -43,6 +53,31 @@ public class BrewinAndChewinFabric implements ModInitializer {
         });
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
             BrewinAndChewinFabric.server = null;
+        });
+
+        EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
+            if (entity instanceof LivingEntity living) {
+                if (entity.hasAttached(BnCAttachments.TIPSY_HEARTS)) {
+                    TipsyHeartsAttachment attachment = entity.getAttached(BnCAttachments.TIPSY_HEARTS);
+                    BrewinAndChewin.getHelper().sendClientbound(player, new SyncNumbedHeartsClientboundPacket(living.getId(), attachment.getNumbedHealth(), attachment.getTicksUntilDamage()));
+                }
+                if (entity.hasAttached(BnCAttachments.RAGING)) {
+                    RagingAttachment attachment = entity.getAttached(BnCAttachments.RAGING);
+                    BrewinAndChewin.getHelper().sendClientbound(player, new SyncRagingStacksClientboundPacket(living.getId(), Optional.of(attachment.getStacks())));
+                }
+            }
+        });
+        ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
+            if (entity instanceof ServerPlayer) {
+                if (entity.hasAttached(BnCAttachments.TIPSY_HEARTS)) {
+                    TipsyHeartsAttachment attachment = entity.getAttached(BnCAttachments.TIPSY_HEARTS);
+                    BrewinAndChewin.getHelper().sendClientboundTracking(entity, new SyncNumbedHeartsClientboundPacket(entity.getId(), attachment.getNumbedHealth(), attachment.getTicksUntilDamage()));
+                }
+                if (entity.hasAttached(BnCAttachments.RAGING)) {
+                    RagingAttachment attachment = entity.getAttached(BnCAttachments.RAGING);
+                    BrewinAndChewin.getHelper().sendClientboundTracking(entity, new SyncRagingStacksClientboundPacket(entity.getId(), Optional.of(attachment.getStacks())));
+                }
+            }
         });
     }
 

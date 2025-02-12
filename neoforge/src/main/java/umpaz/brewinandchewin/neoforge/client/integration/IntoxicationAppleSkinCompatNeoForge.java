@@ -7,8 +7,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 
-// TODO: Check if AppleSkin stuff still renders with Intoxicated.
-// TODO: If so, be a bad modder and mixin to AppleSkin to abide by Intoxicated rendering.
 public class IntoxicationAppleSkinCompatNeoForge {
     public static void init() {
         NeoForge.EVENT_BUS.register(IntoxicationAppleSkinCompatNeoForge.class);

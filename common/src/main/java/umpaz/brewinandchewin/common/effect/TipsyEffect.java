@@ -10,23 +10,11 @@ import umpaz.brewinandchewin.client.particle.DrunkBubbleParticleOptions;
 public class TipsyEffect extends MobEffect {
 
     public TipsyEffect() {
-        super(MobEffectCategory.NEUTRAL, 0);
+        super(MobEffectCategory.NEUTRAL, 13208334, getParticle(13208334));
     }
 
-    @Override
-    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
-        if (entity.level().isClientSide && entity.level().random.nextInt(Math.max(13 - amplifier, 4)) == 0) {
-            entity.level().addParticle(getParticle(), entity.getRandomX(1.0D), entity.getEyeY() - entity.getRandom().nextDouble() + .25d, entity.getRandomZ(1.0D), 0.0D, 0.0D, 0.0D);
-        }
-        return true;
-    }
-
-    public ParticleOptions getParticle() {
-        return new DrunkBubbleParticleOptions(new Vector3f(((getBubbleColor() >> 16) & 0xFF) / 255f, ((getBubbleColor() >> 8) & 0xFF) / 255f, (getBubbleColor() & 0xFF) / 255f), 0.25f);
-    }
-
-    public int getBubbleColor() {
-        return 13208334;
+    public static ParticleOptions getParticle(int color) {
+        return new DrunkBubbleParticleOptions(new Vector3f(((color >> 16) & 0xFF) / 255f, ((color >> 8) & 0xFF) / 255f, (color & 0xFF) / 255f), 0.25f);
     }
 
     @Override

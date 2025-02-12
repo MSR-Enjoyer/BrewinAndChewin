@@ -8,7 +8,7 @@ import umpaz.brewinandchewin.common.tag.BnCTags;
 public class IntoxicationEffect extends MobEffect
 {
     public IntoxicationEffect() {
-        super(MobEffectCategory.HARMFUL, 0);
+        super(MobEffectCategory.HARMFUL, 14531138);
     }
 
     public static boolean canBeIntoxicated(LivingEntity entity) {

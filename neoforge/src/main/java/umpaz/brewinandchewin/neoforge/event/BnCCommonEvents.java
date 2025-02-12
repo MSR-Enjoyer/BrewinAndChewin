@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.entity.living.EffectParticleModificationEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -16,6 +17,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.attachment.RagingAttachment;
 import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
+import umpaz.brewinandchewin.common.effect.RagingEffect;
+import umpaz.brewinandchewin.common.mixin.LivingEntityAccessor;
 import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsClientboundPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
@@ -97,16 +100,25 @@ public class BnCCommonEvents {
             }
         }
         if (attacker instanceof LivingEntity living && (!(living instanceof Player player) || player.getAttackStrengthScale(0.0F) > 0.8F) && living.hasEffect(BnCEffects.RAGING) && event.getSource().is(BnCTags.TRIGGERS_RAGING)) {
+            if (BrewinAndChewin.getHelper().getRagingAttachment(living) == null)
+                BrewinAndChewin.getHelper().setRagingAttachment(living, new RagingAttachment(0, 0));
             RagingAttachment attachment = BrewinAndChewin.getHelper().getRagingAttachment(living);
-            if (attachment != null) {
-                int stacks = Math.min(4, attachment.getStacks() + 1);
-                if (stacks != attachment.getStacks() && !target.level().isClientSide()) {
-                    double heightAddition = living.getY(1.0D) - living.getY(0.5D);
-                    ((ServerLevel) target.level()).sendParticles(RagingAttachment.getParticleType(stacks, 0.5F), target.getX(), target.getY(0.5), target.getZ(), 12, target.getRandom().nextDouble() * 0.4 - 0.2, target.getRandom().nextDouble() * heightAddition * 2 - heightAddition, target.getRandom().nextDouble() * 0.4 - 0.2, 0.0);
-                }
-                attachment.setStacks(stacks);
-                attachment.setTicksUntilReset(Mth.ceil(RagingAttachment.RESET_TICK_MULTIPLIER * (living instanceof Player player ? player.getCurrentItemAttackStrengthDelay() : 30)));
+            int stacks = Math.min(4, attachment.getStacks() + 1);
+            if (stacks != attachment.getStacks() && !target.level().isClientSide()) {
+                double heightAddition = living.getY(1.0D) - living.getY(0.5D);
+                ((ServerLevel) target.level()).sendParticles(RagingAttachment.getParticleType(stacks, 0.5F), target.getX(), target.getY(0.5), target.getZ(), 12, target.getRandom().nextDouble() * 0.4 - 0.2, target.getRandom().nextDouble() * heightAddition * 2 - heightAddition, target.getRandom().nextDouble() * 0.4 - 0.2, 0.0);
             }
+            attachment.setStacks(stacks);
+            ((LivingEntityAccessor) living).brewinandchewin$invokeUpdateEffectVisibility();
+            attachment.setTicksUntilReset(Mth.ceil(RagingAttachment.RESET_TICK_MULTIPLIER * (living instanceof Player player ? player.getCurrentItemAttackStrengthDelay() : 30)));
+        }
+    }
+
+    @SubscribeEvent
+    public static void effectParticleModification(EffectParticleModificationEvent event) {
+        if (event.getEffect().getEffect().value() instanceof RagingEffect) {
+            LivingEntity entity = event.getEntity();
+            event.setParticleOptions(RagingAttachment.getParticleType(entity.getExistingData(BnCAttachments.RAGING).isEmpty() ? 0 : entity.getData(BnCAttachments.RAGING).getStacks(), 0.75F));
         }
     }
 

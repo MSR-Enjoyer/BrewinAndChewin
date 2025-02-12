@@ -1,9 +1,10 @@
+
 package umpaz.brewinandchewin.common;
 
+import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
-import umpaz.brewinandchewin.BrewinAndChewin;
 
 import java.util.List;
 import java.util.Set;
@@ -22,9 +23,7 @@ public class BnCMixinConfigPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         if (mixinClassName.contains(".integration."))
-            // FIXME: Not everybody will have AppleSkin. Replace this.
-//            return BrewinAndChewin.getHelper().isModLoadedEarly(mixinClassName.split(".integration.", 2)[1].split("\\.", 2)[0]);
-            return true;
+            return FabricLoader.getInstance().isModLoaded(mixinClassName.split(".integration.", 2)[1].split("\\.", 2)[0]);
         return true;
     }
 

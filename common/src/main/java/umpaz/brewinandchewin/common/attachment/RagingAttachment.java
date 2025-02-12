@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.particle.RagingParticleOptions;
+import umpaz.brewinandchewin.common.mixin.LivingEntityAccessor;
 import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 
@@ -33,7 +34,6 @@ public class RagingAttachment {
         this.ticksUntilReset = ticksUntilReset;
     }
 
-
     public int getStacks() {
         return stacks;
     }
@@ -54,11 +54,8 @@ public class RagingAttachment {
 
     public static void tick(LivingEntity living) {
         RagingAttachment attachment = BrewinAndChewin.getHelper().getRagingAttachment(living);
-        if (attachment == null) {
-            if (!living.hasEffect(BnCEffects.RAGING))
-                return;
-            BrewinAndChewin.getHelper().setRagingAttachment(living, new RagingAttachment(0, 0));
-        }
+        if (attachment == null)
+            return;
 
         if (!living.level().isClientSide()) {
             if (attachment.getTicksUntilReset() <= 0 && attachment.getStacks() > 0) {
@@ -74,6 +71,7 @@ public class RagingAttachment {
                     BrewinAndChewin.getHelper().setRagingAttachment(living, null);
                     BrewinAndChewin.getHelper().sendClientboundTracking(living, new SyncRagingStacksClientboundPacket(living.getId(), Optional.empty()));
                 }
+                ((LivingEntityAccessor)living).brewinandchewin$invokeUpdateEffectVisibility();
                 return;
             }
 
@@ -82,14 +80,10 @@ public class RagingAttachment {
                 if (living.getAttributes().hasModifier(Attributes.ATTACK_SPEED, RAGING_ATTRIBUTE_ID))
                     living.getAttribute(Attributes.ATTACK_SPEED).removeModifier(RAGING_ATTRIBUTE_ID);
                 living.getAttribute(Attributes.ATTACK_SPEED).addTransientModifier(new AttributeModifier(RAGING_ATTRIBUTE_ID, Math.min(0.8, 0.05 * attachment.getStacks() + 0.025 * living.getEffect(BnCEffects.RAGING).getAmplifier() * attachment.getStacks()), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+                ((LivingEntityAccessor)living).brewinandchewin$invokeUpdateEffectVisibility();
                 BrewinAndChewin.getHelper().sendClientboundTracking(living, new SyncRagingStacksClientboundPacket(living.getId(), Optional.of(attachment.getStacks())));
             }
             attachment.previousStacks = attachment.stacks;
-        }
-
-        if (living.hasEffect(BnCEffects.RAGING) && living.getEffect(BnCEffects.RAGING).isVisible() && living.getRandom().nextInt(attachment.getStacks() > 0 ? 3 : 20) == 0) {
-            double heightAddition = living.getBbHeight() - living.getEyeHeight();
-            living.level().addParticle(getParticleType(attachment.getStacks(), 0.75F), living.getRandomX(0.7D), living.getRandom().nextDouble() * heightAddition * 2 + living.getEyeY() - heightAddition, living.getRandomZ(0.7D), (0.5 - living.getRandom().nextDouble()) * 0.1F, 0.0, (0.5 - living.getRandom().nextDouble()) * 0.1F);
         }
     }
 

@@ -226,7 +226,7 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
     @Override
     public RagingAttachment getRagingAttachment(LivingEntity entity) {
-        return entity.getAttachedOrElse(BnCAttachments.RAGING, new RagingAttachment(0, 0));
+        return entity.getAttachedOrElse(BnCAttachments.RAGING, null);
     }
 
     @Override
@@ -240,7 +240,7 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
     @Override
     public TipsyHeartsAttachment getTipsyHeartsAttachment(LivingEntity entity) {
-        return entity.getAttachedOrElse(BnCAttachments.TIPSY_HEARTS, new TipsyHeartsAttachment(0.0F, 0));
+        return entity.getAttachedOrElse(BnCAttachments.TIPSY_HEARTS, null);
     }
 
     @Override
