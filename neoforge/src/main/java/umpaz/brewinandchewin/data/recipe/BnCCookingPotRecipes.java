@@ -36,12 +36,12 @@ public class BnCCookingPotRecipes {
                 .unlockedByItems("has_cheese", BnCItems.FLAXEN_CHEESE_WEDGE)
                 .build(consumer);
         BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.CREAMY_ONION_SOUP, 1, NORMAL_COOKING, MEDIUM_EXP, Items.BOWL)
-                .addIngredient(BnCTags.CHEESE_WEDGES)
+                .addIngredient(BnCTags.FOOD_CHEESE_WEDGE)
                 .addIngredient(CommonTags.FOODS_ONION)
                 .addIngredient(Tags.Items.FOODS_VEGETABLE)
                 .addIngredient(Tags.Items.FOODS_BREAD)
                 .setRecipeBookTab(CookingPotRecipeBookTab.MEALS)
-                .unlockedBy("has_cheese", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(BnCTags.CHEESE_WEDGES).build()))
+                .unlockedBy("has_cheese", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(BnCTags.FOOD_CHEESE_WEDGE).build()))
                 .build(consumer);
         BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.FIERY_FONDUE_POT, 1, SLOW_COOKING, LARGE_EXP, Items.CAULDRON)
                 .addIngredient(ModItems.TOMATO_SAUCE.get())
@@ -58,7 +58,7 @@ public class BnCCookingPotRecipes {
                 .addIngredient(Tags.Items.CROPS_BEETROOT)
                 .addIngredient(ModItems.TOMATO_SAUCE.get())
                 .addIngredient(CommonTags.FOODS_PASTA)
-                .addIngredient(BnCTags.HORROR_MEATS)
+                .addIngredient(BnCTags.FOOD_HORROR_MEAT)
                 .setRecipeBookTab(CookingPotRecipeBookTab.MEALS)
                 .unlockedByItems("has_cheese", BnCItems.SCARLET_CHEESE_WEDGE)
                 .build(consumer);
@@ -72,13 +72,13 @@ public class BnCCookingPotRecipes {
                 .unlockedByItems("has_cheese", BnCItems.SCARLET_CHEESE_WEDGE)
                 .build(consumer);
         BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.VEGETABLE_OMELET, 1, NORMAL_COOKING, MEDIUM_EXP, Items.BOWL)
-                .addIngredient(BnCTags.CHEESE_WEDGES)
+                .addIngredient(BnCTags.FOOD_CHEESE_WEDGE)
                 .addIngredient(Tags.Items.EGGS)
                 .addIngredient(Tags.Items.EGGS)
                 .addIngredient(CommonTags.FOODS_ONION)
                 .addIngredient(Tags.Items.CROPS_CARROT)
                 .setRecipeBookTab(CookingPotRecipeBookTab.MEALS)
-                .unlockedBy("has_cheese", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(BnCTags.CHEESE_WEDGES).build()))
+                .unlockedBy("has_cheese", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(BnCTags.FOOD_CHEESE_WEDGE).build()))
                 .build(consumer);
 
 

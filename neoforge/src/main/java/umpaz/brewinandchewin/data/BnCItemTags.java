@@ -6,6 +6,7 @@ import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.registry.BnCItems;
@@ -46,16 +47,15 @@ public class BnCItemTags extends ItemTagsProvider {
                 .add(BnCItems.WITHERING_DROSS)
                 .add(BnCItems.KOMBUCHA)
                 .add(BnCItems.DREAD_NOG);
-        tag(BnCTags.CHEESE_WEDGES)
+        tag(BnCTags.FOOD_CHEESE_WEDGE)
                 .add(BnCItems.FLAXEN_CHEESE_WEDGE)
                 .add(BnCItems.SCARLET_CHEESE_WEDGE);
-        tag(BnCTags.PIZZA_TOPPINGS)
+        tag(BnCTags.FOOD_PIZZA_TOPPING)
                 .add(Items.BROWN_MUSHROOM).add(Items.RED_MUSHROOM)
                 .add(Items.CARROT).add(Items.BEETROOT).add(ModItems.CABBAGE_LEAF.get()).add(ModItems.ONION.get())
                 .addOptionalTag(CommonTags.FOODS_COOKED_BACON).addOptionalTag(CommonTags.FOODS_COOKED_BEEF).addOptionalTag(CommonTags.FOODS_COOKED_COD).addOptionalTag(CommonTags.FOODS_COOKED_MUTTON).addOptionalTag(CommonTags.FOODS_COOKED_PORK);
-        tag(BnCTags.HORROR_MEATS).addOptionalTag(CommonTags.FOODS_RAW_BEEF).addOptionalTag(CommonTags.FOODS_RAW_CHICKEN);
-        tag(BnCTags.RAW_MEATS).add(Items.ROTTEN_FLESH).addOptionalTag(CommonTags.FOODS_RAW_BACON).addOptionalTag(CommonTags.FOODS_RAW_BEEF).addOptionalTag(CommonTags.FOODS_RAW_CHICKEN)
-                .addOptionalTag(CommonTags.FOODS_RAW_MUTTON).addOptionalTag(CommonTags.FOODS_RAW_PORK);
+        tag(BnCTags.FOOD_HORROR_MEAT).addOptionalTag(CommonTags.FOODS_RAW_BEEF).addOptionalTag(CommonTags.FOODS_RAW_CHICKEN);
+        tag(BnCTags.FOOD_RAW_MEAT).add(Items.ROTTEN_FLESH).addTag(Tags.Items.FOODS_RAW_MEAT);
         tag(BnCCompatTags.ORIGINS_MEAT)
                 .add(BnCItems.JERKY)
                 .add(BnCItems.KIPPERS)

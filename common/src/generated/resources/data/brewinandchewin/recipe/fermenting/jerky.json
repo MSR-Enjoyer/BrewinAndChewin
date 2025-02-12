@@ -4,13 +4,13 @@
   "experience": 1.0,
   "ingredients": [
     {
-      "tag": "brewinandchewin:raw_meats"
+      "tag": "brewinandchewin:foods/raw_meat"
     },
     {
-      "tag": "brewinandchewin:raw_meats"
+      "tag": "brewinandchewin:foods/raw_meat"
     },
     {
-      "tag": "brewinandchewin:raw_meats"
+      "tag": "brewinandchewin:foods/raw_meat"
     },
     []
   ],

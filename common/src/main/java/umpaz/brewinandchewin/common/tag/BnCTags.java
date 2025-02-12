@@ -1,13 +1,9 @@
 package umpaz.brewinandchewin.common.tag;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -16,10 +12,10 @@ import umpaz.brewinandchewin.BrewinAndChewin;
 public class BnCTags {
 
     public static final TagKey<Item> FERMENTED_DRINKS = modItemTag("fermented_drinks");
-    public static final TagKey<Item> HORROR_MEATS = modItemTag("horror_meats");
-    public static final TagKey<Item> RAW_MEATS = modItemTag("raw_meats");
-    public static final TagKey<Item> PIZZA_TOPPINGS = modItemTag("pizza_toppings");
-    public static final TagKey<Item> CHEESE_WEDGES = modItemTag("cheese_wedges");
+    public static final TagKey<Item> FOOD_HORROR_MEAT = modItemTag("foods/horror_meat");
+    public static final TagKey<Item> FOOD_RAW_MEAT = modItemTag("foods/raw_meat");
+    public static final TagKey<Item> FOOD_PIZZA_TOPPING = modItemTag("foods/pizza_topping");
+    public static final TagKey<Item> FOOD_CHEESE_WEDGE = modItemTag("foods/cheese_wedge");
 
     public static final TagKey<Block> FREEZE_SOURCES = modBlockTag("freeze_sources");
 

@@ -6,7 +6,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.Tags;
 import umpaz.brewinandchewin.client.recipebook.FermentingBookCategory;
 import umpaz.brewinandchewin.common.registry.BnCFluids;
@@ -179,10 +178,10 @@ public class KegFermentingRecipes {
 
 
       KegFermentingRecipeBuilder.kegFermentingRecipe(FermentingBookCategory.MEALS, BnCItems.JERKY, 3, NORMAL_FERMENTING, MEDIUM_EXP, 4)
-              .addIngredient(BnCTags.RAW_MEATS)
-              .addIngredient(BnCTags.RAW_MEATS)
-              .addIngredient(BnCTags.RAW_MEATS)
-              .unlockedBy("has_raw_meat", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(BnCTags.RAW_MEATS)))
+              .addIngredient(BnCTags.FOOD_RAW_MEAT)
+              .addIngredient(BnCTags.FOOD_RAW_MEAT)
+              .addIngredient(BnCTags.FOOD_RAW_MEAT)
+              .unlockedBy("has_raw_meat", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(BnCTags.FOOD_RAW_MEAT)))
               .build(output);
 
 

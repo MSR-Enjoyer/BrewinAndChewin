@@ -7,7 +7,7 @@
   "experience": 1.0,
   "ingredients": [
     {
-      "tag": "brewinandchewin:cheese_wedges"
+      "tag": "brewinandchewin:foods/cheese_wedge"
     },
     {
       "tag": "c:foods/onion"

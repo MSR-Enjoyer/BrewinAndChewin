@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "#brewinandchewin:cheese_wedges"
+            "items": "#brewinandchewin:foods/cheese_wedge"
           }
         ]
       },
