@@ -11,6 +11,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.living.EffectParticleModificationEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -78,6 +79,12 @@ public class BnCCommonEvents {
             }
             RagingAttachment.tick(living);
         }
+    }
+
+    @SubscribeEvent
+    public static void mobEffectApplicable(MobEffectEvent.Applicable event) {
+        if (event.getEntity().getType().is(BnCTags.IMMUNE_TO_INTOXICATION) && event.getEffectInstance().is(BnCEffects.INTOXICATION))
+            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
     }
 
     @SubscribeEvent

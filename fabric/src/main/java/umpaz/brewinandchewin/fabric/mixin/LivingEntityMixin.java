@@ -1,9 +1,11 @@
 package umpaz.brewinandchewin.fabric.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -97,5 +99,12 @@ public abstract class LivingEntityMixin {
             }
             return particleOptions;
         }).toList();
+    }
+
+    @ModifyReturnValue(method = "canBeAffected", at = @At("RETURN"))
+    private boolean brewinandchewin$intoxicationImmunity(boolean original, MobEffectInstance mobEffectInstance) {
+        if (((LivingEntity)(Object)this).getType().is(BnCTags.IMMUNE_TO_INTOXICATION) && mobEffectInstance.getEffect().is(BnCEffects.INTOXICATION))
+            return false;
+        return original;
     }
 }

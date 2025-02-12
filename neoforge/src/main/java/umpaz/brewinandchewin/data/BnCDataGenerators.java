@@ -12,6 +12,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.internal.NeoForgeAdvancementProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import umpaz.brewinandchewin.BrewinAndChewin;
+import umpaz.brewinandchewin.data.recipe.BnCEntityTypeTags;
 import umpaz.brewinandchewin.neoforge.BrewinAndChewinNeoForge;
 import umpaz.brewinandchewin.data.loot.BnCBlockLoot;
 import vectorwing.farmersdelight.data.BlockTags;
@@ -35,6 +36,7 @@ public class BnCDataGenerators {
         generator.addProvider(event.includeServer(), blockTags);
         generator.addProvider(event.includeServer(), new BnCItemTags(output, lookupProvider, blockTags.contentsGetter(), helper));
         generator.addProvider(event.includeServer(), new BnCMobEffectTags(output, lookupProvider, helper));
+        generator.addProvider(event.includeServer(), new BnCEntityTypeTags(output, lookupProvider, helper));
         generator.addProvider(event.includeServer(), new BnCDamageTypeTags(output, lookupProvider, helper));
         generator.addProvider(event.includeServer(), new BnCRecipes(output, lookupProvider));
         generator.addProvider(event.includeServer(), new LootTableProvider(output, Collections.emptySet(), List.of(
