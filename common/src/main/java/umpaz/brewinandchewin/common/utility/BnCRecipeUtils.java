@@ -12,7 +12,6 @@ import java.util.Comparator;
 import java.util.Optional;
 
 public class BnCRecipeUtils {
-    // FIXME: Abstract FluidStack.
     public static ItemStack getPouredItemFromFluid(AbstractedFluidStack fluid) {
         if (fluid.isEmpty())
             return ItemStack.EMPTY;

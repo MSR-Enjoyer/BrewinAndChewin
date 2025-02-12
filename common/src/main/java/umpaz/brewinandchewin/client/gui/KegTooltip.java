@@ -49,24 +49,6 @@ public class KegTooltip implements ClientTooltipComponent {
       if (mealStack.isEmpty()) return;
 
       ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), mealStack);
-      if (itemDisplay.isEmpty()) {
-          // FIXME: Handle fluid displays.
-//          IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(mealStack.fluid());
-//          ResourceLocation stillTexture = fluidTypeExtensions.getStillTexture(mealStack);
-//          if ( stillTexture == null )
-//              return;
-//
-//          TextureAtlasSprite sprite =
-//                  Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTexture);
-//          int tintColor = fluidTypeExtensions.getTintColor(mealStack);
-//
-//          float alpha = ( ( tintColor >> 24 ) & 0xFF ) / 255f;
-//          float red = ( ( tintColor >> 16 ) & 0xFF ) / 255f;
-//          float green = ( ( tintColor >> 8 ) & 0xFF ) / 255f;
-//          float blue = ( tintColor & 0xFF ) / 255f;
-//          gui.blit(mouseX, mouseY + 9, 0, 16, 16, sprite, red, green, blue, alpha);
-          return;
-      }
       gui.renderItem(itemDisplay, mouseX, mouseY + 9);
    }
 
