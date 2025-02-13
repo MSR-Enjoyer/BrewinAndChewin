@@ -114,7 +114,7 @@ public class KegStackedContents extends StackedContents {
                             }
                         }
 
-                        if (!kegTank.isEmpty() && !fermentingRecipe.getFluidIngredient().get().ingredient().matches(kegTank.getAbstractedFluid()) || tankAmount < fermentingRecipe.getFluidIngredient().get().amount()) {
+                        if (kegTank.isEmpty() || !fermentingRecipe.getFluidIngredient().get().ingredient().matches(kegTank.getAbstractedFluid()) || tankAmount < fermentingRecipe.getFluidIngredient().get().amount()) {
                             for (PouringEntry entry : List.copyOf(fluidOutputStacks)) {
                                 int itemAmount = (int) ((Math.max(fermentingRecipe.getFluidIngredient().get().loaderAmount(), entry.fluidUnit().convertToLoader(entry.fluidAmount()) - tankAmount) / entry.fluidUnit().convertToLoader(entry.fluidAmount())) - ((tankAmount % fermentingRecipe.getFluidIngredient().get().loaderAmount()) / entry.fluidUnit().convertToLoader(entry.fluidAmount())));
                                 if (itemAmount <= 0 || (itemAmount * entry.fluidUnit().convertToLoader(entry.fluidAmount())) + tankAmount > kegTank.getFluidCapacity())

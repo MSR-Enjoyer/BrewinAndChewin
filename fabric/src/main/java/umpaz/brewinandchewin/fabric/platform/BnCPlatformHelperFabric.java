@@ -54,6 +54,7 @@ import umpaz.brewinandchewin.fabric.block.entity.KegBlockEntityFabric;
 import umpaz.brewinandchewin.fabric.container.KegFluidTankFabric;
 import umpaz.brewinandchewin.fabric.container.KegItemHandlerFabric;
 import umpaz.brewinandchewin.fabric.container.SidedKegWrapperFabric;
+import umpaz.brewinandchewin.fabric.ingredient.FixedAllIngredient;
 import umpaz.brewinandchewin.fabric.registry.BnCCreativeTabsImpl;
 import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
 import umpaz.brewinandchewin.fabric.utility.*;
@@ -158,11 +159,11 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
     @Override
     public Ingredient createStrictFillPickerIngredient(List<KegStackedContents.PouringEntry> fluidOutputStacks) {
-        return DefaultCustomIngredients.all(fluidOutputStacks.stream().map(p -> {
+        return new FixedAllIngredient(fluidOutputStacks.stream().map(p -> {
             if (p.strict())
                 return DefaultCustomIngredients.components(p.stack());
             return Ingredient.of(p.stack().getItem());
-        }).toArray(Ingredient[]::new));
+        }).toList()).toVanilla();
     }
 
     @Override
