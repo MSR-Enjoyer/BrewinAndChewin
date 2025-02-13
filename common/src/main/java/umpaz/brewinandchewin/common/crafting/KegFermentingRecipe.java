@@ -15,7 +15,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.Level;
 import umpaz.brewinandchewin.client.recipebook.FermentingBookCategory;
 import umpaz.brewinandchewin.common.BnCConfiguration;
@@ -37,7 +36,6 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
     public static final int INPUT_SLOTS = 4;
 
     private final NonNullList<Ingredient> inputItems;
-    private final ShapedRecipePattern pattern;
 
     private final Optional<FluidIngredientWithAmount> fluidIngredient;
     private final Optional<FluidUnit> unit;
@@ -52,7 +50,6 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
 
     public KegFermentingRecipe(NonNullList<Ingredient> inputItems, FermentingBookCategory tab, Optional<FluidIngredientWithAmount> fluidIngredient, Optional<FluidUnit> unit, Either<AbstractedFluidStack, ItemStack> result, float experience, int fermentTime, int temperature) {
         this.inputItems = inputItems;
-        this.pattern = new ShapedRecipePattern(2, 2, inputItems, Optional.empty());
         this.tab = tab;
         this.fluidIngredient = fluidIngredient;
         this.unit = unit;
@@ -110,18 +107,17 @@ public class KegFermentingRecipe implements Recipe<KegRecipeWrapper> {
     @Override
     public boolean matches(KegRecipeWrapper inv, Level level) {
         List<ItemStack> inputs = new ArrayList<>();
-        int i = 0;
 
         for (int j = 0; j < INPUT_SLOTS; ++j) {
             ItemStack itemstack = inv.getItem(j);
             if (!itemstack.isEmpty()) {
-                ++i;
                 inputs.add(itemstack);
             } else
                 inputs.add(ItemStack.EMPTY);
         }
         CraftingInput input = CraftingInput.of(2, 2, inputs);
-        return i == this.inputItems.stream().filter(ingredient -> !ingredient.isEmpty()).toList().size() && pattern.matches(input) && (fluidIngredient.isEmpty() && inv.getFluid().isEmpty() || fluidIngredient.isPresent() && !inv.getFluid().isEmpty() && fluidIngredient.get().ingredient().matches(inv.getFluid()) && inv.getFluid().amount() % fluidIngredient.get().amount() == 0);
+        return input.size() == 1 && inputItems.size() == 1 ? inputItems.getFirst().test(input.getItem(0)) : input.stackedContents().canCraft(this, null) &&
+                (fluidIngredient.isEmpty() && inv.getFluid().isEmpty() || fluidIngredient.isPresent() && !inv.getFluid().isEmpty() && fluidIngredient.get().ingredient().matches(inv.getFluid()) && inv.getFluid().amount() % fluidIngredient.get().amount() == 0);
     }
 
     @Override
