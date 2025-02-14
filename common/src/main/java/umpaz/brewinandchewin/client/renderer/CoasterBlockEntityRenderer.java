@@ -172,7 +172,7 @@ public class CoasterBlockEntityRenderer implements BlockEntityRenderer<CoasterBl
         }
     }
 
-    // TODO: Implement on Fabric.
+    // NeoForge hook.
     public AABB getRenderBoundingBox(CoasterBlockEntity blockEntity) {
         return blockEntity.getRenderBoundingBox();
     }
