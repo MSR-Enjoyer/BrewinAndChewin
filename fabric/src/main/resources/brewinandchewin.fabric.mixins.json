@@ -5,12 +5,13 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "client.GameRendererMixin",
     "LivingEntityMixin",
     "PlayerMixin",
-    "RecipeBookSettingsMixin"
+    "RecipeBookSettingsMixin",
+    "client.GameRendererMixin"
   ],
   "client": [
+    "client.EntityRendererMixin",
     "client.GuiMixin",
     "client.TipsyMouseHandlerMixin"
   ],

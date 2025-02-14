@@ -43,9 +43,9 @@ public class TipsyMouseHandlerMixin {
                 double tipsyDelta = Math.min(1 + minecraft.player.getEffect(BnCEffects.TIPSY).getAmplifier(), 10) / 10.0;
 
                 if (minecraft.options.getCameraType().isFirstPerson() && minecraft.player.isScoping())
-                    return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * d4 * Math.max(1.0, tipsyDelta * 4.5));
+                    return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * d3 * Math.max(1.0, tipsyDelta * 2.0));
 
-                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * d3 * Math.max(1.0, tipsyDelta * 4.5));
+                return brewinandchewin$smoothTurnX.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * d4 * Math.max(1.0, tipsyDelta * 2.0));
             }
         }
         brewinandchewin$smoothTurnX.reset();
@@ -59,9 +59,9 @@ public class TipsyMouseHandlerMixin {
                 double tipsyDelta = Math.min(1 + minecraft.player.getEffect(BnCEffects.TIPSY).getAmplifier(), 10) / 10.0;
 
                 if (minecraft.options.getCameraType().isFirstPerson() && minecraft.player.isScoping())
-                    return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * d4 * Math.max(1.0, tipsyDelta * 4.5));
+                    return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * d3 * Math.max(1.2, tipsyDelta * 2.0));
 
-                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * d3 * Math.max(1.0, tipsyDelta * 4.5));
+                return brewinandchewin$smoothTurnY.getNewDeltaValue(original, Mth.lerp(tipsyDelta, movementTime * 10, movementTime) * d4 * Math.max(1.2, tipsyDelta * 2.0));
             }
         }
         brewinandchewin$smoothTurnY.reset();

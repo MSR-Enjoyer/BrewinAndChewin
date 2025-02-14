@@ -13,6 +13,7 @@ import net.neoforged.neoforge.client.event.ClientChatReceivedEvent;
 import net.neoforged.neoforge.client.event.RenderNameTagEvent;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.BrewinAndChewinClient;
+import umpaz.brewinandchewin.client.utility.BnCTextUtils;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 import umpaz.brewinandchewin.neoforge.client.integration.IntoxicationAppleSkinCompatNeoForge;
@@ -26,37 +27,9 @@ import java.util.stream.Collectors;
 public class TipsyEffects {
     @SubscribeEvent
     public static void whatsYourName(RenderNameTagEvent event) {
-        if (BnCConfiguration.CLIENT_CONFIG.get().scrambleName())
-            if (Minecraft.getInstance().player != null) {
-                if (Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelNameScramble()) {
-                    int amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() - BnCConfiguration.COMMON_CONFIG.get().root().levelNameScramble();
-                    StringBuilder textBuilder = new StringBuilder(event.getContent().getString());
-                    RandomSource random = Minecraft.getInstance().player.getRandom();
-                    int amount = (int) ((amplifier + 1) * ((textBuilder.length()) / 10f)) + random.nextInt(5);
-                    for (int i = 0; i < amount; i++) {
-                        // pick a random word
-                        String[] words = textBuilder.toString().split(" ");
-                        int wordIndex = random.nextInt(words.length);
-                        String word = words[wordIndex];
-
-                        if (word.length() < 4)
-                            continue;
-
-                        int wordStart = Arrays.asList(words).subList(0, wordIndex).stream().mapToInt(String::length).sum() + wordIndex;
-
-                        // pick a random character in the word, excluding the first and last letters
-                        int index = wordStart + random.nextInt(1, Math.max(word.length() - 2, 2));
-                        // pick an index within range
-                        int newIndex = Mth.clamp(index + random.nextInt(Math.max(word.length() - 2, 2)), wordStart + 1, wordStart + word.length() - 2);
-
-                        // swap the characters
-                        char temp = textBuilder.charAt(index);
-                        textBuilder.setCharAt(index, textBuilder.charAt(newIndex));
-                        textBuilder.setCharAt(newIndex, temp);
-                    }
-                    event.setContent(Component.literal(textBuilder.toString()));
-                }
-            }
+        Component newName = BnCTextUtils.nameTagRenderer(event.getContent());
+        if (event.getContent() != newName)
+            event.setContent(newName);
     }
 
     // TODO: Ditch the Forge event so we can use the MODIFIED chat trust level.
