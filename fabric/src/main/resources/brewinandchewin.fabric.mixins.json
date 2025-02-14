@@ -11,6 +11,7 @@
     "client.GameRendererMixin"
   ],
   "client": [
+    "client.ChatListenerMixin",
     "client.EntityRendererMixin",
     "client.GuiMixin",
     "client.TipsyMouseHandlerMixin"

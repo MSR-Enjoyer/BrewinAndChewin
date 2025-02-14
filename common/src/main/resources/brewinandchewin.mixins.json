@@ -14,12 +14,14 @@
     "PlayerMixin",
     "PreventTaggedEffectRemovalMixin$HotCocoa",
     "PreventTaggedEffectRemovalMixin$MilkBottle",
+    "ServerGamePacketListenerImplMixin",
     "ServerPlaceRecipeAccessor",
     "StackedContentsRecipePickerAccessor",
     "StoreLootParamsMixin$LootParamsBuilderMixin",
     "StoreLootParamsMixin$LootParamsMixin"
   ],
   "client": [
+    "client.ChatListenerMixin",
     "client.GhostRecipeAccessor",
     "client.GuiMixin",
     "client.LevelRendererAccessor",

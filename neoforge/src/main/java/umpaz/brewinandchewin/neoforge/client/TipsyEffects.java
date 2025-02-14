@@ -1,9 +1,6 @@
 package umpaz.brewinandchewin.neoforge.client;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
@@ -12,14 +9,7 @@ import net.neoforged.neoforge.client.event.ClientChatReceivedEvent;
 import net.neoforged.neoforge.client.event.RenderNameTagEvent;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.utility.BnCTextUtils;
-import umpaz.brewinandchewin.common.BnCConfiguration;
-import umpaz.brewinandchewin.common.registry.BnCEffects;
 import umpaz.brewinandchewin.neoforge.client.integration.IntoxicationAppleSkinCompatNeoForge;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @EventBusSubscriber(modid = BrewinAndChewin.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class TipsyEffects {
@@ -30,45 +20,11 @@ public class TipsyEffects {
             event.setContent(newName);
     }
 
-    // TODO: Ditch the Forge event so we can use the MODIFIED chat trust level.
     @SubscribeEvent
     public static void iCanHear(ClientChatReceivedEvent.Player event) {
-        if (BnCConfiguration.CLIENT_CONFIG.get().scrambleChat()) {
-            Player player = Minecraft.getInstance().level.getPlayerByUUID(event.getSender());
-            if (player != null)
-                if (player.hasEffect(BnCEffects.TIPSY) && player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble()) {
-                    StringBuilder textBuilder = new StringBuilder(event.getMessage().getString());
-                    int afterPlayerName = (textBuilder.indexOf("[") == 0 || textBuilder.indexOf("<") == 0) ? textBuilder.indexOf(" ") + 1 : 0;
-
-                    int amplifier = player.getEffect(BnCEffects.TIPSY).getAmplifier() - BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble();
-                    int amnt = (int) ((amplifier + 1) * ((textBuilder.length() - afterPlayerName) / 10f)) + player.getRandom().nextInt(5);
-                    for (int i = 0; i < amnt; i++) {
-                        // pick a random word
-                        List<String> words = Arrays.stream(textBuilder.toString().split(" ")).collect(Collectors.toCollection(ArrayList::new));
-                        // Remove the player name from the word list.
-                        if (afterPlayerName > 0)
-                            words.remove(0);
-                        int wordIndex = player.getRandom().nextInt(words.size());
-                        String word = words.get(wordIndex);
-
-                        if (word.length() < 4)
-                            continue;
-
-                        int wordStart = Arrays.stream(textBuilder.toString().split(" ")).toList().subList(0, wordIndex + 1).stream().mapToInt(String::length).sum() + wordIndex;
-
-                        // pick a random character in the word, excluding the first and last letters
-                        int index = wordStart + player.getRandom().nextInt(2, Math.max(word.length() - 2, 3));
-                        // pick an index within range
-                        int newIndex = Mth.clamp(index + player.getRandom().nextInt(Math.max(word.length() - 2, 3)), wordStart + 1, wordStart + word.length() - 2);
-
-                        // swap the characters
-                        char temp = textBuilder.charAt(index);
-                        textBuilder.setCharAt(index, textBuilder.charAt(newIndex));
-                        textBuilder.setCharAt(newIndex, temp);
-                    }
-                    event.setMessage(Component.literal(textBuilder.toString()));
-                }
-        }
+        if (BnCTextUtils.getTipsyMessage() != null)
+            event.setMessage(BnCTextUtils.getTipsyMessage());
+        BnCTextUtils.clearTipsyMessage();
     }
 
     static {
