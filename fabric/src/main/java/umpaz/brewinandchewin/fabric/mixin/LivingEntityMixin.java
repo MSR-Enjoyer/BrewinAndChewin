@@ -24,7 +24,7 @@ import umpaz.brewinandchewin.common.registry.BnCEffects;
 import umpaz.brewinandchewin.common.registry.BnCParticleTypes;
 import umpaz.brewinandchewin.common.tag.BnCTags;
 import umpaz.brewinandchewin.fabric.access.PlayerPreHurtAttackStrengthAccess;
-import umpaz.brewinandchewin.fabric.utility.BnCAttachments;
+import umpaz.brewinandchewin.fabric.registry.BnCAttachments;
 
 import java.util.List;
 
