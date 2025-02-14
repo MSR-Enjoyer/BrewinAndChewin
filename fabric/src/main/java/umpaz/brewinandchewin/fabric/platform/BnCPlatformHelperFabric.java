@@ -55,6 +55,7 @@ import umpaz.brewinandchewin.fabric.container.KegFluidTankFabric;
 import umpaz.brewinandchewin.fabric.container.KegItemHandlerFabric;
 import umpaz.brewinandchewin.fabric.container.SidedKegWrapperFabric;
 import umpaz.brewinandchewin.fabric.ingredient.FixedAllIngredient;
+import umpaz.brewinandchewin.fabric.registry.BnCAttachments;
 import umpaz.brewinandchewin.fabric.registry.BnCCreativeTabsImpl;
 import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
 import umpaz.brewinandchewin.fabric.utility.*;
