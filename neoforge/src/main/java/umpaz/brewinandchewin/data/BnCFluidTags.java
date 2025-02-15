@@ -33,24 +33,24 @@ public class BnCFluidTags extends FluidTagsProvider {
                 .add(BnCFluids.MEAD, BnCFluids.FLOWING_MEAD);
         tag(BnCTags.Fluids.RICE_WINE)
                 .add(BnCFluids.RICE_WINE, BnCFluids.FLOWING_RICE_WINE);
-        tag(BnCTags.Fluids.EGG_GROG)
-                .add(BnCFluids.EGG_GROG, BnCFluids.FLOWING_EGG_GROG);
-        tag(BnCTags.Fluids.STRONGROOT_ALE)
-                .add(BnCFluids.STRONGROOT_ALE, BnCFluids.FLOWING_STRONGROOT_ALE);
-        tag(BnCTags.Fluids.SACCHARINE_RUM)
-                .add(BnCFluids.SACCHARINE_RUM, BnCFluids.SACCHARINE_RUM);
         tag(BnCTags.Fluids.PALE_JANE)
                 .add(BnCFluids.PALE_JANE, BnCFluids.FLOWING_PALE_JANE);
-        tag(BnCTags.Fluids.SALTY_FOLLY)
-                .add(BnCFluids.SALTY_FOLLY, BnCFluids.FLOWING_SALTY_FOLLY);
-        tag(BnCTags.Fluids.STEEL_TOE_STOUT)
-                .add(BnCFluids.STEEL_TOE_STOUT, BnCFluids.FLOWING_STEEL_TOE_STOUT);
+        tag(BnCTags.Fluids.EGG_GROG)
+                .add(BnCFluids.EGG_GROG, BnCFluids.FLOWING_EGG_GROG);
         tag(BnCTags.Fluids.GLITTERING_GRENADINE)
                 .add(BnCFluids.GLITTERING_GRENADINE, BnCFluids.GLITTERING_GRENADINE);
+        tag(BnCTags.Fluids.SACCHARINE_RUM)
+                .add(BnCFluids.SACCHARINE_RUM, BnCFluids.SACCHARINE_RUM);
+        tag(BnCTags.Fluids.SALTY_FOLLY)
+                .add(BnCFluids.SALTY_FOLLY, BnCFluids.FLOWING_SALTY_FOLLY);
         tag(BnCTags.Fluids.BLOODY_MARY)
                 .add(BnCFluids.BLOODY_MARY, BnCFluids.FLOWING_BLOODY_MARY);
         tag(BnCTags.Fluids.RED_RUM)
                 .add(BnCFluids.RED_RUM, BnCFluids.FLOWING_RED_RUM);
+        tag(BnCTags.Fluids.STRONGROOT_ALE)
+                .add(BnCFluids.STRONGROOT_ALE, BnCFluids.FLOWING_STRONGROOT_ALE);
+        tag(BnCTags.Fluids.STEEL_TOE_STOUT)
+                .add(BnCFluids.STEEL_TOE_STOUT, BnCFluids.FLOWING_STEEL_TOE_STOUT);
         tag(BnCTags.Fluids.DREAD_NOG)
                 .add(BnCFluids.DREAD_NOG, BnCFluids.FLOWING_DREAD_NOG);
         tag(BnCTags.Fluids.WITHERING_DROSS)

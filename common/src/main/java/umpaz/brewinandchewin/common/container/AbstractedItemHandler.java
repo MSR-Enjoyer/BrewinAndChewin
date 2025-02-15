@@ -1,4 +1,4 @@
-package umpaz.brewinandchewin.common.block.entity.container;
+package umpaz.brewinandchewin.common.container;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

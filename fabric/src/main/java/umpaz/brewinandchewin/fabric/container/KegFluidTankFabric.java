@@ -8,7 +8,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
-import umpaz.brewinandchewin.common.block.entity.container.AbstractedFluidTank;
+import umpaz.brewinandchewin.common.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.FluidUnit;
 import umpaz.brewinandchewin.fabric.utility.AmountedFluidVariant;
@@ -26,7 +26,7 @@ public class KegFluidTankFabric extends SingleFluidStorage implements Abstracted
     }
 
     @Override
-    public long getFluidCapacity() {
+    public long getFluidCapacity(int slot) {
         return capacity;
     }
 
@@ -58,11 +58,11 @@ public class KegFluidTankFabric extends SingleFluidStorage implements Abstracted
     }
 
     @Override
-    public AbstractedFluidStack drain(long maxDrain, FluidUnit unit, boolean simulate) {
+    public AbstractedFluidStack drain(int slot, long maxDrain, FluidUnit unit, boolean simulate) {
         long newMax = unit.convertToLoader(maxDrain);
         try (Transaction t = TransferUtil.getTransaction()) {
             long extractedAmount = extract(variant, newMax, t);
-            AbstractedFluidStack stack = new AbstractedFluidStack(variant.getFluid(), extractedAmount);
+            AbstractedFluidStack stack = new AbstractedFluidStack(variant.getFluid(), extractedAmount, variant.getComponentMap(), FluidUnit.DROPLETS, new AmountedFluidVariant(variant, extractedAmount, FluidUnit.DROPLETS));
             if (!simulate)
                 t.commit();
             return stack;

@@ -13,6 +13,7 @@
 - Intoxication now affects all sources of saturation.
 - Rewrote Tipsy chat scrambling to make it more consistent across players, and to follow the original logic.
   - Tipsified chat messages now count as modified messages on the client, and you are now able to be prompted to see the original by hovering over the chat.
+- Re-organised the creative tab.
 
 ## Internal
 - Swapped config solution from Forge config to Greenhouse Config.

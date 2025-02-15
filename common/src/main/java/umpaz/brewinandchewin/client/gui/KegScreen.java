@@ -134,7 +134,7 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
             List<Component> components = new ArrayList<>(List.of(component, containerComponent));
             if (BnCConfiguration.CLIENT_CONFIG.get().oppositeFluidDisplay() == BnCConfiguration.Client.DisplaySettings.ADVANCED_TOOLTIPS && minecraft.options.advancedItemTooltips || BnCConfiguration.CLIENT_CONFIG.get().oppositeFluidDisplay() == BnCConfiguration.Client.DisplaySettings.ALWAYS) {
                 FluidUnit opposite = FluidUnit.getOpposite(BnCConfiguration.CLIENT_CONFIG.get().displayUnit());
-                components.add(MutableComponent.create(Component.literal((opposite.shortFormat(("(%s/%s")) + ")").formatted(FluidUnit.convert(menu.kegTank.getAbstractedFluid().amount(), FluidUnit.getLoaderUnit(), opposite), FluidUnit.convert(menu.kegTank.getAbstractedFluid().amount(), FluidUnit.getLoaderUnit(), opposite))).getContents()));
+                components.add(MutableComponent.create(Component.literal((opposite.shortFormat("%s/%s")).formatted(FluidUnit.convert(menu.kegTank.getAbstractedFluid().amount(), FluidUnit.getLoaderUnit(), opposite), FluidUnit.convert(menu.kegTank.getAbstractedFluid().amount(), FluidUnit.getLoaderUnit(), opposite))).getContents()).withStyle(ChatFormatting.GRAY));
             }
             if (minecraft.options.advancedItemTooltips) {
                 ResourceLocation fluidId = menu.kegTank.getAbstractedFluid().fluid().builtInRegistryHolder().key().location();

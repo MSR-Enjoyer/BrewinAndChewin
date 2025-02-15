@@ -2,7 +2,7 @@ package umpaz.brewinandchewin.fabric.utility;
 
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
 import net.minecraft.world.item.ItemStack;
-import umpaz.brewinandchewin.common.block.entity.container.AbstractedFluidTank;
+import umpaz.brewinandchewin.common.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 

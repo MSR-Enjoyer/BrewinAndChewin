@@ -3,7 +3,7 @@ package umpaz.brewinandchewin.common.utility;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
-import umpaz.brewinandchewin.common.block.entity.container.AbstractedItemHandler;
+import umpaz.brewinandchewin.common.container.AbstractedItemHandler;
 
 public class BnCMathUtils {
     public static int redstoneFromItemHandler(@Nullable AbstractedItemHandler handler) {

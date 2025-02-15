@@ -21,14 +21,13 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.attachment.RagingAttachment;
 import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
-import umpaz.brewinandchewin.common.block.entity.container.AbstractedFluidTank;
-import umpaz.brewinandchewin.common.block.entity.container.AbstractedItemHandler;
+import umpaz.brewinandchewin.common.container.AbstractedFluidTank;
+import umpaz.brewinandchewin.common.container.AbstractedItemHandler;
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.common.block.entity.container.KegStackedContents;
 import umpaz.brewinandchewin.common.block.entity.container.SidedKegWrapper;
@@ -110,6 +109,8 @@ public interface BnCPlatformHelper {
     void setTipsyHeartsAttachment(LivingEntity entity, @Nullable TipsyHeartsAttachment value);
 
     Object createLoaderFluidStack(AbstractedFluidStack abstracted);
+
+    AbstractedFluidTank getFluidContainerFromItem(ItemStack stack);
 
     Fluid getMilkFluid();
     Fluid getFlowingMilkFluid();

@@ -4,6 +4,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import umpaz.brewinandchewin.common.container.AbstractedItemHandler;
 
 /**
  * Made abstract for loader specific impl to be made.

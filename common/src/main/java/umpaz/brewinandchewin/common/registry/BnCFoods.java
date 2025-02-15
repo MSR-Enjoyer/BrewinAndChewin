@@ -22,17 +22,16 @@ public class BnCFoods {
             .effect(new MobEffectInstance(BnCEffects.SWEET_HEART, 2400, 0, false, false), 1.0F)
             .alwaysEdible()
             .build();
-    public static final FoodProperties GLITTERING_GRENADINE = (new FoodProperties.Builder())
-            .effect(new MobEffectInstance(BnCEffects.TIPSY, 2400, 0), 1.0F)
-            .effect(new MobEffectInstance(BnCEffects.INTOXICATION, 1800, 0, false, false), 1.0F)
-            .effect(new MobEffectInstance(MobEffects.GLOWING, 600, 0), 1.0F)
-            .effect(new MobEffectInstance(MobEffects.NIGHT_VISION, 600, 0), 1.0F)
-            .alwaysEdible()
-            .build();
     public static final FoodProperties RICE_WINE = (new FoodProperties.Builder())
             .effect(new MobEffectInstance(BnCEffects.TIPSY, 2400, 0), 1.0F)
             .effect(new MobEffectInstance(BnCEffects.INTOXICATION, 1800, 0, false, false), 1.0F)
             .effect(new MobEffectInstance(ModEffects.COMFORT, 1200, 0), 1.0F)
+            .alwaysEdible()
+            .build();
+    public static final FoodProperties PALE_JANE = (new FoodProperties.Builder())
+            .effect(new MobEffectInstance(BnCEffects.TIPSY, 3600, 0), 1.0F)
+            .effect(new MobEffectInstance(BnCEffects.INTOXICATION, 3000, 0, false, false), 1.0F)
+            .effect(new MobEffectInstance(ModEffects.COMFORT, 2400, 0, false, false), 1.0F)
             .alwaysEdible()
             .build();
     public static final FoodProperties EGG_GROG = (new FoodProperties.Builder())
@@ -41,10 +40,23 @@ public class BnCFoods {
             .effect(new MobEffectInstance(MobEffects.ABSORPTION, 600, 0), 1.0F)
             .alwaysEdible()
             .build();
-    public static final FoodProperties PALE_JANE = (new FoodProperties.Builder())
-            .effect(new MobEffectInstance(BnCEffects.TIPSY, 3600, 0), 1.0F)
+    public static final FoodProperties GLITTERING_GRENADINE = (new FoodProperties.Builder())
+            .effect(new MobEffectInstance(BnCEffects.TIPSY, 2400, 0), 1.0F)
+            .effect(new MobEffectInstance(BnCEffects.INTOXICATION, 1800, 0, false, false), 1.0F)
+            .effect(new MobEffectInstance(MobEffects.GLOWING, 600, 0), 1.0F)
+            .effect(new MobEffectInstance(MobEffects.NIGHT_VISION, 600, 0), 1.0F)
+            .alwaysEdible()
+            .build();
+    public static final FoodProperties SACCHARINE_RUM = (new FoodProperties.Builder())
+            .effect(new MobEffectInstance(BnCEffects.TIPSY, 3600, 1), 1.0F)
+            .effect(new MobEffectInstance(BnCEffects.INTOXICATION, 2400, 0, false, false), 1.0F)
+            .effect(new MobEffectInstance(BnCEffects.SWEET_HEART, 3600, 0, false, false), 1.0F)
+            .alwaysEdible()
+            .build();
+    public static final FoodProperties SALTY_FOLLY = (new FoodProperties.Builder())
+            .effect(new MobEffectInstance(BnCEffects.TIPSY, 3600, 1), 1.0F)
             .effect(new MobEffectInstance(BnCEffects.INTOXICATION, 3000, 0, false, false), 1.0F)
-            .effect(new MobEffectInstance(ModEffects.COMFORT, 2400, 0, false, false), 1.0F)
+            .effect(new MobEffectInstance(MobEffects.WATER_BREATHING, 1800, 0), 1.0F)
             .alwaysEdible()
             .build();
     public static final FoodProperties BLOODY_MARY = (new FoodProperties.Builder())
@@ -63,18 +75,6 @@ public class BnCFoods {
             .effect(new MobEffectInstance(BnCEffects.TIPSY, 2400, 1), 1.0F)
             .effect(new MobEffectInstance(BnCEffects.INTOXICATION, 1800, 0, false, false), 1.0F)
             .effect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 600, 0), 1.0F)
-            .alwaysEdible()
-            .build();
-    public static final FoodProperties SACCHARINE_RUM = (new FoodProperties.Builder())
-            .effect(new MobEffectInstance(BnCEffects.TIPSY, 3600, 1), 1.0F)
-            .effect(new MobEffectInstance(BnCEffects.INTOXICATION, 2400, 0, false, false), 1.0F)
-            .effect(new MobEffectInstance(BnCEffects.SWEET_HEART, 3600, 0, false, false), 1.0F)
-            .alwaysEdible()
-            .build();
-    public static final FoodProperties SALTY_FOLLY = (new FoodProperties.Builder())
-            .effect(new MobEffectInstance(BnCEffects.TIPSY, 3600, 1), 1.0F)
-            .effect(new MobEffectInstance(BnCEffects.INTOXICATION, 3000, 0, false, false), 1.0F)
-            .effect(new MobEffectInstance(MobEffects.WATER_BREATHING, 1800, 0), 1.0F)
             .alwaysEdible()
             .build();
     public static final FoodProperties STEEL_TOE_STOUT = (new FoodProperties.Builder())
@@ -107,6 +107,38 @@ public class BnCFoods {
             .alwaysEdible()
             .build();
 
+    public static final FoodProperties FLAXEN_CHEESE = (new FoodProperties.Builder())
+            .nutrition(4).saturationModifier(1.0F).build();
+    public static final FoodProperties SCARLET_CHEESE = (new FoodProperties.Builder())
+            .nutrition(4).saturationModifier(1.0F).build();
+
+    public static final FoodProperties VEGETABLE_OMELET = (new FoodProperties.Builder())
+            .nutrition(12).saturationModifier(0.8F)
+            .effect(new MobEffectInstance(ModEffects.NOURISHMENT, 3600, 0, false, false), 1.0F).build();
+    public static final FoodProperties CREAMY_ONION_SOUP = (new FoodProperties.Builder())
+            .nutrition(12).saturationModifier(0.8F)
+            .effect(new MobEffectInstance(ModEffects.COMFORT, 3600, 0, false, false), 1.0F).build();
+    public static final FoodProperties CHEESY_PASTA = (new FoodProperties.Builder())
+            .nutrition(14).saturationModifier(0.75F)
+            .effect(new MobEffectInstance(ModEffects.NOURISHMENT, 6000, 0, false, false), 1.0F).build();
+    public static final FoodProperties HORROR_LASAGNA = (new FoodProperties.Builder())
+            .nutrition(16).saturationModifier(0.55F)
+            .effect(new MobEffectInstance(ModEffects.NOURISHMENT, 6000, 0, false, false), 1.0F).build();
+    public static final FoodProperties SCARLET_PIEROGIES = (new FoodProperties.Builder())
+            .nutrition(12).saturationModifier(1.0F)
+            .effect(new MobEffectInstance(ModEffects.NOURISHMENT, 8400, 0, false, false), 1.0F).build();
+    public static final FoodProperties FIERY_FONDUE = (new FoodProperties.Builder())
+            .nutrition(14).saturationModifier(0.75f)
+            .effect(new MobEffectInstance(ModEffects.COMFORT, 8400, 0, false, false), 1.0F).build();
+
+    public static final FoodProperties PIZZA_SLICE = (new FoodProperties.Builder())
+            .nutrition(5).saturationModifier(1.0F).build();
+    public static final FoodProperties QUICHE_SLICE = (new FoodProperties.Builder())
+            .nutrition(4).saturationModifier(0.8F).fast().build();
+
+    public static final FoodProperties HAM_AND_CHEESE_SANDWICH = (new FoodProperties.Builder())
+            .nutrition(9).saturationModifier(1.0F).build();
+
     public static final FoodProperties KIMCHI = (new FoodProperties.Builder())
             .nutrition(2).saturationModifier(0.6F).build();
     public static final FoodProperties JERKY = (new FoodProperties.Builder())
@@ -118,39 +150,6 @@ public class BnCFoods {
     public static final FoodProperties COCOA_FUDGE = (new FoodProperties.Builder())
             .nutrition(4).saturationModifier(0.8F)
             .effect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 800, 0, false, false), 1.0F).build();
-
-    public static final FoodProperties FLAXEN_CHEESE = (new FoodProperties.Builder())
-            .nutrition(4).saturationModifier(1.0F).build();
-    public static final FoodProperties SCARLET_CHEESE = (new FoodProperties.Builder())
-            .nutrition(4).saturationModifier(1.0F).build();
-
-    public static final FoodProperties PIZZA_SLICE = (new FoodProperties.Builder())
-            .nutrition(5).saturationModifier(1.0F).build();
-    public static final FoodProperties HAM_AND_CHEESE_SANDWICH = (new FoodProperties.Builder())
-            .nutrition(9).saturationModifier(1.0F).build();
-
-    //Bowl Foods
-    public static final FoodProperties FIERY_FONDUE = (new FoodProperties.Builder())
-            .nutrition(14).saturationModifier(0.75f)
-            .effect(new MobEffectInstance(ModEffects.COMFORT, 8400, 0, false, false), 1.0F).build();
-
-    public static final FoodProperties QUICHE_SLICE = (new FoodProperties.Builder())
-            .nutrition(4).saturationModifier(0.8F).fast().build();
-    public static final FoodProperties VEGETABLE_OMELET = (new FoodProperties.Builder())
-            .nutrition(12).saturationModifier(0.8F)
-            .effect(new MobEffectInstance(ModEffects.NOURISHMENT, 3600, 0, false, false), 1.0F).build();
-    public static final FoodProperties CREAMY_ONION_SOUP = (new FoodProperties.Builder())
-            .nutrition(12).saturationModifier(0.8F)
-            .effect(new MobEffectInstance(ModEffects.COMFORT, 3600, 0, false, false), 1.0F).build();
-    public static final FoodProperties CHEESY_PASTA = (new FoodProperties.Builder())
-            .nutrition(14).saturationModifier(0.75F)
-            .effect(new MobEffectInstance(ModEffects.NOURISHMENT, 6000, 0, false, false), 1.0F).build();
-    public static final FoodProperties SCARLET_PIEROGIES = (new FoodProperties.Builder())
-            .nutrition(12).saturationModifier(1.0F)
-            .effect(new MobEffectInstance(ModEffects.NOURISHMENT, 8400, 0, false, false), 1.0F).build();
-    public static final FoodProperties HORROR_LASAGNA = (new FoodProperties.Builder())
-            .nutrition(16).saturationModifier(0.55F)
-            .effect(new MobEffectInstance(ModEffects.NOURISHMENT, 6000, 0, false, false), 1.0F).build();
 
     public static final FoodProperties SWEET_BERRY_JAM = (new FoodProperties.Builder())
             .nutrition(6).saturationModifier(0.4F).build();

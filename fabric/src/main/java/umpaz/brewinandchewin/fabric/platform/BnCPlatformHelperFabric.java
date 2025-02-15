@@ -10,8 +10,11 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.DefaultCustomIngredients;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,18 +42,18 @@ import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.attachment.RagingAttachment;
 import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
-import umpaz.brewinandchewin.common.block.entity.container.AbstractedFluidTank;
-import umpaz.brewinandchewin.common.block.entity.container.AbstractedItemHandler;
+import umpaz.brewinandchewin.common.container.AbstractedFluidTank;
+import umpaz.brewinandchewin.common.container.AbstractedItemHandler;
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.common.block.entity.container.KegStackedContents;
 import umpaz.brewinandchewin.common.block.entity.container.SidedKegWrapper;
-import umpaz.brewinandchewin.common.crafting.FluidIngredientWithAmount;
 import umpaz.brewinandchewin.common.utility.BnCMenuConstructor;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 import umpaz.brewinandchewin.fabric.BrewinAndChewinFabric;
 import umpaz.brewinandchewin.fabric.block.entity.KegBlockEntityFabric;
+import umpaz.brewinandchewin.fabric.container.KegFluidItemStorageFabric;
 import umpaz.brewinandchewin.fabric.container.KegFluidTankFabric;
 import umpaz.brewinandchewin.fabric.container.KegItemHandlerFabric;
 import umpaz.brewinandchewin.fabric.container.SidedKegWrapperFabric;
@@ -258,6 +261,11 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     @Override
     public Object createLoaderFluidStack(AbstractedFluidStack abstracted) {
         return new AmountedFluidVariant(FluidVariant.of(abstracted.fluid(), abstracted.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY), abstracted.amount(), abstracted.unit());
+    }
+
+    @Override
+    public AbstractedFluidTank getFluidContainerFromItem(ItemStack stack) {
+        return new KegFluidItemStorageFabric(stack);
     }
 
     @Override

@@ -54,8 +54,8 @@ public class BnCTags {
         public static final TagKey<Fluid> PALE_JANE = modFluidTag("pale_jane");
         public static final TagKey<Fluid> EGG_GROG = modFluidTag("egg_grog");
         public static final TagKey<Fluid> GLITTERING_GRENADINE = modFluidTag("glittering_grenadine");
-        public static final TagKey<Fluid> SALTY_FOLLY = modFluidTag("salty_folly");
         public static final TagKey<Fluid> SACCHARINE_RUM = modFluidTag("saccharine_rum");
+        public static final TagKey<Fluid> SALTY_FOLLY = modFluidTag("salty_folly");
         public static final TagKey<Fluid> BLOODY_MARY = modFluidTag("bloody_mary");
         public static final TagKey<Fluid> RED_RUM = modFluidTag("bloody_mary");
         public static final TagKey<Fluid> STRONGROOT_ALE = modFluidTag("strongroot_ale");

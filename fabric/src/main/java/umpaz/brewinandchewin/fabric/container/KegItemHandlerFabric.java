@@ -7,8 +7,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import umpaz.brewinandchewin.common.block.entity.container.AbstractedItemHandler;
-import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+import umpaz.brewinandchewin.common.container.AbstractedItemHandler;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
 
 public class KegItemHandlerFabric extends ItemStackHandlerContainer implements AbstractedItemHandler {
