@@ -26,7 +26,7 @@ public class BnCMobEffectTags extends IntrinsicHolderTagsProvider<MobEffect>
     }
 
     protected void registerModTags() {
-        tag(BnCTags.MILK_BOTTLE_LOW_PRIORITY)
+        tag(BnCTags.Effects.MILK_BOTTLE_LOW_PRIORITY)
                 .add(BnCEffects.TIPSY.value());
     }
 }

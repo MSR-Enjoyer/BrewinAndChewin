@@ -9,6 +9,7 @@ import umpaz.brewinandchewin.common.registry.BnCItems;
 import umpaz.brewinandchewin.common.tag.BnCTags;
 import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.tag.CommonTags;
+import vectorwing.farmersdelight.common.tag.ModTags;
 
 public class BnCCraftingRecipes {
 
@@ -32,8 +33,8 @@ public class BnCCraftingRecipes {
                 .pattern("www")
                 .define('w', Items.WHEAT)
                 .define('t', ModItems.TOMATO_SAUCE.get())
-                .define('p', BnCTags.FOOD_PIZZA_TOPPING)
-                .define('f', BnCTags.FOOD_CHEESE_WEDGE)
+                .define('p', BnCTags.Items.FOOD_PIZZA_TOPPING)
+                .define('f', BnCTags.Items.FOOD_CHEESE_WEDGE)
                 .unlockedBy("has_cheese", InventoryChangeTrigger.TriggerInstance.hasItems(BnCItems.FLAXEN_CHEESE_WEDGE))
                 .save(consumer, BrewinAndChewin.asResource("pizza"));
         ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, BnCItems.QUICHE)
@@ -41,9 +42,9 @@ public class BnCCraftingRecipes {
                 .pattern("mcm")
                 .pattern("eCe")
                 .define('b', ModItems.COOKED_BACON.get())
-                .define('l', ModItems.CABBAGE_LEAF.get())
+                .define('l', CommonTags.CROPS_CABBAGE)
                 .define('m', CommonTags.FOODS_MILK)
-                .define('c', BnCTags.FOOD_CHEESE_WEDGE)
+                .define('c', BnCTags.Items.FOOD_CHEESE_WEDGE)
                 .define('e', Items.EGG)
                 .define('C', ModItems.PIE_CRUST.get())
                 .unlockedBy("has_crust", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PIE_CRUST.get()))
@@ -55,7 +56,7 @@ public class BnCCraftingRecipes {
                 .define('b', Items.BROWN_MUSHROOM)
                 .define('l', ModItems.CABBAGE_LEAF.get())
                 .define('m', CommonTags.FOODS_MILK)
-                .define('c', BnCTags.FOOD_CHEESE_WEDGE)
+                .define('c', BnCTags.Items.FOOD_CHEESE_WEDGE)
                 .define('e', Items.EGG)
                 .define('C', ModItems.PIE_CRUST.get())
                 .unlockedBy("has_crust", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PIE_CRUST.get()))

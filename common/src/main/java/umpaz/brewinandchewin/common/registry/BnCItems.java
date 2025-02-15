@@ -62,10 +62,10 @@ public class BnCItems {
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.BLOODY_MARY));
     public static final Item RED_RUM = new BoozeItem(() -> BnCFluids.RED_RUM, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.RED_RUM));
-    public static final Item WITHERING_DROSS = new BoozeItem(() -> BnCFluids.WITHERING_DROSS, new Item.Properties()
-            .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.WITHERING_DROSS));
     public static final Item DREAD_NOG = new DreadNogItem(() -> BnCFluids.DREAD_NOG, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.DREAD_NOG));
+    public static final Item WITHERING_DROSS = new BoozeItem(() -> BnCFluids.WITHERING_DROSS, new Item.Properties()
+            .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.WITHERING_DROSS));
 
     public static final Item KOMBUCHA = new BoozeItem(() -> BnCFluids.KOMBUCHA, new Item.Properties()
             .stacksTo(16).craftRemainder(BnCItems.TANKARD).food(BnCFoods.KOMBUCHA));

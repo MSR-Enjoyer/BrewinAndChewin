@@ -24,7 +24,7 @@ public class BnCEntityTypeTags extends EntityTypeTagsProvider
     }
 
     protected void registerModTags() {
-        tag(BnCTags.IMMUNE_TO_INTOXICATION)
+        tag(BnCTags.EntityTypes.IMMUNE_TO_INTOXICATION)
                 .addTag(EntityTypeTags.UNDEAD);
     }
 }

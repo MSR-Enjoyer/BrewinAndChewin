@@ -70,7 +70,7 @@ public abstract class LivingEntityMixin {
                 attachment.setTicksUntilDamage(ticksUntilDamage);
                 BrewinAndChewin.getHelper().sendClientboundTracking(target, new SyncNumbedHeartsClientboundPacket(target.getId(), numbedHealth, ticksUntilDamage));
             }
-            if (attacker instanceof LivingEntity living && (!(living instanceof PlayerPreHurtAttackStrengthAccess player) || player.brewinandchewin$getPreHurtAttackStrengthScale() > 0.8F) && living.hasEffect(BnCEffects.RAGING) && source.is(BnCTags.TRIGGERS_RAGING)) {
+            if (attacker instanceof LivingEntity living && (!(living instanceof PlayerPreHurtAttackStrengthAccess player) || player.brewinandchewin$getPreHurtAttackStrengthScale() > 0.8F) && living.hasEffect(BnCEffects.RAGING) && source.is(BnCTags.DamageTypes.TRIGGERS_RAGING)) {
                 if (BrewinAndChewin.getHelper().getRagingAttachment(living) == null)
                     BrewinAndChewin.getHelper().setRagingAttachment(living, new RagingAttachment(0, 0));
                 RagingAttachment attachment = BrewinAndChewin.getHelper().getRagingAttachment(living);
@@ -103,7 +103,7 @@ public abstract class LivingEntityMixin {
 
     @ModifyReturnValue(method = "canBeAffected", at = @At("RETURN"))
     private boolean brewinandchewin$intoxicationImmunity(boolean original, MobEffectInstance mobEffectInstance) {
-        if (((LivingEntity)(Object)this).getType().is(BnCTags.IMMUNE_TO_INTOXICATION) && mobEffectInstance.getEffect().is(BnCEffects.INTOXICATION))
+        if (((LivingEntity)(Object)this).getType().is(BnCTags.EntityTypes.IMMUNE_TO_INTOXICATION) && mobEffectInstance.getEffect().is(BnCEffects.INTOXICATION))
             return false;
         return original;
     }

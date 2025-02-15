@@ -85,7 +85,7 @@ public class BnCCommonEvents {
 
     @SubscribeEvent
     public static void mobEffectApplicable(MobEffectEvent.Applicable event) {
-        if (event.getEntity().getType().is(BnCTags.IMMUNE_TO_INTOXICATION) && event.getEffectInstance().is(BnCEffects.INTOXICATION))
+        if (event.getEntity().getType().is(BnCTags.EntityTypes.IMMUNE_TO_INTOXICATION) && event.getEffectInstance().is(BnCEffects.INTOXICATION))
             event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
     }
 
@@ -110,7 +110,7 @@ public class BnCCommonEvents {
             attachment.setTicksUntilDamage(ticksUntilDamage);
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SyncNumbedHeartsClientboundPacket(target.getId(), numbedHealth, ticksUntilDamage));
         }
-        if (attacker instanceof LivingEntity living && (!(living instanceof Player player) || player.getAttackStrengthScale(0.0F) > 0.8F) && living.hasEffect(BnCEffects.RAGING) && event.getSource().is(BnCTags.TRIGGERS_RAGING)) {
+        if (attacker instanceof LivingEntity living && (!(living instanceof Player player) || player.getAttackStrengthScale(0.0F) > 0.8F) && living.hasEffect(BnCEffects.RAGING) && event.getSource().is(BnCTags.DamageTypes.TRIGGERS_RAGING)) {
             if (BrewinAndChewin.getHelper().getRagingAttachment(living) == null)
                 BrewinAndChewin.getHelper().setRagingAttachment(living, new RagingAttachment(0, 0));
             RagingAttachment attachment = BrewinAndChewin.getHelper().getRagingAttachment(living);

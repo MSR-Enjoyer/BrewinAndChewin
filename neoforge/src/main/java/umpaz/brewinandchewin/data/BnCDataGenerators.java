@@ -51,6 +51,7 @@ public class BnCDataGenerators {
         lookupProvider = builtInEntries.getRegistryProvider();
         generator.addProvider(event.includeServer(), blockTags);
         generator.addProvider(event.includeServer(), new BnCItemTags(output, lookupProvider, blockTags.contentsGetter(), helper));
+        generator.addProvider(event.includeServer(), new BnCFluidTags(output, lookupProvider, helper));
         generator.addProvider(event.includeServer(), new BnCMobEffectTags(output, lookupProvider, helper));
         generator.addProvider(event.includeServer(), new BnCEntityTypeTags(output, lookupProvider, helper));
         generator.addProvider(event.includeServer(), new BnCDamageTypeTags(output, lookupProvider, helper));

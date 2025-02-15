@@ -39,7 +39,7 @@ public class BnCDamageTypeTags extends DamageTypeTagsProvider
         tag(DamageTypeTags.BYPASSES_WOLF_ARMOR)
                 .add(BnCDamageTypes.CARDIAC_ARREST);
 
-        tag(BnCTags.TRIGGERS_RAGING)
+        tag(BnCTags.DamageTypes.TRIGGERS_RAGING)
                 .add(DamageTypes.MOB_ATTACK)
                 .add(DamageTypes.PLAYER_ATTACK);
     }

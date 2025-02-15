@@ -178,10 +178,10 @@ public class KegFermentingRecipes {
 
 
       KegFermentingRecipeBuilder.kegFermentingRecipe(FermentingBookCategory.MEALS, BnCItems.JERKY, 3, NORMAL_FERMENTING, MEDIUM_EXP, 4)
-              .addIngredient(BnCTags.FOOD_JERKY_MEAT)
-              .addIngredient(BnCTags.FOOD_JERKY_MEAT)
-              .addIngredient(BnCTags.FOOD_JERKY_MEAT)
-              .unlockedBy("has_raw_meat", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(BnCTags.FOOD_JERKY_MEAT)))
+              .addIngredient(BnCTags.Items.FOOD_JERKY_MEAT)
+              .addIngredient(BnCTags.Items.FOOD_JERKY_MEAT)
+              .addIngredient(BnCTags.Items.FOOD_JERKY_MEAT)
+              .unlockedBy("has_raw_meat", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(BnCTags.Items.FOOD_JERKY_MEAT)))
               .build(output);
 
 

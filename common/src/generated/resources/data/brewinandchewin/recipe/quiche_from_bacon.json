@@ -15,7 +15,7 @@
       "item": "minecraft:egg"
     },
     "l": {
-      "item": "farmersdelight:cabbage_leaf"
+      "tag": "c:crops/cabbage"
     },
     "m": {
       "tag": "c:foods/milk"

@@ -48,12 +48,22 @@ public class BnCBlockTags extends BlockTagsProvider
     }
 
     protected void registerModTags() {
-        tag(BnCTags.FREEZE_SOURCES).add(
+        tag(BnCTags.Blocks.CHEESE_WHEELS_UNRIPE)
+                .add(BnCBlocks.UNRIPE_FLAXEN_CHEESE_WHEEL)
+                .add(BnCBlocks.UNRIPE_SCARLET_CHEESE_WHEEL);
+        tag(BnCTags.Blocks.CHEESE_WHEELS_RIPE)
+                .add(BnCBlocks.FLAXEN_CHEESE_WHEEL)
+                .add(BnCBlocks.SCARLET_CHEESE_WHEEL);
+
+        tag(BnCTags.Blocks.FREEZE_SOURCES).add(
                 BnCBlocks.ICE_CRATE,
                 Blocks.ICE,
                 Blocks.PACKED_ICE,
                 Blocks.BLUE_ICE
         );
+
+        tag(BnCTags.Blocks.PLAYER_WORKSTATIONS_KEGS)
+                .add(BnCBlocks.KEG);
 
         tag(ModTags.HEAT_SOURCES).add(
                 BnCBlocks.FIERY_FONDUE_POT,
