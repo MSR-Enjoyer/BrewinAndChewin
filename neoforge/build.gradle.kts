@@ -74,6 +74,8 @@ dependencies {
 
     compileOnly("mezz.jei:jei-${Versions.MINECRAFT}-neoforge-api:${Versions.JEI}")
     runtimeOnly("mezz.jei:jei-${Versions.MINECRAFT}-neoforge:${Versions.JEI}")
+    compileOnly("dev.emi:emi-neoforge:${Versions.EMI}:api")
+    runtimeOnly("dev.emi:emi-neoforge:${Versions.EMI}")
 
     implementation("squeek.appleskin:appleskin-neoforge:${Versions.APPLESKIN}")
 }

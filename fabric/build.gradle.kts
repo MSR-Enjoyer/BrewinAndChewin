@@ -60,6 +60,8 @@ dependencies {
 
     modCompileOnly("mezz.jei:jei-${Versions.MINECRAFT}-fabric-api:${Versions.JEI}")
     modLocalRuntime("mezz.jei:jei-${Versions.MINECRAFT}-fabric:${Versions.JEI}")
+    modCompileOnly("dev.emi:emi-fabric:${Versions.EMI}:api")
+    modLocalRuntime("dev.emi:emi-fabric:${Versions.EMI}")
 
     modCompileOnly("squeek.appleskin:appleskin-fabric:${Versions.APPLESKIN}")
     modLocalRuntime("squeek.appleskin:appleskin-fabric:${Versions.APPLESKIN}")
@@ -73,6 +75,7 @@ dependencies {
     modImplementation("com.github.Chocohead:Fabric-ASM:${Versions.FABRIC_ASM}") {
         exclude(group = "net.fabricmc.fabric-api")
     }
+
 }
 
 loom {

@@ -121,6 +121,8 @@
   "brewinandchewin.jei.tooltip.error.recipe.transfer.temperature": "Incorrect Temperature",
   "brewinandchewin.jei.tooltip.error.recipe.transfer.invalid_fluid": "Invalid Fluid Items",
 
+  "emi.category.brewinandchewin.fermenting": "Fermenting",
+
   "tag.block.brewinandchewin.freeze_sources": "Freeze Sources",
 
   "tag.item.brewinandchewin.cheese_wedges": "Cheese Wedges",

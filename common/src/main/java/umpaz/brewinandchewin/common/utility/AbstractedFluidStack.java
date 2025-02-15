@@ -29,6 +29,14 @@ public class AbstractedFluidStack {
         this.loaderSpecific = loaderSpecific;
     }
 
+    public AbstractedFluidStack(Fluid fluid, long amount, DataComponentMap components) {
+        this(fluid, amount, components, FluidUnit.getLoaderUnit(), null);
+    }
+
+    public AbstractedFluidStack(Fluid fluid, long amount, DataComponentMap components, FluidUnit unit) {
+        this(fluid, amount, components, unit, null);
+    }
+
     public AbstractedFluidStack(Fluid fluid, long amount) {
         this(fluid, amount, new PatchedDataComponentMap(DataComponentMap.EMPTY), FluidUnit.getLoaderUnit(), null);
     }

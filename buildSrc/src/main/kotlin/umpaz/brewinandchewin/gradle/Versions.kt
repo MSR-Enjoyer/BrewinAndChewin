@@ -25,6 +25,7 @@ object Versions {
     const val GREENHOUSE_CONFIG_FABRIC_RANGE = ">=1.0.0-alpha.2"
 
     const val JEI = "19.21.0.247"
+    const val EMI = "1.1.19+1.21.1"
     const val APPLESKIN = "mc1.21-3.0.5"
     const val CLOTH_CONFIG = "15.0.140"
 

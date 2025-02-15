@@ -30,6 +30,9 @@
     ],
     "jei_mod_plugin": [
       "umpaz.brewinandchewin.integration.jei.JEIPlugin"
+    ],
+    "emi": [
+      "umpaz.brewinandchewin.integration.emi.EMIPlugin"
     ]
   },
   "mixins": [

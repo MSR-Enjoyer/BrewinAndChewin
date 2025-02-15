@@ -40,7 +40,10 @@ dependencies {
     compileOnly("maven.modrinth:farmers-delight:${Versions.FARMERS_DELIGHT}")
 
     compileOnly("mezz.jei:jei-${Versions.MINECRAFT}-common-api:${Versions.JEI}")
+    compileOnly("dev.emi:emi-xplat-mojmap:${Versions.EMI}:api")
+
     compileOnly("squeek.appleskin:appleskin-neoforge:${Versions.APPLESKIN}")
+
 }
 
 configurations {

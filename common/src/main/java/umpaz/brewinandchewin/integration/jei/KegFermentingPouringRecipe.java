@@ -9,7 +9,7 @@ import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
 import umpaz.brewinandchewin.common.utility.FluidUnit;
 
 /**
- * look. this is only to show #{KegPouringRecipe} and @{KegFermentingRecipe
+ * look. this is only to show {@link KegPouringRecipe} and {@link KegFermentingRecipe}
  */
 public class KegFermentingPouringRecipe extends KegFermentingRecipe {
 
@@ -58,7 +58,6 @@ public class KegFermentingPouringRecipe extends KegFermentingRecipe {
     public int getCatalystAmount() {
         return this.catalystAmount;
     }
-
 
     public ItemStack getOutput() {
         return this.output;
