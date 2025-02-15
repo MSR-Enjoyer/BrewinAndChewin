@@ -16,7 +16,7 @@ public class KegFluidTankNeoForge extends FluidTank implements AbstractedFluidTa
     }
 
     @Override
-    public long getFluidCapacity() {
+    public long getFluidCapacity(int slot) {
         return getCapacity();
     }
 
@@ -41,6 +41,11 @@ public class KegFluidTankNeoForge extends FluidTank implements AbstractedFluidTa
         int newAmount = (int) unit.convertToLoader(maxDrain);
         FluidStack fluid = drain(newAmount, simulate ? FluidAction.SIMULATE : FluidAction.EXECUTE);
         return new AbstractedFluidStack(fluid.getFluid(), fluid.getAmount(), fluid.getComponents(), FluidUnit.MILLIBUCKETS, fluid);
+    }
+
+    @Override
+    public AbstractedFluidStack drain(int slot, long maxDrain, FluidUnit unit, boolean simulate) {
+        return null;
     }
 
     @Override

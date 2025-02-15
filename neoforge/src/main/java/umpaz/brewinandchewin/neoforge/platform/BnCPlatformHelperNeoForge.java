@@ -48,6 +48,7 @@ import umpaz.brewinandchewin.common.utility.BnCMenuConstructor;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
+import umpaz.brewinandchewin.neoforge.container.KegFluidItemStorageNeoForge;
 import umpaz.brewinandchewin.neoforge.container.KegFluidTankNeoForge;
 import umpaz.brewinandchewin.neoforge.container.KegItemHandlerNeoForge;
 import umpaz.brewinandchewin.neoforge.container.SidedKegWrapperNeoForge;
@@ -253,6 +254,11 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     @Override
     public Object createLoaderFluidStack(AbstractedFluidStack abstracted) {
         return new FluidStack(abstracted.fluid().builtInRegistryHolder(), (int) abstracted.unit().convertToLoader(abstracted.amount()), abstracted.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
+    }
+
+    @Override
+    public AbstractedFluidTank getFluidContainerFromItem(ItemStack stack) {
+        return new KegFluidItemStorageNeoForge(stack);
     }
 
     @Override
