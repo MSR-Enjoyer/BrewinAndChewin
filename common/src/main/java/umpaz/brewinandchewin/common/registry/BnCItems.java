@@ -118,17 +118,17 @@ public class BnCItems {
         registerWithTab("vodka", VODKA);
         registerWithTab("mead", MEAD);
         registerWithTab("rice_wine", RICE_WINE);
-        registerWithTab("egg_grog", EGG_GROG);
-        registerWithTab("strongroot_ale", STRONGROOT_ALE);
-        registerWithTab("saccharine_rum", SACCHARINE_RUM);
         registerWithTab("pale_jane", PALE_JANE);
-        registerWithTab("salty_folly", SALTY_FOLLY);
-        registerWithTab("steel_toe_stout", STEEL_TOE_STOUT);
+        registerWithTab("egg_grog", EGG_GROG);
         registerWithTab("glittering_grenadine", GLITTERING_GRENADINE);
+        registerWithTab("salty_folly", SALTY_FOLLY);
+        registerWithTab("saccharine_rum", SACCHARINE_RUM);
         registerWithTab("bloody_mary", BLOODY_MARY);
         registerWithTab("red_rum", RED_RUM);
-        registerWithTab("withering_dross", WITHERING_DROSS);
+        registerWithTab("strongroot_ale", STRONGROOT_ALE);
+        registerWithTab("steel_toe_stout", STEEL_TOE_STOUT);
         registerWithTab("dread_nog", DREAD_NOG);
+        registerWithTab("withering_dross", WITHERING_DROSS);
 
         registerWithTab("kombucha", KOMBUCHA, "farmersrespite");
         
@@ -137,29 +137,29 @@ public class BnCItems {
         registerWithTab("pickled_pickles", PICKLED_PICKLES);
         registerWithTab("kippers", KIPPERS);
         registerWithTab("cocoa_fudge", COCOA_FUDGE);
-        
-        registerWithTab("vegetable_omelet", VEGETABLE_OMELET);
-        registerWithTab("cheesy_pasta", CHEESY_PASTA);
-        registerWithTab("creamy_onion_soup", CREAMY_ONION_SOUP);
-        registerWithTab("scarlet_pierogies", SCARLET_PIEROGIES);
-        registerWithTab("horror_lasagna", HORROR_LASAGNA);
-        
+
         registerWithTab("unripe_flaxen_cheese_wheel", UNRIPE_FLAXEN_CHEESE_WHEEL);
         registerWithTab("flaxen_cheese_wheel", FLAXEN_CHEESE_WHEEL);
-        
+
         registerWithTab("unripe_scarlet_cheese_wheel", UNRIPE_SCARLET_CHEESE_WHEEL);
         registerWithTab("scarlet_cheese_wheel", SCARLET_CHEESE_WHEEL);
-        
+
         registerWithTab("flaxen_cheese_wedge", FLAXEN_CHEESE_WEDGE);
         registerWithTab("scarlet_cheese_wedge", SCARLET_CHEESE_WEDGE);
+        
+        registerWithTab("vegetable_omelet", VEGETABLE_OMELET);
+        registerWithTab("creamy_onion_soup", CREAMY_ONION_SOUP);
+        registerWithTab("cheesy_pasta", CHEESY_PASTA);
+        registerWithTab("horror_lasagna", HORROR_LASAGNA);
+        registerWithTab("scarlet_pierogies", SCARLET_PIEROGIES);
+
+        registerWithTab("ham_and_cheese_sandwich", HAM_AND_CHEESE_SANDWICH);
 
         registerWithTab("pizza", PIZZA);
         registerWithTab("pizza_slice", PIZZA_SLICE);
         
         registerWithTab("fiery_fondue_pot", FIERY_FONDUE_POT);
         registerWithTab("fiery_fondue", FIERY_FONDUE);
-        
-        registerWithTab("ham_and_cheese_sandwich", HAM_AND_CHEESE_SANDWICH);
 
         registerWithTab("quiche", QUICHE);
         registerWithTab("quiche_slice", QUICHE_SLICE);
