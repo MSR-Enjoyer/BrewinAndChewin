@@ -8,7 +8,7 @@
           "condition": "minecraft:block_state_property",
           "block": "brewinandchewin:scarlet_cheese_wheel",
           "properties": {
-            "servings": 3
+            "servings": "3"
           }
         },
         {
