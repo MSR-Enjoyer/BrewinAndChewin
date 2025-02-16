@@ -13,6 +13,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
@@ -110,6 +111,10 @@ public class KegCompatibleFluidIngredients {
 
         public Tag(HolderSet<Fluid> fluid) {
             this(fluid, new PatchedDataComponentMap(DataComponentMap.EMPTY));
+        }
+
+        public TagKey<Fluid> getTagKey() {
+            return fluidTag.unwrapKey().orElse(null);
         }
 
         @Override

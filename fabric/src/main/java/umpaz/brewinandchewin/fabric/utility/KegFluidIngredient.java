@@ -15,7 +15,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
+import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.FluidUnit;
@@ -110,6 +112,11 @@ public class KegFluidIngredient {
 
         public Tag(HolderSet<Fluid> fluid) {
             this(fluid, new PatchedDataComponentMap(DataComponentMap.EMPTY));
+        }
+
+        @Nullable
+        public TagKey<Fluid> getTagKey() {
+            return fluidTag.unwrapKey().orElse(null);
         }
 
         @Override

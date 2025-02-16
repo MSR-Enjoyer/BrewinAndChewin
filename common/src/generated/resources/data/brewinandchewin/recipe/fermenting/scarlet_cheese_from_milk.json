@@ -1,9 +1,9 @@
 {
   "type": "brewinandchewin:fermenting",
   "base_fluid": {
-    "amount": 500,
+    "amount": 1000,
     "ingredient": {
-      "id": "minecraft:milk"
+      "tag": "#c:milk"
     },
     "unit": "millibuckets"
   },
@@ -11,20 +11,20 @@
   "experience": 1.0,
   "ingredients": [
     {
+      "item": "minecraft:crimson_fungus"
+    },
+    {
+      "item": "minecraft:nether_wart"
+    },
+    {
       "item": "minecraft:sugar"
-    },
-    {
-      "item": "minecraft:cocoa_beans"
-    },
-    {
-      "item": "minecraft:cocoa_beans"
     },
     []
   ],
   "result": {
-    "count": 1,
-    "id": "brewinandchewin:cocoa_fudge"
+    "amount": 1000,
+    "id": "brewinandchewin:scarlet_cheese"
   },
-  "temperature": 2,
+  "temperature": 5,
   "unit": "millibuckets"
 }

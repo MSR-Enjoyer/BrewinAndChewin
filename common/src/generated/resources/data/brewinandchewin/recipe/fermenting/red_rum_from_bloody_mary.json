@@ -3,7 +3,7 @@
   "base_fluid": {
     "amount": 1000,
     "ingredient": {
-      "id": "brewinandchewin:bloody_mary"
+      "tag": "#brewinandchewin:bloody_mary"
     },
     "unit": "millibuckets"
   },

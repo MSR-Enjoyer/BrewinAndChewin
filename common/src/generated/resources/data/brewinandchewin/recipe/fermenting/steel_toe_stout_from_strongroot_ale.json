@@ -3,7 +3,7 @@
   "base_fluid": {
     "amount": 1000,
     "ingredient": {
-      "id": "brewinandchewin:strongroot_ale"
+      "tag": "#brewinandchewin:strongroot_ale"
     },
     "unit": "millibuckets"
   },

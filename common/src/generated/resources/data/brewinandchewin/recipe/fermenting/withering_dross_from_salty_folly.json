@@ -3,7 +3,7 @@
   "base_fluid": {
     "amount": 1000,
     "ingredient": {
-      "id": "brewinandchewin:salty_folly"
+      "tag": "#brewinandchewin:salty_folly"
     },
     "unit": "millibuckets"
   },

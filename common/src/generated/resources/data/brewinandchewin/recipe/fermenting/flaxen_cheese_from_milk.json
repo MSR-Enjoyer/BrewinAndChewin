@@ -3,17 +3,18 @@
   "base_fluid": {
     "amount": 1000,
     "ingredient": {
-      "id": "minecraft:milk"
+      "tag": "#c:milk"
     },
     "unit": "millibuckets"
   },
+  "category": "meals",
   "experience": 1.0,
   "ingredients": [
     {
-      "tag": "c:eggs"
+      "item": "minecraft:brown_mushroom"
     },
     {
-      "tag": "c:crops/cabbage"
+      "item": "minecraft:pumpkin_seeds"
     },
     {
       "item": "minecraft:sugar"
@@ -22,7 +23,8 @@
   ],
   "result": {
     "amount": 1000,
-    "id": "brewinandchewin:egg_grog"
+    "id": "brewinandchewin:flaxen_cheese"
   },
+  "temperature": 4,
   "unit": "millibuckets"
 }

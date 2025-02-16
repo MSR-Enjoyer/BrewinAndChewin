@@ -3,7 +3,7 @@
   "base_fluid": {
     "amount": 1000,
     "ingredient": {
-      "id": "brewinandchewin:vodka"
+      "tag": "#brewinandchewin:vodka"
     },
     "unit": "millibuckets"
   },

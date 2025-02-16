@@ -11,9 +11,9 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -160,6 +160,11 @@ public class KegFermentingRecipeBuilder {
                 ResourceLocation resultItemLocation = BuiltInRegistries.ITEM.getKey(result.right().get().getItem());
                 build(consumerIn, BrewinAndChewin.MODID + ":fermenting/" + resultItemLocation.getPath() + "_from_" + baseFluidLocation.getPath());
                 return;
+            } else if (fluidIngredient.isPresent() && fluidIngredient.get().ingredient() instanceof KegCompatibleFluidIngredients.Tag tag && tag.getTagKey() != null) {
+                ResourceLocation baseFluidLocation = tag.getTagKey().location();
+                ResourceLocation resultItemLocation = BuiltInRegistries.ITEM.getKey(result.right().get().getItem());
+                build(consumerIn, BrewinAndChewin.MODID + ":fermenting/" + resultItemLocation.getPath() + "_from_" + baseFluidLocation.getPath());
+                return;
             }
             ResourceLocation resultItemLocation = BuiltInRegistries.ITEM.getKey(result.right().get().getItem());
             build(consumerIn, BrewinAndChewin.MODID + ":fermenting/" + resultItemLocation.getPath());
@@ -168,6 +173,11 @@ public class KegFermentingRecipeBuilder {
 
         if (fluidIngredient.isPresent() && fluidIngredient.get().ingredient() instanceof KegCompatibleFluidIngredients.Exact exact && !exact.displayStacks().isEmpty()) {
             ResourceLocation baseFluidLocation = BuiltInRegistries.FLUID.getKey(exact.displayStacks().getFirst().fluid());
+            ResourceLocation resultFluidLocation = BuiltInRegistries.FLUID.getKey(result.left().get().fluid());
+            build(consumerIn, BrewinAndChewin.MODID + ":fermenting/" + resultFluidLocation.getPath() + "_from_" + baseFluidLocation.getPath());
+            return;
+        } else if (fluidIngredient.isPresent() && fluidIngredient.get().ingredient() instanceof KegCompatibleFluidIngredients.Tag tag && tag.getTagKey() != null) {
+            ResourceLocation baseFluidLocation = tag.getTagKey().location();
             ResourceLocation resultFluidLocation = BuiltInRegistries.FLUID.getKey(result.left().get().fluid());
             build(consumerIn, BrewinAndChewin.MODID + ":fermenting/" + resultFluidLocation.getPath() + "_from_" + baseFluidLocation.getPath());
             return;
@@ -198,13 +208,13 @@ public class KegFermentingRecipeBuilder {
         return this;
     }
 
-    public KegFermentingRecipeBuilder addFluidIngredient(HolderSet<Fluid> fluid, int i) {
-        fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.Tag(fluid), i, Optional.empty()));
+    public KegFermentingRecipeBuilder addFluidIngredient(TagKey<Fluid> fluid, int i) {
+        fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.Tag(HolderSet.emptyNamed(BuiltInRegistries.FLUID.holderOwner(), fluid)), i, Optional.empty()));
         return this;
     }
 
-    public KegFermentingRecipeBuilder addFluidIngredient(HolderSet<Fluid> fluid, int i, FluidUnit unit) {
-        fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.Tag(fluid), i, Optional.of(unit)));
+    public KegFermentingRecipeBuilder addFluidIngredient(TagKey<Fluid> fluid, int i, FluidUnit unit) {
+        fluidIngredient = Optional.of(new FluidIngredientWithAmount(new KegCompatibleFluidIngredients.Tag(HolderSet.emptyNamed(BuiltInRegistries.FLUID.holderOwner(), fluid)), i, Optional.of(unit)));
         return this;
     }
 

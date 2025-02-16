@@ -3,7 +3,7 @@
   "base_fluid": {
     "amount": 1000,
     "ingredient": {
-      "id": "brewinandchewin:rice_wine"
+      "tag": "#brewinandchewin:rice_wine"
     },
     "unit": "millibuckets"
   },
