@@ -14,9 +14,11 @@
 - Rewrote Tipsy chat scrambling to make it more consistent across players, and to follow the original logic.
   - Tipsified chat messages now count as modified messages on the client, and you are now able to be prompted to see the original by hovering over the chat.
 - Re-organised the creative tab.
+- Added EMI integration.
 
 ## Internal
 - Swapped config solution from Forge config to Greenhouse Config.
 - Updated recipe code to match 1.21.1 specifics, such as allowing NeoForge fluid ingredients.
   - Unfortunately, I cannot extensively document the changes right now, as they swept across the entire mod. Hopefully I'll get to working on the wiki soon - Pug.
+- Swapped fluid ingredients for BnC Fermenting recipes to use fluid tags.
 - Removed the maximum of 10000mB for Keg capacity in the configuration.
