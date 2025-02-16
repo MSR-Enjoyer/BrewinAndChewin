@@ -62,8 +62,8 @@ public class CheeseEmiRecipe implements EmiRecipe {
     public void addWidgets(WidgetHolder widgets) {
         widgets.addTexture(BACKGROUND, 0, 0, 102, 41, 8, 9);
 
-        addSlot(widgets, input, 9, 26).recipeContext(this);
-        addSlot(widgets, output, 93, 26).recipeContext(this);
+        addSlot(widgets, input, 0, 16).recipeContext(this);
+        addSlot(widgets, output, 84, 16).recipeContext(this);
     }
 
     private SlotWidget addSlot(WidgetHolder widgets, EmiIngredient ingredient, int x, int y) {

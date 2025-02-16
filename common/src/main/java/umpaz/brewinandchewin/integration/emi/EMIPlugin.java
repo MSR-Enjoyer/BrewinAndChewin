@@ -58,7 +58,7 @@ public class EMIPlugin implements EmiPlugin {
         }
 
         registry.addRecipe(new CheeseEmiRecipe(BrewinAndChewin.asResource("/cheese/flaxen"), EmiStack.of(BnCItems.UNRIPE_FLAXEN_CHEESE_WHEEL.getDefaultInstance()), EmiStack.of(BnCItems.FLAXEN_CHEESE_WHEEL.getDefaultInstance())));
-        registry.addRecipe(new CheeseEmiRecipe(BrewinAndChewin.asResource("/cheese/flaxen"), EmiStack.of(BnCItems.UNRIPE_SCARLET_CHEESE_WHEEL.getDefaultInstance()), EmiStack.of(BnCItems.SCARLET_CHEESE_WHEEL.getDefaultInstance())));
+        registry.addRecipe(new CheeseEmiRecipe(BrewinAndChewin.asResource("/cheese/scarlet"), EmiStack.of(BnCItems.UNRIPE_SCARLET_CHEESE_WHEEL.getDefaultInstance()), EmiStack.of(BnCItems.SCARLET_CHEESE_WHEEL.getDefaultInstance())));
     }
 
     private EmiIngredient getFluidIngredient(RecipeHolder<KegFermentingRecipe> recipe) {
