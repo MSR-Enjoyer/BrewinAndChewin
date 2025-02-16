@@ -60,7 +60,6 @@ repositories {
         }
         filter { includeGroup("maven.modrinth") }
     }
-    mavenLocal()
 }
 
 dependencies {
