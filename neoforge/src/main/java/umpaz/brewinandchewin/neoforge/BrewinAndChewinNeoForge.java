@@ -8,6 +8,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -20,6 +22,8 @@ import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientbo
 import umpaz.brewinandchewin.common.network.serverbound.TransferKegRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.registry.*;
 import umpaz.brewinandchewin.common.registry.BnCCreativeTabs;
+import umpaz.brewinandchewin.neoforge.container.KegFluidTankNeoForge;
+import umpaz.brewinandchewin.neoforge.container.SidedKegWrapperNeoForge;
 import umpaz.brewinandchewin.neoforge.registry.BnCAttachments;
 import umpaz.brewinandchewin.neoforge.registry.BnCFluidTypes;
 import umpaz.brewinandchewin.neoforge.registry.BnCLootModifiers;
@@ -34,7 +38,13 @@ public class BrewinAndChewinNeoForge {
     }
 
     @EventBusSubscriber(modid = BrewinAndChewin.MODID, bus = EventBusSubscriber.Bus.MOD)
-    public static class ModEvents {
+    public static class RegistryEvents {
+        @SubscribeEvent
+        public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+            event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BnCBlockEntityTypes.KEG, (blockEntity, direction) -> (SidedKegWrapperNeoForge)blockEntity.getSidedHandler(direction));
+            event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, BnCBlockEntityTypes.KEG, (blockEntity, direction) -> (KegFluidTankNeoForge)blockEntity.getFluidTank());
+        }
+
         @SubscribeEvent
         public static void registerContent(RegisterEvent event) {
             registerMethod(event, NeoForgeRegistries.Keys.ATTACHMENT_TYPES, BnCAttachments::registerAll);

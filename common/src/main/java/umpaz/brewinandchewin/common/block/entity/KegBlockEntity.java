@@ -71,7 +71,6 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     public static final int RANGE = 2;
 
     private final AbstractedItemHandler inventory;
-    // TODO: Loader Transfer API.
     private final SidedKegWrapper inputHandler;
     private final SidedKegWrapper outputHandler;
     private final AbstractedFluidTank fluidTank;
@@ -136,6 +135,12 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
     public AbstractedFluidStack getOutput() {
         return fluidTank.getAbstractedFluid();
+    }
+
+    public SidedKegWrapper getSidedHandler(Direction direction) {
+        if (direction == Direction.UP)
+            return inputHandler;
+        return outputHandler;
     }
 
     public CustomData writeMeal(CompoundTag tag, HolderLookup.Provider provider) {

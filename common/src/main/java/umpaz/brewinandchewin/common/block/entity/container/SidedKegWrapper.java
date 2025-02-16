@@ -31,9 +31,9 @@ public abstract class SidedKegWrapper implements AbstractedItemHandler {
     @NotNull
     @Override
     public ItemStack getStackInSlot(int slot) {
-        if (side != null && !side.equals(Direction.UP) && slot > 0 && slot < 6)
+        if (side != null && !side.equals(Direction.UP) && slot == 5)
             return itemHandler.getStackInSlot(slot);
-        else if (side != null && side.equals(Direction.UP) && slot < 3)
+        else if (side != null && side.equals(Direction.UP) && slot < 4)
             return itemHandler.getStackInSlot(slot);
         return ItemStack.EMPTY;
     }
@@ -42,7 +42,7 @@ public abstract class SidedKegWrapper implements AbstractedItemHandler {
     public void setStackInSlot(int slot, ItemStack stack) {
         if (side != null && !side.equals(Direction.UP) && slot == 4)
             itemHandler.setStackInSlot(slot, stack);
-        else if (side != null && side.equals(Direction.UP) && slot < 3)
+        else if (side != null && side.equals(Direction.UP) && slot < 4)
             itemHandler.setStackInSlot(slot, stack);
     }
 
@@ -61,7 +61,7 @@ public abstract class SidedKegWrapper implements AbstractedItemHandler {
         if (this.side != null && !this.side.equals(Direction.UP)) {
            return slot == 5 ? this.itemHandler.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
         }
-        return slot < 3 ? this.itemHandler.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
+        return slot < 4 ? this.itemHandler.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
     }
 
     @Override

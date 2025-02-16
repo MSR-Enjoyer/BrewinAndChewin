@@ -1,18 +1,15 @@
 package umpaz.brewinandchewin.fabric;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.*;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.MushroomCow;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.ComposterBlock;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.attachment.RagingAttachment;
@@ -34,6 +31,8 @@ import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
 import umpaz.brewinandchewin.common.registry.BnCParticleTypes;
 import umpaz.brewinandchewin.common.registry.BnCRecipeSerializers;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
+import umpaz.brewinandchewin.fabric.container.KegFluidTankFabric;
+import umpaz.brewinandchewin.fabric.container.SidedKegWrapperFabric;
 import umpaz.brewinandchewin.fabric.fluid.BnCFluidVariantAttributeHandler;
 import umpaz.brewinandchewin.fabric.registry.BnCAttachments;
 import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
@@ -102,6 +101,9 @@ public class BrewinAndChewinFabric implements ModInitializer {
         BnCParticleTypes.registerAll();
         BnCRecipeTypes.registerAll();
         BnCRecipeSerializers.registerAll();
+
+        ItemStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> (SidedKegWrapperFabric)blockEntity.getSidedHandler(direction), BnCBlockEntityTypes.KEG);
+        FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> (KegFluidTankFabric)blockEntity.getFluidTank(), BnCBlockEntityTypes.KEG);
     }
 
     private static void registerNetwork() {
