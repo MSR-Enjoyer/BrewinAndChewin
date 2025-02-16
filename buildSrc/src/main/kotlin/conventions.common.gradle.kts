@@ -52,6 +52,9 @@ repositories {
     maven("https://maven.terraformersmc.com/") {
         name = "TerraformersMC"
     }
+    maven("https://repo.greenhouse.house/releases/") {
+        name = "Greenhouse"
+    }
     exclusiveContent {
         forRepository {
             maven("https://api.modrinth.com/maven") {

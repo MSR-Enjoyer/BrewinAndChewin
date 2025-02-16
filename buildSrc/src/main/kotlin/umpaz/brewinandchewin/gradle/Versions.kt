@@ -32,7 +32,7 @@ object Versions {
     const val FARMERS_DELIGHT = "1.21.1-1.2.6"
     const val FARMERS_DELIGHT_RANGE = "[1.2.6,)"
 
-    const val FARMERS_DELIGHT_REFABRICATED = "1.21.1-2.2.8+refabricated"
+    const val FARMERS_DELIGHT_REFABRICATED = "1.21.1-2.3.0+refabricated"
     const val FARMERS_DELIGHT_REFABRICATED_RANGE = ">=1.21.1-2.2.8"
 
     const val FABRIC_MIXIN = "0.15.5+mixin.0.8.7"

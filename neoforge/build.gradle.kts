@@ -113,9 +113,4 @@ publishMods {
 
         minecraftVersions.add(Versions.MINECRAFT)
     }
-
-    github {
-        accessToken = providers.environmentVariable("GITHUB_TOKEN")
-        parent(project(":common").tasks.named("publishGithub"))
-    }
 }

@@ -80,6 +80,6 @@ publishMods {
         tagName = "${Versions.MOD}+${Versions.MINECRAFT}"
         commitish = Properties.GITHUB_COMMITISH
 
-        allowEmptyFiles = true
+        file
     }
 }
