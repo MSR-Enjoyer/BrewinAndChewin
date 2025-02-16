@@ -1,7 +1,7 @@
 package umpaz.brewinandchewin.gradle
 
 object Versions {
-    const val MOD = "4.0.0-rc.3"
+    const val MOD = "4.0.0-rc.4"
 
     const val MINECRAFT = "1.21.1"
     const val PARCHMENT_MINECRAFT = "1.21"
