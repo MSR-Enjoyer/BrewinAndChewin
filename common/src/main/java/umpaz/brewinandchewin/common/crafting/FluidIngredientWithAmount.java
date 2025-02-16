@@ -31,6 +31,10 @@ public record FluidIngredientWithAmount(AbstractedFluidIngredient ingredient, lo
             FluidIngredientWithAmount::new
     );
 
+    public FluidUnit getUnit() {
+        return unit().orElse(FluidUnit.getLoaderUnit());
+    }
+
     public long loaderAmount() {
         FluidUnit unit = unit().orElse(FluidUnit.getLoaderUnit());
         return unit.convertToLoader(amount);

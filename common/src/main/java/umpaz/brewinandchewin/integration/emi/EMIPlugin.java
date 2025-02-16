@@ -11,6 +11,7 @@ import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.utility.BnCFluidItemDisplays;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
@@ -28,7 +29,6 @@ import java.util.List;
 
 @EmiEntrypoint
 public class EMIPlugin implements EmiPlugin {
-
     @Override
     public void register(EmiRegistry registry) {
         registry.addCategory(BnCRecipeCategories.FERMENTING);
@@ -45,16 +45,14 @@ public class EMIPlugin implements EmiPlugin {
                     ResourceLocation id = ItemStack.isSameItemSameComponents(pouringRecipe.value().getOutput(), BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), pouringRecipe.value().getRawFluid())) ?
                             recipe.id() :
                             recipe.id().withPath(string -> "/" + string + "_" + pouringRecipe.id().getNamespace() + "_" + pouringRecipe.id().getPath());
-                    AbstractedFluidStack fluidStack = recipe.value().getResult().left().orElseThrow();
-                    ItemStack output = pouringRecipe.value().getOutput().copyWithCount((int)fluidStack.unit().convert(fluidStack.amount(), FluidUnit.MILLIBUCKETS) / 250);
-                    ItemStack container = pouringRecipe.value().getContainer().copyWithCount(((int)fluidStack.unit().convert(fluidStack.amount(), FluidUnit.MILLIBUCKETS)) / 250);
-                    registry.addRecipe(new FermentingEmiRecipe(id, recipe.value().getIngredients().stream().map(EmiIngredient::of).toList(),
-                            getFluidIngredient(recipe), EmiStack.of(stack.fluid(), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY, stack.unit().convertToLoader(stack.amount())),
-                            EmiStack.of(output), EmiStack.of(container), recipe.value().getTemperature(), recipe.value().getFermentTime(), recipe.value().getExperience()));
+
+                    registry.addRecipe(new FermentingEmiRecipe(id, recipe.value().getIngredients().stream().map(EmiIngredient::of).toList(), getFluidItemIngredients(registry.getRecipeManager(), recipe), getFluidIngredient(recipe),
+                            EmiStack.of(stack.fluid(), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY, stack.unit().convertToLoader(stack.amount())),
+                            EmiStack.of(pouringRecipe.value().getResultItem(Minecraft.getInstance().level.registryAccess())), EmiStack.of(pouringRecipe.value().getContainer()), recipe.value().getTemperature(), recipe.value().getFermentTime(), recipe.value().getExperience()));
                 }
             } else {
-                registry.addRecipe(new FermentingEmiRecipe(recipe.id(), recipe.value().getIngredients().stream().map(EmiIngredient::of).toList(),
-                        getFluidIngredient(recipe), null,
+                registry.addRecipe(new FermentingEmiRecipe(recipe.id(), recipe.value().getIngredients().stream().map(EmiIngredient::of).toList(), null,
+                        null, null,
                         EmiStack.of(recipe.value().getResultItem(Minecraft.getInstance().level.registryAccess())), null, recipe.value().getTemperature(), recipe.value().getFermentTime(), recipe.value().getExperience()));
             }
         }
@@ -67,5 +65,14 @@ public class EMIPlugin implements EmiPlugin {
         if (recipe.value().getFluidIngredient().isEmpty())
             return null;
         return EmiIngredient.of(recipe.value().getFluidIngredient().orElseThrow().ingredient().displayStacks().stream().map(stack -> EmiStack.of(stack.fluid(), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY, stack.unit().convertToLoader(stack.amount()))).toList());
+    }
+
+    private EmiIngredient getFluidItemIngredients(RecipeManager recipes, RecipeHolder<KegFermentingRecipe> recipe) {
+        int fluidAmount = (int)recipe.value().getFluidIngredient().orElseThrow().getUnit().convert(recipe.value().getFluidIngredient().get().amount(), FluidUnit.MILLIBUCKETS);
+        return EmiIngredient.of(recipes.getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().filter(holder -> recipe.value().getFluidIngredient().get().ingredient().matches(holder.value().getRawFluid())).map(holder -> {
+            ItemStack stack = holder.value().getOutput();
+            stack = stack.copyWithCount((int) (fluidAmount / holder.value().getUnit().convert(holder.value().getRawFluid().amount(), FluidUnit.MILLIBUCKETS)));
+            return (EmiIngredient)EmiStack.of(stack);
+        }).toList());
     }
 }

@@ -110,6 +110,7 @@ public interface BnCPlatformHelper {
 
     Object createLoaderFluidStack(AbstractedFluidStack abstracted);
 
+    @Nullable
     AbstractedFluidTank getFluidContainerFromItem(ItemStack stack);
 
     Fluid getMilkFluid();

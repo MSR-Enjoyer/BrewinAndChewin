@@ -265,6 +265,8 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
     @Override
     public AbstractedFluidTank getFluidContainerFromItem(ItemStack stack) {
+        if (FluidStorage.ITEM.find(stack, ContainerItemContext.withConstant(stack)) == null)
+            return null;
         return new KegFluidItemStorageFabric(stack);
     }
 

@@ -6,6 +6,7 @@ import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.SlotWidget;
 import dev.emi.emi.api.widget.WidgetHolder;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
@@ -66,6 +67,9 @@ public class CheeseEmiRecipe implements EmiRecipe {
     }
 
     private SlotWidget addSlot(WidgetHolder widgets, EmiIngredient ingredient, int x, int y) {
-        return widgets.addSlot(ingredient, x, y);
+        return widgets.add(new SlotWidget(ingredient, x, y) {
+            @Override
+            public void drawBackground(GuiGraphics draw, int mouseX, int mouseY, float delta) {}
+        });
     }
 }

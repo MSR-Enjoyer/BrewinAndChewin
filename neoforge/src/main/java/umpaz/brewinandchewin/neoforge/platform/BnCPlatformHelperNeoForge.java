@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.crafting.CompoundIngredient;
 import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
@@ -258,6 +259,8 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
 
     @Override
     public AbstractedFluidTank getFluidContainerFromItem(ItemStack stack) {
+        if (Capabilities.FluidHandler.ITEM.getCapability(stack, null) == null)
+            return null;
         return new KegFluidItemStorageNeoForge(stack);
     }
 

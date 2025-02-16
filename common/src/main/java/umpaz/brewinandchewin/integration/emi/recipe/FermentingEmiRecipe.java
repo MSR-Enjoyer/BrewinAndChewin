@@ -6,26 +6,14 @@ import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.SlotWidget;
 import dev.emi.emi.api.widget.WidgetHolder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
-import umpaz.brewinandchewin.client.utility.BnCFluidItemDisplays;
-import umpaz.brewinandchewin.common.BnCConfiguration;
-import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
-import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
-import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.BnCTextUtils;
-import umpaz.brewinandchewin.common.utility.FluidUnit;
 import umpaz.brewinandchewin.integration.emi.BnCRecipeCategories;
 import umpaz.brewinandchewin.integration.emi.widget.BnCFluidWidget;
 import vectorwing.farmersdelight.common.utility.ClientRenderUtils;
@@ -38,6 +26,8 @@ public class FermentingEmiRecipe implements EmiRecipe {
     private final ResourceLocation id;
     private final List<EmiIngredient> itemInputs;
     @Nullable
+    private final EmiIngredient itemFluidInput;
+    @Nullable
     private final EmiIngredient fluidInput;
     @Nullable
     private final EmiStack fluidOutput;
@@ -48,9 +38,13 @@ public class FermentingEmiRecipe implements EmiRecipe {
     private final float experience;
 
     private List<EmiIngredient> inputs;
+    private List<EmiIngredient> catalysts;
     private List<EmiStack> outputs;
 
+    private static final Random RANDOM = new Random();
+
     public FermentingEmiRecipe(ResourceLocation id, List<EmiIngredient> itemInputs,
+                               @Nullable EmiIngredient itemFluidInput,
                                @Nullable EmiIngredient fluidInput, @Nullable EmiStack fluidOutput,
                                EmiStack itemOutput,
                                EmiStack container,
@@ -58,6 +52,7 @@ public class FermentingEmiRecipe implements EmiRecipe {
                                int cookTime, float experience) {
         this.id = id;
         this.itemInputs = itemInputs;
+        this.itemFluidInput = itemFluidInput;
         this.fluidInput = fluidInput;
         this.fluidOutput = fluidOutput;
         this.itemOutput = itemOutput;
@@ -83,17 +78,28 @@ public class FermentingEmiRecipe implements EmiRecipe {
             List<EmiIngredient> ingredients = new ArrayList<>(itemInputs);
             if (fluidInput != null)
                 ingredients.add(fluidInput);
-            if (container != null)
-                ingredients.add(container);
             inputs = List.copyOf(ingredients);
         }
         return inputs;
     }
 
     @Override
+    public List<EmiIngredient> getCatalysts() {
+        if (catalysts == null) {
+            List<EmiIngredient> ingredients = new ArrayList<>();
+            if (itemFluidInput != null)
+                ingredients.add(itemFluidInput);
+            catalysts = List.copyOf(ingredients);
+        }
+        return catalysts;
+    }
+
+    @Override
     public List<EmiStack> getOutputs() {
         if (outputs == null) {
             List<EmiStack> stacks = new ArrayList<>();
+            if (fluidOutput != null)
+                stacks.add(fluidOutput);
             stacks.add(itemOutput);
             outputs = List.copyOf(stacks);
         }
@@ -125,31 +131,11 @@ public class FermentingEmiRecipe implements EmiRecipe {
         }
 
         if (fluidInput != null) {
-            AbstractedFluidStack fluidStack = new AbstractedFluidStack((Fluid) fluidInput.getEmiStacks().getFirst().getKey(), fluidInput.getEmiStacks().getFirst().getAmount(), PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, fluidInput.getEmiStacks().getFirst().getComponentChanges()), FluidUnit.getLoaderUnit());
-            ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
-            Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe -> {
-                if (kegPouringRecipe.isStrict())
-                    return ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
-                return ItemStack.isSameItem(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
-            }).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int)(Math.min(FluidUnit.convert(BnCConfiguration.COMMON_CONFIG.get().keg().capacity(), BnCConfiguration.COMMON_CONFIG.get().keg().capacityUnit(), FluidUnit.MILLIBUCKETS), fluidInput.getAmount()) / kegPouringRecipe.getRawFluid().amount())).orElse(1);
-            itemDisplay.setCount(pourCount);
-            if (!itemDisplay.isEmpty())
-                widgets.add(new BnCFluidWidget(fluidInput, EmiStack.of(itemDisplay), 1, 3));
+            widgets.add(new BnCFluidWidget(fluidInput, RANDOM.nextInt(), 1, 3));
         }
 
         if (fluidOutput != null) {
-            AbstractedFluidStack fluidStack = new AbstractedFluidStack((Fluid) fluidOutput.getKey(), fluidOutput.getAmount(), PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, fluidOutput.getComponentChanges()), FluidUnit.getLoaderUnit());
-            ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
-            Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe -> {
-                if (kegPouringRecipe.isStrict())
-                    return ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
-                return ItemStack.isSameItem(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
-            }).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int)(Math.min(FluidUnit.convert(BnCConfiguration.COMMON_CONFIG.get().keg().capacity(), BnCConfiguration.COMMON_CONFIG.get().keg().capacityUnit(), FluidUnit.MILLIBUCKETS), fluidInput.getAmount()) / kegPouringRecipe.getRawFluid().amount())).orElse(1);
-            itemDisplay.setCount(pourCount);
-            if (!itemDisplay.isEmpty())
-                widgets.add(new BnCFluidWidget(fluidOutput, EmiStack.of(itemDisplay), 101, 3)).recipeContext(this);
+            widgets.add(new BnCFluidWidget(fluidOutput, RANDOM.nextInt(), 101, 3)).recipeContext(this);
         }
 
         if (container != null)
