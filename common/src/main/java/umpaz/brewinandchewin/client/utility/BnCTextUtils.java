@@ -34,9 +34,11 @@ public class BnCTextUtils {
                 for (int i = 0; i < amnt; i++) {
                     // pick a random word
                     List<String> words = Arrays.stream(textBuilder.toString().split(" ")).collect(Collectors.toCollection(ArrayList::new));
+                    if (words.isEmpty())
+                        continue;
                     // Remove the player name from the word list.
                     if (afterPlayerName > 0)
-                        words.remove(0);
+                        words.removeFirst();
                     int wordIndex = random.nextInt(words.size());
                     String word = words.get(wordIndex);
 
