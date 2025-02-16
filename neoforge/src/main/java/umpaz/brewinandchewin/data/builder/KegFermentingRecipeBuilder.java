@@ -103,11 +103,11 @@ public class KegFermentingRecipeBuilder {
     }
 
     private void setResult(Item item) {
-        result = Either.right(item.getDefaultInstance());
+        result = Either.right(item.getDefaultInstance().copyWithCount(amount));
     }
 
     private void setResult(ItemStack stack) {
-        result = Either.right(stack);
+        result = Either.right(stack.copyWithCount(amount));
     }
 
 
