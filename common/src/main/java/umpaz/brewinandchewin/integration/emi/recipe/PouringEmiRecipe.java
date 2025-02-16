@@ -11,26 +11,32 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.integration.emi.BnCRecipeCategories;
-import vectorwing.farmersdelight.FarmersDelight;
+import umpaz.brewinandchewin.integration.emi.widget.BnCFluidWidget;
 
 import java.util.List;
+import java.util.Random;
 
-public class CheeseEmiRecipe implements EmiRecipe {
-    private static final ResourceLocation BACKGROUND = BrewinAndChewin.asResource("textures/gui/jei/cheese_ripening.png");
+public class PouringEmiRecipe implements EmiRecipe {
+    public static final ResourceLocation BACKGROUND = BrewinAndChewin.asResource("textures/gui/emi/pouring.png");
 
     private final ResourceLocation id;
-    private final EmiStack input;
+    private final EmiIngredient fluid;
+    private final EmiStack container;
     private final EmiStack output;
 
-    public CheeseEmiRecipe(ResourceLocation id, EmiStack input, EmiStack output) {
+    private static final Random RANDOM = new Random();
+
+    public PouringEmiRecipe(ResourceLocation id, EmiIngredient fluid,
+                            EmiStack container, EmiStack output) {
         this.id = id;
-        this.input = input;
+        this.fluid = fluid;
+        this.container = container;
         this.output = output;
     }
 
     @Override
     public EmiRecipeCategory getCategory() {
-        return BnCRecipeCategories.AGING;
+        return BnCRecipeCategories.POURING;
     }
 
     @Override
@@ -40,7 +46,7 @@ public class CheeseEmiRecipe implements EmiRecipe {
 
     @Override
     public List<EmiIngredient> getInputs() {
-        return List.of(input);
+        return List.of(fluid, container);
     }
 
     @Override
@@ -50,20 +56,22 @@ public class CheeseEmiRecipe implements EmiRecipe {
 
     @Override
     public int getDisplayWidth() {
-        return 102;
+        return 60;
     }
 
     @Override
     public int getDisplayHeight() {
-        return 41;
+        return 60;
     }
 
     @Override
     public void addWidgets(WidgetHolder widgets) {
-        widgets.addTexture(BACKGROUND, 0, 0, 102, 41, 8, 9);
+        widgets.addTexture(BACKGROUND, 4, 2, 56, 56, 36, 15);
 
-        addSlot(widgets, input, 0, 16);
-        addSlot(widgets, output, 84, 16).recipeContext(this);
+        widgets.add(new BnCFluidWidget(fluid, RANDOM.nextInt(), 31, 1));
+
+        addSlot(widgets, container, 4, 38);
+        addSlot(widgets, output, 36, 38).recipeContext(this);
     }
 
     private SlotWidget addSlot(WidgetHolder widgets, EmiIngredient ingredient, int x, int y) {

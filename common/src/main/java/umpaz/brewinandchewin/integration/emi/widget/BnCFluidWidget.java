@@ -50,28 +50,22 @@ public class BnCFluidWidget extends SlotWidget {
         output = true;
     }
 
-    public void drawBackground(GuiGraphics draw, int mouseX, int mouseY, float delta) {}
+    public void drawBackground(GuiGraphics draw, int mouseX, int mouseY, float delta) {
+        Bounds bounds = this.getBounds();
+
+        AbstractedFluidStack fluidStack = new AbstractedFluidStack((Fluid) getStack().getEmiStacks().getFirst().getKey(), getStack().getEmiStacks().getFirst().getAmount(), PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, getStack().getEmiStacks().getFirst().getComponentChanges()), FluidUnit.getLoaderUnit());
+
+        if (BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg())
+            BrewinAndChewinClient.getHelper().renderFluidInKeg(fluidStack, draw, bounds.x() + 2, bounds.y() + 2, 1.0F);
+    }
 
     @Override
     public void drawStack(GuiGraphics draw, int mouseX, int mouseY, float delta) {
         Bounds bounds = this.getBounds();
 
-        AbstractedFluidStack fluidStack = new AbstractedFluidStack((Fluid) getFluidStack().getEmiStacks().getFirst().getKey(), getFluidStack().getEmiStacks().getFirst().getAmount(), PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, getFluidStack().getEmiStacks().getFirst().getComponentChanges()), FluidUnit.MILLIBUCKETS);
-        ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
-        Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe -> {
-            if (kegPouringRecipe.isStrict())
-                return ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
-            return ItemStack.isSameItem(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
-        }).findFirst();
-        int pourCount = pouringRecipe.map(kegPouringRecipe -> (int) (Math.min(FluidUnit.convert(BnCConfiguration.COMMON_CONFIG.get().keg().capacity(), BnCConfiguration.COMMON_CONFIG.get().keg().capacityUnit(), FluidUnit.MILLIBUCKETS), getFluidStack().getAmount()) / kegPouringRecipe.getRawFluid().amount())).orElse(1);
-        itemDisplay.setCount(pourCount);
-
-        if (BnCConfiguration.CLIENT_CONFIG.get().renderFluidInKeg())
-            BrewinAndChewinClient.getHelper().renderFluidInKeg(fluidStack, draw, bounds.x() + 2, bounds.y() + 2, 1.0F);
-
         int xOff = (bounds.width() - 16) / 2;
         int yOff = (bounds.height() - 16) / 2 - 4;
-        getStack().render(draw, bounds.x() + xOff, bounds.y() + yOff, delta);
+        getItemStack().render(draw, bounds.x() + xOff, bounds.y() + yOff, delta);
     }
 
     @Override
@@ -83,22 +77,6 @@ public class BnCFluidWidget extends SlotWidget {
 
     @Override
     public EmiIngredient getStack() {
-        if (invalidateItemStack) {
-            AbstractedFluidStack fluidStack = new AbstractedFluidStack((Fluid) getFluidStack().getEmiStacks().getFirst().getKey(), getFluidStack().getEmiStacks().getFirst().getAmount(), PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, getFluidStack().getEmiStacks().getFirst().getComponentChanges()), FluidUnit.MILLIBUCKETS);
-            ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
-            Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe -> {
-                if (kegPouringRecipe.isStrict())
-                    return ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
-                return ItemStack.isSameItem(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
-            }).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int) (Math.min(FluidUnit.convert(BnCConfiguration.COMMON_CONFIG.get().keg().capacity(), BnCConfiguration.COMMON_CONFIG.get().keg().capacityUnit(), FluidUnit.MILLIBUCKETS), getFluidStack().getAmount()) / kegPouringRecipe.getRawFluid().amount())).orElse(1);
-            itemDisplay.setCount(pourCount);
-            itemIngredient = EmiStack.of(itemDisplay);
-        }
-        return itemIngredient;
-    }
-
-    public EmiIngredient getFluidStack() {
         long time = System.currentTimeMillis() / 1000L;
         if (fluidIngredient == null || time > lastFluidGenerate) {
             lastFluidGenerate = time;
@@ -107,6 +85,22 @@ public class BnCFluidWidget extends SlotWidget {
         }
 
         return fluidIngredient;
+    }
+
+    public EmiIngredient getItemStack() {
+        if (invalidateItemStack) {
+            AbstractedFluidStack fluidStack = new AbstractedFluidStack((Fluid) getStack().getEmiStacks().getFirst().getKey(), getStack().getEmiStacks().getFirst().getAmount(), PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, getStack().getEmiStacks().getFirst().getComponentChanges()), FluidUnit.MILLIBUCKETS);
+            ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
+            Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe -> {
+                if (kegPouringRecipe.isStrict())
+                    return ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
+                return ItemStack.isSameItem(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
+            }).findFirst();
+            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int) (Math.min(FluidUnit.convert(BnCConfiguration.COMMON_CONFIG.get().keg().capacity(), BnCConfiguration.COMMON_CONFIG.get().keg().capacityUnit(), FluidUnit.MILLIBUCKETS), getStack().getAmount()) / kegPouringRecipe.getRawFluid().amount())).orElse(1);
+            itemDisplay.setCount(pourCount);
+            itemIngredient = EmiStack.of(itemDisplay);
+        }
+        return itemIngredient;
     }
 
     private Random getRandom(long time) {

@@ -65,7 +65,7 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
     public FermentingRecipeCategory(IGuiHelper guiHelper, IModIdHelper modIdHelper) {
         this.modIdHelper = modIdHelper;
         title = BnCTextUtils.getTranslation("jei.fermenting");
-        ResourceLocation backgroundImage = BrewinAndChewin.asResource("textures/gui/jei/keg.png");
+        ResourceLocation backgroundImage = BrewinAndChewin.asResource("textures/gui/jei/fermenting.png");
         background = guiHelper.createDrawable(backgroundImage, 12, 13, 136, 56);
         icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BnCItems.KEG));
         arrow = guiHelper.drawableBuilder(backgroundImage, 171, 4, 23, 16)

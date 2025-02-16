@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.utility.BnCTextUtils;
@@ -21,7 +22,7 @@ import vectorwing.farmersdelight.common.utility.ClientRenderUtils;
 import java.util.*;
 
 public class FermentingEmiRecipe implements EmiRecipe {
-    public static final ResourceLocation BACKGROUND = BrewinAndChewin.asResource("textures/gui/jei/keg.png");
+    public static final ResourceLocation BACKGROUND = BrewinAndChewin.asResource("textures/gui/emi/fermenting.png");
 
     private final ResourceLocation id;
     private final List<EmiIngredient> itemInputs;
@@ -29,34 +30,25 @@ public class FermentingEmiRecipe implements EmiRecipe {
     private final EmiIngredient itemFluidInput;
     @Nullable
     private final EmiIngredient fluidInput;
-    @Nullable
-    private final EmiStack fluidOutput;
-    private final EmiStack itemOutput;
-    private final EmiStack container;
+    private final EmiStack output;
     private final int temperature;
     private final int cookTime;
     private final float experience;
 
     private List<EmiIngredient> inputs;
-    private List<EmiIngredient> catalysts;
-    private List<EmiStack> outputs;
 
     private static final Random RANDOM = new Random();
 
     public FermentingEmiRecipe(ResourceLocation id, List<EmiIngredient> itemInputs,
                                @Nullable EmiIngredient itemFluidInput,
-                               @Nullable EmiIngredient fluidInput, @Nullable EmiStack fluidOutput,
-                               EmiStack itemOutput,
-                               EmiStack container,
+                               @Nullable EmiIngredient fluidInput, @Nullable EmiStack output,
                                int temperature,
                                int cookTime, float experience) {
         this.id = id;
         this.itemInputs = itemInputs;
         this.itemFluidInput = itemFluidInput;
+        this.output = output;
         this.fluidInput = fluidInput;
-        this.fluidOutput = fluidOutput;
-        this.itemOutput = itemOutput;
-        this.container = container;
         this.temperature = temperature;
         this.cookTime = cookTime;
         this.experience = experience;
@@ -85,25 +77,14 @@ public class FermentingEmiRecipe implements EmiRecipe {
 
     @Override
     public List<EmiIngredient> getCatalysts() {
-        if (catalysts == null) {
-            List<EmiIngredient> ingredients = new ArrayList<>();
-            if (itemFluidInput != null)
-                ingredients.add(itemFluidInput);
-            catalysts = List.copyOf(ingredients);
-        }
-        return catalysts;
+        if (itemFluidInput != null)
+            return List.of(itemFluidInput);
+        return List.of();
     }
 
     @Override
     public List<EmiStack> getOutputs() {
-        if (outputs == null) {
-            List<EmiStack> stacks = new ArrayList<>();
-            if (fluidOutput != null)
-                stacks.add(fluidOutput);
-            stacks.add(itemOutput);
-            outputs = List.copyOf(stacks);
-        }
-        return outputs;
+        return List.of(output);
     }
 
     @Override
@@ -113,12 +94,12 @@ public class FermentingEmiRecipe implements EmiRecipe {
 
     @Override
     public int getDisplayHeight() {
-        return 60;
+        return 49;
     }
 
     @Override
     public void addWidgets(WidgetHolder widgets) {
-        widgets.addTexture(BACKGROUND, 0, 0, 138, 58, 10, 11);
+        widgets.addTexture(BACKGROUND, 0, 0, 138, 49, 10, 11);
 
         int borderSlotSize = 18;
         for (int row = 0; row < 2; ++row) {
@@ -134,14 +115,10 @@ public class FermentingEmiRecipe implements EmiRecipe {
             widgets.add(new BnCFluidWidget(fluidInput, RANDOM.nextInt(), 1, 3));
         }
 
-        if (fluidOutput != null) {
-            widgets.add(new BnCFluidWidget(fluidOutput, RANDOM.nextInt(), 101, 3)).recipeContext(this);
-        }
-
-        if (container != null)
-            addSlot(widgets, container, 74, 40);
-
-        addSlot(widgets, itemOutput, 106, 40).recipeContext(this);
+        if (output.getKeyOfType(Fluid.class) != null) {
+            widgets.add(new BnCFluidWidget(output, RANDOM.nextInt(), 101, 3)).recipeContext(this);
+        } else
+            addSlot(widgets, output, 106, 6).recipeContext(this);
 
         // Arrow
         widgets.addAnimatedTexture(BACKGROUND, 69, 12, 23, 16, 171, 4, 1000 * 10, true, false, false);

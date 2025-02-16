@@ -158,8 +158,7 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
         ).apply(inst, KegPouringRecipe::new));
         public static final StreamCodec<RegistryFriendlyByteBuf, KegPouringRecipe> STREAM_CODEC = StreamCodec.of(KegPouringRecipe.Serializer::toNetwork, KegPouringRecipe.Serializer::fromNetwork);
 
-        public Serializer() {
-        }
+        public Serializer() {}
 
         public MapCodec<KegPouringRecipe> codec() {
             return CODEC;
