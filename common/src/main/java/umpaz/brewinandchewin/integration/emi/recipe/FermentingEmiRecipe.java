@@ -7,6 +7,7 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.SlotWidget;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.PatchedDataComponentMap;
@@ -47,7 +48,6 @@ public class FermentingEmiRecipe implements EmiRecipe {
     private final float experience;
 
     private List<EmiIngredient> inputs;
-    private List<EmiIngredient> catalysts;
     private List<EmiStack> outputs;
 
     public FermentingEmiRecipe(ResourceLocation id, List<EmiIngredient> itemInputs,
@@ -83,6 +83,8 @@ public class FermentingEmiRecipe implements EmiRecipe {
             List<EmiIngredient> ingredients = new ArrayList<>(itemInputs);
             if (fluidInput != null)
                 ingredients.add(fluidInput);
+            if (container != null)
+                ingredients.add(container);
             inputs = List.copyOf(ingredients);
         }
         return inputs;
@@ -93,22 +95,9 @@ public class FermentingEmiRecipe implements EmiRecipe {
         if (outputs == null) {
             List<EmiStack> stacks = new ArrayList<>();
             stacks.add(itemOutput);
-            if (fluidOutput != null)
-                stacks.add(fluidOutput);
             outputs = List.copyOf(stacks);
         }
         return outputs;
-    }
-
-    @Override
-    public List<EmiIngredient> getCatalysts() {
-        if (catalysts == null) {
-            List<EmiIngredient> stacks = new ArrayList<>();
-            if (container != null)
-                stacks.add(container);
-            catalysts = List.copyOf(stacks);
-        }
-        return catalysts;
     }
 
     @Override
@@ -199,7 +188,10 @@ public class FermentingEmiRecipe implements EmiRecipe {
     }
 
     private SlotWidget addSlot(WidgetHolder widgets, EmiIngredient ingredient, int x, int y) {
-        return widgets.addSlot(ingredient, x, y).drawBack(false);
+        return widgets.add(new SlotWidget(ingredient, x, y) {
+            @Override
+            public void drawBackground(GuiGraphics draw, int mouseX, int mouseY, float delta) {}
+        });
     }
 
     public List<ClientTooltipComponent> getTooltips(double mouseX, double mouseY) {

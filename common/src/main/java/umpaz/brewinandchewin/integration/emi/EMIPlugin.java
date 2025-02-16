@@ -45,9 +45,12 @@ public class EMIPlugin implements EmiPlugin {
                     ResourceLocation id = ItemStack.isSameItemSameComponents(pouringRecipe.value().getOutput(), BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), pouringRecipe.value().getRawFluid())) ?
                             recipe.id() :
                             recipe.id().withPath(string -> "/" + string + "_" + pouringRecipe.id().getNamespace() + "_" + pouringRecipe.id().getPath());
+                    AbstractedFluidStack fluidStack = recipe.value().getResult().left().orElseThrow();
+                    ItemStack output = pouringRecipe.value().getOutput().copyWithCount((int)fluidStack.unit().convert(fluidStack.amount(), FluidUnit.MILLIBUCKETS) / 250);
+                    ItemStack container = pouringRecipe.value().getContainer().copyWithCount(((int)fluidStack.unit().convert(fluidStack.amount(), FluidUnit.MILLIBUCKETS)) / 250);
                     registry.addRecipe(new FermentingEmiRecipe(id, recipe.value().getIngredients().stream().map(EmiIngredient::of).toList(),
                             getFluidIngredient(recipe), EmiStack.of(stack.fluid(), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY, stack.unit().convertToLoader(stack.amount())),
-                            EmiStack.of(pouringRecipe.value().getOutput()), EmiStack.of(pouringRecipe.value().getContainer()), recipe.value().getTemperature(), recipe.value().getFermentTime(), recipe.value().getExperience()));
+                            EmiStack.of(output), EmiStack.of(container), recipe.value().getTemperature(), recipe.value().getFermentTime(), recipe.value().getExperience()));
                 }
             } else {
                 registry.addRecipe(new FermentingEmiRecipe(recipe.id(), recipe.value().getIngredients().stream().map(EmiIngredient::of).toList(),
