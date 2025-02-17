@@ -54,7 +54,7 @@ public class AbstractedFluidStack {
     }
 
     public long amount() {
-        return amount;
+        return isEmpty() ? 0 : amount;
     }
 
     public DataComponentMap components() {

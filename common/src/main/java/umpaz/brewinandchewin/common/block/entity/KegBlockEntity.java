@@ -366,14 +366,14 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             ItemStack resultItem = recipe.get().assemble(keg.recipeWrapper, keg.level.registryAccess());
             if (ItemStack.isSameItem(slotIn, recipe.get().getContainer()) && // if container is same
                     recipe.get().getRawFluid().amount() <= keg.fluidTank.getAbstractedFluid().amount() && // the amount is LTE the fluid amount
-                    (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(resultItem, keg.inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
-                int containerAmount = (int) Mth.clamp(Math.min(slotIn.getCount(), keg.fluidTank.getAbstractedFluid().unit().convertToLoader(keg.fluidTank.getAbstractedFluid().amount()) / recipe.get().getRawFluid().amount()), 1, maxTakeAmount);
+                    (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(resultItem, keg.inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this itemaccept this item
+                int containerAmount = (int) Mth.clamp(slotIn.getCount(), 1, keg.fluidTank.getFluidCapacity() / recipe.get().getLoaderAmount());
                 keg.fluidTank.drain(recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getUnit(),false);
 
                 if (!isCreative) {
                     int overflow = containerAmount;
                     while (overflow > 0 && !slotIn.isEmpty()) {
-                        ItemStack newResult = resultItem.copyWithCount(Math.min(resultItem.getMaxStackSize(), overflow));
+                        ItemStack newResult = resultItem.copyWithCount(Math.min(slotIn.getCount(), overflow));
                         outputs.add(newResult);
                         overflow -= newResult.getCount();
                         slotIn.shrink(newResult.getCount());
@@ -386,14 +386,14 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                     (recipe.get().isStrict() && ItemStack.isSameItemSameComponents(resultItem, slotIn) || !recipe.get().isStrict() && ItemStack.isSameItem(slotIn, resultItem)) && // if result is same
                     (keg.fluidTank.isEmpty() || keg.fluidTank.getAbstractedFluid().amount() < keg.fluidTank.getFluidCapacity()) && // if the result can fit in the container
                     (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(resultItem, keg.inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
-                int containerAmount = (int) Mth.clamp(Math.min(slotIn.getCount(), (keg.fluidTank.getFluidCapacity() - keg.fluidTank.getAbstractedFluid().amount()) / recipe.get().getRawFluid().amount()), 1, maxTakeAmount);
+                int containerAmount = (int) Mth.clamp(slotIn.getCount(), 1,  keg.fluidTank.getFluidCapacity() / (keg.fluidTank.getAbstractedFluid().amount() + (recipe.get().getLoaderAmount())));
                 keg.fluidTank.fill(new AbstractedFluidStack(recipe.get().getFluid(slotIn).fluid(), recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getRawFluid().components(), recipe.get().getUnit(), null), false);
 
                 if (!isCreative) {
                     ItemStack recipeItem = recipe.get().getContainer();
                     int overflow = containerAmount;
                     while (overflow > 0 && !slotIn.isEmpty()) {
-                        ItemStack newResult = recipeItem.copyWithCount(Math.min(recipeItem.getMaxStackSize(), overflow));
+                        ItemStack newResult = recipeItem.copyWithCount(Math.min(slotIn.getCount(), overflow));
                         outputs.add(newResult);
                         overflow -= newResult.getCount();
                         slotIn.shrink(newResult.getCount());
@@ -427,7 +427,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                         ItemStack recipeItem = fluidTank.getContainer();
                         int overflow = (int) (amount / keg.fluidTank.getFluidCapacity());
                         while (overflow > 0 && !slotIn.isEmpty()) {
-                            ItemStack newResult = recipeItem.copyWithCount(Math.min(recipeItem.getMaxStackSize(), overflow));
+                            ItemStack newResult = recipeItem.copyWithCount(Math.min(slotIn.getCount(), overflow));
                             outputs.add(newResult);
                             overflow -= newResult.getCount();
                             slotIn.shrink(newResult.getCount());
@@ -450,7 +450,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                             ItemStack recipeItem = itemFluidContainer.getContainer();
                             int overflow = (int) (amount / keg.fluidTank.getFluidCapacity());
                             while (overflow > 0 && !slotIn.isEmpty()) {
-                                ItemStack newResult = recipeItem.copyWithCount(Math.min(recipeItem.getMaxStackSize(), overflow));
+                                ItemStack newResult = recipeItem.copyWithCount(Math.min(slotIn.getCount(), overflow));
                                 outputs.add(newResult);
                                 overflow -= newResult.getCount();
                                 slotIn.shrink(newResult.getCount());
