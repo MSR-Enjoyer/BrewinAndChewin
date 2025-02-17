@@ -107,8 +107,8 @@ public class BnCConfiguration {
                             GreenhouseConfigCodecs.commentedCodec(
                                     FluidUnit.CODEC,
                                     "Which unit the capacity field should use.",
-                                    "Should be either 'millibuckets' or 'droplets'",
-                                    "1mB = 81 droplets",
+                                    "Should be 'liters', 'millibuckets' or 'droplets'",
+                                    "1 L = 1 mB = 81 d",
                                     "Default: " + DEFAULT.capacityUnit().getSerializedName()
                             ),
                             "kegCapacityUnit",
@@ -238,8 +238,8 @@ public class BnCConfiguration {
                         GreenhouseConfigCodecs.commentedCodec(
                                 FluidUnit.CODEC,
                                 "Which unit the fluid display in the keg should use.",
-                                "Should be either 'millibuckets' or 'droplets'",
-                                "1mB = 81 droplets",
+                                "Should be 'liters', 'millibuckets' or 'droplets'",
+                                "1 L = 1 mB = 81 d",
                                 "Default: " + DEFAULT.displayUnit().getSerializedName()
                         ),
                         "fluidDisplayUnit",
