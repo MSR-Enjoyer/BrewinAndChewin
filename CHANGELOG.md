@@ -18,6 +18,7 @@
 
 ## Internal
 - Swapped config solution from Forge config to Greenhouse Config.
+  - There is no config screen at the moment. This will be added later.
 - Updated recipe code to match 1.21.1 specifics, such as allowing NeoForge fluid ingredients.
   - Unfortunately, I cannot extensively document the changes right now, as they swept across the entire mod. Hopefully I'll get to working on the wiki soon - Pug.
 - Swapped fluid ingredients for BnC Fermenting recipes to use fluid tags.

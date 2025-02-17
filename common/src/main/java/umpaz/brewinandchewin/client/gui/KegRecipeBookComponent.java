@@ -150,7 +150,7 @@ public class KegRecipeBookComponent extends RecipeBookComponent {
                         gui.fill(leftPos + 120, topPos + 19, leftPos + 120 + 16 + 8, topPos + 31 + 16, 822018048);
 
                         ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
-                        int pourCount = (int) (Math.min(fermentingRecipe.getFluidIngredient().get().loaderAmount(), kegMenu.kegTank.getFluidCapacity()) / FluidUnit.convert(250L, FluidUnit.MILLIBUCKETS, FluidUnit.getLoaderUnit()));
+                        int pourCount = (int) (Math.min(fermentingRecipe.getFluidIngredient().get().loaderAmount(), kegMenu.kegTank.getFluidCapacity()) / FluidUnit.convert(250L, FluidUnit.MILLIBUCKET, FluidUnit.getLoaderUnit()));
                         itemDisplay.setCount(pourCount);
                         if (!itemDisplay.isEmpty()) {
                             int itemX = leftPos + 124;

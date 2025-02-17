@@ -62,7 +62,7 @@ public class KegFluidIngredient {
         }
 
         public Exact(Fluid fluid, PatchedDataComponentMap components) {
-            displayStack = new AbstractedFluidStack(fluid, 81000L, components, FluidUnit.DROPLETS, new AmountedFluidVariant(FluidVariant.of(fluid, components.asPatch()), 81000L, FluidUnit.DROPLETS));
+            displayStack = new AbstractedFluidStack(fluid, 81000L, components, FluidUnit.DROPLET, new AmountedFluidVariant(FluidVariant.of(fluid, components.asPatch()), 81000L, FluidUnit.DROPLET));
         }
 
         public Exact(Fluid fluid, DataComponentPatch patch) {
@@ -123,7 +123,7 @@ public class KegFluidIngredient {
         public List<AbstractedFluidStack> displayStacks() {
             if (fluidTag.size() > 0 && fluidStacks.isEmpty()) {
                 for (Holder<Fluid> fluidHolder :  fluidTag) {
-                    fluidStacks.add(new AbstractedFluidStack(fluidHolder.value(), 81000L, components, FluidUnit.DROPLETS, new AmountedFluidVariant(FluidVariant.of(fluidHolder.value(), components.asPatch()), 81000L, FluidUnit.DROPLETS)));
+                    fluidStacks.add(new AbstractedFluidStack(fluidHolder.value(), 81000L, components, FluidUnit.DROPLET, new AmountedFluidVariant(FluidVariant.of(fluidHolder.value(), components.asPatch()), 81000L, FluidUnit.DROPLET)));
                 }
             }
             return fluidStacks;

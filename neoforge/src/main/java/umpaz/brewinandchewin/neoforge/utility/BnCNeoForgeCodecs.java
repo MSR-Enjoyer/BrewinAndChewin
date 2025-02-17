@@ -18,7 +18,7 @@ public class BnCNeoForgeCodecs {
                             return DataResult.error(() -> "Fluid amount must be positive");
                         return DataResult.success(l);
                     }).fieldOf("amount").forGetter(AbstractedFluidStack::amount),
-                    FluidUnit.CODEC.optionalFieldOf("unit", FluidUnit.MILLIBUCKETS).forGetter(AbstractedFluidStack::unit),
+                    FluidUnit.CODEC.optionalFieldOf("unit", FluidUnit.MILLIBUCKET).forGetter(AbstractedFluidStack::unit),
                     DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(fluidStack -> fluidStack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY))
             .apply(inst, (t1, t2, t3, t4) ->
                     new AbstractedFluidStack(t1.value(), t2, PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, t4), t3, new FluidStack(t1, t2.intValue(), t4))));

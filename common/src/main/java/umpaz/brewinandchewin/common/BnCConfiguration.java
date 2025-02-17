@@ -89,7 +89,7 @@ public class BnCConfiguration {
                           int cold, int chilly, int warm, int hot,
                           boolean biomeTemp, boolean dimTemp) {
             public static final Keg DEFAULT = new Keg(
-                    platformSpecificValue(FluidUnit.MILLIBUCKETS, FluidUnit.DROPLETS),
+                    platformSpecificValue(FluidUnit.MILLIBUCKET, FluidUnit.DROPLET),
                     platformSpecificValue(1000L, 81000L),
                     2, 1, 1, 2,
                     true, true
@@ -122,7 +122,7 @@ public class BnCConfiguration {
                                         return DataResult.success(l);
                                     }),
                                     "How much fluid (unit specified by capacityUnit) can the Keg hold?",
-                                    "Range: 1 ~ "  + FluidUnit.convert(10000L, FluidUnit.MILLIBUCKETS, DEFAULT.capacityUnit()),
+                                    "Range: 1 ~ "  + FluidUnit.convert(10000L, FluidUnit.MILLIBUCKET, DEFAULT.capacityUnit()),
                                     "Default: " + DEFAULT.capacity() + "(" + DEFAULT.capacityUnit().getSerializedName() + ")"
                             ),
                             "kegCapacity",
@@ -228,7 +228,7 @@ public class BnCConfiguration {
                          boolean scrambleChat, boolean scrambleName, boolean scrambleSign,
                          boolean renderFluidInKeg) {
         public static final Client DEFAULT = new Client(
-                FluidUnit.MILLIBUCKETS, platformSpecificValue(DisplaySettings.NEVER, DisplaySettings.ADVANCED_TOOLTIPS),
+                platformSpecificValue(FluidUnit.MILLIBUCKET, FluidUnit.LITER), platformSpecificValue(DisplaySettings.NEVER, DisplaySettings.ADVANCED_TOOLTIPS),
                 true, true,
                 true, true, true,
                 true

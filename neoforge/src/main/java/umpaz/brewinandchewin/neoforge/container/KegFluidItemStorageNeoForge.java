@@ -31,7 +31,7 @@ public class KegFluidItemStorageNeoForge implements AbstractedFluidTank {
     @Override
     public AbstractedFluidStack getAbstractedFluid() {
         FluidStack stack = storage.getFluidInTank(0);
-        return new AbstractedFluidStack(stack.getFluid(), stack.getAmount(), stack.getComponents(), FluidUnit.MILLIBUCKETS, stack);
+        return new AbstractedFluidStack(stack.getFluid(), stack.getAmount(), stack.getComponents(), FluidUnit.MILLIBUCKET, stack);
     }
 
     @Override

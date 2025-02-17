@@ -69,10 +69,10 @@ public class EMIPlugin implements EmiPlugin {
     private EmiIngredient getFluidItemIngredients(RecipeManager recipes, RecipeHolder<KegFermentingRecipe> recipe) {
         if (recipe.value().getFluidIngredient().isEmpty())
             return null;
-        int fluidAmount = (int)recipe.value().getFluidIngredient().orElseThrow().getUnit().convert(recipe.value().getFluidIngredient().get().amount(), FluidUnit.MILLIBUCKETS);
+        int fluidAmount = (int)recipe.value().getFluidIngredient().orElseThrow().getUnit().convert(recipe.value().getFluidIngredient().get().amount(), FluidUnit.LITER);
         return EmiIngredient.of(recipes.getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().filter(holder -> recipe.value().getFluidIngredient().get().ingredient().matches(holder.value().getRawFluid())).map(holder -> {
             ItemStack stack = holder.value().getOutput();
-            stack = stack.copyWithCount((int) (fluidAmount / holder.value().getUnit().convert(holder.value().getRawFluid().amount(), FluidUnit.MILLIBUCKETS)));
+            stack = stack.copyWithCount((int) (fluidAmount / holder.value().getUnit().convert(holder.value().getRawFluid().amount(), FluidUnit.LITER)));
             return (EmiIngredient)EmiStack.of(stack);
         }).toList());
     }

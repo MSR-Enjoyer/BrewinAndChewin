@@ -32,7 +32,7 @@ public class KegFluidTankFabric extends SingleFluidStorage implements Abstracted
 
     @Override
     public AbstractedFluidStack getAbstractedFluid() {
-        return new AbstractedFluidStack(variant.getFluid(), getAmount(), variant.getComponentMap(), FluidUnit.DROPLETS, new AmountedFluidVariant(variant, getAmount(), FluidUnit.DROPLETS));
+        return new AbstractedFluidStack(variant.getFluid(), getAmount(), variant.getComponentMap(), FluidUnit.DROPLET, new AmountedFluidVariant(variant, getAmount(), FluidUnit.DROPLET));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class KegFluidTankFabric extends SingleFluidStorage implements Abstracted
             long newFill = insert(variant, newAmount, t);
             if (!simulate)
                 t.commit();
-            return new AbstractedFluidStack(variant.getFluid(), newFill, variant.getComponentMap(), FluidUnit.DROPLETS, new AmountedFluidVariant(variant, newFill, FluidUnit.DROPLETS));
+            return new AbstractedFluidStack(variant.getFluid(), newFill, variant.getComponentMap(), FluidUnit.DROPLET, new AmountedFluidVariant(variant, newFill, FluidUnit.DROPLET));
         }
     }
 
@@ -62,7 +62,7 @@ public class KegFluidTankFabric extends SingleFluidStorage implements Abstracted
         long newMax = unit.convertToLoader(maxDrain);
         try (Transaction t = TransferUtil.getTransaction()) {
             long extractedAmount = extract(variant, newMax, t);
-            AbstractedFluidStack stack = new AbstractedFluidStack(variant.getFluid(), extractedAmount, variant.getComponentMap(), FluidUnit.DROPLETS, new AmountedFluidVariant(variant, extractedAmount, FluidUnit.DROPLETS));
+            AbstractedFluidStack stack = new AbstractedFluidStack(variant.getFluid(), extractedAmount, variant.getComponentMap(), FluidUnit.DROPLET, new AmountedFluidVariant(variant, extractedAmount, FluidUnit.DROPLET));
             if (!simulate)
                 t.commit();
             return stack;
@@ -93,6 +93,6 @@ public class KegFluidTankFabric extends SingleFluidStorage implements Abstracted
         if (stack.isEmpty())
             return AmountedFluidVariant.EMPTY;
 
-        return new AmountedFluidVariant(FluidVariant.of(stack.fluid(), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY), stack.unit().convertToLoader(stack.amount()), FluidUnit.DROPLETS);
+        return new AmountedFluidVariant(FluidVariant.of(stack.fluid(), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY), stack.unit().convertToLoader(stack.amount()), FluidUnit.DROPLET);
     }
 }

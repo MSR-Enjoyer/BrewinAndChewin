@@ -61,7 +61,7 @@ public class KegCompatibleFluidIngredients {
         }
 
         public Exact(Fluid fluid, PatchedDataComponentMap components) {
-            displayStack = new AbstractedFluidStack(fluid, 1000, components, FluidUnit.MILLIBUCKETS, new FluidStack(fluid.builtInRegistryHolder(), 1000, components.asPatch()));
+            displayStack = new AbstractedFluidStack(fluid, 1000, components, FluidUnit.MILLIBUCKET, new FluidStack(fluid.builtInRegistryHolder(), 1000, components.asPatch()));
         }
 
         public Exact(Fluid fluid, DataComponentPatch patch) {
@@ -121,7 +121,7 @@ public class KegCompatibleFluidIngredients {
         public List<AbstractedFluidStack> displayStacks() {
             if (fluidTag.size() > 0 && fluidStacks.isEmpty()) {
                 for (Holder<Fluid> fluidHolder :  fluidTag) {
-                    fluidStacks.add(new AbstractedFluidStack(fluidHolder.value(), 1000, components, FluidUnit.MILLIBUCKETS, new FluidStack(fluidHolder, 1000, components.asPatch())));
+                    fluidStacks.add(new AbstractedFluidStack(fluidHolder.value(), 1000, components, FluidUnit.MILLIBUCKET, new FluidStack(fluidHolder, 1000, components.asPatch())));
                 }
             }
             return fluidStacks;
@@ -144,7 +144,7 @@ public class KegCompatibleFluidIngredients {
 
         public NeoForgeIngredient(FluidIngredient ingredient) {
             this.ingredient = ingredient;
-            displayStacks = Arrays.stream(ingredient.getStacks()).map(fluidStack -> new AbstractedFluidStack(fluidStack.getFluid(), 1000, fluidStack.getComponents(), FluidUnit.MILLIBUCKETS, fluidStack)).toList();
+            displayStacks = Arrays.stream(ingredient.getStacks()).map(fluidStack -> new AbstractedFluidStack(fluidStack.getFluid(), 1000, fluidStack.getComponents(), FluidUnit.MILLIBUCKET, fluidStack)).toList();
         }
 
         @Override
