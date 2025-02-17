@@ -386,7 +386,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                     (recipe.get().isStrict() && ItemStack.isSameItemSameComponents(resultItem, slotIn) || !recipe.get().isStrict() && ItemStack.isSameItem(slotIn, resultItem)) && // if result is same
                     (keg.fluidTank.isEmpty() || keg.fluidTank.getAbstractedFluid().amount() < keg.fluidTank.getFluidCapacity()) && // if the result can fit in the container
                     (!inGui || keg.inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(resultItem, keg.inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
-                int containerAmount = (int) Mth.clamp(slotIn.getCount(), 1,  keg.fluidTank.getFluidCapacity() / (keg.fluidTank.getAbstractedFluid().amount() + (recipe.get().getLoaderAmount())));
+                int containerAmount = (int) Mth.clamp(slotIn.getCount(), 1, keg.fluidTank.getFluidCapacity() / (keg.fluidTank.getAbstractedFluid().amount() + (recipe.get().getLoaderAmount())));
                 keg.fluidTank.fill(new AbstractedFluidStack(recipe.get().getFluid(slotIn).fluid(), recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getRawFluid().components(), recipe.get().getUnit(), null), false);
 
                 if (!isCreative) {
