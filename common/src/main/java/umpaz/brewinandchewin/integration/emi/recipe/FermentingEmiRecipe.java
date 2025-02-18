@@ -21,7 +21,7 @@ import vectorwing.farmersdelight.common.utility.ClientRenderUtils;
 
 import java.util.*;
 
-public class FermentingEmiRecipe implements EmiRecipe {
+public class FermentingEmiRecipe implements EmiRecipe, KegEmiRecipe {
     public static final ResourceLocation BACKGROUND = BrewinAndChewin.asResource("textures/gui/emi/fermenting.png");
 
     private final ResourceLocation id;
@@ -41,7 +41,7 @@ public class FermentingEmiRecipe implements EmiRecipe {
 
     public FermentingEmiRecipe(ResourceLocation id, List<EmiIngredient> itemInputs,
                                @Nullable EmiIngredient itemFluidInput,
-                               @Nullable EmiIngredient fluidInput, @Nullable EmiStack output,
+                               @Nullable EmiIngredient fluidInput, EmiStack output,
                                int temperature,
                                int cookTime, float experience) {
         this.id = id;
@@ -64,6 +64,10 @@ public class FermentingEmiRecipe implements EmiRecipe {
         return id;
     }
 
+    public int getTemperature() {
+        return temperature;
+    }
+
     @Override
     public List<EmiIngredient> getInputs() {
         if (inputs == null) {
@@ -73,6 +77,20 @@ public class FermentingEmiRecipe implements EmiRecipe {
             inputs = List.copyOf(ingredients);
         }
         return inputs;
+    }
+
+    public List<EmiIngredient> getItemInputs() {
+        return itemInputs;
+    }
+
+    @Nullable
+    public EmiIngredient getFluidInput() {
+        return fluidInput;
+    }
+
+    @Nullable
+    public EmiIngredient getFluidItemInput() {
+        return itemFluidInput;
     }
 
     @Override

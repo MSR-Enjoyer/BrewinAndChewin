@@ -384,7 +384,7 @@ public class FermentingTransferServer {
                 if (optionalData.isPresent())
                     toExtract = (int) (recipe.getFluidIngredient().get().amount() / optionalData.get().getRawFluid().amount());
             }
-            var extracted = blockEntity.extractInGui(blockEntity, stack, toExtract);
+            var extracted = blockEntity.extractInGui(stack, toExtract);
             for (ItemStack extract : extracted) {
                 if (!extract.isEmpty())
                     remainderItems.add(extract);

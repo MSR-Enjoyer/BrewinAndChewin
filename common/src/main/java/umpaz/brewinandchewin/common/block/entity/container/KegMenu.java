@@ -160,7 +160,7 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper, KegFermentingRecip
     }
 
     public int getKegTemperature() {
-        return this.kegData.get(2);
+        return this.blockEntity.getTemperature();
     }
 
     public boolean isFermenting() {

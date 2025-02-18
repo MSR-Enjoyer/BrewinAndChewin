@@ -124,11 +124,14 @@
   "emi.category.brewinandchewin.fermenting": "Fermenting",
   "emi.category.brewinandchewin.pouring": "Pouring",
   "emi.category.brewinandchewin.aging": "Aging",
+  "brewinandchewin.emi.warmer_temperature": "Requires warmer temperature",
+  "brewinandchewin.emi.cooler_temperature": "Requires cooler temperature",
+  "brewinandchewin.emi.can_not_empty": "Incorrect fluid",
 
   "tag.block.brewinandchewin.cheese_wheels.unripe": "Unripe Cheese Wheels",
   "tag.block.brewinandchewin.cheese_wheels.ripe": "Cheese Wheels",
   "tag.block.brewinandchewin.freeze_sources": "Freeze Sources",
-  "tag.block.brewinandchewin.player_workstations.keg": "Kegs",
+  "tag.block.brewinandchewin.player_workstations.kegs": "Kegs",
 
   "tag.entity_type.brewinandchewin.immune_to_intoxication": "Immune to Intoxication",
 
@@ -139,7 +142,7 @@
   "tag.item.brewinandchewin.foods.jerky_meat": "Jerky Meats",
   "tag.item.brewinandchewin.foods.horror_meat": "Horror Meats",
   "tag.item.brewinandchewin.foods.pizza_topping": "Pizza Toppings",
-  "tag.item.brewinandchewin.player_workstations.keg": "Kegs",
+  "tag.item.brewinandchewin.player_workstations.kegs": "Kegs",
 
   "tag.fluid.brewinandchewin.beer": "Beer",
   "tag.fluid.brewinandchewin.vodka": "Vodka",

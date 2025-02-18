@@ -16,7 +16,7 @@ import umpaz.brewinandchewin.integration.emi.widget.BnCFluidWidget;
 import java.util.List;
 import java.util.Random;
 
-public class PouringEmiRecipe implements EmiRecipe {
+public class PouringEmiRecipe implements EmiRecipe, KegEmiRecipe {
     public static final ResourceLocation BACKGROUND = BrewinAndChewin.asResource("textures/gui/emi/pouring.png");
 
     private final ResourceLocation id;
@@ -46,7 +46,7 @@ public class PouringEmiRecipe implements EmiRecipe {
 
     @Override
     public List<EmiIngredient> getInputs() {
-        return List.of(fluid, container);
+        return List.of(container, fluid);
     }
 
     @Override
@@ -79,5 +79,20 @@ public class PouringEmiRecipe implements EmiRecipe {
             @Override
             public void drawBackground(GuiGraphics draw, int mouseX, int mouseY, float delta) {}
         });
+    }
+
+    @Override
+    public List<EmiIngredient> getItemInputs() {
+        return List.of(container);
+    }
+
+    @Override
+    public EmiIngredient getFluidInput() {
+        return fluid;
+    }
+
+    @Override
+    public EmiIngredient getFluidItemInput() {
+        return null;
     }
 }

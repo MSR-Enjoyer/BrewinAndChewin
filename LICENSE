@@ -28,4 +28,7 @@ use within the Fabric module.
 NeoForge is licensed under the LGPL 2.1 license.
 You may read the license here:
 https://github.com/neoforged/NeoForge/blob/1.21.x/LICENSE.txt
+
+Some files may include others' licenses. Please read the top of the file
+for information on other licenses.
 =============================================================================

@@ -19,7 +19,8 @@ import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerCo
 import umpaz.brewinandchewin.common.network.clientbound.MakeNextPlayerChatTipsyClientboundPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
-import umpaz.brewinandchewin.common.network.serverbound.TransferKegRecipeServerboundPacket;
+import umpaz.brewinandchewin.common.network.serverbound.EMIFillFermentingRecipeServerboundPacket;
+import umpaz.brewinandchewin.common.network.serverbound.JEITransferKegRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.registry.*;
 import umpaz.brewinandchewin.common.registry.BnCCreativeTabs;
 import umpaz.brewinandchewin.neoforge.container.KegFluidTankNeoForge;
@@ -73,7 +74,8 @@ public class BrewinAndChewinNeoForge {
                     .playToClient(MakeNextPlayerChatTipsyClientboundPacket.TYPE, MakeNextPlayerChatTipsyClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
                     .playToClient(SyncNumbedHeartsClientboundPacket.TYPE, SyncNumbedHeartsClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
                     .playToClient(SyncRagingStacksClientboundPacket.TYPE, SyncRagingStacksClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
-                    .playToServer(TransferKegRecipeServerboundPacket.TYPE, TransferKegRecipeServerboundPacket.STREAM_CODEC, (payload, context) -> payload.handle((ServerPlayer) context.player()));
+                    .playToServer(JEITransferKegRecipeServerboundPacket.TYPE, JEITransferKegRecipeServerboundPacket.STREAM_CODEC, (payload, context) -> payload.handle((ServerPlayer) context.player()))
+                    .playToServer(EMIFillFermentingRecipeServerboundPacket.TYPE, EMIFillFermentingRecipeServerboundPacket.STREAM_CODEC, (payload, context) -> payload.handle((ServerPlayer) context.player()));
         }
 
         public static <T> void registerMethod(RegisterEvent event, ResourceKey<Registry<T>> registry, Runnable registerMethod) {

@@ -1,7 +1,6 @@
 package umpaz.brewinandchewin.integration.jei.transfer;
 
 import com.mojang.datafixers.util.Pair;
-import com.sun.jna.platform.win32.Winspool;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
@@ -30,7 +29,7 @@ import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
-import umpaz.brewinandchewin.common.network.serverbound.TransferKegRecipeServerboundPacket;
+import umpaz.brewinandchewin.common.network.serverbound.JEITransferKegRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.integration.jei.BnCJEIRecipeTypes;
@@ -177,7 +176,7 @@ public class FermentingTransfer {
             }
 
             if (doTransfer) {
-                BrewinAndChewin.getHelper().sendServerbound(new TransferKegRecipeServerboundPacket(
+                BrewinAndChewin.getHelper().sendServerbound(new JEITransferKegRecipeServerboundPacket(
                         recipe.getId(),
                         operations.results.stream().map(pair -> Pair.of(pair.getFirst().index, pair.getSecond().index)).toList(),
                         operations.fluidResults.stream().map(pair -> Pair.of(pair.getFirst().index, pair.getSecond())).toList(),

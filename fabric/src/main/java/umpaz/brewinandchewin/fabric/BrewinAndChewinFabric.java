@@ -18,7 +18,8 @@ import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerCo
 import umpaz.brewinandchewin.common.network.clientbound.MakeNextPlayerChatTipsyClientboundPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
-import umpaz.brewinandchewin.common.network.serverbound.TransferKegRecipeServerboundPacket;
+import umpaz.brewinandchewin.common.network.serverbound.EMIFillFermentingRecipeServerboundPacket;
+import umpaz.brewinandchewin.common.network.serverbound.JEITransferKegRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.registry.BnCBlockEntityTypes;
 import umpaz.brewinandchewin.common.registry.BnCBlocks;
 import umpaz.brewinandchewin.common.registry.BnCCreativeTabs;
@@ -112,8 +113,11 @@ public class BrewinAndChewinFabric implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(SyncNumbedHeartsClientboundPacket.TYPE, SyncNumbedHeartsClientboundPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(SyncRagingStacksClientboundPacket.TYPE, SyncRagingStacksClientboundPacket.STREAM_CODEC);
 
-        PayloadTypeRegistry.playC2S().register(TransferKegRecipeServerboundPacket.TYPE, TransferKegRecipeServerboundPacket.STREAM_CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(TransferKegRecipeServerboundPacket.TYPE, (payload, context) -> payload.handle(context.player()));
+        PayloadTypeRegistry.playC2S().register(JEITransferKegRecipeServerboundPacket.TYPE, JEITransferKegRecipeServerboundPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(EMIFillFermentingRecipeServerboundPacket.TYPE, EMIFillFermentingRecipeServerboundPacket.STREAM_CODEC);
+
+        ServerPlayNetworking.registerGlobalReceiver(JEITransferKegRecipeServerboundPacket.TYPE, (payload, context) -> payload.handle(context.player()));
+        ServerPlayNetworking.registerGlobalReceiver(EMIFillFermentingRecipeServerboundPacket.TYPE, (payload, context) -> payload.handle(context.player()));
     }
 
     private static void registerCompostables() {

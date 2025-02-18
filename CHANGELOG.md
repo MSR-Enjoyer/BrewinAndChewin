@@ -23,3 +23,6 @@
   - Unfortunately, I cannot extensively document the changes right now, as they swept across the entire mod. Hopefully I'll get to working on the wiki soon - Pug.
 - Swapped fluid ingredients for BnC Fermenting recipes to use fluid tags.
 - Removed the maximum of 10000mB for Keg capacity in the configuration.
+
+## Bugfixes
+- Fixed keg eating fluid inputs when extracting more than the output slot's stack amount.
