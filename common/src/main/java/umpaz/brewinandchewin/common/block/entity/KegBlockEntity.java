@@ -393,8 +393,8 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             } else if (recipe.filter(KegPouringRecipe::canFill).isPresent() && // if the recipe can fill
                     (recipe.get().isStrict() && ItemStack.isSameItemSameComponents(resultItem, slotIn) || !recipe.get().isStrict() && ItemStack.isSameItem(slotIn, resultItem)) && // if result is same
                     (fluidTank.isEmpty() || fluidTank.getAbstractedFluid().amount() < fluidTank.getFluidCapacity()) && // if the result can fit in the container
-                    (!inGui || inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(resultItem, inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
-                int containerAmount = (int) Mth.clamp(Math.min(Math.min(slotIn.getCount(), recipe.get().getContainer().getMaxStackSize()), fluidTank.getAbstractedFluid().amount() / recipe.get().getLoaderAmount()), 1, maxTakeAmount);
+                    (!inGui || inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(recipe.get().getContainer(), inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
+                int containerAmount = (int) Mth.clamp(Math.min(Math.min(slotIn.getCount(), recipe.get().getContainer().getMaxStackSize()), fluidTank.getFluidCapacity() / recipe.get().getLoaderAmount()), 1, maxTakeAmount);
                 fluidTank.fill(new AbstractedFluidStack(recipe.get().getFluid(slotIn).fluid(), recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getRawFluid().components(), recipe.get().getUnit(), null), false);
 
                 if (!isCreative) {
