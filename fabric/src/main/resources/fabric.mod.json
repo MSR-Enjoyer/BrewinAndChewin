@@ -22,9 +22,6 @@
     "client": [
       "umpaz.brewinandchewin.fabric.client.BrewinAndChewinFabricClient"
     ],
-    "preLaunch": [
-      "umpaz.brewinandchewin.fabric.BrewinAndChewinFabricPre"
-    ],
     "mm:early_risers": [
       "umpaz.brewinandchewin.fabric.BrewinAndChewinASM"
     ],

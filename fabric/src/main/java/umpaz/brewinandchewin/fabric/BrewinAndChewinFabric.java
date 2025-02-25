@@ -35,6 +35,7 @@ import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.fabric.container.KegFluidTankFabric;
 import umpaz.brewinandchewin.fabric.container.SidedKegWrapperFabric;
 import umpaz.brewinandchewin.fabric.fluid.BnCFluidVariantAttributeHandler;
+import umpaz.brewinandchewin.fabric.platform.BnCPlatformHelperFabric;
 import umpaz.brewinandchewin.fabric.registry.BnCAttachments;
 import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
 import umpaz.brewinandchewin.fabric.registry.BnCLootModifiers;
@@ -46,6 +47,7 @@ public class BrewinAndChewinFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        BrewinAndChewin.init(new BnCPlatformHelperFabric());
         registerContents();
         registerNetwork();
         registerCompostables();
