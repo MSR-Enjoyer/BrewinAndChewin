@@ -17,11 +17,7 @@ configurations {
 }
 
 dependencies {
-    compileOnly(project(":common")) {
-        capabilities {
-            requireCapability("$group:${Properties.MOD_ID}")
-        }
-    }
+    compileOnly(project(":common"))
     "commonJava"(project(":common", "commonJava"))
     "commonResources"(project(":common", "commonResources"))
     "commonTestResources"(project(":common", "commonTestResources"))
