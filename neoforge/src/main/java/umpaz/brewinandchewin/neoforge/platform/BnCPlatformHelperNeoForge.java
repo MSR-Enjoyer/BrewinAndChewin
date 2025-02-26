@@ -265,6 +265,11 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     }
 
     @Override
+    public String getAttachmentKey() {
+        return "neoforge:attachments";
+    }
+
+    @Override
     public Fluid getMilkFluid() {
         return NeoForgeMod.MILK.get();
     }

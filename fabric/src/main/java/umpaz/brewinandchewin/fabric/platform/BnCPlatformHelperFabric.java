@@ -271,6 +271,11 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     }
 
     @Override
+    public String getAttachmentKey() {
+        return "fabric:attachments";
+    }
+
+    @Override
     public Fluid getMilkFluid() {
         return BnCFluidsImpl.MILK;
     }

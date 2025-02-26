@@ -1,6 +1,5 @@
 package umpaz.brewinandchewin.common.utility.dfu;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.DataFixerBuilder;
@@ -17,12 +16,11 @@ import net.minecraft.util.datafix.schemas.NamespacedSchema;
 import umpaz.brewinandchewin.common.mixin.DataFixTypesAccessor;
 import umpaz.brewinandchewin.common.utility.dfu.schema.BnCSchemaV1;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
 
 public record BnCDataFixer(DataFixer fixer) {
+    // Bump this up by 100 for each new Minecraft version. If you're exceeding 99 schemas in the same version, you're doing something wrong.
     public static final int CURRENT_VERSION = 100;
     private static final BiFunction<Integer, Schema, Schema> SAME = Schema::new;
     private static final BiFunction<Integer, Schema, Schema> SAME_NAMESPACED = NamespacedSchema::new;
@@ -39,11 +37,16 @@ public record BnCDataFixer(DataFixer fixer) {
         DataFixerBuilder builder = new DataFixerBuilder(CURRENT_VERSION);
         builder.addSchema(0, (integer, schema) -> new Schema(integer, DataFixers.getDataFixer()
                 .getSchema(DataFixUtils.makeKey(SharedConstants.getCurrentVersion().getDataVersion().getVersion()))));
-        // Rename Scarlet Pierogies to Scarlet Pierogi
-        Schema schema1 = builder.addSchema(1, BnCSchemaV1::new);
+
+        builder.addSchema(1, BnCSchemaV1::new);
         Schema schema2 = builder.addSchema(2, SAME_NAMESPACED);
+        // Rename Scarlet Pierogies to Scarlet Pierogi
         builder.addFixer(ItemRenameFix.create(schema2, "Fix Scarlet Pierogi item name", createRenamer("brewinandchewin:scarlet_pierogies", "brewinandchewin:scarlet_pierogi")));
         builder.addFixer(new NamespacedTypeRenameFix(schema2, "Rename Scarlet Pierogi recipe", References.RECIPE, createRenamer("brewinandchewin:cooking/scarlet_pierogies", "brewinandchewin:cooking/scarlet_pierogi")));
+
+        // Fix 1.20.1 capabilities to attachments
+        Schema schema100 = builder.addSchema(100, SAME_NAMESPACED);;
+
         return builder.build().fixer();
     }
 
