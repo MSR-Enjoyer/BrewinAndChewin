@@ -7,7 +7,7 @@ object Properties {
     const val MOD_ID = "brewinandchewin"
     val MOD_AUTHORS = listOf("Probleyes", "Umpaz", "MerchantPug")
     const val DESCRIPTION = "Fermenting addon for Farmer's Delight."
-    const val LICENSE = "MPL-2.0"
+    const val LICENSE = "MIT"
 
     const val CURSEFORGE_PAGE = "https://www.curseforge.com/minecraft/mc-mods/brewin-and-chewin"
     const val CURSEFORGE_PROJECT_ID = "637808"
