@@ -124,9 +124,11 @@
   "emi.category.brewinandchewin.fermenting": "Fermenting",
   "emi.category.brewinandchewin.pouring": "Pouring",
   "emi.category.brewinandchewin.aging": "Aging",
+  "brewinandchewin.emi.cooking.time.minutes": "%s Minutes",
   "brewinandchewin.emi.warmer_temperature": "Requires warmer temperature",
   "brewinandchewin.emi.cooler_temperature": "Requires cooler temperature",
-  "brewinandchewin.emi.can_not_empty": "Incorrect fluid",
+  "brewinandchewin.emi.incorrect_fluid": "Incorrect fluid for crafting",
+  "brewinandchewin.emi.cant_empty": "Can't empty existing fluid",
 
   "tag.block.brewinandchewin.cheese_wheels.unripe": "Unripe Cheese Wheels",
   "tag.block.brewinandchewin.cheese_wheels.ripe": "Cheese Wheels",

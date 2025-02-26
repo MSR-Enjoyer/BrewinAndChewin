@@ -21,7 +21,7 @@ import vectorwing.farmersdelight.common.utility.ClientRenderUtils;
 
 import java.util.*;
 
-public class FermentingEmiRecipe implements EmiRecipe, KegEmiRecipe {
+public class FermentingEmiRecipe implements KegEmiRecipe {
     public static final ResourceLocation BACKGROUND = BrewinAndChewin.asResource("textures/gui/emi/fermenting.png");
 
     private final ResourceLocation id;

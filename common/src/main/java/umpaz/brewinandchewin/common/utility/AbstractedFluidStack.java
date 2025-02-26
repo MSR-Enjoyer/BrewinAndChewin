@@ -2,12 +2,12 @@ package umpaz.brewinandchewin.common.utility;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
 
 public class AbstractedFluidStack {
@@ -59,6 +59,12 @@ public class AbstractedFluidStack {
 
     public DataComponentMap components() {
         return components;
+    }
+
+    public DataComponentPatch componentPatch() {
+        if (components instanceof PatchedDataComponentMap patched)
+            return patched.asPatch();
+        return DataComponentPatch.EMPTY;
     }
 
     public FluidUnit unit() {

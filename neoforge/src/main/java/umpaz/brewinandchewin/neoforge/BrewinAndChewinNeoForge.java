@@ -20,6 +20,7 @@ import umpaz.brewinandchewin.common.network.clientbound.MakeNextPlayerChatTipsyC
 import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
 import umpaz.brewinandchewin.common.network.serverbound.EMIFillFermentingRecipeServerboundPacket;
+import umpaz.brewinandchewin.common.network.serverbound.EMIFillPouringRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.network.serverbound.JEITransferKegRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.registry.*;
 import umpaz.brewinandchewin.common.registry.BnCCreativeTabs;
@@ -75,7 +76,8 @@ public class BrewinAndChewinNeoForge {
                     .playToClient(SyncNumbedHeartsClientboundPacket.TYPE, SyncNumbedHeartsClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
                     .playToClient(SyncRagingStacksClientboundPacket.TYPE, SyncRagingStacksClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
                     .playToServer(JEITransferKegRecipeServerboundPacket.TYPE, JEITransferKegRecipeServerboundPacket.STREAM_CODEC, (payload, context) -> payload.handle((ServerPlayer) context.player()))
-                    .playToServer(EMIFillFermentingRecipeServerboundPacket.TYPE, EMIFillFermentingRecipeServerboundPacket.STREAM_CODEC, (payload, context) -> payload.handle((ServerPlayer) context.player()));
+                    .playToServer(EMIFillFermentingRecipeServerboundPacket.TYPE, EMIFillFermentingRecipeServerboundPacket.STREAM_CODEC, (payload, context) -> payload.handle((ServerPlayer) context.player()))
+                    .playToServer(EMIFillPouringRecipeServerboundPacket.TYPE, EMIFillPouringRecipeServerboundPacket.STREAM_CODEC, (payload, context) -> payload.handle((ServerPlayer) context.player()));
         }
 
         public static <T> void registerMethod(RegisterEvent event, ResourceKey<Registry<T>> registry, Runnable registerMethod) {

@@ -19,21 +19,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.common.network.serverbound.EMIFillFermentingRecipeServerboundPacket;
-import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
+import umpaz.brewinandchewin.common.network.serverbound.EMIFillPouringRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.integration.emi.BnCRecipeCategories;
 import umpaz.brewinandchewin.integration.emi.recipe.FermentingEmiRecipe;
@@ -53,7 +49,8 @@ import java.util.function.IntFunction;
 public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
     private static final Component WARMER_TEMPERATURE = Component.translatable("brewinandchewin.emi.warmer_temperature");
     private static final Component COOLER_TEMPERATURE = Component.translatable("brewinandchewin.emi.cooler_temperature");
-    private static final Component CAN_NOT_EMPTY = Component.translatable("brewinandchewin.emi.can_not_empty");
+    private static final Component CANT_EMPTY = Component.translatable("brewinandchewin.emi.cant_empty");
+    private static final Component INCORRECT_FLUID = Component.translatable("brewinandchewin.emi.incorrect_fluid");
 
     public List<Slot> getInputSources(KegMenu menu) {
         List<Slot> list = Lists.newArrayList();
@@ -92,40 +89,29 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
 
     @Override
     public boolean canCraft(EmiRecipe recipe, EmiCraftContext<KegMenu> context) {
-        AbstractedFluidStack stack = context.getScreenHandler().kegTank.getAbstractedFluid();
-        EmiStack emiFluid = EmiStack.of(stack.fluid(), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY, stack.unit().convertToLoader(context.getAmount()));
         if (recipe instanceof FermentingEmiRecipe fermentingRecipe) {
             if (!KegBlockEntity.isValidTemp(context.getScreenHandler().getKegTemperature(), fermentingRecipe.getTemperature()))
                 return false;
-            if (!validFluidOrCanEmpty(fermentingRecipe, context))
+            if (!validFluidOrCanEmpty(fermentingRecipe, fermentingRecipe.getFluidInput(), fermentingRecipe.getFluidItemInput(), context))
                 return false;
         } else if (recipe instanceof PouringEmiRecipe pouringRecipe) {
-            if (!pouringRecipe.getFluidInput().isEmpty() && pouringRecipe.getFluidInput().getEmiStacks().stream().noneMatch(emiStack -> emiStack.isEqual(emiFluid)))
+            if (!hasFluid(pouringRecipe.getFluidInput(), context))
                 return false;
         }
         if (recipe instanceof KegEmiRecipe kegRecipe)
-            return hasItems(kegRecipe.getItemInputs(), context) && (kegRecipe.getFluidItemInput() == null || hasItems(List.of(kegRecipe.getFluidItemInput()), context));
+            return hasItems(kegRecipe.getItemInputs(), context);
 
         return false;
     }
 
-    private boolean hasItems(List<EmiIngredient> ingredients, EmiCraftContext<KegMenu> context) {
+    private static boolean hasItems(List<EmiIngredient> ingredients, EmiCraftContext<KegMenu> context) {
         Object2LongMap<EmiStack> used = new Object2LongOpenHashMap<>();
 
         boolean failure = false;
         root: for (EmiIngredient ingredient : ingredients) {
             if (!ingredient.isEmpty()) {
                 for (EmiStack stack : ingredient.getEmiStacks()) {
-                    long desired = stack.getAmount() * context.getAmount();
-                    if (ingredient.getEmiStacks().getFirst().getKey() instanceof Fluid fluid) {
-                        Optional<PouringEmiRecipe> potentialPouring = EmiApi.getRecipeManager().getRecipes(BnCRecipeCategories.POURING).stream().filter(r -> {
-                            if (!(r instanceof PouringEmiRecipe pouring))
-                                return false;
-                            return ingredient.getEmiStacks().stream().anyMatch(es -> es.isEqual(pouring.getFluidInput().getEmiStacks().getFirst())) && r.getInputs().getFirst().getEmiStacks().getFirst().isEqual(stack);
-                        }).map(recipe1 -> (PouringEmiRecipe) recipe1).findFirst();
-                        if (potentialPouring.isPresent())
-                            desired = (context.getScreen().getMenu().kegTank.getFluidCapacity() - context.getScreen().getMenu().kegTank.getAbstractedFluid().amount()) / potentialPouring.get().getFluidInput().getAmount();
-                    }
+                    long desired = stack.getAmount();
                     if (context.getInventory().inventory.containsKey(stack)) {
                         EmiStack identity = context.getInventory().inventory.get(stack);
                         long alreadyUsed = used.getOrDefault(identity, 0L);
@@ -140,10 +126,7 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
             }
         }
 
-        if (failure) {
-
-        }
-        return true;
+        return !failure;
     }
 
     @Override
@@ -152,8 +135,6 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
             var stacks = BnCEMIRecipeFiller.getFermentingStacks(this, fermentingRecipe, context, context.getAmount());
             if (stacks != null) {
                 Minecraft.getInstance().setScreen(context.getScreen());
-                AbstractContainerScreen<KegMenu> screen = context.getScreen();
-
                 BrewinAndChewin.getHelper().sendServerbound(new EMIFillFermentingRecipeServerboundPacket(
                         context.getScreenHandler(),
                         stacks
@@ -161,12 +142,22 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
                 return true;
             }
         } else if (recipe instanceof PouringEmiRecipe pouringRecipe) {
-            byte destination;
-            switch (context.getDestination()) {
-                case NONE -> destination = 0;
-                case CURSOR -> destination = 1;
-                case INVENTORY -> destination = 2;
-                default -> throw new MatchException(null, null);
+            var stacks = BnCEMIRecipeFiller.getPouringStacks(this, pouringRecipe, context, context.getAmount());
+            if (stacks != null) {
+                byte destination;
+                switch (context.getDestination()) {
+                    case NONE -> destination = 0;
+                    case CURSOR -> destination = 1;
+                    case INVENTORY -> destination = 2;
+                    default -> throw new MatchException(null, null);
+                }
+                Minecraft.getInstance().setScreen(context.getScreen());
+                BrewinAndChewin.getHelper().sendServerbound(new EMIFillPouringRecipeServerboundPacket(
+                        context.getScreenHandler(),
+                        destination,
+                        stacks
+                ));
+                return true;
             }
         }
         return false;
@@ -175,10 +166,15 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
     @Override
     public List<ClientTooltipComponent> getTooltip(EmiRecipe recipe, EmiCraftContext<KegMenu> context) {
         List<ClientTooltipComponent> components = Lists.newArrayList();
-        components.addAll(StandardRecipeHandler.super.getTooltip(recipe, context));
         if (recipe instanceof FermentingEmiRecipe fermentingRecipe) {
-            if (!validFluidOrCanEmpty(fermentingRecipe, context))
-                components.add(ClientTooltipComponent.create(CAN_NOT_EMPTY.getVisualOrderText()));
+            if (!hasItems(fermentingRecipe.getItemInputs(), context))
+                components.addAll(StandardRecipeHandler.super.getTooltip(recipe, context));
+            if (!validFluidOrCanEmpty(fermentingRecipe, fermentingRecipe.getFluidInput(), fermentingRecipe.getFluidItemInput(), context)) {
+                if (hasFluidOrAssociatedItem(fermentingRecipe.getFluidInput(), fermentingRecipe.getFluidItemInput(), context))
+                    components.add(ClientTooltipComponent.create(CANT_EMPTY.getVisualOrderText()));
+                else
+                    components.add(ClientTooltipComponent.create(INCORRECT_FLUID.getVisualOrderText()));
+            }
 
             if (!KegBlockEntity.isValidTemp(context.getScreenHandler().getKegTemperature(), fermentingRecipe.getTemperature())) {
                 if (context.getScreenHandler().getKegTemperature() < fermentingRecipe.getTemperature())
@@ -186,6 +182,11 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
                 else
                     components.add(ClientTooltipComponent.create(COOLER_TEMPERATURE.getVisualOrderText()));
             }
+        } else if (recipe instanceof PouringEmiRecipe pouringRecipe) {
+            if (!hasItems(pouringRecipe.getItemInputs(), context))
+                components.addAll(StandardRecipeHandler.super.getTooltip(recipe, context));
+            if (!hasFluid(pouringRecipe.getFluidInput(), context))
+                components.addAll(StandardRecipeHandler.super.getTooltip(recipe, context));
         }
 
         return components;
@@ -204,8 +205,8 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
             if (w instanceof SlotWidget sw) {
                 EmiIngredient stack = sw.getStack();
                 Bounds bounds = sw.getBounds();
-                if (sw instanceof BnCFluidWidget && recipe instanceof FermentingEmiRecipe fermenting) {
-                    if (sw.getRecipe() == null && !validFluidOrCanEmpty(fermenting, context))
+                if (sw instanceof BnCFluidWidget && recipe instanceof KegEmiRecipe kegRecipe) {
+                    if (sw.getRecipe() == null && !validFluidOrCanEmpty(kegRecipe, kegRecipe.getFluidInput(), kegRecipe.getFluidItemInput(), context))
                         draw.fill(bounds.x(), bounds.y(), bounds.x() + bounds.width(), bounds.y() + bounds.height(), 1157562368);
                 } else if (sw.getRecipe() == null && availableForCrafting.containsKey(stack) && !stack.isEmpty() && !availableForCrafting.get(stack)) {
                     draw.fill(bounds.x(), bounds.y(), bounds.x() + bounds.width(), bounds.y() + bounds.height(), 1157562368);
@@ -238,14 +239,14 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
     }
 
 
-    private static boolean validFluidOrCanEmpty(FermentingEmiRecipe recipe, EmiCraftContext<KegMenu> context) {
+    private static boolean validFluidOrCanEmpty(KegEmiRecipe recipe, @Nullable EmiIngredient fluidIngredient, @Nullable EmiIngredient fluidItemIngredient, EmiCraftContext<KegMenu> context) {
         boolean success = false;
         Object2LongMap<EmiStack> used = new Object2LongOpenHashMap<>();
 
         EmiIngredient emptyingIngredient = getEmptyingIngredient(recipe, context);
 
         if (emptyingIngredient == null)
-            return true;
+            return hasFluidOrAssociatedItem(fluidIngredient, fluidItemIngredient, context);
 
         for (EmiStack stack : emptyingIngredient.getEmiStacks()) {
             long desired = stack.getAmount();
@@ -261,36 +262,46 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
             }
         }
 
-        return success;
+        return success && hasFluidOrAssociatedItem(fluidIngredient, fluidItemIngredient, context);
     }
 
+    private static boolean hasFluid(@Nullable EmiIngredient fluidIngredient, EmiCraftContext<KegMenu> context) {
+        AbstractedFluidStack stack = context.getScreenHandler().kegTank.getAbstractedFluid();
+        return (fluidIngredient == null && stack.isEmpty() || fluidIngredient != null && fluidIngredient.getEmiStacks().stream().anyMatch(emiStack -> emiStack.isEqual(EmiStack.of(stack.fluid(), stack.componentPatch(), stack.amount()))));
+    }
+
+    private static boolean hasFluidOrAssociatedItem(@Nullable EmiIngredient fluidIngredient, @Nullable EmiIngredient fluidItemIngredient, EmiCraftContext<KegMenu> context) {
+        return hasFluid(fluidIngredient, context) || fluidItemIngredient == null || hasItems(List.of(fluidItemIngredient), context);
+    }
+
+
     @Nullable
-    public static EmiIngredient getEmptyingIngredient(FermentingEmiRecipe fermentingRecipe, EmiCraftContext<KegMenu> context) {
-        if (context.getScreenHandler().kegTank.isEmpty() || fermentingRecipe.getFluidInput() == null || fermentingRecipe.getFluidInput().getEmiStacks().stream().anyMatch(emiStack -> {
+    public static EmiIngredient getEmptyingIngredient(KegEmiRecipe kegRecipe, EmiCraftContext<KegMenu> context) {
+        if (context.getScreenHandler().kegTank.isEmpty() || kegRecipe.getFluidInput() != null && kegRecipe.getFluidInput().getEmiStacks().stream().anyMatch(emiStack -> {
             AbstractedFluidStack stack = context.getScreenHandler().kegTank.getAbstractedFluid();
             EmiStack tankEmiStack = EmiStack.of(
                     stack.fluid(),
-                    stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY,
-                    stack.unit().convertToLoader(stack.amount())
+                    stack.componentPatch(),
+                    stack.amount() / kegRecipe.getFluidInput().getAmount()
             );
             return emiStack.isEqual(tankEmiStack);
         }))
             return null;
 
+        AbstractedFluidStack stack = context.getScreenHandler().kegTank.getAbstractedFluid();
         List<EmiIngredient> ingredients = new ArrayList<>(EmiApi.getRecipeManager().getRecipes(BnCRecipeCategories.POURING).stream()
                 .filter(recipe -> {
                     if (!(recipe instanceof PouringEmiRecipe pouringRecipe))
                         return false;
-                    AbstractedFluidStack stack = context.getScreenHandler().kegTank.getAbstractedFluid();
                     EmiStack tankEmiStack = EmiStack.of(
                             stack.fluid(),
-                            stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY,
-                            stack.unit().convertToLoader(stack.amount())
+                            stack.componentPatch(),
+                            stack.amount() / pouringRecipe.getFluidInput().getAmount()
                     );
                     return pouringRecipe.getFluidInput().getEmiStacks().getFirst().isEqual(tankEmiStack);
                 }).map(recipe -> {
                     PouringEmiRecipe pouringRecipe = (PouringEmiRecipe) recipe;
-                    return ((PouringEmiRecipe)recipe).getItemInputs().getFirst().copy().setAmount(pouringRecipe.getFluidInput().getAmount());
+                    return ((PouringEmiRecipe)recipe).getItemInputs().getFirst().copy().setAmount(stack.amount() / pouringRecipe.getFluidInput().getAmount());
                 }).toList());
 
         if (ingredients.isEmpty())
@@ -322,7 +333,7 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
         }
 
 
-        if (recipe.getItemInputs() != null && context.getScreenHandler().kegTank.isEmpty()) {
+        if (recipe.getFluidItemInput() != null && context.getScreenHandler().kegTank.isEmpty()) {
             boolean success = false;
             for (EmiStack stack : recipe.getFluidItemInput().getEmiStacks()) {
                 long desired = stack.getAmount();
@@ -343,7 +354,7 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
             for (EmiStack stack : recipe.getFluidInput().getEmiStacks()) {
                 long desired = stack.getAmount();
                 AbstractedFluidStack tankStack = context.getScreenHandler().kegTank.getAbstractedFluid();
-                EmiStack tankEmiStack = EmiStack.of(tankStack.fluid(), tankStack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY, desired);
+                EmiStack tankEmiStack = EmiStack.of(tankStack.fluid(), tankStack.componentPatch(), tankStack.amount());
                 if (tankStack.amount() >= desired && stack.isEqual(tankEmiStack)) {
                     success = true;
                     break;
@@ -357,7 +368,7 @@ public class KegEmiRecipeHandler implements StandardRecipeHandler<KegMenu> {
 
     @Override
     public boolean supportsRecipe(EmiRecipe recipe) {
-        return recipe.getCategory() == BnCRecipeCategories.FERMENTING && recipe.supportsRecipeTree();
+        return (recipe.getCategory() == BnCRecipeCategories.FERMENTING || recipe.getCategory() == BnCRecipeCategories.POURING) && recipe.supportsRecipeTree();
     }
 
     public enum InputType {

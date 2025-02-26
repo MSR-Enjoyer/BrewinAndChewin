@@ -12,7 +12,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -25,6 +24,7 @@ import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.FluidUnit;
 import umpaz.brewinandchewin.integration.emi.BnCRecipeCategories;
 import umpaz.brewinandchewin.integration.emi.recipe.FermentingEmiRecipe;
+import umpaz.brewinandchewin.integration.emi.recipe.KegEmiRecipe;
 import umpaz.brewinandchewin.integration.emi.recipe.PouringEmiRecipe;
 
 import java.util.ArrayList;
@@ -47,16 +47,17 @@ public class BnCEMIRecipeFiller {
                 List<Slot> slots = handler.getInputSources(menu);
                 List<Slot> craftingSlots = handler.getCraftingSlots(menu);
                 List<EmiIngredient> itemIngredients = recipe.getItemInputs();
-                EmiIngredient fluidIngredient = recipe.getFluidItemInput();
+                EmiIngredient fluidIngredient = recipe.getFluidInput();
+                EmiIngredient fluidItemIngredient = recipe.getFluidItemInput();
                 EmiIngredient emptyingIngredient = KegEmiRecipeHandler.getEmptyingIngredient(recipe, context);
                 if (!handleItemInputs(
                         handler, recipe, context.getScreen(), amount,
                         desired, itemIngredients, slots, craftingSlots
                 ))
                     return null;
-                if (fluidIngredient != null && !handleFillingInputs(
+                if (fluidItemIngredient != null && !handleFillingInputs(
                         handler, recipe, context, amount,
-                        desired, fluidIngredient, slots
+                        desired, fluidIngredient, fluidItemIngredient, slots
                 ))
                     return null;
                 if (emptyingIngredient != null && !context.getScreen().getMenu().kegTank.isEmpty() && !handleEmptyingInputs(
@@ -65,6 +66,26 @@ public class BnCEMIRecipeFiller {
                 ))
                     return null;
                 return desired;
+            }
+        } catch (Exception ex) {
+            BrewinAndChewin.LOG.error("Failed to get fermenting recipe stacks. ", ex);
+        }
+        return null;
+    }
+
+    public static @Nullable List<ItemStack> getPouringStacks(KegEmiRecipeHandler handler, PouringEmiRecipe recipe, EmiCraftContext<KegMenu> context, int amount) {
+        try {
+            KegMenu menu = context.getScreen().getMenu();
+            if (handler != null) {
+                Map<KegEmiRecipeHandler.InputType, List<ItemStack>> desired = Maps.newHashMap();
+                List<Slot> slots = handler.getInputSources(menu);
+                EmiIngredient emptyingIngredient = recipe.getItemInputs().getFirst();
+                if (emptyingIngredient != null && !context.getScreen().getMenu().kegTank.isEmpty() && !handleEmptyingInputs(
+                        handler, recipe, context, amount,
+                        desired, emptyingIngredient, slots
+                ))
+                    return null;
+                return desired.get(KegEmiRecipeHandler.InputType.EMPTY);
             }
         } catch (Exception ex) {
             BrewinAndChewin.LOG.error("Failed to get fermenting recipe stacks. ", ex);
@@ -169,18 +190,18 @@ public class BnCEMIRecipeFiller {
 
     private static boolean handleFillingInputs(
             KegEmiRecipeHandler handler, FermentingEmiRecipe recipe, EmiCraftContext<KegMenu> context, int amount,
-            Map<KegEmiRecipeHandler.InputType, List<ItemStack>> desired, EmiIngredient ingredient, List<Slot> slots) {
-        if (recipe.getFluidInput() == null || context.getScreen().getMenu().kegTank.getFluidCapacity() <= context.getScreen().getMenu().kegTank.getAbstractedFluid().amount())
+            Map<KegEmiRecipeHandler.InputType, List<ItemStack>> desired, EmiIngredient fluidIngredient, EmiIngredient itemIngredient, List<Slot> slots) {
+        if (recipe.getFluidInput() == null || fluidIngredient.getEmiStacks().stream().anyMatch(emiStack -> context.getScreen().getMenu().kegTank.getAbstractedFluid().matches(new AbstractedFluidStack((Fluid) emiStack.getKey(), (int)emiStack.getAmount(), PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, emiStack.getComponentChanges())))) && context.getScreen().getMenu().kegTank.getFluidCapacity() == Math.min(fluidIngredient.getAmount() * context.getAmount(), context.getScreen().getMenu().kegTank.getFluidCapacity()))
             return true;
         EmiIngredient emiFluidIngredient = recipe.getFluidInput();
         EmiStack emiFluidStack = recipe.getFluidInput().getEmiStacks().getFirst();
-        AbstractedFluidStack fluidStack = new AbstractedFluidStack((Fluid)emiFluidStack.getKey(), emiFluidStack.getAmount(), PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, emiFluidStack.getComponentChanges()), FluidUnit.getLoaderUnit());
+        AbstractedFluidStack fluidStack = new AbstractedFluidStack((Fluid)emiFluidStack.getKey(), (int) emiFluidStack.getAmount(), PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, emiFluidStack.getComponentChanges()), FluidUnit.getLoaderUnit());
 
 
         List<EmiStack> discoveredQuickRef = Lists.newArrayList();
 
         List<DiscoveredItem> d = Lists.newArrayList();
-        List<EmiStack> emiStacks = ingredient.getEmiStacks();
+        List<EmiStack> emiStacks = itemIngredient.getEmiStacks();
 
         for (EmiStack stack : emiStacks) {
             slotLoop: for (Slot s : slots) {
@@ -200,7 +221,69 @@ public class BnCEMIRecipeFiller {
                         return emiFluidIngredient.getEmiStacks().stream().anyMatch(es -> pouring.getFluidInput().getEmiStacks().getFirst().isEqual(es)) && r.getOutputs().getFirst().isEqual(stack);
                     }).map(recipe1 -> (PouringEmiRecipe) recipe1).findFirst();
                     if (potentialPouring.isPresent()) {
-                        int consumed = (int) ((context.getScreen().getMenu().kegTank.getFluidCapacity() - context.getScreen().getMenu().kegTank.getAbstractedFluid().amount()) / potentialPouring.get().getFluidInput().getAmount());
+                        AbstractedFluidStack tankStack = context.getScreen().getMenu().kegTank.getAbstractedFluid();
+                        EmiStack tankEmiStack = EmiStack.of(tankStack.fluid(), tankStack.componentPatch(), tankStack.amount());
+                        int consumed = (int) ((context.getScreen().getMenu().kegTank.getFluidCapacity() - (potentialPouring.get().getFluidInput().getEmiStacks().stream().anyMatch(emiStack -> emiStack.isEqual(tankEmiStack)) ? context.getScreen().getMenu().kegTank.getAbstractedFluid().amount() : 0)) / potentialPouring.get().getFluidInput().getAmount());
+                        if (consumed < 1)
+                            continue;
+                        d.add(new DiscoveredItem(stack, ss, ss.getCount(), consumed, (int) stack.getAmount()));
+                        discoveredQuickRef.add(stack);
+                    }
+                }
+            }
+        }
+
+        for (EmiStack inventoryStack : context.getInventory().inventory.values()) {
+            if (discoveredQuickRef.contains(inventoryStack))
+                continue;
+            ItemStack itemStack = inventoryStack.getItemStack();
+            AbstractedFluidTank tank = BrewinAndChewin.getHelper().getFluidContainerFromItem(itemStack);
+            if (tank == null)
+                continue;
+            int target = (int) tank.getAbstractedFluid().amount();
+            if (tank.getAbstractedFluid().isEmpty() && tank.isFluidValid(0, fluidStack) && target > 0) {
+                AbstractedFluidStack tankStack = context.getScreen().getMenu().kegTank.getAbstractedFluid();
+                int consumed = (int) ((context.getScreen().getMenu().kegTank.getFluidCapacity() - (tankStack.matches(tank.getAbstractedFluid()) ? context.getScreen().getMenu().kegTank.getAbstractedFluid().amount() : 0)) / target);
+                if (consumed < 1)
+                    continue;
+                d.add(new DiscoveredItem(inventoryStack, itemStack, itemStack.getCount(), consumed, (int) ((context.getScreen().getMenu().kegTank.getFluidCapacity()) / target)));
+            }
+        }
+        return handleFluidInternally(handler, recipe, context, amount, KegEmiRecipeHandler.InputType.FILL, desired, d);
+    }
+
+    private static boolean handleEmptyingInputs(
+            KegEmiRecipeHandler handler, KegEmiRecipe recipe, EmiCraftContext<KegMenu> context, int amount,
+            Map<KegEmiRecipeHandler.InputType, List<ItemStack>> desired, EmiIngredient ingredient, List<Slot> slots) {
+        if (context.getScreen().getMenu().kegTank.isEmpty())
+            return true;
+        AbstractedFluidStack fluidStack = context.getScreen().getMenu().kegTank.getAbstractedFluid();
+        EmiStack emiFluidStack = EmiStack.of(fluidStack.fluid(), fluidStack.componentPatch(), fluidStack.amount());
+
+        List<EmiStack> discoveredQuickRef = Lists.newArrayList();
+
+        List<DiscoveredItem> d = Lists.newArrayList();
+        List<EmiStack> emiStacks = ingredient.getEmiStacks();
+
+        for (EmiStack stack : emiStacks) {
+            slotLoop: for (Slot s : slots) {
+                ItemStack ss = s.getItem();
+                if (EmiStack.of(s.getItem()).isEqual(stack)) {
+                    for (DiscoveredItem di : d) {
+                        if (ItemStack.isSameItemSameComponents(ss, di.stack) || di.amount >= di.consumed) {
+                            di.amount += ss.getCount();
+                            continue slotLoop;
+                        }
+                    }
+                    Optional<PouringEmiRecipe> potentialPouring = recipe instanceof PouringEmiRecipe pouring ? Optional.of(pouring) : EmiApi.getRecipeManager().getRecipes(BnCRecipeCategories.POURING).stream().filter(r -> {
+                        if (!(r instanceof PouringEmiRecipe pouring))
+                            return false;
+                        return pouring.getFluidInput().getEmiStacks().getFirst().isEqual(emiFluidStack) && r.getInputs().getFirst().getEmiStacks().getFirst().isEqual(stack);
+                    }).map(recipe1 -> (PouringEmiRecipe) recipe1).findFirst();
+                    if (potentialPouring.isPresent()) {
+                        int consumed = (int) (Math.min(context.getScreen().getMenu().kegTank.getAbstractedFluid().amount() * context.getAmount(), context.getScreen().getMenu().kegTank.getFluidCapacity()) / potentialPouring.get().getFluidInput().getAmount());
+                        if (recipe instanceof PouringEmiRecipe && consumed > context.getAmount())
+                            consumed = context.getAmount();
                         if (consumed < 1)
                             continue;
                         d.add(new DiscoveredItem(stack, ss, ss.getCount(), consumed, (int) stack.getAmount()));
@@ -218,67 +301,8 @@ public class BnCEMIRecipeFiller {
             if (tank == null)
                 continue;
             long target = tank.getAbstractedFluid().amount();
-            if (tank.isEmpty() && tank.isFluidValid(fluidStack) && target > 0) {
-                int consumed = (int) ((context.getScreen().getMenu().kegTank.getFluidCapacity() - context.getScreen().getMenu().kegTank.getAbstractedFluid().amount()) / target);
-                if (consumed < 1)
-                    continue;
-                d.add(new DiscoveredItem(inventoryStack, itemStack, itemStack.getCount(), consumed, (int) ((context.getScreen().getMenu().kegTank.getFluidCapacity()) / target)));
-            }
-        }
-        return handleFluidInternally(handler, recipe, context, amount, KegEmiRecipeHandler.InputType.FILL, desired, d);
-    }
-
-    private static boolean handleEmptyingInputs(
-            KegEmiRecipeHandler handler, FermentingEmiRecipe recipe, EmiCraftContext<KegMenu> context, int amount,
-            Map<KegEmiRecipeHandler.InputType, List<ItemStack>> desired, EmiIngredient ingredient, List<Slot> slots) {
-        if (context.getScreen().getMenu().kegTank.isEmpty() || recipe.getFluidInput() == null)
-            return true;
-        AbstractedFluidStack fluidStack = context.getScreen().getMenu().kegTank.getAbstractedFluid();
-        EmiStack emiFluidStack = EmiStack.of(fluidStack.fluid(), fluidStack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY, fluidStack.amount());
-
-        List<EmiStack> discoveredQuickRef = Lists.newArrayList();
-
-        List<DiscoveredItem> d = Lists.newArrayList();
-        List<EmiStack> emiStacks = ingredient.getEmiStacks();
-
-        for (EmiStack stack : emiStacks) {
-            slotLoop: for (Slot s : slots) {
-                ItemStack ss = s.getItem();
-                if (EmiStack.of(s.getItem()).isEqual(stack)) {
-                    for (DiscoveredItem di : d) {
-                        if (ItemStack.isSameItemSameComponents(ss, di.stack) || di.amount >= di.consumed) {
-                            di.amount += ss.getCount();
-                            continue slotLoop;
-                        }
-                    }
-                    Optional<PouringEmiRecipe> potentialPouring = EmiApi.getRecipeManager().getRecipes(BnCRecipeCategories.POURING).stream().filter(r -> {
-                        if (!(r instanceof PouringEmiRecipe pouring))
-                            return false;
-                        if (recipe.getFluidInput() == null)
-                            return false;
-                        return pouring.getFluidInput().getEmiStacks().getFirst().isEqual(emiFluidStack) && r.getInputs().getFirst().getEmiStacks().getFirst().isEqual(stack);
-                    }).map(recipe1 -> (PouringEmiRecipe) recipe1).findFirst();
-                    if (potentialPouring.isPresent()) {
-                        int consumed = (int) ((context.getScreen().getMenu().kegTank.getFluidCapacity() - context.getScreen().getMenu().kegTank.getAbstractedFluid().amount()) / potentialPouring.get().getFluidInput().getAmount());
-                        if (consumed < 1)
-                            continue;
-                        d.add(new DiscoveredItem(stack, ss, ss.getCount(), consumed * amount, (int) stack.getAmount()));
-                        discoveredQuickRef.add(stack);
-                    }
-                }
-            }
-        }
-
-        for (EmiStack inventoryStack : context.getInventory().inventory.values()) {
-            if (discoveredQuickRef.contains(inventoryStack))
-                continue;
-            ItemStack itemStack = inventoryStack.getItemStack();
-            AbstractedFluidTank tank = BrewinAndChewin.getHelper().getFluidContainerFromItem(itemStack);
-            if (tank == null)
-                continue;
-            long target = tank.getFluidCapacity();
-            if (tank.isEmpty() && tank.isFluidValid(fluidStack) && target > 0) {
-                int consumed = (int) ((context.getScreen().getMenu().kegTank.getFluidCapacity() - context.getScreen().getMenu().kegTank.getAbstractedFluid().amount()) / target);
+            if (tank.getAbstractedFluid().isEmpty() && tank.isFluidValid(0, fluidStack) && target > 0) {
+                int consumed = (int) (recipe instanceof PouringEmiRecipe ? context.getScreen().getMenu().kegTank.getAbstractedFluid().amount() : (context.getScreen().getMenu().kegTank.getFluidCapacity() - context.getScreen().getMenu().kegTank.getAbstractedFluid().amount()) / target);
                 if (consumed < 1)
                     continue;
                 d.add(new DiscoveredItem(inventoryStack, itemStack, itemStack.getCount(), consumed * amount, (int) ((context.getScreen().getMenu().kegTank.getFluidCapacity()) / target)));
@@ -287,7 +311,7 @@ public class BnCEMIRecipeFiller {
         return handleFluidInternally(handler, recipe, context, amount, KegEmiRecipeHandler.InputType.EMPTY, desired, d);
     }
 
-    private static boolean handleFluidInternally(KegEmiRecipeHandler handler, FermentingEmiRecipe recipe, EmiCraftContext<KegMenu> context, int amount, KegEmiRecipeHandler.InputType inputType,
+    private static boolean handleFluidInternally(KegEmiRecipeHandler handler, KegEmiRecipe recipe, EmiCraftContext<KegMenu> context, int amount, KegEmiRecipeHandler.InputType inputType,
                                                  Map<KegEmiRecipeHandler.InputType, List<ItemStack>> desired, List<DiscoveredItem> d) {
         List<DiscoveredItem> discovered = Lists.newArrayList();
 

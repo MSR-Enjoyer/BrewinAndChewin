@@ -19,6 +19,7 @@ import umpaz.brewinandchewin.common.network.clientbound.MakeNextPlayerChatTipsyC
 import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
 import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
 import umpaz.brewinandchewin.common.network.serverbound.EMIFillFermentingRecipeServerboundPacket;
+import umpaz.brewinandchewin.common.network.serverbound.EMIFillPouringRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.network.serverbound.JEITransferKegRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.registry.BnCBlockEntityTypes;
 import umpaz.brewinandchewin.common.registry.BnCBlocks;
@@ -117,9 +118,11 @@ public class BrewinAndChewinFabric implements ModInitializer {
 
         PayloadTypeRegistry.playC2S().register(JEITransferKegRecipeServerboundPacket.TYPE, JEITransferKegRecipeServerboundPacket.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(EMIFillFermentingRecipeServerboundPacket.TYPE, EMIFillFermentingRecipeServerboundPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(EMIFillPouringRecipeServerboundPacket.TYPE, EMIFillPouringRecipeServerboundPacket.STREAM_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(JEITransferKegRecipeServerboundPacket.TYPE, (payload, context) -> payload.handle(context.player()));
         ServerPlayNetworking.registerGlobalReceiver(EMIFillFermentingRecipeServerboundPacket.TYPE, (payload, context) -> payload.handle(context.player()));
+        ServerPlayNetworking.registerGlobalReceiver(EMIFillPouringRecipeServerboundPacket.TYPE, (payload, context) -> payload.handle(context.player()));
     }
 
     private static void registerCompostables() {

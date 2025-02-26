@@ -16,7 +16,7 @@ import umpaz.brewinandchewin.integration.emi.widget.BnCFluidWidget;
 import java.util.List;
 import java.util.Random;
 
-public class PouringEmiRecipe implements EmiRecipe, KegEmiRecipe {
+public class PouringEmiRecipe implements KegEmiRecipe {
     public static final ResourceLocation BACKGROUND = BrewinAndChewin.asResource("textures/gui/emi/pouring.png");
 
     private final ResourceLocation id;
