@@ -63,8 +63,12 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
         return true;
     }
 
-    public ItemStack getContainer(){
+    public ItemStack getContainer() {
         return this.container.orElse(BrewinAndChewin.getHelper().getCraftingRemainingItem(output));
+    }
+
+    public ItemStack getContainer(ItemStack stack) {
+        return this.container.orElse(BrewinAndChewin.getHelper().getCraftingRemainingItem(stack));
     }
 
     public Optional<FluidUnit> getRawUnit() {

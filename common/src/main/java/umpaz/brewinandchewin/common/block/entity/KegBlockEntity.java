@@ -397,7 +397,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                 fluidTank.fill(new AbstractedFluidStack(recipe.get().getFluid(slotIn).fluid(), recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getRawFluid().components(), recipe.get().getUnit(), null), false);
 
                 if (!isCreative) {
-                    ItemStack recipeItem = recipe.get().getContainer();
+                    ItemStack recipeItem = recipe.get().getContainer(slotIn);
                     int overflow = containerAmount;
                     while (overflow > 0 && !slotIn.isEmpty()) {
                         ItemStack newResult = recipeItem.copyWithCount(Math.min(Math.min(slotIn.getCount(), maxTakeAmount), overflow));
@@ -431,7 +431,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                 if (amount <= amountToDrain && amount > 0) {
                     fluidTank.fill(itemFluidContainer.drain(amountToDrain, FluidUnit.getLoaderUnit(), true), true);
                     if (!isCreative) {
-                        ItemStack recipeItem = fluidTank.getContainer();
+                        ItemStack recipeItem = BrewinAndChewin.getHelper().getCraftingRemainingItem(slotIn).isEmpty() ? itemFluidContainer.getContainer() : BrewinAndChewin.getHelper().getCraftingRemainingItem(slotIn);
                         int overflow = (int) (amount / fluidTank.getFluidCapacity());
                         while (overflow > 0 && !slotIn.isEmpty()) {
                             ItemStack newResult = recipeItem.copyWithCount(Math.min(Math.min(slotIn.getCount(), maxTakeAmount), overflow));
@@ -453,21 +453,9 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                 if (amount > 0) {
                     itemFluidContainer.fill(fluidTank.drain(amountToDrain, FluidUnit.getLoaderUnit(), false), false);
                     if (amount <= amountToDrain) {
-                        if (!isCreative) {
-                            ItemStack recipeItem = itemFluidContainer.getContainer();
-                            int overflow = (int) (amount / fluidTank.getFluidCapacity());
-                            while (overflow > 0 && (!inGui || outputs.isEmpty()) && !slotIn.isEmpty()) {
-                                ItemStack newResult = recipeItem.copyWithCount(Math.min(Math.min(slotIn.getCount(), maxTakeAmount), overflow));
-                                outputs.add(newResult);
-                                overflow -= newResult.getCount();
-                                slotIn.shrink(newResult.getCount());
-                            }
-                        } else {
-                            outputs.add(slotIn);
-                        }
+                        outputs.add(slotIn);
                         setChanged();
                         inventoryChanged();
-
                     }
                 }
             }
