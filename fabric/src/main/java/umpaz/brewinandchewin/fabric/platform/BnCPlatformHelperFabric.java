@@ -66,6 +66,7 @@ import umpaz.brewinandchewin.platform.BnCPlatform;
 import umpaz.brewinandchewin.platform.BnCPlatformHelper;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class BnCPlatformHelperFabric implements BnCPlatformHelper {
@@ -125,12 +126,12 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     }
 
     @Override
-    public AbstractedItemHandler createKegInventory(int size, Consumer<Integer> onContentsChanged) {
+    public AbstractedItemHandler createKegInventory(int size, BiConsumer<AbstractedItemHandler, Integer> onContentsChanged) {
         return new KegItemHandlerFabric(size) {
             @Override
             protected void onContentsChanged(int slot) {
                 super.onContentsChanged(slot);
-                onContentsChanged.accept(slot);
+                onContentsChanged.accept(this, slot);
             }
         };
     }

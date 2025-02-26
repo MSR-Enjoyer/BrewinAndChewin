@@ -37,6 +37,7 @@ import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public interface BnCPlatformHelper {
@@ -62,7 +63,7 @@ public interface BnCPlatformHelper {
     BlockEntityType.BlockEntitySupplier<KegBlockEntity> supplyBlockEntity();
     MenuType<KegMenu> createMenuType(BnCMenuConstructor<KegMenu> constructor);
 
-    AbstractedItemHandler createKegInventory(int size, Consumer<Integer> onContentsChanged);
+    AbstractedItemHandler createKegInventory(int size, BiConsumer<AbstractedItemHandler, Integer> onContentsChanged);
 
     AbstractedFluidTank createKegTank(long capacity, Runnable onContentsChanged);
 
