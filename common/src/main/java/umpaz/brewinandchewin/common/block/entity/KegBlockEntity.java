@@ -224,11 +224,10 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
         if (recipe.getFluidIngredient().isEmpty()) { // if the recipe does not require a fluid
             return keg.fluidTank.isEmpty(); // make sure the fluid is empty
-        } else {
-            if (!recipe.getFluidIngredient().get().ingredient().matches(keg.fluidTank.getAbstractedFluid()))
-                return false; // make sure the fluid is the same
-            return keg.fluidTank.getAbstractedFluid().amount() % recipe.getFluidIngredient().get().amount() == 0; // make sure the fluid amount is a multiple of the recipe amount
         }
+        if (!recipe.getFluidIngredient().get().ingredient().matches(keg.fluidTank.getAbstractedFluid()))
+            return false; // make sure the fluid is the same
+        return keg.fluidTank.getAbstractedFluid().amount() % recipe.getFluidIngredient().get().amount() == 0; // make sure the fluid amount is a multiple of the recipe amount
     }
 
     public static void fermentingTick(Level level, BlockPos pos, BlockState state, KegBlockEntity keg) {
