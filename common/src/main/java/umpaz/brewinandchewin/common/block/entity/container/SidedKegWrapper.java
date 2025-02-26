@@ -52,7 +52,7 @@ public abstract class SidedKegWrapper implements AbstractedItemHandler {
         if (this.side != null && !this.side.equals(Direction.UP)) {
            return slot == 4 ? this.itemHandler.insertItem(slot, stack, simulate) : stack;
         }
-        return slot < 3 ? this.itemHandler.insertItem(slot, stack, simulate) : stack;
+        return slot < 4 ? this.itemHandler.insertItem(slot, stack, simulate) : stack;
     }
 
     @NotNull
