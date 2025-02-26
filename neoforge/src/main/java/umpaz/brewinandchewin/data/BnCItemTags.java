@@ -73,7 +73,7 @@ public class BnCItemTags extends ItemTagsProvider {
                 .add(BnCItems.VEGETABLE_OMELET)
                 .add(BnCItems.CHEESY_PASTA)
                 .add(BnCItems.CREAMY_ONION_SOUP)
-                .add(BnCItems.SCARLET_PIEROGIES)
+                .add(BnCItems.SCARLET_PIEROGI)
                 .add(BnCItems.HORROR_LASAGNA)
                 .add(BnCItems.PIZZA_SLICE)
                 .add(BnCItems.FIERY_FONDUE)

@@ -11,7 +11,6 @@ import umpaz.brewinandchewin.data.builder.BnCCookingPotRecipeBuilder;
 import vectorwing.farmersdelight.client.recipebook.CookingPotRecipeBookTab;
 import vectorwing.farmersdelight.common.registry.ModItems;
 import vectorwing.farmersdelight.common.tag.CommonTags;
-import vectorwing.farmersdelight.common.tag.ModTags;
 
 public class BnCCookingPotRecipes {
     public static final int FAST_COOKING = 100;      // 5 seconds
@@ -62,7 +61,7 @@ public class BnCCookingPotRecipes {
                 .setRecipeBookTab(CookingPotRecipeBookTab.MEALS)
                 .unlockedByItems("has_cheese", BnCItems.SCARLET_CHEESE_WEDGE)
                 .build(consumer);
-        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.SCARLET_PIEROGIES, 1, NORMAL_COOKING, MEDIUM_EXP, Items.BOWL)
+        BnCCookingPotRecipeBuilder.cookingPotRecipe(BnCItems.SCARLET_PIEROGI, 1, NORMAL_COOKING, MEDIUM_EXP, Items.BOWL)
                 .addIngredient(BnCItems.SCARLET_CHEESE_WEDGE)
                 .addIngredient(Tags.Items.CROPS_POTATO)
                 .addIngredient(CommonTags.FOODS_DOUGH)

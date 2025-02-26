@@ -63,7 +63,7 @@ public class BnCAdvancements implements NeoForgeAdvancementProvider.AdvancementG
             BnCItems.COCOA_FUDGE,
             BnCItems.VEGETABLE_OMELET,
             BnCItems.CHEESY_PASTA,
-            BnCItems.SCARLET_PIEROGIES,
+            BnCItems.SCARLET_PIEROGI,
             BnCItems.HORROR_LASAGNA,
             BnCItems.PIZZA_SLICE,
             BnCItems.FIERY_FONDUE,

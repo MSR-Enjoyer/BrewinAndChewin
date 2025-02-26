@@ -82,7 +82,7 @@ public class BnCItems {
     public static final Item CREAMY_ONION_SOUP = new ConsumableItem(new Item.Properties().stacksTo(16).food(BnCFoods.CREAMY_ONION_SOUP).craftRemainder(Items.BOWL), true);
     public static final Item CHEESY_PASTA = new ConsumableItem(new Item.Properties().stacksTo(16).food(BnCFoods.CHEESY_PASTA).craftRemainder(Items.BOWL), true);
     public static final Item HORROR_LASAGNA = new ConsumableItem(new Item.Properties().stacksTo(16).food(BnCFoods.HORROR_LASAGNA).craftRemainder(Items.BOWL), true);
-    public static final Item SCARLET_PIEROGIES = new ConsumableItem(new Item.Properties().stacksTo(16).food(BnCFoods.SCARLET_PIEROGIES).craftRemainder(Items.BOWL), true);
+    public static final Item SCARLET_PIEROGI = new ConsumableItem(new Item.Properties().stacksTo(16).food(BnCFoods.SCARLET_PIEROGI).craftRemainder(Items.BOWL), true);
 
     public static final Item FIERY_FONDUE_POT = new BlockItem(BnCBlocks.FIERY_FONDUE_POT, new Item.Properties().stacksTo(1));
     public static final Item FIERY_FONDUE = new ConsumableItem(new Item.Properties().stacksTo(16).food(BnCFoods.FIERY_FONDUE).craftRemainder(Items.BOWL), true);
@@ -143,7 +143,7 @@ public class BnCItems {
         registerWithTab("creamy_onion_soup", CREAMY_ONION_SOUP);
         registerWithTab("cheesy_pasta", CHEESY_PASTA);
         registerWithTab("horror_lasagna", HORROR_LASAGNA);
-        registerWithTab("scarlet_pierogies", SCARLET_PIEROGIES);
+        registerWithTab("scarlet_pierogi", SCARLET_PIEROGI);
 
         registerWithTab("fiery_fondue_pot", FIERY_FONDUE_POT);
         registerWithTab("fiery_fondue", FIERY_FONDUE);
