@@ -100,6 +100,10 @@ public class KegPouringRecipe implements Recipe<KegRecipeWrapper> {
         return this.fluid;
     }
 
+    public boolean hasSpecialFluid() {
+        return false;
+    }
+
     public boolean isStrict() {
         return strict;
     }

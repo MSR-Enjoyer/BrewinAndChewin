@@ -50,7 +50,7 @@ public class EMIPlugin implements EmiPlugin {
             }
         }
 
-        for (RecipeHolder<KegPouringRecipe> recipe : registry.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING)) {
+        for (RecipeHolder<KegPouringRecipe> recipe : registry.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().filter(pouringRecipe -> !pouringRecipe.value().hasSpecialFluid()).toList()) {
             AbstractedFluidStack stack = recipe.value().getRawFluid();
             registry.addRecipe(new PouringEmiRecipe(recipe.id(), EmiStack.of(stack.fluid(), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY, recipe.value().getUnit().convertToLoader(stack.amount())),
                     EmiStack.of(recipe.value().getContainer()), EmiStack.of(recipe.value().getOutput())));
