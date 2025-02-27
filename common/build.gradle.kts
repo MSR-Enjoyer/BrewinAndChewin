@@ -80,7 +80,7 @@ publishMods {
         tagName = "${Versions.MOD}+${Versions.MINECRAFT}"
         commitish = Properties.GITHUB_COMMITISH
 
-//        file.set(project(":neoforge").tasks.named<Jar>("jar").get().archiveFile)
-//        additionalFiles.setFrom(project(":fabric").tasks.named<Jar>("remapJar").get().archiveFile)
+//        file.set(project(":fabric").tasks.named<Jar>("remapJar").get().archiveFile)
+//        additionalFiles.setFrom(project(":neoforge").tasks.named<Jar>("jar").get().archiveFile)
     }
 }
