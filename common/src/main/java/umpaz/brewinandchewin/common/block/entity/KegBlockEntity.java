@@ -389,7 +389,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
                 changed = true;
             } else if (recipe.filter(KegPouringRecipe::canFill).isPresent() && // if the recipe can fill
                     (recipe.get().isStrict() && ItemStack.isSameItemSameComponents(resultItem, slotIn) || !recipe.get().isStrict() && ItemStack.isSameItem(slotIn, resultItem)) && // if result is same
-                    (fluidTank.isEmpty() || fluidTank.getAbstractedFluid().amount() < fluidTank.getFluidCapacity()) && // if the result can fit in the container
+                    (fluidTank.isEmpty() || fluidTank.getAbstractedFluid().matches(recipe.get().getFluid(slotIn)) && fluidTank.getAbstractedFluid().amount() < fluidTank.getFluidCapacity()) && // if the result can fit in the container
                     (!inGui || inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(recipe.get().getContainer(), inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
                 int containerAmount = (int) Mth.clamp(Math.min(slotIn.getCount(), fluidTank.getFluidCapacity() / recipe.get().getLoaderAmount()), 1, maxTakeAmount);
                 fluidTank.fill(new AbstractedFluidStack(recipe.get().getFluid(slotIn).fluid(), recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getRawFluid().components(), recipe.get().getUnit(), null), false);
@@ -423,7 +423,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         AbstractedFluidTank itemFluidContainer = BrewinAndChewin.getHelper().getFluidContainerFromItem(slotIn);
 
         if (itemFluidContainer != null && !slotIn.isEmpty()) {
-            if (fluidTank.getAbstractedFluid().matches(itemFluidContainer.getAbstractedFluid()) || fluidTank.getAbstractedFluid().isEmpty() &&
+            if ((fluidTank.getAbstractedFluid().matches(itemFluidContainer.getAbstractedFluid()) || fluidTank.getAbstractedFluid().isEmpty()) &&
                     (!inGui || inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || inventory.getStackInSlot(OUTPUT_SLOT).is(itemFluidContainer.getContainer().getItem())) &&
                     level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().anyMatch(pouringRecipe -> pouringRecipe.value().getFluid(slotIn).matches(fluidTank.getAbstractedFluid()))) {
                 long amountToDrain = fluidTank.getFluidCapacity() - fluidTank.getAbstractedFluid().amount();

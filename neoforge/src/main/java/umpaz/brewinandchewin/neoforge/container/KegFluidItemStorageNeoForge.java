@@ -63,7 +63,7 @@ public class KegFluidItemStorageNeoForge implements AbstractedFluidTank {
     }
 
     @Override
-    public boolean isFluidValid(AbstractedFluidStack stack) {
-        return storage.isFluidValid(0, new FluidStack(stack.fluid().builtInRegistryHolder(), (int)stack.unit().convertToLoader(stack.amount()), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY));
+    public boolean isFluidValid(int slot, AbstractedFluidStack stack) {
+        return storage.isFluidValid(slot, new FluidStack(stack.fluid().builtInRegistryHolder(), (int)stack.unit().convertToLoader(stack.amount()), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY));
     }
 }
