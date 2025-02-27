@@ -33,13 +33,13 @@ repositories {
 
 dependencies {
     // Depend on the Common project, for VanillaGradle and ModDevGradle.
-    compileOnly("house.greenhouse:bovines-and-buttercups:${bovines_version}+${minecraft_version}-common")
+    compileOnly "umpaz.brewinandchewin:BrewinAndChewin-common:${bnc_version}+${minecraft_version}"
 
     // Depend on the Fabric project, for Loom.
-    modImplementation("house.greenhouse:bovines-and-buttercups:${bovines_version}+${minecraft_version}-fabric")
-    
+    modImplementation "umpaz.brewinandchewin:BrewinAndChewin-fabric:${bnc_version}+${minecraft_version}"
+
     // Depend on the NeoForge project, for ModDevGradle or NeoGradle.
-    implementation("house.greenhouse:bovines-and-buttercups:${bovines_version}+${minecraft_version}-neoforge")
+    implementation "umpaz.brewinandchewin:BrewinAndChewin-neoforge:${bnc_version}+${minecraft_version}"
 }
 ```
 
@@ -58,12 +58,12 @@ repositories {
 
 dependencies {
     // Depend on the Common project, for VanillaGradle and ModDevGradle.
-    compileOnly("umpaz.brewinandchewin:brewinandchewin-common:${bovines_version}+${minecraft_version}-common")
+    compileOnly("umpaz.brewinandchewin:BrewinAndChewin-common:${bnc_version}+${minecraft_version}")
 
     // Depend on the Fabric project, for Loom.
-    modImplementation("umpaz.brewinandchewin:brewinandchewin-fabric:${bovines_version}+${minecraft_version}-fabric")
+    modImplementation("umpaz.brewinandchewin:BrewinAndChewin-fabric:${bnc_version}+${minecraft_version}")
 
     // Depend on the NeoForge project, for ModDevGradle or NeoGradle.
-    implementation("umpaz.brewinandchewin:brewinandchewin-neoforge:${bovines_version}+${minecraft_version}-neoforge")
+    implementation("umpaz.brewinandchewin:BrewinAndChewin-neoforge:${bnc_version}+${minecraft_version}")
 }
 ```
