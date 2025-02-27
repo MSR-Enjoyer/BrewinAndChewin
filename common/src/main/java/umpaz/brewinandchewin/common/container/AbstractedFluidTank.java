@@ -36,6 +36,6 @@ public interface AbstractedFluidTank {
         return isFluidValid(0, stack);
     }
     default boolean isFluidValid(int slot, AbstractedFluidStack stack) {
-        return true;
+        return false;
     }
 }

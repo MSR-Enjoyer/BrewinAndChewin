@@ -7,6 +7,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.fluids.capability.wrappers.FluidBucketWrapper;
 import umpaz.brewinandchewin.common.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.FluidUnit;
@@ -64,6 +65,9 @@ public class KegFluidItemStorageNeoForge implements AbstractedFluidTank {
 
     @Override
     public boolean isFluidValid(int slot, AbstractedFluidStack stack) {
-        return storage.isFluidValid(slot, new FluidStack(stack.fluid().builtInRegistryHolder(), (int)stack.unit().convertToLoader(stack.amount()), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY));
+        // Why this logic isn't in isFluidValid is beyond me.
+        if (storage instanceof FluidBucketWrapper bucketWrapper)
+            return bucketWrapper.canFillFluidType((FluidStack) stack.loaderSpecific());
+        return storage.isFluidValid(slot, (FluidStack) stack.loaderSpecific());
     }
 }
