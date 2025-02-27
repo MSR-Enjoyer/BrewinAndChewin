@@ -68,19 +68,20 @@ artifacts {
     add("commonTestResources", sourceSets["test"].resources.sourceDirectories.singleFile)
 }
 
-publishMods {
-    changelog = rootProject.file("CHANGELOG.md").readText()
-    displayName = "v${Versions.MOD} (Minecraft ${Versions.MINECRAFT})"
-    version = "${Versions.MOD}+${Versions.MINECRAFT}"
-    type = STABLE
-
-    github {
-        accessToken = providers.environmentVariable("GITHUB_TOKEN")
-        repository = Properties.GITHUB_REPO
-        tagName = "${Versions.MOD}+${Versions.MINECRAFT}"
-        commitish = Properties.GITHUB_COMMITISH
-
-//        file.set(project(":fabric").tasks.named<Jar>("remapJar").get().archiveFile)
-//        additionalFiles.setFrom(project(":neoforge").tasks.named<Jar>("jar").get().archiveFile)
-    }
-}
+//publishMods {
+//    changelog = rootProject.file("CHANGELOG.md").readText()
+//    displayName = "v${Versions.MOD} (Minecraft ${Versions.MINECRAFT})"
+//    version = "${Versions.MOD}+${Versions.MINECRAFT}"
+//    type = STABLE
+//
+//
+//    github {
+//        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+//        repository = Properties.GITHUB_REPO
+//        tagName = "${Versions.MOD}+${Versions.MINECRAFT}"
+//        commitish = Properties.GITHUB_COMMITISH
+//
+////        file.set(project(":fabric").tasks.named<Jar>("remapJar").get().archiveFile)
+////        additionalFiles.setFrom(project(":neoforge").tasks.named<Jar>("jar").get().archiveFile)
+//    }
+//}
