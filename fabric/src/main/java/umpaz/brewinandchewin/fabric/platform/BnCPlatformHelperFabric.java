@@ -265,6 +265,12 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     }
 
     @Override
+    public Object copyLoaderFluidStack(Object fluidStack) {
+        AmountedFluidVariant variant = (AmountedFluidVariant) fluidStack;
+        return new AmountedFluidVariant(variant.variant(), variant.amount(), variant.fluidUnit());
+    }
+
+    @Override
     public AbstractedFluidTank getFluidContainerFromItem(ItemStack stack) {
         if (FluidStorage.ITEM.find(stack, ContainerItemContext.withConstant(stack)) == null)
             return null;

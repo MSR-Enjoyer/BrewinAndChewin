@@ -259,6 +259,11 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     }
 
     @Override
+    public Object copyLoaderFluidStack(Object fluidStack) {
+        return ((FluidStack)fluidStack).copy();
+    }
+
+    @Override
     public AbstractedFluidTank getFluidContainerFromItem(ItemStack stack) {
         if (Capabilities.FluidHandler.ITEM.getCapability(stack, null) == null)
             return null;
