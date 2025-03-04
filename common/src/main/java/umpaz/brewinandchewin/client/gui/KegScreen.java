@@ -121,7 +121,11 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
             Component containerComponent = (BnCTextUtils.getTranslation("container.keg.served_in", FLUID_CONTAINER_COMPONENTS.computeIfAbsent(menu.kegTank.getAbstractedFluid().fluid(), fluid -> {
                 MutableComponent component = MutableComponent.create(PlainTextContents.EMPTY).withStyle(ChatFormatting.GRAY);
                 int amountAdded = 0;
-                for (KegPouringRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).filter(pouringRecipe -> pouringRecipe.getRawFluid().matches(menu.kegTank.getAbstractedFluid())).sorted(Comparator.comparing(recipe -> recipe.getContainer().getItem().getDescription().getString())).toList()) {
+                for (KegPouringRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).filter(pouringRecipe -> {
+                    if (pouringRecipe.isStrict())
+                        return pouringRecipe.getRawFluid().matches(menu.kegTank.getAbstractedFluid());
+                    return pouringRecipe.getRawFluid().fluid().isSame(menu.kegTank.getAbstractedFluid().fluid());
+                }).sorted(Comparator.comparing(recipe -> recipe.getContainer().getItem().getDescription().getString())).toList()) {
                     if (amountAdded > 0)
                         component.append(", ");
                     component.append(recipe.getContainer().getItem().getDescription().plainCopy().withStyle(ChatFormatting.GRAY));

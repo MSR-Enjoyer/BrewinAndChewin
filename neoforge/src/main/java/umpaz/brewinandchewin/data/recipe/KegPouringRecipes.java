@@ -93,14 +93,5 @@ public class KegPouringRecipes {
                 .setFluidUnit(FluidUnit.MILLIBUCKET)
                 .withContainer(Items.HONEYCOMB)
                 .build(consumer);
-
-        // TODO: Add back when Create updates.
-        // Create Compat
-//        CreatePotionPouringRecipeBuilder.createPotionPouringRecipe(Items.GLASS_BOTTLE, 250)
-//                .build(consumer, new ResourceLocation(BrewinAndChewinNeoForge.MODID, "pouring/create/potion"));
-//        KegPouringRecipeBuilder.kegPouringRecipe(AllFluids.TEA.getSource(), 250, AllItems.BUILDERS_TEA)
-//                .withContainer(Items.GLASS_BOTTLE)
-//                .withCondition(new ModLoadedCondition("create"))
-//                .build(consumer, new ResourceLocation(BrewinAndChewinNeoForge.MODID, "pouring/create/builders_tea"));
     }
 }

@@ -14,7 +14,6 @@ import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -88,11 +87,15 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
     @Override
     public void sendClientbound(ServerPlayer player, CustomPacketPayload payload) {
+        if (player.level().isClientSide)
+            return;
         ServerPlayNetworking.send(player, payload);
     }
 
     @Override
     public void sendClientboundTracking(Entity tracked, CustomPacketPayload payload) {
+        if (tracked.level().isClientSide)
+            return;
         for (ServerPlayer other : PlayerLookup.tracking(tracked))
             ServerPlayNetworking.send(other, payload);
 
@@ -290,5 +293,10 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     @Override
     public Fluid getFlowingMilkFluid() {
         return BnCFluidsImpl.FLOWING_MILK;
+    }
+
+    @Override
+    public Fluid getCreatePotionFluid() {
+        throw new UnsupportedOperationException("BnC does not currently have the Create Fabric build artifacts. If you see this after Create Fabric's release, either update if a version is available or report this as a bug.");
     }
 }

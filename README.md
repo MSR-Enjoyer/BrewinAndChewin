@@ -39,7 +39,7 @@ dependencies {
     modImplementation "umpaz.brewinandchewin:BrewinAndChewin-fabric:${bnc_version}+${minecraft_version}"
 
     // Depend on the NeoForge project, for ModDevGradle or NeoGradle.
-    implementation "umpaz.brewinandchewin:BrewinAndChewin-neoforge:${bnc_version}+${minecraft_version}"
+    implementation "umpaz.brewinandchewin:BrewinAndChewin-neoforge:${bnc_version}+${minecraft_version}" { isTransitive = false }
 }
 ```
 
@@ -64,6 +64,8 @@ dependencies {
     modImplementation("umpaz.brewinandchewin:BrewinAndChewin-fabric:${bnc_version}+${minecraft_version}")
 
     // Depend on the NeoForge project, for ModDevGradle or NeoGradle.
-    implementation("umpaz.brewinandchewin:BrewinAndChewin-neoforge:${bnc_version}+${minecraft_version}")
+    implementation("umpaz.brewinandchewin:BrewinAndChewin-neoforge:${bnc_version}+${minecraft_version}") { transitive false }
+    implementation("house.greenhouse:greenhouseconfig:${Versions.GREENHOUSE_CONFIG}-neoforge")
+    implementation("house.greenhouse:greenhouseconfig_toml:${Versions.GREENHOUSE_CONFIG_TOML}")
 }
 ```

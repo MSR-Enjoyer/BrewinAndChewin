@@ -27,17 +27,5 @@
   "#brewinandchewin:red_rum": "brewinandchewin:red_rum",
   "#brewinandchewin:withering_dross": "brewinandchewin:withering_dross",
   "#brewinandchewin:flaxen_cheese": "brewinandchewin:unripe_flaxen_cheese_wheel",
-  "#brewinandchewin:scarlet_cheese": "brewinandchewin:unripe_scarlet_cheese_wheel",
-  "#create:potion": {
-    "base": "minecraft:potion",
-    "remaps": {
-      "from": "minecraft:potion_contents",
-      "to": "minecraft:potion_contents"
-    },
-    "optional": true
-  },
-  "create:tea": {
-    "id": "create:builders_tea",
-    "optional": true
-  }
+  "#brewinandchewin:scarlet_cheese": "brewinandchewin:unripe_scarlet_cheese_wheel"
 }

@@ -2,7 +2,6 @@ package umpaz.brewinandchewin.platform;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -16,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -71,7 +71,7 @@ public interface BnCPlatformHelper {
         return createKegSlot(inventory, slot, x, y, true, null);
     }
     default Slot createKegContainerSlot(AbstractedItemHandler inventory, int slot, int x, int y) {
-        return createKegSlot(inventory, slot, x, y, true, Pair.of(TextureAtlas.LOCATION_BLOCKS, KegMenu.EMPTY_CONTAINER_SLOT_TANKARD));
+        return createKegSlot(inventory, slot, x, y, true, Pair.of(InventoryMenu.BLOCK_ATLAS, KegMenu.EMPTY_CONTAINER_SLOT_TANKARD));
     }
     default Slot createKegResultSlot(AbstractedItemHandler inventory, int slot, int x, int y) {
         return createKegSlot(inventory, slot, x, y, false, null);
@@ -119,4 +119,6 @@ public interface BnCPlatformHelper {
 
     Fluid getMilkFluid();
     Fluid getFlowingMilkFluid();
+
+    Fluid getCreatePotionFluid();
 }

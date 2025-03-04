@@ -1,7 +1,7 @@
 package umpaz.brewinandchewin.gradle
 
 object Versions {
-    const val MOD = "4.0.1"
+    const val MOD = "4.0.2"
 
     const val MINECRAFT = "1.21.1"
     const val PARCHMENT_MINECRAFT = "1.21.1"
@@ -15,7 +15,7 @@ object Versions {
     const val FABRIC_MINECRAFT_RANGE = "1.21.1"
     const val FABRIC_ASM = "v2.3"
 
-    const val NEOFORGE = "21.1.115"
+    const val NEOFORGE = "21.1.128"
     const val NEOFORGE_LOADER_RANGE = "[4,)"
     const val NEOFORGE_MINECRAFT_RANGE = "[1.21,1.21.2)"
 
@@ -37,6 +37,13 @@ object Versions {
 
     const val FABRIC_MIXIN = "0.15.5+mixin.0.8.7"
     const val MIXIN_EXTRAS = "0.4.1"
+
+    const val CREATE = "6.0.1-18"
+    const val FLYWHEEL = "1.0.1-11"
+    const val PONDER = "1.0.43"
+    const val REGISTRATE = "MC1.21-1.3.0+63"
+
+    const val CREATE_FABRIC = "6.0.0.0+mc1.20.1-build.1649"
 
     const val JAVA = 21
 }

@@ -7,6 +7,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapLike;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
@@ -35,7 +36,7 @@ public record FluidItemComponentRemapper(ItemStack baseItem,
     public ItemStack convert(HolderLookup.Provider lookup, AbstractedFluidStack fluid) throws IllegalStateException {
         ItemStack stack = baseItem.copy();
 
-        if (!fluid.components().isEmpty())
+        if (fluid.components().isEmpty())
             return stack;
 
         RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, lookup);
@@ -54,6 +55,19 @@ public record FluidItemComponentRemapper(ItemStack baseItem,
 
         for (var entry : map.entrySet()) {
             Tag current;
+            if (entry.getValue().getSecond().isEmpty()) {
+                current = itemTag;
+                if (current instanceof CompoundTag tag) {
+                    var id = BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(entry.getValue().getFirst());
+                    if (id == null)
+                        // TODO: PUt proper error handling here.
+                        continue;
+                    var innerFluidTag = fluidTag.get(id.toString());
+                    if (innerFluidTag == null)
+                        continue;
+                    tag.put(id.toString(), innerFluidTag);
+                }
+            }
             for (int i = 0; i < entry.getValue().getSecond().size(); ++i) {
                 current = itemTag.copy();
 
@@ -68,13 +82,13 @@ public record FluidItemComponentRemapper(ItemStack baseItem,
                                 if (current instanceof ListTag listTag) {
                                     listTag.set(key.index(), newElement);
                                 } else {
-                                    throw new RuntimeException("Unable to map tag " + String.join(".", fluidKeys.stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", itemKeys.stream().map(TagReference::key).toList()) + " is not a list tag.");
+                                    BrewinAndChewin.LOG.error("Unable to map tag {}. Tag {} is not a list tag.", String.join(".", fluidKeys.stream().map(TagReference::key).toList()), String.join(".", itemKeys.stream().map(TagReference::key).toList()));
                                 }
                             } else {
                                 if (current instanceof CompoundTag compoundTag) {
                                     compoundTag.put(key.key(), newElement);
                                 } else {
-                                    throw new RuntimeException("Unable to map tag " + String.join(".", fluidKeys.stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", itemKeys.stream().map(TagReference::key).toList()) + " is not a compound tag.");
+                                    BrewinAndChewin.LOG.error("Unable to map tag {}. Tag {} is not a compound tag.", String.join(".", fluidKeys.stream().map(TagReference::key).toList()), String.join(".", itemKeys.stream().map(TagReference::key).toList()));
                                 }
                             }
                             break;
@@ -84,20 +98,20 @@ public record FluidItemComponentRemapper(ItemStack baseItem,
                                 if (listTag.size() < key.index()) {
                                     current = listTag.get(key.index());
                                 } else {
-                                    throw new RuntimeException("Unable to find tag " + String.join(".", itemKeys.stream().map(TagReference::key).toList()) + " in output json.");
+                                    BrewinAndChewin.LOG.error("Unable to find tag {} in output json.", String.join(".", itemKeys.stream().map(TagReference::key).toList()));
                                 }
                             } else {
-                                throw new RuntimeException("Unable to map tag " + String.join(".", fluidKeys.stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", itemKeys.subList(0, i).stream().map(TagReference::key).toList()) + " is not a list tag.");
+                                BrewinAndChewin.LOG.error("Unable to map tag {}. Tag {} is not a list tag.", String.join(".", fluidKeys.stream().map(TagReference::key).toList()), String.join(".", itemKeys.subList(0, i).stream().map(TagReference::key).toList()));
                             }
                         else {
                             if (current instanceof CompoundTag compoundTag) {
                                 if (compoundTag.contains(key.key())) {
                                     current = compoundTag.get(key.key());
                                 } else {
-                                    throw new RuntimeException("Unable to find tag " + String.join(".", itemKeys.stream().map(TagReference::key).toList()) + " in output json.");
+                                    BrewinAndChewin.LOG.error("Unable to find tag {} in output json.", String.join(".", itemKeys.stream().map(TagReference::key).toList()));
                                 }
                             } else {
-                                throw new RuntimeException("Unable to map tag " + String.join(".", fluidKeys.stream().map(TagReference::key).toList()) + ". Tag " + String.join(".", String.join(".", itemKeys.subList(0, i).stream().map(TagReference::key).toList())) + " is not a compound tag.");
+                                BrewinAndChewin.LOG.error("Unable to map tag {}. Tag {} is not a compound tag.", String.join(".", fluidKeys.stream().map(TagReference::key).toList()), String.join(".", String.join(".", itemKeys.subList(0, i).stream().map(TagReference::key).toList())));
                             }
                         }
                     }
@@ -197,6 +211,8 @@ public record FluidItemComponentRemapper(ItemStack baseItem,
                     else
                         BrewinAndChewin.LOG.error("Failed to decode remap value within fluid to item remapping: {}", dataResult.error().get().message());
                 }
+            } else {
+
             }
 
             return DataResult.success(Pair.of(Pair.of(componentType, references), input));

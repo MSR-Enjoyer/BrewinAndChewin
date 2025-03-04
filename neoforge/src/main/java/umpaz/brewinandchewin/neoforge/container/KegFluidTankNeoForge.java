@@ -28,13 +28,11 @@ public class KegFluidTankNeoForge extends FluidTank implements AbstractedFluidTa
     @Override
     public void setAbstractedFluid(AbstractedFluidStack stack) {
         setFluid(unwrapFluid(stack));
-        onContentsChanged();
     }
 
     @Override
     public AbstractedFluidStack fill(AbstractedFluidStack fluidStack, boolean simulate) {
         fill(unwrapFluid(fluidStack), simulate ? FluidAction.SIMULATE : FluidAction.EXECUTE);
-        onContentsChanged();
         return getAbstractedFluid();
     }
 
@@ -42,7 +40,6 @@ public class KegFluidTankNeoForge extends FluidTank implements AbstractedFluidTa
     public AbstractedFluidStack drain(int slot, long maxDrain, FluidUnit unit, boolean simulate) {
         int newAmount = (int) unit.convertToLoader(maxDrain);
         FluidStack fluid = drain(newAmount, simulate ? FluidAction.SIMULATE : FluidAction.EXECUTE);
-        onContentsChanged();
         return new AbstractedFluidStack(fluid.getFluid(), fluid.getAmount(), fluid.getComponents(), FluidUnit.MILLIBUCKET, fluid);
     }
 

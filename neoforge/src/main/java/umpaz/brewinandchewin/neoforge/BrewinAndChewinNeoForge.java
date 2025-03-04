@@ -30,6 +30,7 @@ import umpaz.brewinandchewin.neoforge.registry.BnCAttachments;
 import umpaz.brewinandchewin.neoforge.registry.BnCFluidTypes;
 import umpaz.brewinandchewin.neoforge.registry.BnCLootModifiers;
 import umpaz.brewinandchewin.neoforge.platform.BnCPlatformHelperNeoForge;
+import umpaz.brewinandchewin.neoforge.registry.BnCRecipeSerializersNeoForge;
 
 @Mod(BrewinAndChewin.MODID)
 public class BrewinAndChewinNeoForge {
@@ -49,23 +50,24 @@ public class BrewinAndChewinNeoForge {
 
         @SubscribeEvent
         public static void registerContent(RegisterEvent event) {
-            registerMethod(event, NeoForgeRegistries.Keys.ATTACHMENT_TYPES, BnCAttachments::registerAll);
-            registerMethod(event, Registries.BLOCK, BnCBlocks::registerAll);
-            registerMethod(event, Registries.BLOCK_ENTITY_TYPE, BnCBlockEntityTypes::registerAll);
-            registerMethod(event, Registries.CREATIVE_MODE_TAB, BnCCreativeTabs::registerAll);
-            registerMethod(event, Registries.FLUID, BnCFluids::registerAll);
-            registerMethod(event, NeoForgeRegistries.Keys.FLUID_TYPES, BnCFluidTypes::registerAll);
+            register(event, NeoForgeRegistries.Keys.ATTACHMENT_TYPES, BnCAttachments::registerAll);
+            register(event, Registries.BLOCK, BnCBlocks::registerAll);
+            register(event, Registries.BLOCK_ENTITY_TYPE, BnCBlockEntityTypes::registerAll);
+            register(event, Registries.CREATIVE_MODE_TAB, BnCCreativeTabs::registerAll);
+            register(event, Registries.FLUID, BnCFluids::registerAll);
+            register(event, NeoForgeRegistries.Keys.FLUID_TYPES, BnCFluidTypes::registerAll);
 
-            registerMethod(event, Registries.ITEM, BnCEffects::registerAll); // Moved up to item.
-            registerMethod(event, Registries.ITEM, BnCItems::registerAll);
+            register(event, Registries.ITEM, BnCEffects::registerAll); // Moved up to item.
+            register(event, Registries.ITEM, BnCItems::registerAll);
 
-            registerMethod(event, Registries.LOOT_CONDITION_TYPE, BnCLootConditions::registerAll);
-            registerMethod(event, Registries.LOOT_FUNCTION_TYPE, BnCLootFunctions::registerAll);
-            registerMethod(event, NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, BnCLootModifiers::registerAll);
-            registerMethod(event, Registries.MENU, BnCMenuTypes::registerAll);
-            registerMethod(event, Registries.PARTICLE_TYPE, BnCParticleTypes::registerAll);
-            registerMethod(event, Registries.RECIPE_TYPE, BnCRecipeTypes::registerAll);
-            registerMethod(event, Registries.RECIPE_SERIALIZER, BnCRecipeSerializers::registerAll);
+            register(event, Registries.LOOT_CONDITION_TYPE, BnCLootConditions::registerAll);
+            register(event, Registries.LOOT_FUNCTION_TYPE, BnCLootFunctions::registerAll);
+            register(event, NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, BnCLootModifiers::registerAll);
+            register(event, Registries.MENU, BnCMenuTypes::registerAll);
+            register(event, Registries.PARTICLE_TYPE, BnCParticleTypes::registerAll);
+            register(event, Registries.RECIPE_TYPE, BnCRecipeTypes::registerAll);
+            register(event, Registries.RECIPE_SERIALIZER, BnCRecipeSerializers::registerAll);
+            register(event, Registries.RECIPE_SERIALIZER, BnCRecipeSerializersNeoForge::registerAll);
         }
 
         @SubscribeEvent
@@ -80,7 +82,7 @@ public class BrewinAndChewinNeoForge {
                     .playToServer(EMIFillPouringRecipeServerboundPacket.TYPE, EMIFillPouringRecipeServerboundPacket.STREAM_CODEC, (payload, context) -> payload.handle((ServerPlayer) context.player()));
         }
 
-        public static <T> void registerMethod(RegisterEvent event, ResourceKey<Registry<T>> registry, Runnable registerMethod) {
+        public static <T> void register(RegisterEvent event, ResourceKey<Registry<T>> registry, Runnable registerMethod) {
             if (event.getRegistryKey() == registry)
                 registerMethod.run();
         }

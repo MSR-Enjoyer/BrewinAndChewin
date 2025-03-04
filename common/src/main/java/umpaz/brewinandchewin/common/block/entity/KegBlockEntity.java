@@ -81,6 +81,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     private int fermentTimeTotal;
     private Component customName;
 
+    private boolean currentlyOperating = false;
     public int kegTemperature;
     private boolean initialisedTemperature = false;
 
@@ -364,13 +365,14 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         boolean changed = false;
 
         List<ItemStack> outputs = new ArrayList<>();
+        currentlyOperating = true;
 
         if (recipe.isPresent() && (fluidTank.isEmpty() || fluidTank.getAbstractedFluid().fluid() == recipe.get().getRawFluid().fluid())) { // if the recipe is present and the fluid is empty or the same
             ItemStack resultItem = recipe.get().assemble(recipeWrapper, level.registryAccess());
-            if (ItemStack.isSameItem(slotIn, recipe.get().getContainer()) && // if container is same
+            if (ItemStack.isSameItem(slotIn, recipe.get().getContainer(resultItem)) && // if container is same
                     recipe.get().getRawFluid().amount() <= fluidTank.getAbstractedFluid().amount() && // the amount is LTE the fluid amount
                     (!inGui || inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(resultItem, inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this itemaccept this item
-                int containerAmount = (int) Mth.clamp(Math.min(slotIn.getCount(), maxTakeAmount), 1, fluidTank.getFluidCapacity() / recipe.get().getLoaderAmount());
+                int containerAmount = (int) Mth.clamp(Math.min(Math.min(slotIn.getCount(), resultItem.getMaxStackSize()), maxTakeAmount), 1, fluidTank.getFluidCapacity() / recipe.get().getLoaderAmount());
                 fluidTank.drain(recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getUnit(),false);
 
                 if (!isCreative) {
@@ -390,9 +392,9 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             } else if (recipe.filter(KegPouringRecipe::canFill).isPresent() && // if the recipe can fill
                     (recipe.get().isStrict() && ItemStack.isSameItemSameComponents(resultItem, slotIn) || !recipe.get().isStrict() && ItemStack.isSameItem(slotIn, resultItem)) && // if result is same
                     (fluidTank.isEmpty() || fluidTank.getAbstractedFluid().matches(recipe.get().getFluid(slotIn)) && fluidTank.getAbstractedFluid().amount() < fluidTank.getFluidCapacity()) && // if the result can fit in the container
-                    (!inGui || inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(recipe.get().getContainer(), inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
-                int containerAmount = (int) Mth.clamp(Math.min(slotIn.getCount(), fluidTank.getFluidCapacity() / recipe.get().getLoaderAmount()), 1, maxTakeAmount);
-                fluidTank.fill(new AbstractedFluidStack(recipe.get().getFluid(slotIn).fluid(), recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getRawFluid().components(), recipe.get().getUnit(), null), false);
+                    (!inGui || inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(recipe.get().getContainer(slotIn), inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this item
+                int containerAmount = (int) Mth.clamp(Math.min(Math.min(slotIn.getCount(), recipe.get().getContainer(slotIn).getMaxStackSize()), fluidTank.getFluidCapacity() / recipe.get().getLoaderAmount()), 1, maxTakeAmount);
+                fluidTank.fill(new AbstractedFluidStack(recipe.get().getFluid(slotIn).fluid(), recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getFluid(slotIn).components(), recipe.get().getUnit(), null), false);
 
                 if (!isCreative) {
                     ItemStack recipeItem = recipe.get().getContainer(slotIn);
@@ -416,8 +418,10 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             }
         }
 
-        if (!outputs.isEmpty() || recipe.isPresent())
+        if (!outputs.isEmpty() || recipe.isPresent()) {
+            currentlyOperating = false;
             return outputs;
+        }
 
         // TODO: Account for stacks with multiple tanks.
         AbstractedFluidTank itemFluidContainer = BrewinAndChewin.getHelper().getFluidContainerFromItem(slotIn);
@@ -462,6 +466,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
         }
 
+        currentlyOperating = false;
         return outputs;
     }
 
@@ -644,7 +649,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
     private AbstractedItemHandler createHandler() {
         return BrewinAndChewin.getHelper().createKegInventory(INVENTORY_SIZE, (handler, slot) -> {
-            if (slot == CONTAINER_SLOT) {
+            if ((slot == CONTAINER_SLOT || slot == OUTPUT_SLOT) && !currentlyOperating) {
                 List<ItemStack> out = KegBlockEntity.this.extractInGui(handler.getStackInSlot(CONTAINER_SLOT), handler.getSlotLimit(OUTPUT_SLOT));
                 if (!out.isEmpty()) {
                     handler.insertItem(OUTPUT_SLOT, out.get(0), false);
@@ -660,9 +665,11 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     private AbstractedFluidTank createFluidTank() {
         return BrewinAndChewin.getHelper().createKegTank(BnCConfiguration.COMMON_CONFIG.get().keg().localizedCapacity(), () -> {
             AbstractedItemHandler handler = KegBlockEntity.this.inventory;
-            List<ItemStack> out = KegBlockEntity.this.extractInGui(handler.getStackInSlot(CONTAINER_SLOT), handler.getSlotLimit(OUTPUT_SLOT));
-            if (!out.isEmpty())
-                handler.insertItem(OUTPUT_SLOT, out.get(0), false);
+            if (!currentlyOperating) {
+                List<ItemStack> out = KegBlockEntity.this.extractInGui(handler.getStackInSlot(CONTAINER_SLOT), handler.getSlotLimit(OUTPUT_SLOT));
+                if (!out.isEmpty())
+                    handler.insertItem(OUTPUT_SLOT, out.get(0), false);
+            }
             inventoryChanged();
             checkNewRecipe = true;
         });

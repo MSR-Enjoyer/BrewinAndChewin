@@ -76,6 +76,7 @@ dependencies {
         exclude(group = "net.fabricmc.fabric-api")
     }
 
+    implementation("com.simibubi.create:create-fabric-1.20.1:${Versions.CREATE}") { isTransitive = false}
 }
 
 loom {

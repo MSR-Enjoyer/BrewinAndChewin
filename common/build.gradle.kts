@@ -44,6 +44,8 @@ dependencies {
 
     compileOnly("squeek.appleskin:appleskin-neoforge:${Versions.APPLESKIN}")
 
+    compileOnly("com.simibubi.create:create-${Versions.MINECRAFT}:${Versions.CREATE}")
+    compileOnly("com.tterrag.registrate:Registrate:${Versions.REGISTRATE}")
 }
 
 configurations {

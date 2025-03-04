@@ -63,6 +63,9 @@ repositories {
         }
         filter { includeGroup("maven.modrinth") }
     }
+    maven("https://maven.createmod.net") // Create, Ponder, Flywheel
+    maven("https://mvn.devos.one/snapshots") // Registrate
+    maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // ForgeConfigAPIPort
 }
 
 dependencies {

@@ -1,6 +1,8 @@
-## Changes
-- Fluid Display Item JSONs can now accept fluid tags as a key.
+## Minor Changes
+- Reimplemented Create compat on NeoForge, now that it is updated.
+- Moved Create compat fluid_item_displays to `create.json` outside of `default_displays.json`.
+- Fixed special recipe fluids not being inserted into the keg correctly.
+- The 'functions' field within 'remaps' fields of Item Fluid Displays is now optional.
 
 ## Bugfixes
-- Fixed JEI compatibility having a missing texture.
-- Fixed JEI compatibility having incorrect inputs.
+- Fixed the inability to open kegs in a server setting.

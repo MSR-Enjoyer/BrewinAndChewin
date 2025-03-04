@@ -2,6 +2,7 @@ package umpaz.brewinandchewin.neoforge.platform;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.simibubi.create.AllFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentPatch;
@@ -86,11 +87,15 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
 
     @Override
     public void sendClientbound(ServerPlayer player, CustomPacketPayload payload) {
+        if (player.level().isClientSide)
+            return;
         PacketDistributor.sendToPlayer(player, payload);
     }
 
     @Override
     public void sendClientboundTracking(Entity tracked, CustomPacketPayload payload) {
+        if (tracked.level().isClientSide)
+            return;
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(tracked, payload);
     }
 
@@ -283,5 +288,10 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     @Override
     public Fluid getFlowingMilkFluid() {
         return NeoForgeMod.FLOWING_MILK.get();
+    }
+
+    @Override
+    public Fluid getCreatePotionFluid() {
+        return AllFluids.POTION.get().getSource();
     }
 }
