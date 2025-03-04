@@ -2,7 +2,6 @@ package umpaz.brewinandchewin.fabric.platform;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.simibubi.create.AllFluids;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.SlotItemHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.SlottedStackStorage;
@@ -298,6 +297,9 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
     @Override
     public Fluid getCreatePotionFluid() {
-        return AllFluids.POTION.getSource();
+        if (isModLoaded("create")) {
+            return BnCCreateDelegate.getPotionSource();
+        }
+        return null;
     }
 }

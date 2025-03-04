@@ -2,7 +2,6 @@ package umpaz.brewinandchewin.neoforge.platform;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.simibubi.create.AllFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentPatch;
@@ -46,10 +45,7 @@ import umpaz.brewinandchewin.common.container.AbstractedItemHandler;
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.common.block.entity.container.KegStackedContents;
 import umpaz.brewinandchewin.common.block.entity.container.SidedKegWrapper;
-import umpaz.brewinandchewin.common.utility.BnCMenuConstructor;
-import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
-import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
-import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
+import umpaz.brewinandchewin.common.utility.*;
 import umpaz.brewinandchewin.neoforge.container.KegFluidItemStorageNeoForge;
 import umpaz.brewinandchewin.neoforge.container.KegFluidTankNeoForge;
 import umpaz.brewinandchewin.neoforge.container.KegItemHandlerNeoForge;
@@ -57,16 +53,12 @@ import umpaz.brewinandchewin.neoforge.container.SidedKegWrapperNeoForge;
 import umpaz.brewinandchewin.neoforge.registry.BnCAttachments;
 import umpaz.brewinandchewin.neoforge.registry.BnCCreativeTabsImpl;
 import umpaz.brewinandchewin.neoforge.registry.BnCFluidsImpl;
-import umpaz.brewinandchewin.neoforge.utility.BnCNeoForgeCodecs;
-import umpaz.brewinandchewin.neoforge.utility.BnCNeoForgeStreamCodecs;
-import umpaz.brewinandchewin.neoforge.utility.KegCompatibleFluidIngredients;
-import umpaz.brewinandchewin.neoforge.utility.KegRecipeWrapperNeoForge;
+import umpaz.brewinandchewin.neoforge.utility.*;
 import umpaz.brewinandchewin.platform.BnCPlatformHelper;
 import umpaz.brewinandchewin.platform.BnCPlatform;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
 
@@ -292,6 +284,9 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
 
     @Override
     public Fluid getCreatePotionFluid() {
-        return AllFluids.POTION.getSource();
+        if (isModLoaded("create")) {
+            return BnCCreateDelegate.getPotionSource();
+        }
+        return null;
     }
 }
