@@ -30,7 +30,6 @@ import umpaz.brewinandchewin.neoforge.registry.BnCAttachments;
 import umpaz.brewinandchewin.neoforge.registry.BnCFluidTypes;
 import umpaz.brewinandchewin.neoforge.registry.BnCLootModifiers;
 import umpaz.brewinandchewin.neoforge.platform.BnCPlatformHelperNeoForge;
-import umpaz.brewinandchewin.neoforge.registry.BnCRecipeSerializersNeoForge;
 
 @Mod(BrewinAndChewin.MODID)
 public class BrewinAndChewinNeoForge {
@@ -67,7 +66,6 @@ public class BrewinAndChewinNeoForge {
             register(event, Registries.PARTICLE_TYPE, BnCParticleTypes::registerAll);
             register(event, Registries.RECIPE_TYPE, BnCRecipeTypes::registerAll);
             register(event, Registries.RECIPE_SERIALIZER, BnCRecipeSerializers::registerAll);
-            register(event, Registries.RECIPE_SERIALIZER, BnCRecipeSerializersNeoForge::registerAll);
         }
 
         @SubscribeEvent

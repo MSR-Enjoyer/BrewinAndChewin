@@ -1,9 +1,8 @@
-package umpaz.brewinandchewin.neoforge.crafting;
+package umpaz.brewinandchewin.common.crafting;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.simibubi.create.AllDataComponents;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.*;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -13,15 +12,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import umpaz.brewinandchewin.BrewinAndChewin;
-import umpaz.brewinandchewin.common.crafting.KegPouringRecipe;
+import umpaz.brewinandchewin.common.registry.BnCRecipeSerializers;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.FluidUnit;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
-import umpaz.brewinandchewin.neoforge.registry.BnCRecipeSerializersNeoForge;
 
 import java.util.Optional;
 
-// TODO: Move this into common when Fabric gets build artifacts.
 public class CreatePotionPouringRecipe extends KegPouringRecipe {
     public CreatePotionPouringRecipe(Optional<ItemStack> container, ItemStack result, long amount, Optional<FluidUnit> unit, boolean canFill) {
         super(new AbstractedFluidStack(BrewinAndChewin.getHelper().getCreatePotionFluid(), amount), container, result, unit, false, canFill);
@@ -55,7 +52,7 @@ public class CreatePotionPouringRecipe extends KegPouringRecipe {
     @Override
     @SuppressWarnings("DataFlowIssue")
     public RecipeSerializer<?> getSerializer() {
-        return BnCRecipeSerializersNeoForge.CREATE_POTION_POURING;
+        return BnCRecipeSerializers.CREATE_POTION_POURING;
     }
 
     public static class Serializer implements RecipeSerializer<CreatePotionPouringRecipe> {

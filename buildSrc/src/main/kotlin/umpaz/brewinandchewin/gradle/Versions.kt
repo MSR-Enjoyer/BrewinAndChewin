@@ -44,6 +44,7 @@ object Versions {
     const val REGISTRATE = "MC1.21-1.3.0+63"
 
     const val CREATE_FABRIC = "6.0.0.0+mc1.20.1-build.1649"
+    const val REGISTRATE_FABRIC = "1.3.77-MC1.21.1"
 
     const val JAVA = 21
 }

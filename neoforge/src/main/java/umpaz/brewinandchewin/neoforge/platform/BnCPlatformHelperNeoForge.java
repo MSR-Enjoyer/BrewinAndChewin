@@ -292,6 +292,6 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
 
     @Override
     public Fluid getCreatePotionFluid() {
-        return AllFluids.POTION.get().getSource();
+        return AllFluids.POTION.getSource();
     }
 }

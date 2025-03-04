@@ -76,7 +76,8 @@ dependencies {
         exclude(group = "net.fabricmc.fabric-api")
     }
 
-    implementation("com.simibubi.create:create-fabric-1.20.1:${Versions.CREATE}") { isTransitive = false}
+    modCompileOnly("com.simibubi.create:create-fabric-1.20.1:${Versions.CREATE_FABRIC}") { isTransitive = false}
+    modCompileOnly("com.tterrag.registrate_fabric:Registrate:${Versions.REGISTRATE_FABRIC}") { isTransitive = false}
 }
 
 loom {

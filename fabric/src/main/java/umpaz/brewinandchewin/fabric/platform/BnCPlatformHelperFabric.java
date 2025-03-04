@@ -2,6 +2,7 @@ package umpaz.brewinandchewin.fabric.platform;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.simibubi.create.AllFluids;
 import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.SlotItemHandler;
 import io.github.fabricators_of_create.porting_lib.transfer.item.SlottedStackStorage;
@@ -297,6 +298,6 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
     @Override
     public Fluid getCreatePotionFluid() {
-        throw new UnsupportedOperationException("BnC does not currently have the Create Fabric build artifacts. If you see this after Create Fabric's release, either update if a version is available or report this as a bug.");
+        return AllFluids.POTION.getSource();
     }
 }
