@@ -1,7 +1,7 @@
 package umpaz.brewinandchewin.gradle
 
 object Properties {
-    const val GROUP = "umpaz"
+    const val GROUP = "umpaz.brewinandchewin"
     const val MOD_NAME = "Brewin' And Chewin'"
     const val ARCHIVES_NAME = "BrewinAndChewin"
     const val MOD_ID = "brewinandchewin"

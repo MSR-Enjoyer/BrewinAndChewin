@@ -1,12 +1,12 @@
 package umpaz.brewinandchewin.gradle
 
 object Versions {
-    const val MOD = "4.0.0-rc.6"
+    const val MOD = "4.0.1"
 
     const val MINECRAFT = "1.21.1"
-    const val PARCHMENT_MINECRAFT = "1.21"
+    const val PARCHMENT_MINECRAFT = "1.21.1"
     const val NEOFORM = "$MINECRAFT-20240808.144430"
-    const val PARCHMENT = "2024.07.28"
+    const val PARCHMENT = "2024.11.17"
 
     const val FABRIC_API = "0.115.0+1.21.1"
     const val FABRIC_LOADER = "0.16.10"

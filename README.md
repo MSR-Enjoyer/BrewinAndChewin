@@ -20,3 +20,50 @@ Using a keg, you can brew or ferment many new foods, including liquors, cheese, 
 
 ### Discord
 - [Chef's Delights Discord](https://discord.gg/7PBaMYNtrg) for questions or whatever~
+
+### Kotlin DSL
+<details>
+
+```groovy
+repositories {
+    maven("https://repo.greenhouse.house/releases/") {
+        name = "Greenhouse Maven"
+    }
+}
+
+dependencies {
+    // Depend on the Common project, for VanillaGradle and ModDevGradle.
+    compileOnly "umpaz.brewinandchewin:BrewinAndChewin-common:${bnc_version}+${minecraft_version}"
+
+    // Depend on the Fabric project, for Loom.
+    modImplementation "umpaz.brewinandchewin:BrewinAndChewin-fabric:${bnc_version}+${minecraft_version}"
+
+    // Depend on the NeoForge project, for ModDevGradle or NeoGradle.
+    implementation "umpaz.brewinandchewin:BrewinAndChewin-neoforge:${bnc_version}+${minecraft_version}"
+}
+```
+
+</details>
+
+### Groovy DSL
+<details>
+
+```groovy
+repositories {
+    maven {
+        name = "Greenhouse Maven"
+        url = "https://repo.greenhouse.house/releases/"
+    }
+}
+
+dependencies {
+    // Depend on the Common project, for VanillaGradle and ModDevGradle.
+    compileOnly("umpaz.brewinandchewin:BrewinAndChewin-common:${bnc_version}+${minecraft_version}")
+
+    // Depend on the Fabric project, for Loom.
+    modImplementation("umpaz.brewinandchewin:BrewinAndChewin-fabric:${bnc_version}+${minecraft_version}")
+
+    // Depend on the NeoForge project, for ModDevGradle or NeoGradle.
+    implementation("umpaz.brewinandchewin:BrewinAndChewin-neoforge:${bnc_version}+${minecraft_version}")
+}
+```

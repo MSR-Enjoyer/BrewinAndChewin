@@ -110,6 +110,7 @@ public interface BnCPlatformHelper {
     void setTipsyHeartsAttachment(LivingEntity entity, @Nullable TipsyHeartsAttachment value);
 
     Object createLoaderFluidStack(AbstractedFluidStack abstracted);
+    Object copyLoaderFluidStack(Object fluidStack);
 
     @Nullable
     AbstractedFluidTank getFluidContainerFromItem(ItemStack stack);

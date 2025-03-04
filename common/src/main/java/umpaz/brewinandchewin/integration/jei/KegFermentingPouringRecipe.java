@@ -41,12 +41,6 @@ public class KegFermentingPouringRecipe extends KegFermentingRecipe {
         this.id = id;
     }
 
-    public long getPouringLoaderAmount() {
-        if (pouringUnit == null)
-            return -1L;
-        return pouringUnit.convertToLoader(pouringAmount);
-    }
-
     public ResourceLocation getId() {
         return id;
     }

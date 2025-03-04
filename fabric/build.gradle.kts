@@ -59,7 +59,7 @@ dependencies {
     }
 
     modCompileOnly("mezz.jei:jei-${Versions.MINECRAFT}-fabric-api:${Versions.JEI}")
-//    modLocalRuntime("mezz.jei:jei-${Versions.MINECRAFT}-fabric:${Versions.JEI}")
+    modLocalRuntime("mezz.jei:jei-${Versions.MINECRAFT}-fabric:${Versions.JEI}")
     modCompileOnly("dev.emi:emi-fabric:${Versions.EMI}:api")
     modLocalRuntime("dev.emi:emi-fabric:${Versions.EMI}")
 

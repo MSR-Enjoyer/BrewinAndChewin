@@ -75,6 +75,6 @@ public class AbstractedFluidStack {
         if (loaderSpecific == null)
             loaderSpecific = BrewinAndChewin.getHelper().createLoaderFluidStack(this);
 
-        return loaderSpecific;
+        return BrewinAndChewin.getHelper().copyLoaderFluidStack(loaderSpecific);
     }
 }
