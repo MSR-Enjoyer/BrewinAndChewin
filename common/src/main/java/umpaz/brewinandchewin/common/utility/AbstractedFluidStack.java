@@ -17,14 +17,14 @@ public class AbstractedFluidStack {
 
     private final Fluid fluid;
     private final long amount;
-    private final DataComponentMap components;
+    private final DataComponentPatch components;
     private final FluidUnit unit;
     private Object loaderSpecific;
 
     public AbstractedFluidStack(Fluid fluid, long amount, DataComponentMap components, FluidUnit unit, Object loaderSpecific) {
         this.fluid = fluid;
         this.amount = amount;
-        this.components = components;
+        this.components = components instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY;
         this.unit = unit;
         this.loaderSpecific = loaderSpecific;
     }
@@ -58,13 +58,11 @@ public class AbstractedFluidStack {
     }
 
     public DataComponentMap components() {
-        return components;
+        return PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, components);
     }
 
     public DataComponentPatch componentPatch() {
-        if (components instanceof PatchedDataComponentMap patched)
-            return patched.asPatch();
-        return DataComponentPatch.EMPTY;
+        return components;
     }
 
     public FluidUnit unit() {
