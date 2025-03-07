@@ -9,7 +9,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.neoforged.neoforge.common.util.Lazy;
-import org.apache.commons.lang3.NotImplementedException;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.recipebook.BnCRecipeBook;
 import umpaz.brewinandchewin.client.recipebook.FermentingBookCategory;
@@ -17,9 +16,7 @@ import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.registry.BnCItems;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = BrewinAndChewin.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class BnCRecipeBookNeoForge {

@@ -13,7 +13,6 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import org.apache.commons.lang3.NotImplementedException;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.gui.KegScreen;
 import umpaz.brewinandchewin.common.registry.BnCItems;
@@ -73,7 +72,7 @@ public class JEIPlugin implements IModPlugin {
                         @Override
                         // Not implemented because marked for removal.
                         public ITypedIngredient<Object> getTypedIngredient() {
-                            throw new NotImplementedException("getTypedIngredient is not implemented for KegScreen.");
+                            throw new UnsupportedOperationException("getTypedIngredient is not implemented for KegScreen.");
                         }
 
                         @Override
