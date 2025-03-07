@@ -41,7 +41,8 @@ object Versions {
     const val CREATE = "6.0.1-18"
     const val FLYWHEEL = "1.0.1-11"
     const val PONDER = "1.0.43"
-    const val REGISTRATE = "MC1.21-1.3.0+63"
+    const val REGISTRATE = "MC1.21-1.3.0+62"
+    const val CURIOS = "9.2.3+1.21.1"
 
     const val CREATE_FABRIC = "6.0.0.0+mc1.20.1-build.1649"
     const val REGISTRATE_FABRIC = "1.3.77-MC1.21.1"

@@ -49,6 +49,7 @@ neoForge {
             gameDirectory.set(file("runs/datagen"))
             programArguments.addAll(
                 "--mod", Properties.MOD_ID,
+                "--existing-mod", "farmersdelight",
                 "--output", file("../common/src/generated/resources").absolutePath,
                 "--all"
             )
@@ -61,6 +62,12 @@ neoForge {
             sourceSet(sourceSets["main"])
             sourceSet(sourceSets["test"])
         }
+    }
+}
+
+repositories {
+    maven("https://maven.theillusivec4.top/") {
+        name = "Curios"
     }
 }
 
@@ -79,12 +86,12 @@ dependencies {
 
     implementation("squeek.appleskin:appleskin-neoforge:${Versions.APPLESKIN}")
 
-    implementation("com.simibubi.create:create-${Versions.MINECRAFT}:${Versions.CREATE}:slim") { isTransitive = false}
-    implementation("net.createmod.ponder:Ponder-NeoForge-${Versions.MINECRAFT}:${Versions.PONDER}")
+    implementation("com.simibubi.create:create-${Versions.MINECRAFT}:${Versions.CREATE}") { isTransitive = false }
+    implementation("net.createmod.ponder:Ponder-NeoForge-${Versions.MINECRAFT}:${Versions.PONDER}") { isTransitive = false }
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${Versions.MINECRAFT}:${Versions.FLYWHEEL}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${Versions.MINECRAFT}:${Versions.FLYWHEEL}")
-    implementation("com.tterrag.registrate:Registrate:${Versions.REGISTRATE}")
-
+    implementation("com.tterrag.registrate:Registrate:${Versions.REGISTRATE}")  { isTransitive = false }
+    runtimeOnly("top.theillusivec4.curios:curios-neoforge:${Versions.CURIOS}")
 }
 
 tasks {
