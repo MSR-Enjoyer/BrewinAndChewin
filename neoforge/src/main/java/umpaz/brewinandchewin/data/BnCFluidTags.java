@@ -55,6 +55,11 @@ public class BnCFluidTags extends FluidTagsProvider {
                 .add(BnCFluids.DREAD_NOG, BnCFluids.FLOWING_DREAD_NOG);
         tag(BnCTags.Fluids.WITHERING_DROSS)
                 .add(BnCFluids.WITHERING_DROSS, BnCFluids.FLOWING_WITHERING_DROSS);
+
+        tag(BnCTags.Fluids.FLAXEN_CHEESE)
+                .add(BnCFluids.FLAXEN_CHEESE, BnCFluids.FLOWING_FLAXEN_CHEESE);
+        tag(BnCTags.Fluids.SCARLET_CHEESE)
+                .add(BnCFluids.SCARLET_CHEESE, BnCFluids.FLOWING_FLAXEN_CHEESE);
     }
 
     private void registerConventionalTags() {

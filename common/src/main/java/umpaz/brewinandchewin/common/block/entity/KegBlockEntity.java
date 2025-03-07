@@ -81,6 +81,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     private int fermentTimeTotal;
     private Component customName;
 
+    private boolean deferFluidExtraction = false;
     private boolean currentlyOperating = false;
     public int kegTemperature;
     private boolean initialisedTemperature = false;
@@ -236,6 +237,14 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
         keg.updateTemperature();
 
+        if (keg.deferFluidExtraction) {
+            keg.deferFluidExtraction = false;
+            List<ItemStack> out = keg.extractInGui(keg.inventory.getStackInSlot(CONTAINER_SLOT), keg.inventory.getSlotLimit(OUTPUT_SLOT));
+            if (!out.isEmpty())
+                keg.inventory.insertItem(OUTPUT_SLOT, out.getFirst(), false);
+        }
+
+
         if (keg.hasInput()) {
             Optional<RecipeHolder<KegFermentingRecipe>> recipe = keg.getMatchingRecipe(keg.recipeWrapper);
             if (recipe.isPresent()) {
@@ -321,6 +330,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
         fermentTime = 0;
         if (recipe.getResult().left().isPresent()) {
+            deferFluidExtraction = true;
             keg.fluidTank.setAbstractedFluid(recipe.getResult().left().get());
             if (!keg.level.isClientSide()) {
                 Vec3 center = keg.getBlockPos().getCenter();
@@ -337,11 +347,8 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
         for (int i = 0; i < OUTPUT_SLOT; ++i) {
             ItemStack slotStack = inventory.getStackInSlot(i);
-            if (!BrewinAndChewin.getHelper().getCraftingRemainingItem(slotStack).isEmpty()) {
+            if (!BrewinAndChewin.getHelper().getCraftingRemainingItem(slotStack).isEmpty())
                 ejectIngredientRemainder(BrewinAndChewin.getHelper().getCraftingRemainingItem(slotStack));
-            }
-            if (!slotStack.isEmpty())
-                slotStack.shrink(1);
         }
         return true;
     }
@@ -649,7 +656,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
     private AbstractedItemHandler createHandler() {
         return BrewinAndChewin.getHelper().createKegInventory(INVENTORY_SIZE, (handler, slot) -> {
-            if ((slot == CONTAINER_SLOT || slot == OUTPUT_SLOT) && !currentlyOperating) {
+            if (!getLevel().isClientSide() && (slot == CONTAINER_SLOT || slot == OUTPUT_SLOT) && !currentlyOperating) {
                 List<ItemStack> out = KegBlockEntity.this.extractInGui(handler.getStackInSlot(CONTAINER_SLOT), handler.getSlotLimit(OUTPUT_SLOT));
                 if (!out.isEmpty()) {
                     handler.insertItem(OUTPUT_SLOT, out.get(0), false);
@@ -665,7 +672,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     private AbstractedFluidTank createFluidTank() {
         return BrewinAndChewin.getHelper().createKegTank(BnCConfiguration.COMMON_CONFIG.get().keg().localizedCapacity(), () -> {
             AbstractedItemHandler handler = KegBlockEntity.this.inventory;
-            if (!currentlyOperating) {
+            if (!getLevel().isClientSide() && !currentlyOperating && !deferFluidExtraction) {
                 List<ItemStack> out = KegBlockEntity.this.extractInGui(handler.getStackInSlot(CONTAINER_SLOT), handler.getSlotLimit(OUTPUT_SLOT));
                 if (!out.isEmpty())
                     handler.insertItem(OUTPUT_SLOT, out.get(0), false);
