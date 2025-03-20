@@ -92,13 +92,12 @@ public class KegScreen extends AbstractContainerScreen<KegMenu> implements Recip
 
     @Override
     public void render(GuiGraphics gui, final int mouseX, final int mouseY, float partialTicks) {
-        this.renderBackground(gui, mouseX, mouseY, partialTicks);
         if (this.recipeBookComponent.isVisible() && this.widthTooNarrow) {
-            this.renderBg(gui, partialTicks, mouseX, mouseY);
+            this.renderBackground(gui, mouseX, mouseY, partialTicks);
             this.recipeBookComponent.render(gui, mouseX, mouseY, partialTicks);
         } else {
-            this.recipeBookComponent.render(gui, mouseX, mouseY, partialTicks);
             super.render(gui, mouseX, mouseY, partialTicks);
+            this.recipeBookComponent.render(gui, mouseX, mouseY, partialTicks);
             this.recipeBookComponent.renderGhostRecipe(gui, this.leftPos, this.topPos, false, partialTicks);
         }
         gui.blit(BACKGROUND_TEXTURE, this.leftPos + 119, this.topPos + 15, 176, 22, 27, 33);

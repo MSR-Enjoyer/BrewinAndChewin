@@ -6,6 +6,7 @@
 - Fixed the keg not removing items upon fermenting.
 - Fixed keg emptying fluids multiple to the capacity amount, rather than the amount of the fluid in the tank.
 - Fixed Tipsy chat scrambling applying to the wrong player on servers.
+- Fixed incorrect rendering of Keg recipe book.
 - [FABRIC] Fixed a classloading issue preventing the ItemLike (Mojmap) interface from having mixins applied.
     - This issue is explained at [MehVahdJukaar/FarmersDelightRefabricated#77](https://github.com/MehVahdJukaar/FarmersDelightRefabricated/issues/77)
 - [FABRIC] Fixed the keg not accepting items in cases.
