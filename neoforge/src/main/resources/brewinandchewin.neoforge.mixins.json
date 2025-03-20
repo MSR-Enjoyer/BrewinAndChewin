@@ -3,14 +3,14 @@
   "minVersion": "0.8",
   "package": "umpaz.brewinandchewin.neoforge.mixin",
   "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "PreventTaggedEffectRemovalMixin$HotCocoa",
+    "PreventTaggedEffectRemovalMixin$MilkBottle"
+  ],
   "client": [
     "client.TipsyMouseHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "client.PreventTaggedEffectRemovalMixin$HotCocoa",
-    "client.PreventTaggedEffectRemovalMixin$MilkBottle"
-  ]
+  }
 }

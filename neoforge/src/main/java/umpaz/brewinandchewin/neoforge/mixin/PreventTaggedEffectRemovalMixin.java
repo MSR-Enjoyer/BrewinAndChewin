@@ -1,4 +1,4 @@
-package umpaz.brewinandchewin.neoforge.mixin.client;
+package umpaz.brewinandchewin.neoforge.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
