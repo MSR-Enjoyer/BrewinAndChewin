@@ -25,7 +25,9 @@ public class PlayerListMixin implements ChatPlayerListAccess {
     public PlayerChatMessage brewinandchewin$sendOriginalChatMessageToClients(PlayerChatMessage message, @Local(argsOnly = true) ChatType.Bound boundChatType) {
         if (brewinandchewin$originalChatMessage != null) {
             server.logChatMessage(message.decoratedContent(), boundChatType, "Modified by Tipsy");
-            return message.withUnsignedContent(Component.literal(brewinandchewin$originalChatMessage));
+            PlayerChatMessage retValue = message.withUnsignedContent(Component.literal(brewinandchewin$originalChatMessage));
+            brewinandchewin$originalChatMessage = null;
+            return retValue;
         }
         return message;
     }

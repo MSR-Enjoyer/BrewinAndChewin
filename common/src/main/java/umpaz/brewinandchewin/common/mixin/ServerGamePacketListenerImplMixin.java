@@ -24,7 +24,8 @@ public abstract class ServerGamePacketListenerImplMixin {
         ServerPlayer sender = player.getServer().getPlayerList().getPlayer(message.sender());
         if (sender.hasEffect(BnCEffects.TIPSY) && sender.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble()) {
             ((ChatPlayerListAccess)player.getServer().getPlayerList()).brewinandchewin$setOriginalMessage(message.signedContent());
-            BrewinAndChewin.getHelper().sendClientbound(player, new MakeNextPlayerChatTipsyClientboundPacket(sender.getEffect(BnCEffects.TIPSY).getAmplifier()));
+            for (ServerPlayer otherPlayer : player.getServer().getPlayerList().getPlayers())
+                BrewinAndChewin.getHelper().sendClientbound(otherPlayer, new MakeNextPlayerChatTipsyClientboundPacket(sender.getEffect(BnCEffects.TIPSY).getAmplifier()));
             return BnCTextUtils.setupChatMessageServer(message, sender);
         }
         return message;

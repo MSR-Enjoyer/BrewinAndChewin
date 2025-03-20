@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import umpaz.brewinandchewin.BrewinAndChewin;
-import umpaz.brewinandchewin.client.recipebook.BnCRecipeBook;
+import umpaz.brewinandchewin.common.BnCRecipeBookTypes;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.common.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.container.AbstractedItemHandler;
@@ -221,7 +221,7 @@ public class KegMenu extends RecipeBookMenu<KegRecipeWrapper, KegFermentingRecip
 
     @Override
     public RecipeBookType getRecipeBookType() {
-        return BnCRecipeBook.FERMENTING.get();
+        return BnCRecipeBookTypes.FERMENTING;
     }
 
     @Override

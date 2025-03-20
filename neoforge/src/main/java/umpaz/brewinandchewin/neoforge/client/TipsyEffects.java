@@ -22,8 +22,9 @@ public class TipsyEffects {
 
     @SubscribeEvent
     public static void iCanHear(ClientChatReceivedEvent.Player event) {
-        if (BnCClientTextUtils.getTipsyMessage() != null)
-            event.setMessage(BnCClientTextUtils.getTipsyMessage());
+        Component chatMessage = BnCClientTextUtils.getTipsyMessage();
+        if (chatMessage != null)
+            event.setMessage(chatMessage);
         BnCClientTextUtils.clearTipsyMessage();
     }
 

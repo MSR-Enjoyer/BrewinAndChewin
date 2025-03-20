@@ -21,7 +21,7 @@
     "StackedContentsRecipePickerAccessor",
     "StoreLootParamsMixin$LootParamsBuilderMixin",
     "StoreLootParamsMixin$LootParamsMixin",
-    "client.ServerRecipeBookMixin"
+    "ServerRecipeBookMixin"
   ],
   "client": [
     "client.ChatListenerMixin",

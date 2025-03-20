@@ -9,7 +9,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import umpaz.brewinandchewin.BrewinAndChewin;
-import umpaz.brewinandchewin.client.recipebook.BnCRecipeBook;
+import umpaz.brewinandchewin.client.recipebook.BnCRecipeBookCategories;
+import umpaz.brewinandchewin.common.BnCRecipeBookTypes;
 
 public record SendRecipeBookValuesClientboundPacket(boolean open, boolean filtering) implements CustomPacketPayload {
     public static final ResourceLocation ID = BrewinAndChewin.asResource("send_recipe_book_values");
@@ -33,8 +34,8 @@ public record SendRecipeBookValuesClientboundPacket(boolean open, boolean filter
     public void handle() {
         Minecraft.getInstance().execute(() -> {
             ClientRecipeBook recipeBook = Minecraft.getInstance().player.getRecipeBook();
-            recipeBook.setOpen(BnCRecipeBook.FERMENTING.get(), open);
-            recipeBook.setOpen(BnCRecipeBook.FERMENTING.get(), filtering);
+            recipeBook.setOpen(BnCRecipeBookTypes.FERMENTING, open);
+            recipeBook.setOpen(BnCRecipeBookTypes.FERMENTING, filtering);
         });
     }
 }

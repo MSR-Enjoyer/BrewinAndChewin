@@ -11,9 +11,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import umpaz.brewinandchewin.client.recipebook.BnCRecipeBook;
-import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
-import vectorwing.farmersdelight.refabricated.FDRecipeBookTypes;
+import umpaz.brewinandchewin.client.recipebook.BnCRecipeBookCategories;
+import umpaz.brewinandchewin.common.BnCRecipeBookTypes;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,23 +30,23 @@ public class RecipeBookSettingsMixin {
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void brewinandchewin$modifyTagFields(CallbackInfo ci) {
         Map<RecipeBookType, Pair<String, String>> newMap = new HashMap<>(TAG_FIELDS);
-        newMap.put(BnCRecipeBook.FERMENTING.get(), Pair.of("isBrewinAndChewinFermentingGuiOpen", "isBrewinAndChewinFermentingFilteringCraftable"));
+        newMap.put(BnCRecipeBookTypes.FERMENTING, Pair.of("isBrewinAndChewinFermentingGuiOpen", "isBrewinAndChewinFermentingFilteringCraftable"));
         TAG_FIELDS = Map.copyOf(newMap);
     }
 
     @Inject(method = "<init>(Ljava/util/Map;)V", at = @At("TAIL"))
     private void brewinandchewin$defaultCookingRecipeBookTypeStates(CallbackInfo ci) {
-        if (!states.containsKey(BnCRecipeBook.FERMENTING.get()))
-            states.put(BnCRecipeBook.FERMENTING.get(), new RecipeBookSettings.TypeSettings(false, false));
+        if (!states.containsKey(BnCRecipeBookTypes.FERMENTING))
+            states.put(BnCRecipeBookTypes.FERMENTING, new RecipeBookSettings.TypeSettings(false, false));
     }
 
     @ModifyExpressionValue(method = "read(Lnet/minecraft/network/FriendlyByteBuf;)Lnet/minecraft/stats/RecipeBookSettings;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/RecipeBookType;values()[Lnet/minecraft/world/inventory/RecipeBookType;"))
     private static RecipeBookType[] brewinandchewin$modifyReadFDRecipeBookSettingsToVanilla(RecipeBookType[] original) {
-        return Arrays.stream(original).filter(recipeBookType -> recipeBookType != BnCRecipeBook.FERMENTING.get()).toArray(RecipeBookType[]::new);
+        return Arrays.stream(original).filter(recipeBookType -> recipeBookType != BnCRecipeBookTypes.FERMENTING).toArray(RecipeBookType[]::new);
     }
 
     @ModifyExpressionValue(method = "write(Lnet/minecraft/network/FriendlyByteBuf;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/RecipeBookType;values()[Lnet/minecraft/world/inventory/RecipeBookType;"))
     private RecipeBookType[] brewinandchewin$modifyWrittenFDRecipeBookSettingsToVanilla(RecipeBookType[] original) {
-        return Arrays.stream(original).filter(recipeBookType -> recipeBookType != BnCRecipeBook.FERMENTING.get()).toArray(RecipeBookType[]::new);
+        return Arrays.stream(original).filter(recipeBookType -> recipeBookType != BnCRecipeBookTypes.FERMENTING).toArray(RecipeBookType[]::new);
     }
 }

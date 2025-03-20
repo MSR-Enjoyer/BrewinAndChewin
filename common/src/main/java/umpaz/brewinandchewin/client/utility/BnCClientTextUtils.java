@@ -17,8 +17,8 @@ public class BnCClientTextUtils {
     private static Component nextTipsyMessage;
 
     public static void setupChatMessage(Component original, UUID sender) {
-        if (BnCConfiguration.CLIENT_CONFIG.get().scrambleChat() && tipsyMessageLevel > 0 ||
-                Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble()) {
+        if (BnCConfiguration.CLIENT_CONFIG.get().scrambleChat() && (tipsyMessageLevel > 0 ||
+                Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble())) {
             Player player = Minecraft.getInstance().level.getPlayerByUUID(sender);
             if (player != null) {
                 StringBuilder textBuilder = new StringBuilder(original.getString());
@@ -56,7 +56,6 @@ public class BnCClientTextUtils {
                     textBuilder.setCharAt(index, textBuilder.charAt(newIndex));
                     textBuilder.setCharAt(newIndex, temp);
                 }
-                tipsyMessageLevel = 0;
                 String text = textBuilder.toString();
                 if (!original.getString().equals(text))  {
                     nextTipsyMessage = Component.literal(textBuilder.toString());

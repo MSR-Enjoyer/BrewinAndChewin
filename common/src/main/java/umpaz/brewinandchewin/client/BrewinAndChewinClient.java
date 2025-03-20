@@ -1,6 +1,5 @@
 package umpaz.brewinandchewin.client;
 
-import net.minecraft.network.chat.Component;
 import umpaz.brewinandchewin.client.renderer.texture.BnCTextureModifiers;
 import umpaz.brewinandchewin.platform.client.BnCClientPlatformHelper;
 

@@ -10,8 +10,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.neoforged.neoforge.common.util.Lazy;
 import umpaz.brewinandchewin.BrewinAndChewin;
-import umpaz.brewinandchewin.client.recipebook.BnCRecipeBook;
+import umpaz.brewinandchewin.client.recipebook.BnCRecipeBookCategories;
 import umpaz.brewinandchewin.client.recipebook.FermentingBookCategory;
+import umpaz.brewinandchewin.common.BnCRecipeBookTypes;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.registry.BnCItems;
 import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
@@ -22,16 +23,16 @@ import java.util.List;
 public class BnCRecipeBookNeoForge {
     @SubscribeEvent
     public static void registerRecipeBooks(RegisterRecipeBookCategoriesEvent event) {
-        event.registerBookCategories(BnCRecipeBook.FERMENTING.get(), ImmutableList.of(BnCRecipeBook.FERMENTING_SEARCH.get(), BnCRecipeBook.FERMENTING_DRINKS.get(), BnCRecipeBook.FERMENTING_MEALS.get()));
-        event.registerAggregateCategory(BnCRecipeBook.FERMENTING_SEARCH.get(), ImmutableList.of(BnCRecipeBook.FERMENTING_DRINKS.get(), BnCRecipeBook.FERMENTING_MEALS.get()));
+        event.registerBookCategories(BnCRecipeBookTypes.FERMENTING, ImmutableList.of(BnCRecipeBookCategories.FERMENTING_SEARCH, BnCRecipeBookCategories.FERMENTING_DRINKS, BnCRecipeBookCategories.FERMENTING_MEALS));
+        event.registerAggregateCategory(BnCRecipeBookCategories.FERMENTING_SEARCH, ImmutableList.of(BnCRecipeBookCategories.FERMENTING_DRINKS, BnCRecipeBookCategories.FERMENTING_MEALS));
         event.registerRecipeCategoryFinder(BnCRecipeTypes.FERMENTING, recipe ->
         {
             if (recipe.value() instanceof KegFermentingRecipe fermentingRecipe) {
                 FermentingBookCategory tab = fermentingRecipe.getRecipeBookCategory();
                 if (tab != null) {
                     return switch (tab) {
-                        case MEALS -> BnCRecipeBook.FERMENTING_MEALS.get();
-                        case DRINKS -> BnCRecipeBook.FERMENTING_DRINKS.get();
+                        case MEALS -> BnCRecipeBookCategories.FERMENTING_MEALS;
+                        case DRINKS -> BnCRecipeBookCategories.FERMENTING_DRINKS;
                     };
                 }
             }

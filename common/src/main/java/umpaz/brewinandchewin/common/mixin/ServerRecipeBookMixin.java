@@ -1,4 +1,4 @@
-package umpaz.brewinandchewin.common.mixin.client;
+package umpaz.brewinandchewin.common.mixin;
 
 import net.minecraft.network.protocol.game.ClientboundRecipePacket;
 import net.minecraft.resources.ResourceLocation;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import umpaz.brewinandchewin.BrewinAndChewin;
-import umpaz.brewinandchewin.client.recipebook.BnCRecipeBook;
+import umpaz.brewinandchewin.common.BnCRecipeBookTypes;
 import umpaz.brewinandchewin.common.network.clientbound.SendRecipeBookValuesClientboundPacket;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
 @Mixin(ServerRecipeBook.class)
 public class ServerRecipeBookMixin extends RecipeBook {
     @Inject(method = "sendRecipes", at = @At("TAIL"))
-    private void brewinandchewin$sendCookingRecipeValues(ClientboundRecipePacket.State state, ServerPlayer player, List<ResourceLocation> recipes, CallbackInfo ci) {
-        BrewinAndChewin.getHelper().sendClientbound(player, new SendRecipeBookValuesClientboundPacket(getBookSettings().isOpen(BnCRecipeBook.FERMENTING.get()), getBookSettings().isFiltering(BnCRecipeBook.FERMENTING.get())));
+    private void brewinandchewin$sendFermentingRecipeValues(ClientboundRecipePacket.State state, ServerPlayer player, List<ResourceLocation> recipes, CallbackInfo ci) {
+        BrewinAndChewin.getHelper().sendClientbound(player, new SendRecipeBookValuesClientboundPacket(getBookSettings().isOpen(BnCRecipeBookTypes.FERMENTING), getBookSettings().isFiltering(BnCRecipeBookTypes.FERMENTING)));
     }
 }
