@@ -10,7 +10,6 @@ public interface AbstractedItemHandler {
     void setStackInSlot(int slot, ItemStack stack);
 
     ItemStack insertItem(int slot, ItemStack stack, boolean simulate);
-
     ItemStack extractItem(int slot, int amount, boolean simulate);
 
     boolean isItemValid(int slot, ItemStack stack);

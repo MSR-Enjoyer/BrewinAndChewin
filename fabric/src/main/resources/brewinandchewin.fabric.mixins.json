@@ -7,10 +7,14 @@
   "mixins": [
     "LivingEntityMixin",
     "PlayerMixin",
+    "PreventTaggedEffectRemovalMixin$HotCocoa",
+    "PreventTaggedEffectRemovalMixin$MilkBottle",
     "RecipeBookSettingsMixin",
     "client.GameRendererMixin"
   ],
   "client": [
+    "ClientRecipeBookMixin",
+    "RecipeBookCategoriesMixin",
     "client.ChatListenerMixin",
     "client.EntityRendererMixin",
     "client.GuiMixin",

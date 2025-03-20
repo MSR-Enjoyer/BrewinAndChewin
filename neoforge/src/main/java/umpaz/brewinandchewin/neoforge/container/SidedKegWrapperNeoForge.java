@@ -1,6 +1,7 @@
 package umpaz.brewinandchewin.neoforge.container;
 
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.container.AbstractedItemHandler;

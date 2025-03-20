@@ -1,6 +1,5 @@
 package umpaz.brewinandchewin.fabric.container;
 
-import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.base.SingleFluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
@@ -37,7 +36,7 @@ public class KegFluidTankFabric extends SingleFluidStorage implements Abstracted
 
     @Override
     public void setAbstractedFluid(AbstractedFluidStack stack) {
-        try (Transaction t = TransferUtil.getTransaction()) {
+        try (Transaction t = Transaction.openOuter()) {
             extract(variant, capacity, t);
             AmountedFluidVariant variant = unwrapFluid(stack);
             insert(variant.variant(), FluidUnit.convertToLoader(stack.amount(), stack.unit()), t);
@@ -48,7 +47,7 @@ public class KegFluidTankFabric extends SingleFluidStorage implements Abstracted
     @Override
     public AbstractedFluidStack fill(AbstractedFluidStack fluidStack, boolean simulate) {
         long newAmount = fluidStack.unit().convertToLoader(fluidStack.amount());
-        try (Transaction t = TransferUtil.getTransaction()) {
+        try (Transaction t = Transaction.openOuter()) {
             FluidVariant variant = FluidVariant.of(fluidStack.fluid(), fluidStack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
             long newFill = insert(variant, newAmount, t);
             if (!simulate)
@@ -60,7 +59,7 @@ public class KegFluidTankFabric extends SingleFluidStorage implements Abstracted
     @Override
     public AbstractedFluidStack drain(int slot, long maxDrain, FluidUnit unit, boolean simulate) {
         long newMax = unit.convertToLoader(maxDrain);
-        try (Transaction t = TransferUtil.getTransaction()) {
+        try (Transaction t = Transaction.openOuter()) {
             long extractedAmount = extract(variant, newMax, t);
             AbstractedFluidStack stack = new AbstractedFluidStack(variant.getFluid(), extractedAmount, variant.getComponentMap(), FluidUnit.DROPLET, new AmountedFluidVariant(variant, extractedAmount, FluidUnit.DROPLET));
             if (!simulate)

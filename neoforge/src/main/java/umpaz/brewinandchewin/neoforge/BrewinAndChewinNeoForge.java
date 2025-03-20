@@ -15,10 +15,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import umpaz.brewinandchewin.BrewinAndChewin;
-import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsClientboundPacket;
-import umpaz.brewinandchewin.common.network.clientbound.MakeNextPlayerChatTipsyClientboundPacket;
-import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
-import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
+import umpaz.brewinandchewin.common.network.clientbound.*;
 import umpaz.brewinandchewin.common.network.serverbound.EMIFillFermentingRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.network.serverbound.EMIFillPouringRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.network.serverbound.JEITransferKegRecipeServerboundPacket;
@@ -73,6 +70,7 @@ public class BrewinAndChewinNeoForge {
             event.registrar("2")
                     .playToClient(ClearKegFluidContainerComponentsClientboundPacket.TYPE, ClearKegFluidContainerComponentsClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
                     .playToClient(MakeNextPlayerChatTipsyClientboundPacket.TYPE, MakeNextPlayerChatTipsyClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
+                    .playToClient(SendRecipeBookValuesClientboundPacket.TYPE, SendRecipeBookValuesClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
                     .playToClient(SyncNumbedHeartsClientboundPacket.TYPE, SyncNumbedHeartsClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
                     .playToClient(SyncRagingStacksClientboundPacket.TYPE, SyncRagingStacksClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
                     .playToServer(JEITransferKegRecipeServerboundPacket.TYPE, JEITransferKegRecipeServerboundPacket.STREAM_CODEC, (payload, context) -> payload.handle((ServerPlayer) context.player()))

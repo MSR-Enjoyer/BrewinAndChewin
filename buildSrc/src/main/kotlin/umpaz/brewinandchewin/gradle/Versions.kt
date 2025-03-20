@@ -32,8 +32,8 @@ object Versions {
     const val FARMERS_DELIGHT = "1.21.1-1.2.6"
     const val FARMERS_DELIGHT_RANGE = "[1.2.6,)"
 
-    const val FARMERS_DELIGHT_REFABRICATED = "1.21.1-2.3.0+refabricated"
-    const val FARMERS_DELIGHT_REFABRICATED_RANGE = ">=1.21.1-2.2.8"
+    const val FARMERS_DELIGHT_REFABRICATED = "1.21.1-3.0.0+refabricated"
+    const val FARMERS_DELIGHT_REFABRICATED_RANGE = ">=1.21.1-3.0.0"
 
     const val FABRIC_MIXIN = "0.15.5+mixin.0.8.7"
     const val MIXIN_EXTRAS = "0.4.1"
@@ -46,6 +46,7 @@ object Versions {
 
     const val CREATE_FABRIC = "6.0.0.0+mc1.20.1-build.1649"
     const val REGISTRATE_FABRIC = "1.3.77-MC1.21.1"
+    const val PORTING_LIB = "3.1.0-beta.39+1.21.1"
 
     const val JAVA = 21
 }

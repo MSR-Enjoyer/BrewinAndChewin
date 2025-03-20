@@ -1,6 +1,5 @@
 package umpaz.brewinandchewin.fabric.container;
 
-import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -58,7 +57,7 @@ public class KegFluidItemStorageFabric implements AbstractedFluidTank {
     @Override
     public void setAbstractedFluid(AbstractedFluidStack stack) {
         if (storage.supportsInsertion()) {
-            try (Transaction t = TransferUtil.getTransaction()) {
+            try (Transaction t = Transaction.openOuter()) {
                 FluidVariant variant = FluidVariant.of(stack.fluid(), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
                 storage.insert(variant, capacity, t);
                 t.commit();
@@ -69,7 +68,7 @@ public class KegFluidItemStorageFabric implements AbstractedFluidTank {
     @Override
     public AbstractedFluidStack fill(AbstractedFluidStack stack, boolean simulate) {
         if (storage.supportsInsertion()) {
-            try (Transaction t = TransferUtil.getTransaction()) {
+            try (Transaction t = Transaction.openOuter()) {
                 FluidVariant variant = FluidVariant.of(stack.fluid(), stack.components() instanceof PatchedDataComponentMap patched ? patched.asPatch() : DataComponentPatch.EMPTY);
                 long newFill = storage.insert(variant, capacity, t);
                 if (!simulate)
@@ -83,7 +82,7 @@ public class KegFluidItemStorageFabric implements AbstractedFluidTank {
     @Override
     public AbstractedFluidStack drain(int slot, long maxDrain, FluidUnit unit, boolean simulate) {
         if (storage.supportsExtraction() && storage instanceof SlottedStorage<FluidVariant> slottedStorage) {
-            try (Transaction t = TransferUtil.getTransaction()) {
+            try (Transaction t = Transaction.openOuter()) {
                 SingleSlotStorage<FluidVariant> singleSlot = slottedStorage.getSlot(slot);
                 long extractedAmount = storage.extract(singleSlot.getResource(), unit.convertToLoader(maxDrain), t);
                 AbstractedFluidStack stack = new AbstractedFluidStack(singleSlot.getResource().getFluid(), extractedAmount, singleSlot.getResource().getComponentMap(), FluidUnit.DROPLET, new AmountedFluidVariant(singleSlot.getResource(), extractedAmount, FluidUnit.DROPLET));
@@ -107,7 +106,7 @@ public class KegFluidItemStorageFabric implements AbstractedFluidTank {
 
     @Override
     public boolean isFluidValid(int slot, AbstractedFluidStack stack) {
-        try (Transaction t = TransferUtil.getTransaction()) {
+        try (Transaction t = Transaction.openOuter()) {
             return storage.insert(((AmountedFluidVariant) stack.loaderSpecific()).variant(), getFluidCapacity(), t) > 0;
         }
     }

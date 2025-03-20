@@ -14,10 +14,7 @@ import net.minecraft.world.level.block.ComposterBlock;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.common.attachment.RagingAttachment;
 import umpaz.brewinandchewin.common.attachment.TipsyHeartsAttachment;
-import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsClientboundPacket;
-import umpaz.brewinandchewin.common.network.clientbound.MakeNextPlayerChatTipsyClientboundPacket;
-import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
-import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
+import umpaz.brewinandchewin.common.network.clientbound.*;
 import umpaz.brewinandchewin.common.network.serverbound.EMIFillFermentingRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.network.serverbound.EMIFillPouringRecipeServerboundPacket;
 import umpaz.brewinandchewin.common.network.serverbound.JEITransferKegRecipeServerboundPacket;
@@ -39,7 +36,7 @@ import umpaz.brewinandchewin.fabric.fluid.BnCFluidVariantAttributeHandler;
 import umpaz.brewinandchewin.fabric.platform.BnCPlatformHelperFabric;
 import umpaz.brewinandchewin.fabric.registry.BnCAttachments;
 import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
-import umpaz.brewinandchewin.fabric.registry.BnCLootModifiers;
+import umpaz.brewinandchewin.fabric.registry.BnCLootModificationEvents;
 
 import java.util.Optional;
 
@@ -100,7 +97,7 @@ public class BrewinAndChewinFabric implements ModInitializer {
         BnCItems.registerAll();
         BnCLootConditions.registerAll();
         BnCLootFunctions.registerAll();
-        BnCLootModifiers.registerAll();
+        BnCLootModificationEvents.init();
         BnCMenuTypes.registerAll();
         BnCParticleTypes.registerAll();
         BnCRecipeTypes.registerAll();
@@ -113,6 +110,7 @@ public class BrewinAndChewinFabric implements ModInitializer {
     private static void registerNetwork() {
         PayloadTypeRegistry.playS2C().register(ClearKegFluidContainerComponentsClientboundPacket.TYPE, ClearKegFluidContainerComponentsClientboundPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(MakeNextPlayerChatTipsyClientboundPacket.TYPE, MakeNextPlayerChatTipsyClientboundPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(SendRecipeBookValuesClientboundPacket.TYPE, SendRecipeBookValuesClientboundPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(SyncNumbedHeartsClientboundPacket.TYPE, SyncNumbedHeartsClientboundPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(SyncRagingStacksClientboundPacket.TYPE, SyncRagingStacksClientboundPacket.STREAM_CODEC);
 

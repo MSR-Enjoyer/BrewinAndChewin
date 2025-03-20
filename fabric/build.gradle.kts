@@ -78,6 +78,8 @@ dependencies {
 
     modCompileOnly("com.simibubi.create:create-fabric-1.20.1:${Versions.CREATE_FABRIC}") { isTransitive = false}
     modCompileOnly("com.tterrag.registrate_fabric:Registrate:${Versions.REGISTRATE_FABRIC}") { isTransitive = false}
+    // FIXME: When Create Fabric is fully updated, delete Porting Lib as they are no longer utilising it.
+    modCompileOnly("io.github.fabricators_of_create.Porting-Lib:lazy_registration:${Versions.PORTING_LIB}") { isTransitive = false }
 }
 
 loom {

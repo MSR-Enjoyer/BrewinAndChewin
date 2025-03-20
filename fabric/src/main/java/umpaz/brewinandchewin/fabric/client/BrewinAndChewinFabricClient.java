@@ -1,6 +1,5 @@
 package umpaz.brewinandchewin.fabric.client;
 
-import io.github.fabricators_of_create.porting_lib.event.client.ColorHandlersCallback;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.PreparableModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -8,6 +7,7 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -24,10 +24,7 @@ import umpaz.brewinandchewin.client.BrewinAndChewinClient;
 import umpaz.brewinandchewin.client.gui.KegScreen;
 import umpaz.brewinandchewin.client.gui.KegTooltip;
 import umpaz.brewinandchewin.common.fluid.BnCFluidConstants;
-import umpaz.brewinandchewin.common.network.clientbound.ClearKegFluidContainerComponentsClientboundPacket;
-import umpaz.brewinandchewin.common.network.clientbound.MakeNextPlayerChatTipsyClientboundPacket;
-import umpaz.brewinandchewin.common.network.clientbound.SyncNumbedHeartsClientboundPacket;
-import umpaz.brewinandchewin.common.network.clientbound.SyncRagingStacksClientboundPacket;
+import umpaz.brewinandchewin.common.network.clientbound.*;
 import umpaz.brewinandchewin.common.registry.BnCFluids;
 import umpaz.brewinandchewin.common.registry.BnCMenuTypes;
 import umpaz.brewinandchewin.fabric.client.gui.BnCHUDOverlays;
@@ -71,10 +68,7 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
                 }
             });
         });
-        BnCClientSetup.registerColorHandlers((blockColor, block) -> {
-            ColorHandlersCallback.BLOCK.register(blockColors ->
-                    blockColors.register(blockColor, block));
-        });
+        BnCClientSetup.registerColorHandlers(ColorProviderRegistry.BLOCK::register);
         PreparableModelLoadingPlugin.register(BnCClientSetup::getModels, (data, context) -> {
             context.addModels(data.stream().map(resourceLocation -> resourceLocation.withPath(path -> "brewinandchewin/coaster/" + path)).toList());
             context.addModels(BrewinAndChewin.asResource("block/coaster"), BrewinAndChewin.asResource("block/coaster_tray"));
@@ -91,7 +85,6 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
                 return model;
             });
         });
-        BnCRecipeCategories.init();
         registerNetwork();
         registerFluidRenderers();
     }
@@ -99,6 +92,7 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
     private static void registerNetwork() {
         ClientPlayNetworking.registerGlobalReceiver(ClearKegFluidContainerComponentsClientboundPacket.TYPE, (payload, context) -> payload.handle());
         ClientPlayNetworking.registerGlobalReceiver(MakeNextPlayerChatTipsyClientboundPacket.TYPE, (payload, context) -> payload.handle());
+        ClientPlayNetworking.registerGlobalReceiver(SendRecipeBookValuesClientboundPacket.TYPE, (payload, context) -> payload.handle());
         ClientPlayNetworking.registerGlobalReceiver(SyncNumbedHeartsClientboundPacket.TYPE, (payload, context) -> payload.handle());
         ClientPlayNetworking.registerGlobalReceiver(SyncRagingStacksClientboundPacket.TYPE, (payload, context) -> payload.handle());
     }

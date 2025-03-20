@@ -1,16 +1,16 @@
 package umpaz.brewinandchewin.fabric.utility;
 
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
 import net.minecraft.world.item.ItemStack;
 import umpaz.brewinandchewin.common.container.AbstractedFluidTank;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
+import vectorwing.farmersdelight.refabricated.inventory.ItemHandler;
 
 public class KegRecipeWrapperFabric implements KegRecipeWrapper {
-    private final ItemStackHandler inventory;
+    private final ItemHandler inventory;
     private final AbstractedFluidTank tank;
 
-    public KegRecipeWrapperFabric(ItemStackHandler itemHandler, AbstractedFluidTank fluidHandler) {
+    public KegRecipeWrapperFabric(ItemHandler itemHandler, AbstractedFluidTank fluidHandler) {
         this.inventory = itemHandler;
         this.tank = fluidHandler;
     }

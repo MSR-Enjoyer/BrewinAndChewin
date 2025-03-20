@@ -1,44 +1,42 @@
 package umpaz.brewinandchewin.fabric.container;
 
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandlerSlot;
-import io.github.fabricators_of_create.porting_lib.transfer.item.SlottedStackStorage;
-import io.github.fabricators_of_create.porting_lib.util.DualSortedSetIterator;
-import it.unimi.dsi.fastutil.objects.ObjectAVLTreeSet;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.container.AbstractedItemHandler;
 import umpaz.brewinandchewin.common.block.entity.container.SidedKegWrapper;
+import vectorwing.farmersdelight.refabricated.inventory.ItemHandler;
+import vectorwing.farmersdelight.refabricated.inventory.ItemStackHandler;
+import vectorwing.farmersdelight.refabricated.inventory.ItemStackStorage;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
 
-public class SidedKegWrapperFabric extends SidedKegWrapper implements SlottedStackStorage {
+public class SidedKegWrapperFabric extends SidedKegWrapper implements ItemHandler {
     public SidedKegWrapperFabric(AbstractedItemHandler itemHandler, @Nullable Direction side) {
         super(itemHandler, side);
     }
 
     @Override
     public SingleSlotStorage<ItemVariant> getSlot(int slot) {
-        return ((ItemStackHandler)itemHandler).getSlot(slot);
+        return ((ItemHandler)itemHandler).getSlot(slot);
     }
 
     @Override
     public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         StoragePreconditions.notBlankNotNegative(resource, maxAmount);
         long inserted = 0;
-        Iterator<ItemStackHandlerSlot> itr = getInsertableSlotsFor(resource);
+        Iterator<ItemStackStorage> itr = getInsertableSlotsFor(resource);
         while (itr.hasNext()) {
-            ItemStackHandlerSlot slot = itr.next();
+            ItemStackStorage slot = itr.next();
             inserted += slot.insert(resource, maxAmount - inserted, transaction);
             if (inserted >= maxAmount)
                 break;
@@ -50,7 +48,7 @@ public class SidedKegWrapperFabric extends SidedKegWrapper implements SlottedSta
     public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         StoragePreconditions.notBlankNotNegative(resource, maxAmount);
         long extracted = 0;
-        for (ItemStackHandlerSlot slot : getSlotsContaining(resource.getItem(), true)) {
+        for (ItemStackStorage slot : getSlotsContaining(resource, true)) {
             extracted += slot.extract(resource, maxAmount - extracted, transaction);
             if (extracted >= maxAmount)
                 break;
@@ -59,25 +57,64 @@ public class SidedKegWrapperFabric extends SidedKegWrapper implements SlottedSta
     }
 
 
-    private Iterator<ItemStackHandlerSlot> getInsertableSlotsFor(ItemVariant resource) {
-        SortedSet<ItemStackHandlerSlot> slots = getSlotsContaining(resource.getItem(), false);
-        SortedSet<ItemStackHandlerSlot> emptySlots = getSlotsContaining(Items.AIR, false);
-        if (slots.isEmpty()) {
-            return emptySlots.isEmpty() ? Collections.emptyIterator() : emptySlots.iterator();
-        } else {
-            return emptySlots.isEmpty() ? slots.iterator() : new DualSortedSetIterator<>(slots, emptySlots);
-        }
+    @Override
+    public long insertSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
+        if (!isValidSlot(slot, false))
+            return 0;
+        return ((ItemStackHandler)itemHandler).extractSlot(slot, resource, maxAmount, transaction);
     }
 
-    private SortedSet<ItemStackHandlerSlot> getSlotsContaining(Item item, boolean output) {
-        return ((ItemStackHandler)itemHandler).getSlotsContaining(item).stream().filter(storageViews -> isValidInputSlot(storageViews.getIndex(), output)).collect(Collectors.toCollection(() -> new ObjectAVLTreeSet<>(Comparator.comparingInt(ItemStackHandlerSlot::getIndex))));
+    @Override
+    public long extractSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext transaction) {
+        if (!isValidSlot(slot, true))
+            return 0;
+        return ((ItemStackHandler)itemHandler).extractSlot(slot, resource, maxAmount, transaction);
     }
 
-    private boolean isValidInputSlot(int slot, boolean output) {
+    @Override
+    public void commitModifiedStacks() {
+        ((ItemStackHandler)itemHandler).commitModifiedStacks();
+    }
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
+        return extractItem(slot, amount, false);
+    }
+
+    @Override
+    public Iterator<StorageView<ItemVariant>> iterator() {
+        ItemStackHandler handler = ((ItemStackHandler)itemHandler);
+        return side != null && !side.equals(Direction.UP) ?
+                (Iterator) handler.getSlots().subList(4, 6).iterator() :
+                (Iterator) handler.getSlots().subList(0, 4).iterator();
+    }
+
+    public SortedSet<ItemStackStorage> getSlotsContaining(ItemVariant resource, boolean output) {
+        ItemStackHandler handler = ((ItemStackHandler)itemHandler);
+        List<SingleSlotStorage<ItemVariant>> slots = side != null && !side.equals(Direction.UP) ?
+                List.of(output ? handler.getSlots().get(5) : handler.getSlots().get(4)) :
+                handler.getSlots().subList(0, 4);
+        return slots.stream()
+                .map(storageView -> (ItemStackStorage)storageView).filter(storageView -> storageView.getResource().equals(resource))
+                .collect(Collectors.toCollection(ObjectLinkedOpenHashSet::new));
+    }
+
+    public Iterator<ItemStackStorage> getInsertableSlotsFor(ItemVariant resource) {
+        ItemStackHandler handler = ((ItemStackHandler)itemHandler);
+        List<SingleSlotStorage<ItemVariant>> slots = side != null && !side.equals(Direction.UP) ?
+                List.of(handler.getSlots().get(4)) :
+                handler.getSlots().subList(0, 4);
+        return slots.stream()
+                .map(storageView -> (ItemStackStorage)storageView).filter(storageView -> storageView.getResource().equals(resource))
+                .filter((views) -> views.isResourceBlank() || views.getResource().equals(resource))
+                .iterator();
+    }
+
+    private boolean isValidSlot(int slot, boolean extract) {
         if (side == null || side.equals(Direction.UP)) {
             return slot < 3;
         } else {
-            return output ? slot == 5 : slot == 4;
+            return extract ? slot == 5 : slot == 4;
         }
     }
 }

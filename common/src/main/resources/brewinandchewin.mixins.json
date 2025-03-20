@@ -15,13 +15,12 @@
     "LootParamsAccessor",
     "NbtUtilsMixin",
     "PlayerMixin",
-    "PreventTaggedEffectRemovalMixin$HotCocoa",
-    "PreventTaggedEffectRemovalMixin$MilkBottle",
     "ServerGamePacketListenerImplMixin",
     "ServerPlaceRecipeAccessor",
     "StackedContentsRecipePickerAccessor",
     "StoreLootParamsMixin$LootParamsBuilderMixin",
-    "StoreLootParamsMixin$LootParamsMixin"
+    "StoreLootParamsMixin$LootParamsMixin",
+    "client.ServerRecipeBookMixin"
   ],
   "client": [
     "client.ChatListenerMixin",
