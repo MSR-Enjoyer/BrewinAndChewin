@@ -123,6 +123,8 @@ public class BoozeItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag isAdvanced) {
+        if (!BrewinAndChewin.getHelper().hasFoodEffectTooltip())
+            return;
         TextUtils.addFoodEffectTooltip(stack, tooltip::add, 1.0F, context.tickRate());
         for (int i = 0; i < tooltip.size(); ++i) {
             Component component = tooltip.get(i);

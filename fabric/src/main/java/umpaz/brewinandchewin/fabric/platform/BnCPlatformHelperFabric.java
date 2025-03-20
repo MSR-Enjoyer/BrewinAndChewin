@@ -60,13 +60,12 @@ import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
 import umpaz.brewinandchewin.fabric.utility.*;
 import umpaz.brewinandchewin.platform.BnCPlatform;
 import umpaz.brewinandchewin.platform.BnCPlatformHelper;
+import vectorwing.farmersdelight.common.Configuration;
 import vectorwing.farmersdelight.refabricated.inventory.ItemHandler;
 import vectorwing.farmersdelight.refabricated.inventory.ItemHandlerSlot;
-import vectorwing.farmersdelight.refabricated.inventory.ItemStackHandler;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class BnCPlatformHelperFabric implements BnCPlatformHelper {
 
@@ -301,5 +300,10 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
             return BnCCreateDelegate.getPotionSource();
         }
         return null;
+    }
+
+    @Override
+    public boolean hasFoodEffectTooltip() {
+        return Configuration.FOOD_EFFECT_TOOLTIP.get();
     }
 }

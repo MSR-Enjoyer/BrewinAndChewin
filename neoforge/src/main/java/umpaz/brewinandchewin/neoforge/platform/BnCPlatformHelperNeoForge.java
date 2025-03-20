@@ -56,6 +56,7 @@ import umpaz.brewinandchewin.neoforge.registry.BnCFluidsImpl;
 import umpaz.brewinandchewin.neoforge.utility.*;
 import umpaz.brewinandchewin.platform.BnCPlatformHelper;
 import umpaz.brewinandchewin.platform.BnCPlatform;
+import vectorwing.farmersdelight.common.Configuration;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -288,5 +289,10 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
             return BnCCreateDelegate.getPotionSource();
         }
         return null;
+    }
+
+    @Override
+    public boolean hasFoodEffectTooltip() {
+        return Configuration.FOOD_EFFECT_TOOLTIP.get();
     }
 }
