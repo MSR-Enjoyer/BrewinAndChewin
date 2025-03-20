@@ -111,6 +111,7 @@ public class BnCHUDOverlays {
             int right = minecraft.getWindow().getGuiScaledWidth() / 2 + 91;
 
             drawIntoxicationOverlay(player, minecraft, gui, right, top);
+            minecraft.gui.rightHeight += 10;
         }
 
         @Override
