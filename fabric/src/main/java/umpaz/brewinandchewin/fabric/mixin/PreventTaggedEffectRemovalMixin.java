@@ -15,7 +15,7 @@ import vectorwing.farmersdelight.common.item.MilkBottleItem;
 public class PreventTaggedEffectRemovalMixin {
     @Mixin(MilkBottleItem.class)
     public static class MilkBottle {
-        @ModifyExpressionValue(method = "affectConsumer", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/Holder;is(Lnet/minecraft/tags/TagKey;)Z"), remap = false)
+        @ModifyExpressionValue(method = "affectConsumer", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/Holder;is(Lnet/minecraft/tags/TagKey;)Z"))
         private boolean brewinandchewin$preventIntoxicationRemoval(boolean original, @Local(argsOnly = true) Level level, @Local(argsOnly = true) LivingEntity consumer, @Local MobEffectInstance effectInstance) {
             return original && (BuiltInRegistries.MOB_EFFECT.getOrCreateTag(BnCTags.Effects.MILK_BOTTLE_LOW_PRIORITY).contains(effectInstance.getEffect()) || consumer.getActiveEffects().stream().allMatch(effect -> BuiltInRegistries.MOB_EFFECT.getOrCreateTag(BnCTags.Effects.MILK_BOTTLE_LOW_PRIORITY).contains(effect.getEffect())));
         }
@@ -23,7 +23,7 @@ public class PreventTaggedEffectRemovalMixin {
 
     @Mixin(HotCocoaItem.class)
     public static class HotCocoa {
-        @ModifyExpressionValue(method = "affectConsumer", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/Holder;is(Lnet/minecraft/tags/TagKey;)Z"), remap = false)
+        @ModifyExpressionValue(method = "affectConsumer", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/Holder;is(Lnet/minecraft/tags/TagKey;)Z"))
         private boolean brewinandchewin$preventIntoxicationRemoval(boolean original, @Local(argsOnly = true) Level level, @Local(argsOnly = true) LivingEntity consumer, @Local MobEffectInstance effectInstance) {
             return original && (!BuiltInRegistries.MOB_EFFECT.getOrCreateTag(BnCTags.Effects.HOT_COCOA_LOW_PRIORITY).contains(effectInstance.getEffect()) || consumer.getActiveEffects().stream().allMatch(effect -> BuiltInRegistries.MOB_EFFECT.getOrCreateTag(BnCTags.Effects.HOT_COCOA_LOW_PRIORITY).contains(effect.getEffect())));
         }
