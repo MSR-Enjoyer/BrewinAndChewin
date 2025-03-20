@@ -364,10 +364,8 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     }
 
     private List<ItemStack> fluidExtract(ItemStack slotIn, int maxTakeAmount, boolean inGui, boolean isCreative) {
-        if (slotIn.isEmpty())
-            return List.of();
-
-        if (inventory.getStackInSlot(OUTPUT_SLOT).getCount() >= Math.min(inventory.getSlotLimit(OUTPUT_SLOT), inventory.getStackInSlot(OUTPUT_SLOT).getMaxStackSize()))
+        if (slotIn.isEmpty() || deferFluidExtraction ||
+                inventory.getStackInSlot(OUTPUT_SLOT).getCount() >= Math.min(inventory.getSlotLimit(OUTPUT_SLOT), inventory.getStackInSlot(OUTPUT_SLOT).getMaxStackSize()))
             return List.of();
 
         Optional<KegPouringRecipe> recipe = getPouringRecipe(slotIn);
@@ -381,7 +379,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             if (ItemStack.isSameItem(slotIn, recipe.get().getContainer(resultItem)) && // if container is same
                     recipe.get().getRawFluid().amount() <= fluidTank.getAbstractedFluid().amount() && // the amount is LTE the fluid amount
                     (!inGui || inventory.getStackInSlot(OUTPUT_SLOT).isEmpty() || ItemStack.isSameItemSameComponents(resultItem, inventory.getStackInSlot(OUTPUT_SLOT)))) { // the output slot can accept this itemaccept this item
-                int containerAmount = (int) Mth.clamp(Math.min(Math.min(slotIn.getCount(), resultItem.getMaxStackSize()), maxTakeAmount), 1, fluidTank.getFluidCapacity() / recipe.get().getLoaderAmount());
+                int containerAmount = (int) Mth.clamp(Math.min(Math.min(slotIn.getCount(), resultItem.getMaxStackSize()), maxTakeAmount), 1, fluidTank.getAbstractedFluid().amount() / recipe.get().getLoaderAmount());
                 fluidTank.drain(recipe.get().getRawFluid().amount() * containerAmount, recipe.get().getUnit(),false);
 
                 if (!isCreative) {

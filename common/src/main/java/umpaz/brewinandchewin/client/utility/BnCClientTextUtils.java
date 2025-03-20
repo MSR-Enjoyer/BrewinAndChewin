@@ -6,14 +6,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.SignText;
-import umpaz.brewinandchewin.client.BrewinAndChewinClient;
 import umpaz.brewinandchewin.common.BnCConfiguration;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class BnCTextUtils {
+public class BnCClientTextUtils {
     public static int tipsyMessageLevel = 0;
     private static Component nextTipsyMessage;
 

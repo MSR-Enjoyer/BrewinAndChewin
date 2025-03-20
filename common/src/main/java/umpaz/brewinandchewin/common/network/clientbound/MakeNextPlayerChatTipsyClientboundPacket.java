@@ -8,7 +8,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import umpaz.brewinandchewin.BrewinAndChewin;
-import umpaz.brewinandchewin.client.utility.BnCTextUtils;
+import umpaz.brewinandchewin.client.utility.BnCClientTextUtils;
 
 public record MakeNextPlayerChatTipsyClientboundPacket(int level) implements CustomPacketPayload {
     public static final ResourceLocation ID = BrewinAndChewin.asResource("make_next_player_chat_tipsy");
@@ -29,6 +29,6 @@ public record MakeNextPlayerChatTipsyClientboundPacket(int level) implements Cus
     }
 
     public void handle() {
-        BnCTextUtils.tipsyMessageLevel = level();
+        BnCClientTextUtils.tipsyMessageLevel = level();
     }
 }
