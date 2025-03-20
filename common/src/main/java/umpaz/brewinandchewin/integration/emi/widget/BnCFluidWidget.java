@@ -89,16 +89,17 @@ public class BnCFluidWidget extends SlotWidget {
 
     public EmiIngredient getItemStack() {
         if (invalidateItemStack) {
-            AbstractedFluidStack fluidStack = new AbstractedFluidStack((Fluid) getStack().getEmiStacks().getFirst().getKey(), getStack().getEmiStacks().getFirst().getAmount(), PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, getStack().getEmiStacks().getFirst().getComponentChanges()), FluidUnit.LITER);
+            AbstractedFluidStack fluidStack = new AbstractedFluidStack((Fluid) getStack().getEmiStacks().getFirst().getKey(), getStack().getEmiStacks().getFirst().getAmount(), PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, getStack().getEmiStacks().getFirst().getComponentChanges()), FluidUnit.getLoaderUnit());
             ItemStack itemDisplay = BnCFluidItemDisplays.getFluidItemDisplay(Minecraft.getInstance().level.registryAccess(), fluidStack).copy();
             Optional<KegPouringRecipe> pouringRecipe = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING).stream().map(RecipeHolder::value).sorted(Comparator.comparing(KegPouringRecipe::isStrict)).filter(kegPouringRecipe -> {
                 if (kegPouringRecipe.isStrict())
                     return ItemStack.isSameItemSameComponents(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
                 return ItemStack.isSameItem(itemDisplay, kegPouringRecipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
             }).findFirst();
-            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int) (Math.min(FluidUnit.convert(BnCConfiguration.COMMON_CONFIG.get().keg().capacity(), BnCConfiguration.COMMON_CONFIG.get().keg().capacityUnit(), FluidUnit.LITER), getStack().getAmount()) / kegPouringRecipe.getRawFluid().amount())).orElse(1);
+            int pourCount = pouringRecipe.map(kegPouringRecipe -> (int) (Math.min(FluidUnit.convert(BnCConfiguration.COMMON_CONFIG.get().keg().capacity(), BnCConfiguration.COMMON_CONFIG.get().keg().capacityUnit(), FluidUnit.getLoaderUnit()), fluidStack.amount()) / kegPouringRecipe.getLoaderAmount())).orElse(1);
             itemDisplay.setCount(pourCount);
             itemIngredient = EmiStack.of(itemDisplay);
+            invalidateItemStack = false;
         }
         return itemIngredient;
     }
