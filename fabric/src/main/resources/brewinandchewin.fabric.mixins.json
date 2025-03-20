@@ -9,15 +9,15 @@
     "PlayerMixin",
     "PreventTaggedEffectRemovalMixin$HotCocoa",
     "PreventTaggedEffectRemovalMixin$MilkBottle",
-    "RecipeBookSettingsMixin",
-    "client.GameRendererMixin"
+    "RecipeBookSettingsMixin"
   ],
   "client": [
-    "ClientRecipeBookMixin",
-    "RecipeBookCategoriesMixin",
     "client.ChatListenerMixin",
+    "client.ClientRecipeBookMixin",
     "client.EntityRendererMixin",
+    "client.GameRendererMixin",
     "client.GuiMixin",
+    "client.RecipeBookCategoriesMixin",
     "client.TipsyMouseHandlerMixin"
   ],
   "injectors": {

@@ -1,4 +1,4 @@
-package umpaz.brewinandchewin.fabric.mixin;
+package umpaz.brewinandchewin.fabric.mixin.client;
 
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.world.inventory.RecipeBookType;

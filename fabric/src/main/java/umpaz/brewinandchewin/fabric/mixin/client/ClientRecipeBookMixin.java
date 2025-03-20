@@ -1,4 +1,4 @@
-package umpaz.brewinandchewin.fabric.mixin;
+package umpaz.brewinandchewin.fabric.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.ClientRecipeBook;
