@@ -81,6 +81,7 @@ public class KegBlock extends BaseEntityBlock implements SimpleWaterloggedBlock 
                 level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1, 1);
                 return ItemInteractionResult.SUCCESS;
             }
+            kegBE.updateTemperature();
             BrewinAndChewin.getHelper().openKegMenu(player, kegBE, pos);
         }
         return ItemInteractionResult.SUCCESS;

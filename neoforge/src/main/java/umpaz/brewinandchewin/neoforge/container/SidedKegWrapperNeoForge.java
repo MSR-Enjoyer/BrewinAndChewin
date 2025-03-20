@@ -16,4 +16,9 @@ public class SidedKegWrapperNeoForge extends SidedKegWrapper implements IItemHan
     public int getSlots() {
         return getSlotCount();
     }
+
+    @Override
+    public void commitModifiedStacks() {
+        // No-op
+    }
 }

@@ -235,7 +235,8 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     public static void fermentingTick(Level level, BlockPos pos, BlockState state, KegBlockEntity keg) {
         boolean didInventoryChange = false;
 
-        keg.updateTemperature();
+        if (level.getGameTime() % 80 == 0) // Every 4s
+            keg.updateTemperature();
 
         if (keg.deferFluidExtraction) {
             keg.deferFluidExtraction = false;
@@ -427,6 +428,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         }
 
         if (!outputs.isEmpty() || recipe.isPresent()) {
+            inventory.commitModifiedStacks();
             currentlyOperating = false;
             return outputs;
         }
@@ -474,6 +476,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
         }
 
+        inventory.commitModifiedStacks();
         currentlyOperating = false;
         return outputs;
     }
@@ -658,10 +661,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     private AbstractedItemHandler createHandler() {
         return BrewinAndChewin.getHelper().createKegInventory(INVENTORY_SIZE, (handler, slot) -> {
             if (!getLevel().isClientSide() && (slot == CONTAINER_SLOT || slot == OUTPUT_SLOT) && !currentlyOperating) {
-                List<ItemStack> out = KegBlockEntity.this.extractInGui(handler.getStackInSlot(CONTAINER_SLOT), handler.getSlotLimit(OUTPUT_SLOT));
-                if (!out.isEmpty()) {
-                    handler.insertItem(OUTPUT_SLOT, out.get(0), false);
-                }
+                deferFluidExtraction = true;
             }
             if (slot >= 0 && slot < OUTPUT_SLOT) {
                 checkNewRecipe = true;

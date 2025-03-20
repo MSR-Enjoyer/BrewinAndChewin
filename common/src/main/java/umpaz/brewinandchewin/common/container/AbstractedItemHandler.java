@@ -19,4 +19,9 @@ public interface AbstractedItemHandler {
     default CompoundTag writeToNbt(HolderLookup.Provider provider) {
         return new CompoundTag();
     }
+
+    /**
+     * Only needs to be run on Fabric, due to ItemStack abstractions in the form of ItemVariant.
+     */
+    void commitModifiedStacks();
 }
