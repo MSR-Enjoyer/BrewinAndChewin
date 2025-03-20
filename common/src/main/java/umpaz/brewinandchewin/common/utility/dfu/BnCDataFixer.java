@@ -44,8 +44,8 @@ public record BnCDataFixer(DataFixer fixer) {
         builder.addFixer(ItemRenameFix.create(schema2, "Fix Scarlet Pierogi item name", createRenamer("brewinandchewin:scarlet_pierogies", "brewinandchewin:scarlet_pierogi")));
         builder.addFixer(new NamespacedTypeRenameFix(schema2, "Rename Scarlet Pierogi recipe", References.RECIPE, createRenamer("brewinandchewin:cooking/scarlet_pierogies", "brewinandchewin:cooking/scarlet_pierogi")));
 
-        // Fix 1.20.1 capabilities to attachments
-        Schema schema100 = builder.addSchema(100, SAME_NAMESPACED);;
+        // TODO: Fix 1.20.1 capabilities to attachments
+        Schema schema100 = builder.addSchema(100, SAME_NAMESPACED);
 
         return builder.build().fixer();
     }
