@@ -1,8 +1,6 @@
+## Major Changes
+- [FABRIC] Updated for Farmer's Delight Refabricated 3.0.0.
+
 ## Bugfixes
-- Fixed a crash on Fabric when having an item inside the keg and getting out a fluid due to a faulty transfer setup.
-- Fixed pouring recipes consuming two items instead of one.
-- Fixed a regression where Cheese fluids do not have icons.
-- Fixed cheese fluid tags being empty.
-- Fixed EMI integration crashes due to an incorrect import.
-- Fixed EMI integration being unable to transfer more than once for fermenting recipes with a fluid ingredient.
-- Fixed EMI integration item loss when transferring twice.
+- [FABRIC] Fixed a classloading issue preventing the ItemLike (Mojmap) interface from having mixins applied.
+    - This issue is explained at [MehVahdJukaar/FarmersDelightRefabricated#77](https://github.com/MehVahdJukaar/FarmersDelightRefabricated/issues/77)
