@@ -67,7 +67,7 @@ public class BrewinAndChewinNeoForge {
 
         @SubscribeEvent
         public static void registerPayloads(RegisterPayloadHandlersEvent event) {
-            event.registrar("2")
+            event.registrar("3")
                     .playToClient(ClearKegFluidContainerComponentsClientboundPacket.TYPE, ClearKegFluidContainerComponentsClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
                     .playToClient(MakeNextPlayerChatTipsyClientboundPacket.TYPE, MakeNextPlayerChatTipsyClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())
                     .playToClient(SendRecipeBookValuesClientboundPacket.TYPE, SendRecipeBookValuesClientboundPacket.STREAM_CODEC, (payload, context) -> payload.handle())

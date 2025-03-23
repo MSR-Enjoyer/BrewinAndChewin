@@ -2,6 +2,7 @@ package umpaz.brewinandchewin.client.utility;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
@@ -14,52 +15,52 @@ import java.util.stream.Collectors;
 
 public class BnCClientTextUtils {
     public static int tipsyMessageLevel = 0;
+    public static long randomSeed = 0L;
     private static Component nextTipsyMessage;
 
-    public static void setupChatMessage(Component original, UUID sender) {
+    public static void setupChatMessage(Component original) {
         if (BnCConfiguration.CLIENT_CONFIG.get().scrambleChat() && (tipsyMessageLevel > 0 ||
                 Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble())) {
-            Player player = Minecraft.getInstance().level.getPlayerByUUID(sender);
-            if (player != null) {
-                StringBuilder textBuilder = new StringBuilder(original.getString());
-                int afterPlayerName = (textBuilder.indexOf("[") == 0 || textBuilder.indexOf("<") == 0) ? textBuilder.indexOf(" ") + 1 : 0;
 
-                int amplifier = tipsyMessageLevel;
-                if (Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && amplifier < Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier())
-                    amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier();
-                amplifier = amplifier - BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble();
-                RandomSource random = RandomSource.create(0L);
-                int amnt = (int) ((amplifier + 1) * ((textBuilder.length() - afterPlayerName) / 10f)) + random.nextInt(5);
-                for (int i = 0; i < amnt; i++) {
-                    // pick a random word
-                    List<String> words = Arrays.stream(textBuilder.toString().split(" ")).collect(Collectors.toCollection(ArrayList::new));
-                    if (words.isEmpty())
-                        continue;
-                    // Remove the player name from the word list.
-                    if (afterPlayerName > 0)
-                        words.removeFirst();
-                    int wordIndex = random.nextInt(words.size());
-                    String word = words.get(wordIndex);
+            if (!(original.getContents() instanceof TranslatableContents contents) || !contents.getKey().equals("chat.type.text"))
+                return;
 
-                    if (word.length() < 4)
-                        continue;
+            Object[] args = contents.getArgs();
+            if (args.length < 2 || !(args[0] instanceof Component playerName) || !(args[1] instanceof Component message))
+                return;
 
-                    int wordStart = Arrays.stream(textBuilder.toString().split(" ")).toList().subList(0, wordIndex + 1).stream().mapToInt(String::length).sum() + wordIndex;
+            StringBuilder textBuilder = new StringBuilder(message.getString());
 
-                    // pick a random character in the word, excluding the first and last letters
-                    int index = wordStart + random.nextInt(2, Math.max(word.length() - 2, 3));
-                    // pick an index within range
-                    int newIndex = Mth.clamp(index + random.nextInt(Math.max(word.length() - 2, 3)), wordStart + 1, wordStart + word.length() - 2);
+            int amplifier = tipsyMessageLevel;
+            if (Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && amplifier < Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier())
+                amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier();
+            amplifier = amplifier - BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble();
+            RandomSource random = RandomSource.create(randomSeed);
+            int amnt = (int) ((amplifier + 1) * (textBuilder.length() / 6f)) + random.nextInt(amplifier, amplifier + 2) - 1;
 
-                    // swap the characters
-                    char temp = textBuilder.charAt(index);
-                    textBuilder.setCharAt(index, textBuilder.charAt(newIndex));
-                    textBuilder.setCharAt(newIndex, temp);
-                }
-                String text = textBuilder.toString();
-                if (!original.getString().equals(text))  {
-                    nextTipsyMessage = Component.literal(textBuilder.toString());
-                }
+            for (int i = 0; i < amnt; i++) {
+                List<String> globalWords = Arrays.stream(textBuilder.toString().split(" ")).collect(Collectors.toCollection(ArrayList::new));
+                List<String> validWords = globalWords.stream().filter(s -> s.length() > 3).collect(Collectors.toCollection(ArrayList::new));
+                if (validWords.isEmpty())
+                    break;
+                // pick a random word
+                int wordIndex = random.nextInt(validWords.size());
+                String word = validWords.get(wordIndex);
+                int globalWordLength = globalWords.subList(0, globalWords.indexOf(word)).stream().mapToInt(value -> value.length() + 1).sum();
+                // pick a random character in the word, excluding the first and last letters
+                int index = globalWordLength + random.nextInt(1, word.length() - 2);
+                // pick an index within range
+                int newIndex = Mth.clamp(index + (random.nextBoolean() ? 1 : -1), globalWordLength + 1,
+                        globalWordLength + word.length() - 2);
+                // swap the characters
+                char temp = textBuilder.charAt(index);
+                textBuilder.setCharAt(index, textBuilder.charAt(newIndex));
+                textBuilder.setCharAt(newIndex, temp);
+            }
+
+            String text = textBuilder.toString();
+            if (!original.getString().equals(text))  {
+                nextTipsyMessage = Component.translatable("chat.type.text", playerName, Component.literal(textBuilder.toString()).withStyle(message.getStyle()));
             }
         }
         tipsyMessageLevel = 0;
@@ -80,8 +81,8 @@ public class BnCClientTextUtils {
                     int amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() - BnCConfiguration.COMMON_CONFIG.get().root().levelNameScramble();
                     StringBuilder textBuilder = new StringBuilder(original.getString());
                     RandomSource random = Minecraft.getInstance().player.getRandom();
-                    int amount = (int) ((amplifier + 1) * ((textBuilder.length()) / 10f)) + random.nextInt(5);
-                    for (int i = 0; i < amount; i++) {
+                    int amnt = (int) ((amplifier + 1) * (textBuilder.length() / 4f)) + random.nextInt(amplifier + 1);
+                    for (int i = 0; i < amnt; i++) {
                         // pick a random word
                         String[] words = textBuilder.toString().split(" ");
                         int wordIndex = random.nextInt(words.length);
@@ -122,8 +123,8 @@ public class BnCClientTextUtils {
                 if (line.getString().length() <= 1) continue;
                 StringBuilder text = new StringBuilder(line.getString());
                 int amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() - minScrambleAmplifier;
-                int amount = (int) ((amplifier + 1) * (text.length() / (10f - minScrambleAmplifier))) + random.nextInt(5);
-                for (int j = 0; j < amount; j++) {
+                int amnt = (int) ((amplifier + 1) * (text.length() / 4f)) + random.nextInt(amplifier + 1);
+                for (int j = 0; j < amnt; j++) {
                     // pick a random word
                     String[] words = text.toString().split(" ");
                     int wordIndex = random.nextInt(words.length);

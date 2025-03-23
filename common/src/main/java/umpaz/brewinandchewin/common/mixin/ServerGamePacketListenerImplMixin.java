@@ -19,14 +19,15 @@ public abstract class ServerGamePacketListenerImplMixin {
     @Shadow public ServerPlayer player;
 
     // We must go here because chat links may be implemented here.
-    @ModifyVariable(method = "broadcastChatMessage", at = @At("HEAD"), argsOnly = true)
+    @ModifyVariable(method = "broadcastChatMessage", at = @At("HEAD"), argsOnly = true, order = 1500) // Run after other chat message modifications, to make sure we don't screw with them.
     public PlayerChatMessage brewinandchewin$modifyChatMessageForServer(PlayerChatMessage message) {
         ServerPlayer sender = player.getServer().getPlayerList().getPlayer(message.sender());
-        if (sender.hasEffect(BnCEffects.TIPSY) && sender.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble()) {
-            ((ChatPlayerListAccess)player.getServer().getPlayerList()).brewinandchewin$setOriginalMessage(message.signedContent());
+        if (message.unsignedContent() == null && sender.hasEffect(BnCEffects.TIPSY) && sender.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble()) {
+            ((ChatPlayerListAccess)player.getServer().getPlayerList()).brewinandchewin$setOriginalMessage(message.decoratedContent());
+            long randomSeed = player.getRandom().nextLong();
             for (ServerPlayer otherPlayer : player.getServer().getPlayerList().getPlayers())
-                BrewinAndChewin.getHelper().sendClientbound(otherPlayer, new MakeNextPlayerChatTipsyClientboundPacket(sender.getEffect(BnCEffects.TIPSY).getAmplifier()));
-            return BnCTextUtils.setupChatMessageServer(message, sender);
+                BrewinAndChewin.getHelper().sendClientbound(otherPlayer, new MakeNextPlayerChatTipsyClientboundPacket(sender.getEffect(BnCEffects.TIPSY).getAmplifier(), randomSeed));
+            return BnCTextUtils.setupChatMessageServer(message, sender, randomSeed);
         }
         return message;
     }

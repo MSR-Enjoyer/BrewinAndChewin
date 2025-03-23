@@ -13,7 +13,7 @@ import umpaz.brewinandchewin.client.utility.BnCClientTextUtils;
 public class ChatListenerMixin {
     @ModifyReturnValue(method = "evaluateTrustLevel", at = @At("RETURN"))
     public ChatTrustLevel brewinandchewin$setTipsyChatToModified(ChatTrustLevel original, PlayerChatMessage chatMessage, Component decoratedServerContent) {
-        BnCClientTextUtils.setupChatMessage(decoratedServerContent, chatMessage.sender());
+        BnCClientTextUtils.setupChatMessage(decoratedServerContent);
         if (BnCClientTextUtils.getTipsyMessage() != null)
             return ChatTrustLevel.MODIFIED;
         return original;

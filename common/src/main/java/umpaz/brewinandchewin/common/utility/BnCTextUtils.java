@@ -3,6 +3,7 @@ package umpaz.brewinandchewin.common.utility;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.PlayerChatMessage;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -16,43 +17,41 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BnCTextUtils {
-    public static PlayerChatMessage setupChatMessageServer(PlayerChatMessage message, ServerPlayer sender) {
+    public static PlayerChatMessage setupChatMessageServer(PlayerChatMessage chatMessage, ServerPlayer sender, long randomSeed) {
         if (sender.hasEffect(BnCEffects.TIPSY) && sender.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble()) {
-            StringBuilder textBuilder = new StringBuilder(message.signedContent());
-
             int amplifier = sender.getEffect(BnCEffects.TIPSY).getAmplifier();
             amplifier = amplifier - BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble();
-            RandomSource random = RandomSource.create(0L);
-            int amnt = (int) ((amplifier + 1) * (textBuilder.length() / 10f)) + random.nextInt(5);
+            RandomSource random = RandomSource.create(randomSeed);
+
+            StringBuilder textBuilder = new StringBuilder(chatMessage.decoratedContent().getString());
+
+            int amnt = (int) ((amplifier + 1) * (textBuilder.length() / 6f)) + random.nextInt(amplifier, amplifier + 2) - 1;
             for (int i = 0; i < amnt; i++) {
+                List<String> globalWords = Arrays.stream(textBuilder.toString().split(" ")).collect(Collectors.toCollection(ArrayList::new));
+                List<String> validWords = globalWords.stream().filter(s -> s.length() > 3).collect(Collectors.toCollection(ArrayList::new));
+                if (validWords.isEmpty())
+                    break;
                 // pick a random word
-                List<String> words = Arrays.stream(textBuilder.toString().split(" ")).collect(Collectors.toCollection(ArrayList::new));
-                if (words.isEmpty())
-                    continue;
-                int wordIndex = random.nextInt(words.size());
-                String word = words.get(wordIndex);
-
-                if (word.length() < 4)
-                    continue;
-
-                int wordStart = Arrays.stream(textBuilder.toString().split(" ")).toList().subList(0, wordIndex).stream().mapToInt(String::length).sum() + wordIndex;
-
+                int wordIndex = random.nextInt(validWords.size());
+                String word = validWords.get(wordIndex);
+                int globalWordLength = globalWords.subList(0, globalWords.indexOf(word)).stream().mapToInt(value -> value.length() + 1).sum();
                 // pick a random character in the word, excluding the first and last letters
-                int index = wordStart + random.nextInt(2, Math.max(word.length() - 2, 3));
+                int index = globalWordLength + random.nextInt(1, word.length() - 2);
                 // pick an index within range
-                int newIndex = Mth.clamp(index + random.nextInt(Math.max(word.length() - 2, 3)), wordStart + 1, wordStart + word.length() - 2);
-
+                int newIndex = Mth.clamp(index + (random.nextBoolean() ? 1 : -1), globalWordLength + 1,
+                        globalWordLength + word.length() - 2);
                 // swap the characters
                 char temp = textBuilder.charAt(index);
                 textBuilder.setCharAt(index, textBuilder.charAt(newIndex));
                 textBuilder.setCharAt(newIndex, temp);
             }
             String text = textBuilder.toString();
-            if (!message.signedContent().equals(text))  {
-                return message.withUnsignedContent(Component.literal(text));
+            if (!chatMessage.signedContent().equals(text))  {
+                Style style = chatMessage.decoratedContent().getStyle();
+                return chatMessage.withUnsignedContent(Component.literal(text).withStyle(style));
             }
         }
-        return message;
+        return chatMessage;
     }
 
     public static MutableComponent getTranslation(String key, Object... args) {

@@ -18,14 +18,14 @@ import umpaz.brewinandchewin.common.access.ChatPlayerListAccess;
 public class PlayerListMixin implements ChatPlayerListAccess {
     @Shadow @Final private MinecraftServer server;
     @Unique
-    private String brewinandchewin$originalChatMessage;
+    private Component brewinandchewin$originalChatMessage;
 
-    // Modify on server then unmodify on client for chat links.
+    // Modify on server then unmodify for client for chat links.
     @ModifyVariable(method = "broadcastChatMessage(Lnet/minecraft/network/chat/PlayerChatMessage;Ljava/util/function/Predicate;Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/network/chat/ChatType$Bound;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;verifyChatTrusted(Lnet/minecraft/network/chat/PlayerChatMessage;)Z"), argsOnly = true)
     public PlayerChatMessage brewinandchewin$sendOriginalChatMessageToClients(PlayerChatMessage message, @Local(argsOnly = true) ChatType.Bound boundChatType) {
         if (brewinandchewin$originalChatMessage != null) {
             server.logChatMessage(message.decoratedContent(), boundChatType, "Modified by Tipsy");
-            PlayerChatMessage retValue = message.withUnsignedContent(Component.literal(brewinandchewin$originalChatMessage));
+            PlayerChatMessage retValue = !message.signedContent().equals(brewinandchewin$originalChatMessage.getString()) ? message.withUnsignedContent(brewinandchewin$originalChatMessage) : message.removeUnsignedContent();
             brewinandchewin$originalChatMessage = null;
             return retValue;
         }
@@ -33,7 +33,7 @@ public class PlayerListMixin implements ChatPlayerListAccess {
     }
 
     @Override
-    public void brewinandchewin$setOriginalMessage(String message) {
+    public void brewinandchewin$setOriginalMessage(Component message) {
         brewinandchewin$originalChatMessage = message;
     }
 }
