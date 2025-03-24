@@ -1,3 +1,5 @@
+- This update is required both clientside and serverside.
+
 ## Changes
 - Tweaked Tipsified text modifications to be more frequent and less set in stone.
 - Tipsy is no longer consistently modified, opting for random modifications.

@@ -1,6 +1,7 @@
 package umpaz.brewinandchewin.neoforge.client;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
@@ -22,9 +23,10 @@ public class TipsyEffects {
 
     @SubscribeEvent
     public static void iCanHear(ClientChatReceivedEvent.Player event) {
-        Component chatMessage = BnCClientTextUtils.getTipsyMessage();
-        if (chatMessage != null)
-            event.setMessage(chatMessage);
+        BnCClientTextUtils.setupChatMessage(event.getPlayerChatMessage().withUnsignedContent(event.getMessage()));
+        PlayerChatMessage chatMessage = BnCClientTextUtils.getTipsyMessage();
+        if (chatMessage != null && chatMessage.filterMask().isEmpty() && !chatMessage.decoratedContent().equals(event.getPlayerChatMessage().decoratedContent()) && event.getBoundChatType() != null)
+            event.setMessage(event.getBoundChatType().decorate(chatMessage.decoratedContent()));
         BnCClientTextUtils.clearTipsyMessage();
     }
 

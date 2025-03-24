@@ -8,6 +8,7 @@
     "PreventTaggedEffectRemovalMixin$MilkBottle"
   ],
   "client": [
+    "client.ChatListenerMixin",
     "client.TipsyMouseHandlerMixin"
   ],
   "injectors": {

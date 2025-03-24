@@ -1,6 +1,7 @@
 package umpaz.brewinandchewin.fabric.client;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.model.loading.v1.PreparableModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
@@ -12,8 +13,13 @@ import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.multiplayer.chat.ChatTrustLevel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -23,6 +29,7 @@ import umpaz.brewinandchewin.client.BnCClientSetup;
 import umpaz.brewinandchewin.client.BrewinAndChewinClient;
 import umpaz.brewinandchewin.client.gui.KegScreen;
 import umpaz.brewinandchewin.client.gui.KegTooltip;
+import umpaz.brewinandchewin.client.utility.BnCClientTextUtils;
 import umpaz.brewinandchewin.common.fluid.BnCFluidConstants;
 import umpaz.brewinandchewin.common.network.clientbound.*;
 import umpaz.brewinandchewin.common.registry.BnCFluids;
@@ -84,6 +91,18 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
                 }
                 return model;
             });
+        });
+        ClientReceiveMessageEvents.ALLOW_CHAT.register((message, chatMessage, profile, bound, timestamp) -> {
+            if (chatMessage != null) {
+                BnCClientTextUtils.setupChatMessage(chatMessage);
+                PlayerChatMessage tipsyMessage = BnCClientTextUtils.getTipsyMessage();
+                if (tipsyMessage != null) {
+                    BnCClientTextUtils.clearTipsyMessage();
+                    Minecraft.getInstance().gui.getChat().addMessage(bound.decorate(tipsyMessage.decoratedContent()), tipsyMessage.signature(), GuiMessageTag.chatModified(tipsyMessage.signedContent()));
+                }
+                return false;
+            }
+            return true;
         });
         registerNetwork();
         registerFluidRenderers();

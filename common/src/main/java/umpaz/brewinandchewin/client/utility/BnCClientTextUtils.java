@@ -2,7 +2,7 @@ package umpaz.brewinandchewin.client.utility;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
@@ -16,20 +16,13 @@ import java.util.stream.Collectors;
 public class BnCClientTextUtils {
     public static int tipsyMessageLevel = 0;
     public static long randomSeed = 0L;
-    private static Component nextTipsyMessage;
+    private static PlayerChatMessage nextTipsyMessage;
 
-    public static void setupChatMessage(Component original) {
+    public static void setupChatMessage(PlayerChatMessage chatMessage) {
         if (BnCConfiguration.CLIENT_CONFIG.get().scrambleChat() && (tipsyMessageLevel > 0 ||
                 Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble())) {
 
-            if (!(original.getContents() instanceof TranslatableContents contents) || !contents.getKey().equals("chat.type.text"))
-                return;
-
-            Object[] args = contents.getArgs();
-            if (args.length < 2 || !(args[0] instanceof Component playerName) || !(args[1] instanceof Component message))
-                return;
-
-            StringBuilder textBuilder = new StringBuilder(message.getString());
+            StringBuilder textBuilder = new StringBuilder(chatMessage.decoratedContent().getString());
 
             int amplifier = tipsyMessageLevel;
             if (Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && amplifier < Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier())
@@ -59,14 +52,13 @@ public class BnCClientTextUtils {
             }
 
             String text = textBuilder.toString();
-            if (!original.getString().equals(text))  {
-                nextTipsyMessage = Component.translatable("chat.type.text", playerName, Component.literal(textBuilder.toString()).withStyle(message.getStyle()));
+            if (!chatMessage.decoratedContent().getString().equals(text))  {
+                nextTipsyMessage = chatMessage.withUnsignedContent(Component.literal(text).withStyle(chatMessage.decoratedContent().getStyle()));
             }
         }
-        tipsyMessageLevel = 0;
     }
 
-    public static Component getTipsyMessage() {
+    public static PlayerChatMessage getTipsyMessage() {
         return nextTipsyMessage;
     }
 

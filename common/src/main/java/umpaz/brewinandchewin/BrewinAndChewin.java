@@ -1,6 +1,5 @@
 package umpaz.brewinandchewin;
 
-import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;

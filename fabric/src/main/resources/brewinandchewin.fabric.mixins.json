@@ -12,7 +12,6 @@
     "RecipeBookSettingsMixin"
   ],
   "client": [
-    "client.ChatListenerMixin",
     "client.ClientRecipeBookMixin",
     "client.EntityRendererMixin",
     "client.GameRendererMixin",
