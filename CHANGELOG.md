@@ -8,5 +8,6 @@
 ## Bugfixes
 - Fixed Tipsified text stripping chat styling.
 - Fixed Tipsified text not respecting spaces within usernames (will show up in nickname mods).
-- Fixed block culling not respecting Tipsy swaying.
+- Fixed block culling not respecting Tipsy swaying to a certain degree.
+  - Sometimes, screen tears may happen, but I don't know enough about rendering to fix it :P.
 - [FABRIC] Fixed server-sided Tipsy chatting not working with mods that run off Fabric API's chat event.

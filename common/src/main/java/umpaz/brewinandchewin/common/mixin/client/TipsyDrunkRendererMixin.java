@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import umpaz.brewinandchewin.common.registry.BnCEffects;
 
@@ -45,9 +46,10 @@ public class TipsyDrunkRendererMixin {
         return pose;
     }
 
-    @ModifyVariable(method = "renderLevel", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4f;rotation(Lorg/joml/Quaternionfc;)Lorg/joml/Matrix4f;"))
-    private Matrix4f brewinandchewin$cullWithTipsySpinInMind(Matrix4f original, @Local(argsOnly = true) DeltaTracker delta) {
+    @ModifyArg(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;prepareCullFrustum(Lnet/minecraft/world/phys/Vec3;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V"), index = 1)
+    private Matrix4f brewinandchewin$cullWithTipsySpin(Matrix4f original, @Local(argsOnly = true) DeltaTracker delta) {
         Player player = Minecraft.getInstance().player;
+        // FIXME: It's not perfect, but this'll do.
         if (player != null && player.hasEffect(BnCEffects.TIPSY)) {
             float distortionScale = minecraft.options.screenEffectScale().get().floatValue();
             if (distortionScale > 0) {
@@ -57,13 +59,14 @@ public class TipsyDrunkRendererMixin {
                 float scaledStrength = strength * distortionScale;
 
                 // left and right
-                pose.rotateAround(new Quaternionf().fromAxisAngleDeg(0, 1, 0, -Mth.cos(3 + ticks * 0.0295f) * scaledStrength), 0.5f, 0.5f, 0.5f);
+                pose.rotateAround(new Quaternionf().fromAxisAngleDeg(0, 1, 0, Mth.cos(3 + ticks * 0.0295f) * scaledStrength), 0.5f, 0.5f, 0.5f);
                 // up and down
-                pose.rotateAround(new Quaternionf().fromAxisAngleDeg(1, 0, 1, -Mth.sin(27 + ticks * 0.0132f) * scaledStrength), 0.5f, 0.5f, 0.5f);
+                pose.rotateAround(new Quaternionf().fromAxisAngleDeg(1, 0, 1, Mth.sin(27 + ticks * 0.0132f) * scaledStrength), 0.5f, 0.5f, 0.5f);
                 // circle
                 float xDiff = (Mth.sin(ticks * 0.00253f) * (scaledStrength / 100F));
                 float zDiff = (Mth.cos(ticks * 0.00784f) * (scaledStrength / 100F));
                 pose.translate(xDiff, 0, zDiff);
+
                 original.mul(pose.last().pose());
             }
         }
