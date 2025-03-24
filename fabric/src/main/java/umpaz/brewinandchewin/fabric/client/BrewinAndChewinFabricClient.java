@@ -99,8 +99,8 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
                 if (tipsyMessage != null) {
                     BnCClientTextUtils.clearTipsyMessage();
                     Minecraft.getInstance().gui.getChat().addMessage(bound.decorate(tipsyMessage.decoratedContent()), tipsyMessage.signature(), GuiMessageTag.chatModified(tipsyMessage.signedContent()));
+                    return false;
                 }
-                return false;
             }
             return true;
         });
