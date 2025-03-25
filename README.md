@@ -69,3 +69,4 @@ dependencies {
     implementation("house.greenhouse:greenhouseconfig_toml:${Versions.GREENHOUSE_CONFIG_TOML}")
 }
 ```
+</details>
