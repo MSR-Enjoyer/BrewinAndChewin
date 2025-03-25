@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -23,6 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.apache.commons.compress.compressors.z.ZCompressorInputStream;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.BnCClientSetup;
 import umpaz.brewinandchewin.client.BrewinAndChewinClient;
@@ -39,9 +41,11 @@ import umpaz.brewinandchewin.fabric.client.model.CoasterWrappedModel;
 import umpaz.brewinandchewin.fabric.client.platform.BnCClientPlatformHelperFabric;
 import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.stream.Stream;
 
 public class BrewinAndChewinFabricClient implements ClientModInitializer {
     @Override
@@ -98,19 +102,30 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
                 PlayerChatMessage tipsyMessage = BnCClientTextUtils.getTipsyMessage();
                 if (tipsyMessage != null) {
                     BnCClientTextUtils.clearTipsyMessage();
-                    ChatType.Bound newBound = new ChatType.Bound(Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.CHAT_TYPE).getOrThrow(ChatType.CHAT), getPlayerNameComponent(bound.name()), Optional.empty());
-                    Minecraft.getInstance().gui.getChat().addMessage(newBound.decorate(tipsyMessage.decoratedContent()), tipsyMessage.signature(), GuiMessageTag.chatModified(chatMessage.decoratedContent().getString()));
+                    Minecraft.getInstance().gui.getChat().addMessage(getPlayerNameComponent(bound.name(), true).copy().append(tipsyMessage.decoratedContent()), tipsyMessage.signature(), GuiMessageTag.chatModified(chatMessage.decoratedContent().getString()));
+                    BnCClientTextUtils.tipsyMessageLevel = 0;
+                    BnCClientTextUtils.randomSeed = 0L;
                     return false;
                 }
             }
+            BnCClientTextUtils.tipsyMessageLevel = 0;
+            BnCClientTextUtils.randomSeed = 0L;
             return true;
         });
         registerNetwork();
         registerFluidRenderers();
     }
 
-    private static Component getPlayerNameComponent(Component component) {
-        return component.getSiblings().getFirst();
+    private static MutableComponent getPlayerNameComponent(Component component, boolean originalCall) {
+        List<Component> components = component.getSiblings();
+        if (originalCall)
+            components = components.subList(0, components.size() - 1);
+        MutableComponent newComponent = Component.empty();
+        newComponent.append(component.plainCopy().withStyle(component.getStyle()));
+        for (Component sibling : components) {
+            newComponent.append(getPlayerNameComponent(sibling, false).withStyle(sibling.getStyle()));
+        }
+        return newComponent;
     }
 
     private static void registerNetwork() {

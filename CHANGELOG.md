@@ -1,2 +1,3 @@
 ## Bugfixes
-- [NEOFORGE] Fixed chat scrambling not functioning on NeoForge.
+- Fixed issues with chat scrambling whilst the player name text is modified.
+- [FABRIC] Fixed Tipsy status leaking into other player messages.

@@ -1,5 +1,6 @@
 package umpaz.brewinandchewin.neoforge.client;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.ChatType;
@@ -34,14 +35,21 @@ public class TipsyEffects {
         BnCClientTextUtils.setupChatMessage(event.getPlayerChatMessage().withUnsignedContent(getChatMessage(event.getMessage())));
         PlayerChatMessage tipsyMessage = BnCClientTextUtils.getTipsyMessage();
         if (tipsyMessage != null && event.getBoundChatType() != null) {
-            ChatType.Bound newBound = new ChatType.Bound(Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.CHAT_TYPE).getOrThrow(ChatType.CHAT), getPlayerNameComponent(event.getBoundChatType().name()), Optional.empty());
-            event.setMessage(newBound.decorate(tipsyMessage.decoratedContent()));
+            event.setMessage(getPlayerNameComponent(event.getBoundChatType().name(), true).copy().append(tipsyMessage.decoratedContent()));
         }
         BnCClientTextUtils.clearTipsyMessage();
     }
 
-    private static Component getPlayerNameComponent(Component component) {
-        return component.getSiblings().getFirst();
+    private static MutableComponent getPlayerNameComponent(Component component, boolean originalCall) {
+        List<Component> components = component.getSiblings();
+        if (originalCall)
+            components = components.subList(0, components.size() - 1);
+        MutableComponent newComponent = Component.empty();
+        newComponent.append(component.plainCopy().withStyle(component.getStyle()));
+        for (Component sibling : components) {
+            newComponent.append(getPlayerNameComponent(sibling, false).withStyle(sibling.getStyle()));
+        }
+        return newComponent;
     }
 
     private static Component getChatMessage(Component component) {
