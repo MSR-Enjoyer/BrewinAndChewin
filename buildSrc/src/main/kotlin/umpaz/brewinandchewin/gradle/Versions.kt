@@ -48,5 +48,11 @@ object Versions {
     const val REGISTRATE_FABRIC = "1.3.77-MC1.21.1"
     const val PORTING_LIB = "3.1.0-beta.39+1.21.1"
 
+    const val STYLED_CHAT = "2.6.1+1.21"
+    const val PB4_PREDICATE_API = "0.5.1+1.21"
+    const val PB4_PLACEHOLDER_API = "2.4.2+1.21"
+    const val PB4_PLAYER_DATA_API = "0.6.0+1.21"
+    const val PERMISSIONS_API = "0.3.1"
+
     const val JAVA = 21
 }

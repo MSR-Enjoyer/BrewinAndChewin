@@ -2,6 +2,7 @@ package umpaz.brewinandchewin.client.utility;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -18,12 +19,10 @@ public class BnCClientTextUtils {
     public static long randomSeed = 0L;
     private static PlayerChatMessage nextTipsyMessage;
 
-    public static void setupChatMessage(PlayerChatMessage chatMessage) {
-        if (BnCConfiguration.CLIENT_CONFIG.get().scrambleChat() && (tipsyMessageLevel > 0 ||
-                Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble())) {
+    public static Component modifyComponents(Component original, long randomSeed) {
+        StringBuilder textBuilder = new StringBuilder(original.getContents().visit(Optional::ofNullable).orElse(""));
 
-            StringBuilder textBuilder = new StringBuilder(chatMessage.decoratedContent().getString());
-
+        if (!textBuilder.isEmpty()) {
             int amplifier = tipsyMessageLevel;
             if (Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && amplifier < Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier())
                 amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier();
@@ -50,10 +49,28 @@ public class BnCClientTextUtils {
                 textBuilder.setCharAt(index, textBuilder.charAt(newIndex));
                 textBuilder.setCharAt(newIndex, temp);
             }
-
             String text = textBuilder.toString();
-            if (!chatMessage.decoratedContent().getString().equals(text))  {
-                nextTipsyMessage = chatMessage.withUnsignedContent(Component.literal(text).withStyle(chatMessage.decoratedContent().getStyle()));
+            MutableComponent component = Component.literal(text).withStyle(original.getStyle());
+            for (Component sibling : original.getSiblings()) {
+                component.append(modifyComponents(sibling, randomSeed));
+            }
+            return component;
+        }
+        MutableComponent component = Component.empty();
+        for (Component sibling : original.getSiblings()) {
+            component.append(modifyComponents(sibling, randomSeed));
+        }
+        return component;
+    }
+
+    public static void setupChatMessage(PlayerChatMessage chatMessage) {
+        if (BnCConfiguration.CLIENT_CONFIG.get().scrambleChat() && (tipsyMessageLevel > 0 ||
+                Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble())) {
+
+            Component newMessage = modifyComponents(chatMessage.decoratedContent(), randomSeed);
+
+            if (!chatMessage.decoratedContent().equals(newMessage))  {
+                nextTipsyMessage = chatMessage.withUnsignedContent(newMessage);
             }
         }
     }
@@ -70,32 +87,7 @@ public class BnCClientTextUtils {
         if (BnCConfiguration.CLIENT_CONFIG.get().scrambleName())
             if (Minecraft.getInstance().player != null) {
                 if (Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelNameScramble()) {
-                    int amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() - BnCConfiguration.COMMON_CONFIG.get().root().levelNameScramble();
-                    StringBuilder textBuilder = new StringBuilder(original.getString());
-                    RandomSource random = Minecraft.getInstance().player.getRandom();
-                    int amnt = (int) ((amplifier + 1) * (textBuilder.length() / 4f)) + random.nextInt(amplifier + 1);
-                    for (int i = 0; i < amnt; i++) {
-                        // pick a random word
-                        String[] words = textBuilder.toString().split(" ");
-                        int wordIndex = random.nextInt(words.length);
-                        String word = words[wordIndex];
-
-                        if (word.length() < 4)
-                            continue;
-
-                        int wordStart = Arrays.asList(words).subList(0, wordIndex).stream().mapToInt(String::length).sum() + wordIndex;
-
-                        // pick a random character in the word, excluding the first and last letters
-                        int index = wordStart + random.nextInt(1, Math.max(word.length() - 2, 2));
-                        // pick an index within range
-                        int newIndex = Mth.clamp(index + random.nextInt(Math.max(word.length() - 2, 2)), wordStart + 1, wordStart + word.length() - 2);
-
-                        // swap the characters
-                        char temp = textBuilder.charAt(index);
-                        textBuilder.setCharAt(index, textBuilder.charAt(newIndex));
-                        textBuilder.setCharAt(newIndex, temp);
-                    }
-                    return Component.literal(textBuilder.toString());
+                    return modifyComponents(original, 0L);
                 }
             }
         return original;
@@ -109,30 +101,8 @@ public class BnCClientTextUtils {
         int minScrambleAmplifier = BnCConfiguration.COMMON_CONFIG.get().root().levelSignScramble();
 
         if (player.hasEffect(BnCEffects.TIPSY) && player.getEffect(BnCEffects.TIPSY).getAmplifier() >= minScrambleAmplifier) {
-            Random random = new Random(0);
             for (int i = 0; i < 4; i++) {
-                Component line = signText.getMessage(i, false);
-                if (line.getString().length() <= 1) continue;
-                StringBuilder text = new StringBuilder(line.getString());
-                int amplifier = Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() - minScrambleAmplifier;
-                int amnt = (int) ((amplifier + 1) * (text.length() / 4f)) + random.nextInt(amplifier + 1);
-                for (int j = 0; j < amnt; j++) {
-                    // pick a random word
-                    String[] words = text.toString().split(" ");
-                    int wordIndex = random.nextInt(words.length);
-                    String word = words[wordIndex];
-                    if (word.length() < 4) continue;
-                    int wordStart = Arrays.asList(words).subList(0, wordIndex).stream().mapToInt(String::length).sum() + wordIndex;
-                    // pick a random character in the word, excluding the first and last letters
-                    int index = wordStart + random.nextInt(1, Math.max(word.length() - 2, 2));
-                    // pick an index within range
-                    int newIndex = Mth.clamp(index + random.nextInt(Math.max(word.length() - 2, 2)), wordStart + 1, wordStart + word.length() - 2);
-                    // swap the characters
-                    char temp = text.charAt(index);
-                    text.setCharAt(index, text.charAt(newIndex));
-                    text.setCharAt(newIndex, temp);
-                }
-                signText = signText.setMessage(i, Component.literal(text.toString()));
+                signText = signText.setMessage(i, modifyComponents(signText.getMessage(i, false), 0L));
             }
         }
         return signText;

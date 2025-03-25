@@ -16,10 +16,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.multiplayer.chat.ChatTrustLevel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.PlayerChatMessage;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -40,6 +39,7 @@ import umpaz.brewinandchewin.fabric.client.model.CoasterWrappedModel;
 import umpaz.brewinandchewin.fabric.client.platform.BnCClientPlatformHelperFabric;
 import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -98,7 +98,8 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
                 PlayerChatMessage tipsyMessage = BnCClientTextUtils.getTipsyMessage();
                 if (tipsyMessage != null) {
                     BnCClientTextUtils.clearTipsyMessage();
-                    Minecraft.getInstance().gui.getChat().addMessage(bound.decorate(tipsyMessage.decoratedContent()), tipsyMessage.signature(), GuiMessageTag.chatModified(tipsyMessage.signedContent()));
+                    ChatType.Bound newBound = new ChatType.Bound(Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.CHAT_TYPE).getOrThrow(ChatType.CHAT), getPlayerNameComponent(bound.name()), Optional.empty());
+                    Minecraft.getInstance().gui.getChat().addMessage(newBound.decorate(tipsyMessage.decoratedContent()), tipsyMessage.signature(), GuiMessageTag.chatModified(chatMessage.decoratedContent().getString()));
                     return false;
                 }
             }
@@ -106,6 +107,10 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
         });
         registerNetwork();
         registerFluidRenderers();
+    }
+
+    private static Component getPlayerNameComponent(Component component) {
+        return component.getSiblings().getFirst();
     }
 
     private static void registerNetwork() {

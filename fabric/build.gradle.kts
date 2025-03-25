@@ -39,6 +39,10 @@ repositories {
             includeGroup("com.github.Chocohead")
         }
     }
+    maven("https://api.modrinth.com/maven") {
+        name = "Modrinth"
+    }
+    maven("https://maven.nucleoid.xyz")
 }
 
 dependencies {
@@ -80,6 +84,12 @@ dependencies {
     modCompileOnly("com.tterrag.registrate_fabric:Registrate:${Versions.REGISTRATE_FABRIC}") { isTransitive = false}
     // FIXME: When Create Fabric is fully updated, delete Porting Lib as they are no longer utilising it.
     modCompileOnly("io.github.fabricators_of_create.Porting-Lib:lazy_registration:${Versions.PORTING_LIB}") { isTransitive = false }
+
+    modLocalRuntime("maven.modrinth:styled-chat:${Versions.STYLED_CHAT}")
+    modLocalRuntime("eu.pb4:predicate-api:${Versions.PB4_PREDICATE_API}")
+    modLocalRuntime("eu.pb4:placeholder-api:${Versions.PB4_PLACEHOLDER_API}")
+    modLocalRuntime("me.lucko:fabric-permissions-api:${Versions.PERMISSIONS_API}")
+    modLocalRuntime("eu.pb4:player-data-api:${Versions.PB4_PLAYER_DATA_API}")
 }
 
 loom {
