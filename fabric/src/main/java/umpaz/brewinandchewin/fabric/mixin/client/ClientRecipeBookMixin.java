@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import umpaz.brewinandchewin.client.recipebook.BnCRecipeBookCategories;
 import umpaz.brewinandchewin.client.recipebook.FermentingBookCategory;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
-import vectorwing.farmersdelight.refabricated.client.FDRecipeCategories;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 public class ClientRecipeBookMixin {
     @Inject(method = "setupCollections", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap;copyOf(Ljava/util/Map;)Lcom/google/common/collect/ImmutableMap;"))
     private void brewinandchewin$setupAggregateCategories(Iterable<RecipeHolder<?>> iterable, RegistryAccess registryAccess, CallbackInfo ci, @Local(ordinal = 1) Map<RecipeBookCategories, List<RecipeCollection>> aggregateCategories) {
-        aggregateCategories.put(FDRecipeCategories.COOKING_SEARCH, Stream.of(FDRecipeCategories.COOKING_MEALS, FDRecipeCategories.COOKING_DRINKS, FDRecipeCategories.COOKING_MISC)
+        aggregateCategories.put(BnCRecipeBookCategories.FERMENTING_SEARCH, Stream.of(BnCRecipeBookCategories.FERMENTING_MEALS, BnCRecipeBookCategories.FERMENTING_DRINKS)
                 .flatMap(categories -> aggregateCategories.getOrDefault(categories, List.of()).stream())
                 .toList()
         );
@@ -35,8 +35,8 @@ public class ClientRecipeBookMixin {
             FermentingBookCategory tab = fermentingRecipe.getRecipeBookCategory();
             if (tab != null) {
                 cir.setReturnValue(switch (tab) {
-                    case MEALS -> FDRecipeCategories.COOKING_MEALS;
-                    case DRINKS -> FDRecipeCategories.COOKING_DRINKS;
+                    case MEALS -> BnCRecipeBookCategories.FERMENTING_MEALS;
+                    case DRINKS -> BnCRecipeBookCategories.FERMENTING_DRINKS;
                 });
             }
         }
