@@ -53,6 +53,10 @@ public class KegFermentingPouringRecipe extends KegFermentingRecipe {
         return this.catalystAmount;
     }
 
+    public long getPouringAmount() {
+        return pouringUnit.convertToLoader(pouringAmount);
+    }
+
     public ItemStack getOutput() {
         return this.output;
     }

@@ -7,7 +7,6 @@ import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
-import mezz.jei.api.gui.ingredient.IRecipeSlotDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IModIdHelper;
@@ -17,7 +16,6 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.recipe.vanilla.IJeiIngredientInfoRecipe;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
@@ -39,15 +37,12 @@ import umpaz.brewinandchewin.common.registry.BnCRecipeTypes;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 import umpaz.brewinandchewin.common.utility.BnCTextUtils;
 import umpaz.brewinandchewin.integration.jei.BnCJEIRecipeTypes;
-import umpaz.brewinandchewin.integration.jei.JEIPlugin;
 import umpaz.brewinandchewin.integration.jei.KegFermentingPouringRecipe;
 import vectorwing.farmersdelight.common.utility.ClientRenderUtils;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPouringRecipe> {
     public static final ResourceLocation UID = BrewinAndChewin.asResource("fermenting");
@@ -117,10 +112,10 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
                 IRecipeSlotBuilder recipeSlot = builder.addSlot(RecipeIngredientRole.INPUT, 0, 2)
                         .setFluidRenderer(BnCConfiguration.COMMON_CONFIG.get().keg().localizedCapacity(), false, 26, 30)
                         .setOverlay(kegOverlay, 0, 0);
-                recipeSlot.addIngredients((IIngredientType) fluidHelper.getFluidIngredientType(), recipe.getFluidIngredient().get().ingredient().displayStacks().stream().map(abstractedFluidStack -> fluidHelper.create(abstractedFluidStack.fluid().builtInRegistryHolder(), abstractedFluidStack.unit().convertToLoader(abstractedFluidStack.amount()), abstractedFluidStack.componentPatch())).toList());
+                recipeSlot.addIngredients((IIngredientType) fluidHelper.getFluidIngredientType(), recipe.getFluidIngredient().get().ingredient().displayStacks().stream().map(abstractedFluidStack -> fluidHelper.create(abstractedFluidStack.fluid().builtInRegistryHolder(), recipe.getFluidIngredient().get().loaderAmount(), abstractedFluidStack.componentPatch())).toList());
             } else {
                 IIngredientAcceptor<?> recipeSlot = builder.addInvisibleIngredients(RecipeIngredientRole.INPUT);
-                recipeSlot.addIngredients((IIngredientType) fluidHelper.getFluidIngredientType(), recipe.getFluidIngredient().get().ingredient().displayStacks().stream().map(abstractedFluidStack -> fluidHelper.create(abstractedFluidStack.fluid().builtInRegistryHolder(), abstractedFluidStack.unit().convertToLoader(abstractedFluidStack.amount()), abstractedFluidStack.componentPatch())).toList());
+                recipeSlot.addIngredients((IIngredientType) fluidHelper.getFluidIngredientType(), recipe.getFluidIngredient().get().ingredient().displayStacks().stream().map(abstractedFluidStack -> fluidHelper.create(abstractedFluidStack.fluid().builtInRegistryHolder(), recipe.getFluidIngredient().get().loaderAmount(), abstractedFluidStack.componentPatch())).toList());
             }
             IRecipeSlotBuilder itemSlot = builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 5, 5);
 
@@ -238,7 +233,7 @@ public class FermentingRecipeCategory implements IRecipeCategory<KegFermentingPo
                 tooltip.add(key);
         } else if (ClientRenderUtils.isCursorInsideBounds(92, 39, 10, 16, mouseX, mouseY)) {
             if (recipe.getCatalyst() != null) {
-                tooltip.add(Component.literal(String.valueOf(recipe.getCatalystAmount())).append(I18n.get("generic.unit.millibuckets")));
+                tooltip.add(Component.literal(String.valueOf(recipe.getPouringAmount())).append(I18n.get("generic.unit.millibuckets")));
             }
         }
     }
