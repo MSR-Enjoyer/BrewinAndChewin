@@ -1,3 +1,3 @@
 ## Bugfixes
-- Fixed issues with chat scrambling whilst the player name text is modified.
-- [FABRIC] Fixed Tipsy status leaking into other player messages.
+- Updated Russian (ru_ru) translation. [#49](https://github.com/MerchantCalico/BrewinAndChewin/pull/49) - mpustovoi.
+- [FABRIC] Fixed Keg Recipe Book contents showing up inside the Cooking Pot rather than the Keg. [#53](https://github.com/MerchantCalico/BrewinAndChewin/issues/53)
