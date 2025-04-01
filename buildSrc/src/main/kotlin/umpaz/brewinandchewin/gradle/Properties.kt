@@ -5,7 +5,7 @@ object Properties {
     const val MOD_NAME = "Brewin' And Chewin'"
     const val ARCHIVES_NAME = "BrewinAndChewin"
     const val MOD_ID = "brewinandchewin"
-    val MOD_AUTHORS = listOf("Probleyes", "Umpaz", "MerchantPug")
+    val MOD_AUTHORS = listOf("Probleyes", "Umpaz", "MerchantCalico")
     const val DESCRIPTION = "Fermenting addon for Farmer's Delight."
     const val LICENSE = "MIT"
 
@@ -13,6 +13,6 @@ object Properties {
     const val CURSEFORGE_PROJECT_ID = "637808"
     const val MODRINTH_PAGE = "https://modrinth.com/mod/brewin-and-chewin/"
     const val MODRINTH_PROJECT_ID = "hIu9KJTT"
-    const val GITHUB_REPO = "MerchantPug/BrewinAndChewin"
+    const val GITHUB_REPO = "MerchantCalico/BrewinAndChewin"
     const val GITHUB_COMMITISH = Versions.MINECRAFT
 }
