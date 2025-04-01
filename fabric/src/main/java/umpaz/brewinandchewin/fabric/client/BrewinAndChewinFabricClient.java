@@ -102,7 +102,7 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
                 PlayerChatMessage tipsyMessage = BnCClientTextUtils.getTipsyMessage();
                 if (tipsyMessage != null) {
                     BnCClientTextUtils.clearTipsyMessage();
-                    Minecraft.getInstance().gui.getChat().addMessage(getPlayerNameComponent(bound.name(), true).copy().append(tipsyMessage.decoratedContent()), tipsyMessage.signature(), GuiMessageTag.chatModified(chatMessage.decoratedContent().getString()));
+                    Minecraft.getInstance().gui.getChat().addMessage(getPlayerNameComponent(bound.name(), true).copy().append(tipsyMessage.decoratedContent()), tipsyMessage.signature(), GuiMessageTag.chatModified(chatMessage.signedContent()));
                     BnCClientTextUtils.tipsyMessageLevel = 0;
                     BnCClientTextUtils.randomSeed = 0L;
                     return false;

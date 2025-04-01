@@ -16,7 +16,7 @@ public class ChatListenerMixin {
         BnCClientTextUtils.setupChatMessage(chatMessage);
         if (BnCClientTextUtils.getTipsyMessage() != null) {
             BnCClientTextUtils.clearTipsyMessage();
-            return GuiMessageTag.chatModified(chatMessage.decoratedContent().getString());
+            return GuiMessageTag.chatModified(chatMessage.signedContent());
         }
         return original;
     }
