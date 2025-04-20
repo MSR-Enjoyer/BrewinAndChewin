@@ -2,6 +2,7 @@
 
 ## Changes
 - Players in adventure mode may no longer interact with Coaster blocks.
+- [INTERNAL] Updated tipsy seed sync to allow for /msg, /tell to share random seeds between sent messages (if you /tell yourself).
 
 ## Bugfixes
 - [FABRIC] Fixed narrator not narrating Tipsified messages.
