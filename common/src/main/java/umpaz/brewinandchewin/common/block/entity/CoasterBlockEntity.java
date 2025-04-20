@@ -36,6 +36,8 @@ public class CoasterBlockEntity extends SyncedBlockEntity {
    }
 
     public ItemInteractionResult useItemOn(ItemStack stack, Level level, BlockState state, BlockPos pos, Player player, InteractionHand hand) {
+        if (!player.getAbilities().mayBuild)
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (state.getValue(CoasterBlock.INVISIBLE) && stack.is(BnCItems.COASTER)) {
             if (!player.getAbilities().instabuild)
                 stack.shrink(1);
@@ -49,6 +51,8 @@ public class CoasterBlockEntity extends SyncedBlockEntity {
     }
 
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (!player.getAbilities().mayBuild)
+            return InteractionResult.PASS;
         if (state.getValue(CoasterBlock.SIZE) > 0) { //Pickup Logic
             if (player.isShiftKeyDown() && !state.getValue(INVISIBLE)) {
                 ItemStack coaster = new ItemStack(BnCItems.COASTER);
