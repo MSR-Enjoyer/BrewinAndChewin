@@ -26,7 +26,7 @@ public abstract class ServerGamePacketListenerImplMixin {
             ((ChatPlayerListAccess)player.getServer().getPlayerList()).brewinandchewin$setOriginalMessage(message.decoratedContent());
             long randomSeed = player.getRandom().nextLong();
             for (ServerPlayer otherPlayer : player.getServer().getPlayerList().getPlayers())
-                BrewinAndChewin.getHelper().sendClientbound(otherPlayer, new MakeNextPlayerChatTipsyClientboundPacket(sender.getEffect(BnCEffects.TIPSY).getAmplifier(), randomSeed));
+                BrewinAndChewin.getHelper().sendClientbound(otherPlayer, new MakeNextPlayerChatTipsyClientboundPacket(sender.getEffect(BnCEffects.TIPSY).getAmplifier(), randomSeed, 0));
             return BnCTextUtils.setupChatMessageServer(message, sender, randomSeed);
         }
         return message;

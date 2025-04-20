@@ -1,9 +1,5 @@
 package umpaz.brewinandchewin.neoforge.client;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.PlayerChatMessage;
@@ -17,9 +13,6 @@ import net.neoforged.neoforge.client.event.RenderNameTagEvent;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.utility.BnCClientTextUtils;
 import umpaz.brewinandchewin.neoforge.client.integration.IntoxicationAppleSkinCompatNeoForge;
-
-import java.util.List;
-import java.util.Optional;
 
 @EventBusSubscriber(modid = BrewinAndChewin.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class TipsyEffects {
@@ -35,21 +28,22 @@ public class TipsyEffects {
         BnCClientTextUtils.setupChatMessage(event.getPlayerChatMessage().withUnsignedContent(getChatMessage(event.getMessage())));
         PlayerChatMessage tipsyMessage = BnCClientTextUtils.getTipsyMessage();
         if (tipsyMessage != null && event.getBoundChatType() != null) {
-            event.setMessage(getPlayerNameComponent(event.getBoundChatType().name(), true).copy().append(tipsyMessage.decoratedContent()));
+            BnCClientTextUtils.clearTipsyMessage();
+
+            MutableComponent boundChat = BnCClientTextUtils.getStyledChatPrefix(event.getBoundChatType(), event.getBoundChatType().decorate(Component.literal("")).copy());
+            MutableComponent newMessage = tipsyMessage.decoratedContent().copy().withStyle(event.getBoundChatType().chatType().value().chat().style());
+
+            event.setMessage(boundChat.append(newMessage));
         }
         BnCClientTextUtils.clearTipsyMessage();
-    }
 
-    private static MutableComponent getPlayerNameComponent(Component component, boolean originalCall) {
-        List<Component> components = component.getSiblings();
-        if (originalCall)
-            components = components.subList(0, components.size() - 1);
-        MutableComponent newComponent = Component.empty();
-        newComponent.append(component.plainCopy().withStyle(component.getStyle()));
-        for (Component sibling : components) {
-            newComponent.append(getPlayerNameComponent(sibling, false).withStyle(sibling.getStyle()));
+        if (BnCClientTextUtils.clearDelayAmount <= 0) {
+            BnCClientTextUtils.tipsyMessageLevel = 0;
+            BnCClientTextUtils.randomSeed = 0L;
+            BnCClientTextUtils.generatedRandom = false;
+        } else {
+            --BnCClientTextUtils.clearDelayAmount;
         }
-        return newComponent;
     }
 
     private static Component getChatMessage(Component component) {

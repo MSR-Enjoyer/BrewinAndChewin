@@ -13,18 +13,15 @@ import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.apache.commons.compress.compressors.z.ZCompressorInputStream;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.BnCClientSetup;
 import umpaz.brewinandchewin.client.BrewinAndChewinClient;
@@ -40,12 +37,11 @@ import umpaz.brewinandchewin.fabric.client.integration.IntoxicationAppleSkinComp
 import umpaz.brewinandchewin.fabric.client.model.CoasterWrappedModel;
 import umpaz.brewinandchewin.fabric.client.platform.BnCClientPlatformHelperFabric;
 import umpaz.brewinandchewin.fabric.registry.BnCFluidsImpl;
+import umpaz.brewinandchewin.fabric.registry.BnCLootModificationEvents;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.stream.Stream;
 
 public class BrewinAndChewinFabricClient implements ClientModInitializer {
     @Override
@@ -100,32 +96,32 @@ public class BrewinAndChewinFabricClient implements ClientModInitializer {
             if (chatMessage != null) {
                 BnCClientTextUtils.setupChatMessage(chatMessage);
                 PlayerChatMessage tipsyMessage = BnCClientTextUtils.getTipsyMessage();
-                if (tipsyMessage != null) {
+                if (tipsyMessage != null && bound.chatType().isBound()) {
                     BnCClientTextUtils.clearTipsyMessage();
-                    Minecraft.getInstance().gui.getChat().addMessage(getPlayerNameComponent(bound.name(), true).copy().append(tipsyMessage.decoratedContent()), tipsyMessage.signature(), GuiMessageTag.chatModified(chatMessage.signedContent()));
-                    BnCClientTextUtils.tipsyMessageLevel = 0;
-                    BnCClientTextUtils.randomSeed = 0L;
+                    MutableComponent boundChat = BnCClientTextUtils.getStyledChatPrefix(bound, bound.decorate(Component.literal("")).copy());
+                    MutableComponent newMessage = tipsyMessage.decoratedContent().copy().withStyle(bound.chatType().value().chat().style());
+
+                    Minecraft.getInstance().gui.getChat().addMessage(boundChat.append(newMessage.copy().withStyle(bound.chatType().value().chat().style())), tipsyMessage.signature(), GuiMessageTag.chatModified(chatMessage.signedContent()));
+                    Minecraft.getInstance().getNarrator().sayChat(boundChat.append(newMessage.copy().withStyle(bound.chatType().value().narration().style())));
+
+                    if (BnCClientTextUtils.clearDelayAmount <= 0) {
+                        BnCClientTextUtils.tipsyMessageLevel = 0;
+                        BnCClientTextUtils.randomSeed = 0L;
+                        BnCClientTextUtils.generatedRandom = false;
+                    } else {
+                        --BnCClientTextUtils.clearDelayAmount;
+                    }
                     return false;
                 }
             }
+            BnCClientTextUtils.clearDelayAmount = 0;
             BnCClientTextUtils.tipsyMessageLevel = 0;
             BnCClientTextUtils.randomSeed = 0L;
+            BnCClientTextUtils.generatedRandom = false;
             return true;
         });
         registerNetwork();
         registerFluidRenderers();
-    }
-
-    private static MutableComponent getPlayerNameComponent(Component component, boolean originalCall) {
-        List<Component> components = component.getSiblings();
-        if (originalCall)
-            components = components.subList(0, components.size() - 1);
-        MutableComponent newComponent = Component.empty();
-        newComponent.append(component.plainCopy().withStyle(component.getStyle()));
-        for (Component sibling : components) {
-            newComponent.append(getPlayerNameComponent(sibling, false).withStyle(sibling.getStyle()));
-        }
-        return newComponent;
     }
 
     private static void registerNetwork() {

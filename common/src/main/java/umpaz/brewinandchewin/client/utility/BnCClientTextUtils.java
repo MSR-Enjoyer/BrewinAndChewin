@@ -1,9 +1,17 @@
 package umpaz.brewinandchewin.client.utility;
 
+import com.simibubi.create.infrastructure.ponder.scenes.MechanicalSawScenes;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.PlayerChatMessage;
+import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
@@ -15,7 +23,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class BnCClientTextUtils {
+    public static final ResourceKey<ChatType> STYLED_CHAT_HACK_CHAT_TYPE = ResourceKey.create(Registries.CHAT_TYPE, ResourceLocation.fromNamespaceAndPath("styled_chat", "generic_hack"));
     public static int tipsyMessageLevel = 0;
+    public static boolean generatedRandom = false;
+    public static int clearDelayAmount = 0;
     public static long randomSeed = 0L;
     private static PlayerChatMessage nextTipsyMessage;
 
@@ -67,6 +78,9 @@ public class BnCClientTextUtils {
         if (BnCConfiguration.CLIENT_CONFIG.get().scrambleChat() && (tipsyMessageLevel > 0 ||
                 Minecraft.getInstance().player.hasEffect(BnCEffects.TIPSY) && Minecraft.getInstance().player.getEffect(BnCEffects.TIPSY).getAmplifier() >= BnCConfiguration.COMMON_CONFIG.get().root().levelChatScramble())) {
 
+            if (!generatedRandom)
+                randomSeed = Minecraft.getInstance().player.getRandom().nextLong();
+
             Component newMessage = modifyComponents(chatMessage.decoratedContent(), randomSeed);
 
             if (!chatMessage.decoratedContent().equals(newMessage))  {
@@ -81,6 +95,37 @@ public class BnCClientTextUtils {
 
     public static void clearTipsyMessage() {
         nextTipsyMessage = null;
+    }
+
+    public static MutableComponent getStyledChatPrefix(ChatType.Bound bound, Component message) {
+        if (bound.chatType().is(BnCClientTextUtils.STYLED_CHAT_HACK_CHAT_TYPE)) {
+            if (message.getContents() instanceof TranslatableContents boundTranslatable &&
+                    boundTranslatable.getArgs()[0] instanceof MutableComponent innerMutable) {
+                MutableComponent oldComponent = innerMutable.copy();
+                if (oldComponent.getContents() instanceof TranslatableContents translatable) {
+                    List<Object> args = new ArrayList<>(List.of(translatable.getArgs()));
+                    args.removeLast();
+                    args.add(Component.empty());
+                    return Component.translatable(translatable.getKey(), args.toArray()).withStyle(oldComponent.getStyle());
+                }
+                return handleSiblings(Component.empty(), innerMutable, true);
+            }
+        }
+        return message.copy();
+    }
+
+    private static MutableComponent handleSiblings(MutableComponent newMessage, Component oldComponent, boolean originalCall) {
+
+        newMessage.append(oldComponent.plainCopy().withStyle(oldComponent.getStyle()));
+
+        if (oldComponent.getSiblings().isEmpty())
+            return newMessage;
+
+        for (int i = 0; i < oldComponent.getSiblings().size(); ++i) {
+            if (!originalCall || i < oldComponent.getSiblings().size() - 1)
+                handleSiblings(newMessage, oldComponent.getSiblings().get(i), false);
+        }
+        return newMessage;
     }
 
     public static Component nameTagRenderer(Component original) {

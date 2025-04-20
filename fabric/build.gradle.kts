@@ -85,6 +85,9 @@ dependencies {
     // FIXME: When Create Fabric is fully updated, delete Porting Lib as they are no longer utilising it.
     modCompileOnly("io.github.fabricators_of_create.Porting-Lib:lazy_registration:${Versions.PORTING_LIB}") { isTransitive = false }
 
+    modCompileOnly("maven.modrinth:styled-chat:${Versions.STYLED_CHAT}")
+    modCompileOnly("eu.pb4:placeholder-api:${Versions.PB4_PLACEHOLDER_API}")
+
     modLocalRuntime("maven.modrinth:styled-chat:${Versions.STYLED_CHAT}")
     modLocalRuntime("eu.pb4:predicate-api:${Versions.PB4_PREDICATE_API}")
     modLocalRuntime("eu.pb4:placeholder-api:${Versions.PB4_PLACEHOLDER_API}")

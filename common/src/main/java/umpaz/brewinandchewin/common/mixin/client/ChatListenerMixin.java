@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import umpaz.brewinandchewin.client.BnCClientSetup;
 import umpaz.brewinandchewin.client.utility.BnCClientTextUtils;
 
 import java.time.Instant;
@@ -39,5 +40,6 @@ public class ChatListenerMixin {
     public void brewinandchewin$modifyTipsyMessageWhileFiltering(ChatType.Bound bound, PlayerChatMessage playerChatMessage, Component component, GameProfile gameProfile, boolean bl, Instant instant, CallbackInfoReturnable<Boolean> cir) {
         BnCClientTextUtils.tipsyMessageLevel = 0;
         BnCClientTextUtils.randomSeed = 0L;
+        BnCClientTextUtils.generatedRandom = false;
     }
 }

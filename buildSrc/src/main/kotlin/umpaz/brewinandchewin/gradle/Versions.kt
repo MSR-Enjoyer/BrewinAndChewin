@@ -1,7 +1,7 @@
 package umpaz.brewinandchewin.gradle
 
 object Versions {
-    const val MOD = "4.2.5"
+    const val MOD = "4.3.0"
 
     const val MINECRAFT = "1.21.1"
     const val PARCHMENT_MINECRAFT = "1.21.1"
@@ -48,6 +48,7 @@ object Versions {
     const val REGISTRATE_FABRIC = "1.3.77-MC1.21.1"
     const val PORTING_LIB = "3.1.0-beta.39+1.21.1"
 
+    const val SINYTRA_CONNECTOR = "2.0.0-beta.7+1.21.1"
     const val STYLED_CHAT = "2.6.1+1.21"
     const val PB4_PREDICATE_API = "0.5.1+1.21"
     const val PB4_PLACEHOLDER_API = "2.4.2+1.21"

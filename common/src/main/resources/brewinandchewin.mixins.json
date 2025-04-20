@@ -13,15 +13,16 @@
     "LivingEntityMixin",
     "LootContextAccessor",
     "LootParamsAccessor",
+    "MsgCommandMixin",
     "NbtUtilsMixin",
     "PlayerListMixin",
     "PlayerMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlaceRecipeAccessor",
+    "ServerRecipeBookMixin",
     "StackedContentsRecipePickerAccessor",
     "StoreLootParamsMixin$LootParamsBuilderMixin",
-    "StoreLootParamsMixin$LootParamsMixin",
-    "ServerRecipeBookMixin"
+    "StoreLootParamsMixin$LootParamsMixin"
   ],
   "client": [
     "client.ChatListenerMixin",
