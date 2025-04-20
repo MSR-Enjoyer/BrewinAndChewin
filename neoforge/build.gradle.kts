@@ -7,7 +7,6 @@ plugins {
     id("conventions.loader")
     id("net.neoforged.moddev")
     id("me.modmuss50.mod-publish-plugin")
-    id("org.sinytra.adapter.userdev") version "1.2.1-SNAPSHOT"
 }
 
 neoForge {
@@ -70,9 +69,6 @@ repositories {
     maven("https://maven.theillusivec4.top/") {
         name = "Curios"
     }
-    maven("https://maven.su5ed.dev/releases") {
-        name = "Sinytra"
-    }
 }
 
 dependencies {
@@ -96,15 +92,6 @@ dependencies {
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${Versions.MINECRAFT}:${Versions.FLYWHEEL}")
     implementation("com.tterrag.registrate:Registrate:${Versions.REGISTRATE}")  { isTransitive = false }
     runtimeOnly("top.theillusivec4.curios:curios-neoforge:${Versions.CURIOS}")
-
-    runtimeOnly("org.sinytra:Connector:${Versions.SINYTRA_CONNECTOR}")
-    compileOnly("org.sinytra.forgified-fabric-api:forgified-fabric-api:${Versions.SINYTRA_CONNECTOR}")
-    runtimeOnly("org.sinytra.forgified-fabric-api:forgified-fabric-api:${Versions.SINYTRA_CONNECTOR}")
-
-    compileOnly("maven.modrinth:styled-chat:${Versions.STYLED_CHAT}")
-    compileOnly("eu.pb4:placeholder-api:${Versions.PB4_PLACEHOLDER_API}")
-    runtimeOnly("maven.modrinth:styled-chat:${Versions.STYLED_CHAT}")
-    runtimeOnly("eu.pb4:predicate-api:${Versions.PB4_PREDICATE_API}")
 }
 
 tasks {
