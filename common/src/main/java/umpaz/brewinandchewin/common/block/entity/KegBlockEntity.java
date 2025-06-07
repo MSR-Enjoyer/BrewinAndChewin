@@ -150,17 +150,12 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     }
 
     public CustomData writeMeal(CompoundTag tag, HolderLookup.Provider provider) {
+        writeDrink(tag, provider);
         AbstractedItemHandler drops = BrewinAndChewin.getHelper().createKegInventory(INVENTORY_SIZE, (handler, integer) -> {});
         for (int i = 0; i < INVENTORY_SIZE; ++i) {
             drops.setStackInSlot(i, i == CONTAINER_SLOT ? inventory.getStackInSlot(i) : ItemStack.EMPTY);
         }
-        if (customName != null) {
-            tag.putString("CustomName", Component.Serializer.toJson(customName, provider));
-        }
         tag.put("Inventory", drops.writeToNbt(provider));
-        if (!fluidTank.isEmpty()) {
-            tag.put("FluidTank", this.fluidTank.writeToNbt(provider));
-        }
         return CustomData.of(tag);
     }
 
@@ -196,6 +191,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     }
 
     public CompoundTag writeDrink(CompoundTag compound, HolderLookup.Provider provider) {
+        compound.putString("id", BnCBlockEntityTypes.KEG.builtInRegistryHolder().getRegisteredName());
         if (customName != null) {
             compound.putString("CustomName", Component.Serializer.toJson(customName, provider));
         }
