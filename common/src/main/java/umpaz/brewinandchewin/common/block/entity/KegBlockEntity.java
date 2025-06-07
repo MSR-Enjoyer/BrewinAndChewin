@@ -151,11 +151,6 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
     public CustomData writeMeal(CompoundTag tag, HolderLookup.Provider provider) {
         writeDrink(tag, provider);
-        AbstractedItemHandler drops = BrewinAndChewin.getHelper().createKegInventory(INVENTORY_SIZE, (handler, integer) -> {});
-        for (int i = 0; i < INVENTORY_SIZE; ++i) {
-            drops.setStackInSlot(i, i == CONTAINER_SLOT ? inventory.getStackInSlot(i) : ItemStack.EMPTY);
-        }
-        tag.put("Inventory", drops.writeToNbt(provider));
         return CustomData.of(tag);
     }
 
