@@ -5,7 +5,8 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import house.greenhouse.greenhouseconfig.api.GreenhouseConfigHolder;
-import house.greenhouse.greenhouseconfig.api.codec.GreenhouseConfigCodecs;
+import house.greenhouse.greenhouseconfig.api.util.DefaultFieldUtil;
+import house.greenhouse.greenhouseconfig.impl.codec.OrderCorrectedRecordCodec;
 import house.greenhouse.greenhouseconfig.toml.TomlLang;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -19,14 +20,18 @@ import umpaz.brewinandchewin.platform.BnCPlatform;
 
 public class BnCConfiguration {
 
-    public static final GreenhouseConfigHolder<Common> COMMON_CONFIG = GreenhouseConfigHolder.<BnCConfiguration.Common>builder("brewinandchewin-common", TomlLang.INSTANCE)
-            .common(BnCConfiguration.Common.CODEC, BnCConfiguration.Common.DEFAULT)
-            .networkSerializable(BnCConfiguration.Common.STREAM_CODEC.cast())
-            .buildAndRegister();
+    public static final GreenhouseConfigHolder<Common> COMMON_CONFIG = GreenhouseConfigHolder.common("brewinandchewin-common",
+                    BnCConfiguration.Common.CODEC,
+                    BnCConfiguration.Common.DEFAULT,
+                    TomlLang.INSTANCE)
+            .networkSynchronized(BnCConfiguration.Common.STREAM_CODEC.cast())
+            .build();
 
-    public static final GreenhouseConfigHolder<BnCConfiguration.Client> CLIENT_CONFIG = GreenhouseConfigHolder.<BnCConfiguration.Client>builder("brewinandchewin-client", TomlLang.INSTANCE)
-            .client(BnCConfiguration.Client.CODEC, BnCConfiguration.Client.DEFAULT)
-            .buildAndRegister();
+    public static final GreenhouseConfigHolder<BnCConfiguration.Client> CLIENT_CONFIG = GreenhouseConfigHolder.client("brewinandchewin-client",
+                    BnCConfiguration.Client.CODEC,
+                    BnCConfiguration.Client.DEFAULT,
+                    TomlLang.INSTANCE)
+            .build();
 
     public static void init() {}
 
@@ -48,32 +53,26 @@ public class BnCConfiguration {
             public static final Root DEFAULT = new Root(3, 3, 3);
 
             public static final MapCodec<Root> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    Codec.intRange(1, 10),
-                                    "At what amplifier of Tipsy should the chat scramble?",
-                                    "Default: " + DEFAULT.levelChatScramble()
-                            ),
+                    DefaultFieldUtil.codecWithComments(
+                            Codec.intRange(1, 10),
                             "levelChatScramble",
-                            DEFAULT.levelChatScramble()
+                            DEFAULT.levelChatScramble(),
+                            "At what amplifier of Tipsy should the chat scramble?",
+                            "Default: " + DEFAULT.levelChatScramble()
                     ).forGetter(Root::levelChatScramble),
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    Codec.intRange(1, 10),
-                                    "At what amplifier of Tipsy should signs scramble?",
-                                    "Default: " + DEFAULT.levelSignScramble()
-                            ),
+                    DefaultFieldUtil.codecWithComments(
+                            Codec.intRange(1, 10),
                             "levelSignScramble",
-                            DEFAULT.levelSignScramble()
+                            DEFAULT.levelSignScramble(),
+                            "At what amplifier of Tipsy should signs scramble?",
+                            "Default: " + DEFAULT.levelSignScramble()
                     ).forGetter(Root::levelSignScramble),
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    Codec.intRange(1, 10),
-                                    "At what amplifier of Tipsy should nametags scramble?",
-                                    "Default: " + DEFAULT.levelNameScramble()
-                            ),
+                    DefaultFieldUtil.codecWithComments(
+                            Codec.intRange(1, 10),
                             "levelNameScramble",
-                            DEFAULT.levelNameScramble()
+                            DEFAULT.levelNameScramble(),
+                            "At what amplifier of Tipsy should nametags scramble?",
+                            "Default: " + DEFAULT.levelNameScramble()
                     ).forGetter(Root::levelNameScramble)
             ).apply(inst, Root::new));
 
@@ -102,87 +101,71 @@ public class BnCConfiguration {
                 return capacityUnit.convertToLoader(capacity);
             }
 
-            public static final Codec<Keg> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    FluidUnit.CODEC,
-                                    "Which unit the capacity field should use.",
-                                    "Should be 'liters', 'millibuckets' or 'droplets'",
-                                    "1 L = 1 mB = 81 d",
-                                    "Default: " + DEFAULT.capacityUnit().getSerializedName()
-                            ),
+            public static final Codec<Keg> CODEC = OrderCorrectedRecordCodec.wrap(RecordCodecBuilder.create(inst -> inst.group(
+                    DefaultFieldUtil.codecWithComments(
+                            FluidUnit.CODEC,
                             "kegCapacityUnit",
-                            DEFAULT.capacityUnit()
+                            DEFAULT.capacityUnit(),
+                            "Which unit the capacity field should use.",
+                            "Should be 'liters', 'millibuckets' or 'droplets'",
+                            "1 L = 1 mB = 81 d",
+                            "Default: " + DEFAULT.capacityUnit().getSerializedName()
                     ).forGetter(Keg::capacityUnit),
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    Codec.LONG.validate(l -> {
-                                        if (l < 0)
-                                            return DataResult.error(() -> "Keg capacity cannot be below 0.");
-                                        return DataResult.success(l);
-                                    }),
-                                    "How much fluid (unit specified by capacityUnit) can the Keg hold?",
-                                    "Range: 1 ~ "  + FluidUnit.convert(10000L, FluidUnit.MILLIBUCKET, DEFAULT.capacityUnit()),
-                                    "Default: " + DEFAULT.capacity() + "(" + DEFAULT.capacityUnit().getSerializedName() + ")"
-                            ),
+                    DefaultFieldUtil.codecWithComments(
+                            Codec.LONG.validate(l -> {
+                                if (l < 0)
+                                    return DataResult.error(() -> "Keg capacity cannot be below 0.");
+                                return DataResult.success(l);
+                            }),
                             "kegCapacity",
-                            DEFAULT.capacity()
+                            DEFAULT.capacity(),
+                            "How much fluid (unit specified by capacityUnit) can the Keg hold?",
+                            "Range: 1 ~ "  + FluidUnit.convert(10000L, FluidUnit.MILLIBUCKET, DEFAULT.capacityUnit()),
+                            "Default: " + DEFAULT.capacity() + "(" + DEFAULT.capacityUnit().getSerializedName() + ")"
                     ).forGetter(Keg::capacity),
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    ExtraCodecs.POSITIVE_INT,
-                                    "How many cold blocks are required for a cold temperature in the Keg?",
-                                    "Default: " + DEFAULT.cold()
-                            ),
+                    DefaultFieldUtil.codecWithComments(
+                            ExtraCodecs.POSITIVE_INT,
                             "kegCold",
-                            DEFAULT.cold()
+                            DEFAULT.cold(),
+                            "How many cold blocks are required for a cold temperature in the Keg?",
+                            "Default: " + DEFAULT.cold()
                     ).forGetter(Keg::cold),
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    ExtraCodecs.POSITIVE_INT,
-                                    "How many cold blocks are required for a chilly temperature in the Keg?",
-                                    "Default: " + DEFAULT.chilly()
-                            ),
+                    DefaultFieldUtil.codecWithComments(
+                            ExtraCodecs.POSITIVE_INT,
                             "kegChilly",
-                            DEFAULT.chilly()
+                            DEFAULT.chilly(),
+                            "How many cold blocks are required for a chilly temperature in the Keg?",
+                            "Default: " + DEFAULT.chilly()
                     ).forGetter(Keg::chilly),
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    ExtraCodecs.POSITIVE_INT,
-                                    "How many hot blocks are required for a warm temperature in the Keg?",
-                                    "Default: " + DEFAULT.warm()
-                            ),
+                    DefaultFieldUtil.codecWithComments(
+                            ExtraCodecs.POSITIVE_INT,
                             "kegWarm",
-                            DEFAULT.warm()
+                            DEFAULT.warm(),
+                            "How many hot blocks are required for a warm temperature in the Keg?",
+                            "Default: " + DEFAULT.warm()
                     ).forGetter(Keg::warm),
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    ExtraCodecs.POSITIVE_INT,
-                                    "How many hot blocks are required for a hot temperature in the Keg?",
-                                    "Default: " + DEFAULT.hot()
-                            ),
+                    DefaultFieldUtil.codecWithComments(
+                            ExtraCodecs.POSITIVE_INT,
                             "kegHot",
-                            DEFAULT.hot()
+                            DEFAULT.hot(),
+                            "How many hot blocks are required for a hot temperature in the Keg?",
+                            "Default: " + DEFAULT.hot()
                     ).forGetter(Keg::hot),
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    Codec.BOOL,
-                                    "Should the biome temperature influence the temperature in the Keg?",
-                                    "Default: " + DEFAULT.biomeTemp()
-                            ),
+                    DefaultFieldUtil.codecWithComments(
+                            Codec.BOOL,
                             "kegBiomeTemp",
-                            DEFAULT.biomeTemp()
+                            DEFAULT.biomeTemp(),
+                            "Should the biome temperature influence the temperature in the Keg?",
+                            "Default: " + DEFAULT.biomeTemp()
                     ).forGetter(Keg::biomeTemp),
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    Codec.BOOL,
-                                    "Should the dimension temperature influence the temperature in the Keg?",
-                                    "Default: " + DEFAULT.dimTemp()
-                            ),
+                    DefaultFieldUtil.codecWithComments(
+                            Codec.BOOL,
                             "kegDimTemp",
-                            DEFAULT.dimTemp()
+                            DEFAULT.dimTemp(),
+                            "Should the dimension temperature influence the temperature in the Keg?",
+                            "Default: " + DEFAULT.dimTemp()
                     ).forGetter(Keg::dimTemp)
-            ).apply(inst, Keg::new));
+            ).apply(inst, Keg::new)));
             public static final StreamCodec<ByteBuf, Keg> STREAM_CODEC = StreamCodec.of(Keg::encode, Keg::new);
 
             public Keg(ByteBuf buf) {
@@ -208,14 +191,12 @@ public class BnCConfiguration {
         public record RecipeBook(boolean enabled) {
             public static final RecipeBook DEFAULT = new RecipeBook(true);
             public static final Codec<RecipeBook> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                    GreenhouseConfigCodecs.defaultFieldCodec(
-                            GreenhouseConfigCodecs.commentedCodec(
-                                    Codec.BOOL,
-                                    "Should the Keg have a Recipe Book available on its interface?",
-                                    "Default: " + DEFAULT.enabled()
-                            ),
+                    DefaultFieldUtil.codecWithComments(
+                            Codec.BOOL,
                             "enableRecipeBookKeg",
-                            DEFAULT.enabled()
+                            DEFAULT.enabled(),
+                            "Should the Keg have a Recipe Book available on its interface?",
+                            "Default: " + DEFAULT.enabled()
                     ).forGetter(RecipeBook::enabled)
             ).apply(inst, RecipeBook::new));
             public static final StreamCodec<ByteBuf, RecipeBook> STREAM_CODEC = ByteBufCodecs.BOOL.map(RecipeBook::new, RecipeBook::enabled);
@@ -228,88 +209,73 @@ public class BnCConfiguration {
                          boolean scrambleChat, boolean scrambleName, boolean scrambleSign,
                          boolean renderFluidInKeg) {
         public static final Client DEFAULT = new Client(
-                platformSpecificValue(FluidUnit.MILLIBUCKET, FluidUnit.LITER), platformSpecificValue(DisplaySettings.NEVER, DisplaySettings.ADVANCED_TOOLTIPS),
+                platformSpecificValue(FluidUnit.MILLIBUCKET, FluidUnit.LITER),
+                platformSpecificValue(DisplaySettings.NEVER, DisplaySettings.ADVANCED_TOOLTIPS),
                 true, true,
                 true, true, true,
                 true
         );
-        private static final Codec<Client> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                GreenhouseConfigCodecs.defaultFieldCodec(
-                        GreenhouseConfigCodecs.commentedCodec(
-                                FluidUnit.CODEC,
-                                "Which unit the fluid display in the keg should use.",
-                                "Should be 'liters', 'millibuckets' or 'droplets'",
-                                "1 L = 1 mB = 81 d",
-                                "Default: " + DEFAULT.displayUnit().getSerializedName()
-                        ),
-                        "fluidDisplayUnit",
-                        DEFAULT.displayUnit()
-                ).forGetter(Client::displayUnit),
-                GreenhouseConfigCodecs.defaultFieldCodec(
-                        GreenhouseConfigCodecs.commentedCodec(
-                                DisplaySettings.CODEC,
-                                "When the opposite fluid display unit should be shown.",
-                                "Should be one of 'never', 'advanced_tooltips' or 'always'",
-                                "Default: " + DEFAULT.oppositeFluidDisplay().getSerializedName()
-                        ),
+        private static final Codec<Client> CODEC = OrderCorrectedRecordCodec.wrap(RecordCodecBuilder.create(inst -> inst.group(
+                 DefaultFieldUtil.codecWithComments(
+                         FluidUnit.CODEC,
+                         "fluidDisplayUnit",
+                         DEFAULT.displayUnit(),
+                         "Which unit the fluid display in the keg should use.",
+                         "Should be 'liters', 'millibuckets' or 'droplets'",
+                         "1 L = 1 mB = 81 d",
+                         "Default: " + DEFAULT.displayUnit().getSerializedName()
+                 ).forGetter(Client::displayUnit),
+                DefaultFieldUtil.codecWithComments(
+                        DisplaySettings.CODEC,
                         "oppositeFluidDisplay",
-                        DEFAULT.oppositeFluidDisplay()
+                        DEFAULT.oppositeFluidDisplay(),
+                        "When the opposite fluid display unit should be shown.",
+                        "Should be one of 'never', 'advanced_tooltips' or 'always'",
+                        "Default: " + DEFAULT.oppositeFluidDisplay().getSerializedName()
                 ).forGetter(Client::oppositeFluidDisplay),
-                GreenhouseConfigCodecs.defaultFieldCodec(
-                        GreenhouseConfigCodecs.commentedCodec(
-                                Codec.BOOL,
-                                "Should the numbed hearts obtained from being damaged when Tipsy flicker when you are about to take damage?",
-                                "Default: " + DEFAULT.numbedHeartFlickering()
-                        ),
+                DefaultFieldUtil.codecWithComments(
+                        Codec.BOOL,
                         "numbedHeartFlickering",
-                        DEFAULT.numbedHeartFlickering()
+                        DEFAULT.numbedHeartFlickering(),
+                        "Should the numbed hearts obtained from being damaged when Tipsy flicker when you are about to take damage?",
+                        "Default: " + DEFAULT.numbedHeartFlickering()
                 ).forGetter(Client::numbedHeartFlickering),
-                GreenhouseConfigCodecs.defaultFieldCodec(
-                        GreenhouseConfigCodecs.commentedCodec(
-                                Codec.BOOL,
-                                "Should the food bar have a yellow overlay when the player has the Intoxication effect?",
-                                "Default: " + DEFAULT.intoxicationFoodOverlay()
-                        ),
+                DefaultFieldUtil.codecWithComments(
+                        Codec.BOOL,
                         "intoxicationFoodOverlay",
-                        DEFAULT.intoxicationFoodOverlay()
+                        DEFAULT.intoxicationFoodOverlay(),
+                        "Should the food bar have a yellow overlay when the player has the Intoxication effect?",
+                        "Default: " + DEFAULT.intoxicationFoodOverlay()
                 ).forGetter(Client::intoxicationFoodOverlay),
-                GreenhouseConfigCodecs.defaultFieldCodec(
-                        GreenhouseConfigCodecs.commentedCodec(
-                                Codec.BOOL,
-                                "Should the chat scramble when the player has the Tipsy effect?",
-                                "Default: " + DEFAULT.scrambleChat()
-                        ),
+                DefaultFieldUtil.codecWithComments(
+                        Codec.BOOL,
                         "scrambleChat",
-                        DEFAULT.scrambleChat()
+                        DEFAULT.scrambleChat(),
+                        "Should the chat scramble when the player has the Tipsy effect?",
+                        "Default: " + DEFAULT.scrambleChat()
                 ).forGetter(Client::scrambleChat),
-                GreenhouseConfigCodecs.defaultFieldCodec(
-                        GreenhouseConfigCodecs.commentedCodec(
-                                Codec.BOOL,
-                                "Should other player's nametags scramble when the player has the Tipsy effect?",
-                                "Default: " + DEFAULT.scrambleName()
-                        ),
+                DefaultFieldUtil.codecWithComments(
+                        Codec.BOOL,
                         "scrambleName",
-                        DEFAULT.scrambleName()
+                        DEFAULT.scrambleName(),
+                        "Should other player's nametags scramble when the player has the Tipsy effect?",
+                        "Default: " + DEFAULT.scrambleName()
                 ).forGetter(Client::scrambleName),
-                GreenhouseConfigCodecs.defaultFieldCodec(
-                        GreenhouseConfigCodecs.commentedCodec(
-                                Codec.BOOL,
-                                "Should signs scramble when the player has the Tipsy effect?",
-                                "Default: " + DEFAULT.scrambleSign()
-                        ),
+                DefaultFieldUtil.codecWithComments(
+                        Codec.BOOL,
                         "scrambleSign",
-                        DEFAULT.scrambleSign()
+                        DEFAULT.scrambleSign(),
+                        "Should signs scramble when the player has the Tipsy effect?",
+                        "Default: " + DEFAULT.scrambleSign()
                 ).forGetter(Client::scrambleSign),
-                GreenhouseConfigCodecs.defaultFieldCodec(
-                        GreenhouseConfigCodecs.commentedCodec(
-                                Codec.BOOL,
-                                "Should kegs render the fluid texture in the background of the fluid slot?",
-                                "Default: " + DEFAULT.renderFluidInKeg()
-                        ),
+                DefaultFieldUtil.codecWithComments(
+                        Codec.BOOL,
                         "renderFluidInKeg",
-                        DEFAULT.renderFluidInKeg()
+                        DEFAULT.renderFluidInKeg(),
+                        "Should kegs render the fluid texture in the background of the fluid slot?",
+                        "Default: " + DEFAULT.renderFluidInKeg()
                 ).forGetter(Client::scrambleSign)
-        ).apply(inst, Client::new));
+        ).apply(inst, Client::new)));
 
         public enum DisplaySettings implements StringRepresentable {
             NEVER("never"),
