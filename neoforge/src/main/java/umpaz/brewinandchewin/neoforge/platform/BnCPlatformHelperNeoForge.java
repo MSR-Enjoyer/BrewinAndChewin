@@ -199,7 +199,10 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
 
     @Override
     public AbstractedFluidStack deserializeLoaderFluidStack(CompoundTag tag, HolderLookup.Provider provider) {
-        var fluidStack = FluidStack.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, provider), tag).mapOrElse(Pair::getFirst, pairError -> FluidStack.EMPTY);
+        if (!tag.contains("Fluid"))
+            return AbstractedFluidStack.EMPTY;
+
+        var fluidStack = FluidStack.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, provider), tag.get("Fluid")).mapOrElse(Pair::getFirst, pairError -> FluidStack.EMPTY);
 
         return new AbstractedFluidStack(fluidStack.getFluid(), fluidStack.getAmount(), fluidStack.getComponents(), FluidUnit.MILLIBUCKET);
     }
