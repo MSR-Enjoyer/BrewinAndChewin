@@ -13,6 +13,7 @@ import org.joml.Matrix4f;
 import umpaz.brewinandchewin.BrewinAndChewin;
 import umpaz.brewinandchewin.client.utility.BnCFluidItemDisplays;
 import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
+import umpaz.brewinandchewin.common.utility.FluidUnit;
 import vectorwing.farmersdelight.common.utility.TextUtils;
 
 public class KegTooltip implements ClientTooltipComponent {
@@ -34,9 +35,9 @@ public class KegTooltip implements ClientTooltipComponent {
    @Override
    public int getWidth( Font font ) {
       if ( !mealStack.isEmpty() ) {
-         MutableComponent textServingsOf = mealStack.amount() == 250
+         MutableComponent textServingsOf = mealStack.amount() == FluidUnit.MILLIBUCKET.convertToLoader(250)
                  ? TextUtils.getTranslation("tooltip.cooking_pot.single_serving")
-                 : TextUtils.getTranslation("tooltip.cooking_pot.many_servings", mealStack.amount() / 250);
+                 : TextUtils.getTranslation("tooltip.cooking_pot.many_servings", mealStack.amount() / FluidUnit.MILLIBUCKET.convertToLoader(250));
          return Math.max(font.width(textServingsOf), font.width(BrewinAndChewin.getHelper().getFluidDisplayName(mealStack)) + 20);
       }
       else {
@@ -58,9 +59,9 @@ public class KegTooltip implements ClientTooltipComponent {
       int gray = color == null ? -1 : color;
 
       if (!mealStack.isEmpty()) {
-         MutableComponent textServingsOf = mealStack.amount() == 250
+         MutableComponent textServingsOf = mealStack.amount() == FluidUnit.MILLIBUCKET.convertToLoader(250)
                  ? TextUtils.getTranslation("tooltip.cooking_pot.single_serving")
-                 : TextUtils.getTranslation("tooltip.cooking_pot.many_servings", mealStack.amount() / 250);
+                 : TextUtils.getTranslation("tooltip.cooking_pot.many_servings", mealStack.amount() / FluidUnit.MILLIBUCKET.convertToLoader(250));
 
          font.drawInBatch(textServingsOf, (float) x, (float) y, gray, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 15728880);
          font.drawInBatch(BrewinAndChewin.getHelper().getFluidDisplayName(mealStack), x + ITEM_SIZE + MARGIN, y + textSpacing + MARGIN, -1, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, 15728880);

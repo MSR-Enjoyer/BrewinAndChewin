@@ -4,12 +4,16 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -191,6 +195,13 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     @Override
     public StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidIngredient> getFluidIngredientWrapperStreamCodec() {
         return KegCompatibleFluidIngredients.STREAM_CODEC;
+    }
+
+    @Override
+    public AbstractedFluidStack deserializeLoaderFluidStack(CompoundTag tag, HolderLookup.Provider provider) {
+        var fluidStack = FluidStack.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, provider), tag).mapOrElse(Pair::getFirst, pairError -> FluidStack.EMPTY);
+
+        return new AbstractedFluidStack(fluidStack.getFluid(), fluidStack.getAmount(), fluidStack.getComponents(), FluidUnit.MILLIBUCKET);
     }
 
     @Override

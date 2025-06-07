@@ -4,6 +4,8 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -38,7 +40,6 @@ import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public interface BnCPlatformHelper {
 
@@ -91,6 +92,8 @@ public interface BnCPlatformHelper {
     Codec<AbstractedFluidIngredient> getFluidIngredientWrapperCodec();
 
     StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidIngredient> getFluidIngredientWrapperStreamCodec();
+
+    AbstractedFluidStack deserializeLoaderFluidStack(CompoundTag tag, HolderLookup.Provider provider);
 
     ItemStack getCraftingRemainingItem(ItemStack stack);
 

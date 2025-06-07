@@ -11,16 +11,21 @@ import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,10 +48,7 @@ import umpaz.brewinandchewin.common.container.AbstractedItemHandler;
 import umpaz.brewinandchewin.common.block.entity.container.KegMenu;
 import umpaz.brewinandchewin.common.block.entity.container.KegStackedContents;
 import umpaz.brewinandchewin.common.block.entity.container.SidedKegWrapper;
-import umpaz.brewinandchewin.common.utility.BnCMenuConstructor;
-import umpaz.brewinandchewin.common.utility.AbstractedFluidIngredient;
-import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
-import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
+import umpaz.brewinandchewin.common.utility.*;
 import umpaz.brewinandchewin.fabric.BrewinAndChewinFabric;
 import umpaz.brewinandchewin.fabric.block.entity.KegBlockEntityFabric;
 import umpaz.brewinandchewin.fabric.container.KegFluidItemStorageFabric;
@@ -201,6 +203,14 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     @Override
     public StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidIngredient> getFluidIngredientWrapperStreamCodec() {
         return KegFluidIngredient.STREAM_CODEC;
+    }
+
+    @Override
+    public AbstractedFluidStack deserializeLoaderFluidStack(CompoundTag tag, HolderLookup.Provider provider) {
+        var fluidVariant = FluidVariant.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, provider), tag.get("variant")).mapOrElse(Pair::getFirst, pairError -> FluidVariant.blank());
+        var amount = tag.getLong("amount");
+
+        return new AbstractedFluidStack(fluidVariant.getFluid(), amount, fluidVariant.getComponentMap(), FluidUnit.DROPLET);
     }
 
     @Override

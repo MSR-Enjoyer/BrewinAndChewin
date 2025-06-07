@@ -131,8 +131,8 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         CustomData data = kegStack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY);
         CompoundTag tag = data.copyTag();
         if (!tag.isEmpty()) {
-            if (tag.contains("FluidTank")) {
-                return AbstractedFluidStack.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, provider), tag.get("FluidTank")).mapOrElse(Pair::getFirst, pairError -> AbstractedFluidStack.EMPTY);
+            if (tag.contains("FluidTank", Tag.TAG_COMPOUND)) {
+                return BrewinAndChewin.getHelper().deserializeLoaderFluidStack(tag.getCompound("FluidTank"), provider);
             }
         }
 
