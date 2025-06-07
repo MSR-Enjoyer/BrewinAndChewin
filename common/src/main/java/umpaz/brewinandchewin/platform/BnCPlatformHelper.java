@@ -93,7 +93,7 @@ public interface BnCPlatformHelper {
 
     StreamCodec<RegistryFriendlyByteBuf, AbstractedFluidIngredient> getFluidIngredientWrapperStreamCodec();
 
-    AbstractedFluidStack deserializeLoaderFluidStack(CompoundTag tag, HolderLookup.Provider provider);
+    AbstractedFluidStack deserializeTankFluidStack(CompoundTag tag, HolderLookup.Provider provider);
 
     ItemStack getCraftingRemainingItem(ItemStack stack);
 

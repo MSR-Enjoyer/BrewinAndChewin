@@ -1,7 +1,6 @@
 package umpaz.brewinandchewin.common.block.entity;
 
 import com.google.common.collect.Lists;
-import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
@@ -12,10 +11,8 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -132,7 +129,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         CompoundTag tag = data.copyTag();
         if (!tag.isEmpty()) {
             if (tag.contains("FluidTank", Tag.TAG_COMPOUND)) {
-                return BrewinAndChewin.getHelper().deserializeLoaderFluidStack(tag.getCompound("FluidTank"), provider);
+                return BrewinAndChewin.getHelper().deserializeTankFluidStack(tag.getCompound("FluidTank"), provider);
             }
         }
 

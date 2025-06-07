@@ -206,7 +206,7 @@ public class BnCPlatformHelperFabric implements BnCPlatformHelper {
     }
 
     @Override
-    public AbstractedFluidStack deserializeLoaderFluidStack(CompoundTag tag, HolderLookup.Provider provider) {
+    public AbstractedFluidStack deserializeTankFluidStack(CompoundTag tag, HolderLookup.Provider provider) {
         var fluidVariant = FluidVariant.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, provider), tag.get("variant")).mapOrElse(Pair::getFirst, pairError -> FluidVariant.blank());
         var amount = tag.getLong("amount");
 

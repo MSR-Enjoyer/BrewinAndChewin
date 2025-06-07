@@ -198,7 +198,7 @@ public class BnCPlatformHelperNeoForge implements BnCPlatformHelper {
     }
 
     @Override
-    public AbstractedFluidStack deserializeLoaderFluidStack(CompoundTag tag, HolderLookup.Provider provider) {
+    public AbstractedFluidStack deserializeTankFluidStack(CompoundTag tag, HolderLookup.Provider provider) {
         if (!tag.contains("Fluid"))
             return AbstractedFluidStack.EMPTY;
 
