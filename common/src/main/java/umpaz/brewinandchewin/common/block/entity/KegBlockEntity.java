@@ -414,7 +414,6 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         }
 
         if (!outputs.isEmpty() || recipe.isPresent()) {
-            inventory.commitModifiedStacks();
             currentlyOperating = false;
             return outputs;
         }
@@ -462,7 +461,6 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
 
         }
 
-        inventory.commitModifiedStacks();
         currentlyOperating = false;
         return outputs;
     }

@@ -11,11 +11,6 @@ public class KegItemHandlerFabric extends ItemStackHandler implements Abstracted
         super(size);
     }
 
-    @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        return removeItem(slot, amount, simulate);
-    }
-
     public void readFromNbt(CompoundTag tag, HolderLookup.Provider provider) {
         deserializeNBT(provider, tag);
     }
