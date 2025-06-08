@@ -1,2 +1,2 @@
 - [FABRIC] Updated to match 3.1.0's updated inventory code. Fixing crashes upon using this version of FDRF.
-- Now has a Turkish translation [#62](https://github.com/MerchantCalico/BrewinAndChewin/pull/62) - raspmary
+- Added Turkish translation [#62](https://github.com/MerchantCalico/BrewinAndChewin/pull/62) - raspmary
