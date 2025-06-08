@@ -1,2 +1,1 @@
-- [FABRIC] Updated to match 3.1.0's updated inventory code. Fixing crashes upon using this version of FDRF.
-- Added Turkish translation [#62](https://github.com/MerchantCalico/BrewinAndChewin/pull/62) - raspmary
+- Ship the correct version of Greenhouse Config TOML, allowing the game to create configs upon start-up.
