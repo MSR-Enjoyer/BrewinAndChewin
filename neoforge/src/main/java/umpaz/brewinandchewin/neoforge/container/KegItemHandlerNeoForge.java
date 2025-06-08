@@ -25,9 +25,4 @@ public class KegItemHandlerNeoForge extends ItemStackHandler implements Abstract
         return serializeNBT(provider);
     }
 
-    @Override
-    public void commitModifiedStacks() {
-        // No-op
-    }
-
 }
