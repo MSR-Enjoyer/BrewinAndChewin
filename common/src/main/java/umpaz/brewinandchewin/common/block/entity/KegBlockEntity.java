@@ -334,7 +334,7 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
         }
 
 
-        for (int i = 0; i < OUTPUT_SLOT; ++i) {
+        for (int i = 0; i < CONTAINER_SLOT; ++i) {
             ItemStack slotStack = inventory.getStackInSlot(i);
             if (!BrewinAndChewin.getHelper().getCraftingRemainingItem(slotStack).isEmpty())
                 ejectIngredientRemainder(BrewinAndChewin.getHelper().getCraftingRemainingItem(slotStack));
