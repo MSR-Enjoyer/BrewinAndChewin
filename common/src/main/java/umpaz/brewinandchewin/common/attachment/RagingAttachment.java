@@ -64,8 +64,9 @@ public class RagingAttachment {
             }
 
             if (attachment.getStacks() <= 0 || !living.hasEffect(BnCEffects.RAGING)) {
-                if (living.getAttributes().hasModifier(Attributes.ATTACK_SPEED, RAGING_ATTRIBUTE_ID))
+                if (living.getAttributes().hasAttribute(Attributes.ATTACK_SPEED) && living.getAttributes().hasModifier(Attributes.ATTACK_SPEED, RAGING_ATTRIBUTE_ID)) {
                     living.getAttribute(Attributes.ATTACK_SPEED).removeModifier(RAGING_ATTRIBUTE_ID);
+                }
                 if (attachment.previousStacks != 0) {
                     attachment.previousStacks = 0;
                     BrewinAndChewin.getHelper().setRagingAttachment(living, null);
