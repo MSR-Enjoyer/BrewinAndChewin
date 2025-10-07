@@ -19,7 +19,7 @@ object Versions {
     const val NEOFORGE_LOADER_RANGE = "[4,)"
     const val NEOFORGE_MINECRAFT_RANGE = "[1.21,1.21.2)"
 
-    const val GREENHOUSE_CONFIG = "2.2.0+1.21.1"
+    const val GREENHOUSE_CONFIG = "2.2.1+1.21.1"
     const val GREENHOUSE_CONFIG_TOML = "1.1.0"
     const val GREENHOUSE_CONFIG_NEOFORGE_RANGE = "[2.2.0,)"
     const val GREENHOUSE_CONFIG_FABRIC_RANGE = ">=2.2.0"

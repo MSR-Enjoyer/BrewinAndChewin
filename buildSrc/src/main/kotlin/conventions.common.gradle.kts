@@ -52,7 +52,7 @@ repositories {
     maven("https://maven.terraformersmc.com/") {
         name = "TerraformersMC"
     }
-    maven("https://repo.greenhouse.house/releases/") {
+    maven("https://maven.greenhouse.lgbt/releases/") {
         name = "Greenhouse"
     }
     exclusiveContent {
@@ -149,7 +149,7 @@ publishing {
     repositories {
         maven {
             name = "Greenhouse"
-            url = uri("https://repo.greenhouse.house/releases")
+            url = uri("https://maven.greenhouse.lgbt/releases")
             credentials {
                 username = System.getenv("MAVEN_USERNAME")
                 password = System.getenv("MAVEN_PASSWORD")

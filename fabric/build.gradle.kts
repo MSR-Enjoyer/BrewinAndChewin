@@ -14,10 +14,10 @@ repositories {
         name = "TerraformersMC"
         url = uri("https://maven.terraformersmc.com/")
     }
-    maven("https://repo.greenhouse.house/releases/") {
+    maven("https://maven.greenhouse.lgbt/releases/") {
         name = "Greenhouse Maven"
     }
-    maven("https://repo.greenhouse.house/snapshots/") {
+    maven("https://maven.greenhouse.lgbt/snapshots/") {
         name = "Greenhouse Maven (Snapshots)"
     }
     maven("https://mvn.devos.one/snapshots/") {
