@@ -1,3 +1,3 @@
-- Fixed container slot expending an extra item when fermenting if an extra item is present. [#64](https://github.com/MerchantCalico/BrewinAndChewin/issues/64)
+- Fixed the container slot being consumed whenever a liquid is finished fermenting. [#64](https://github.com/ChrysanthCow/BrewinAndChewin/issues/64)
 - Fixed crash when an entity does not have an attack speed modifier and has Raging. [#80](https://github.com/MerchantCalico/BrewinAndChewin/issues/80)
-- Updated Greenhouse Config to 2.2.1, fixing a race condition when initializing configs on NeoForge.
+- Updated Greenhouse Config. Fixes an uncommon crash when launching the game on NeoForge. [#75](https://github.com/ChrysanthCow/BrewinAndChewin/issues/75)

@@ -1,7 +1,7 @@
 package umpaz.brewinandchewin.gradle
 
 object Versions {
-    const val MOD = "4.4.1"
+    const val MOD = "4.4.2"
 
     const val MINECRAFT = "1.21.1"
     const val PARCHMENT_MINECRAFT = "1.21.1"
@@ -19,10 +19,10 @@ object Versions {
     const val NEOFORGE_LOADER_RANGE = "[4,)"
     const val NEOFORGE_MINECRAFT_RANGE = "[1.21,1.21.2)"
 
-    const val GREENHOUSE_CONFIG = "2.2.1+1.21.1"
+    const val GREENHOUSE_CONFIG = "2.2.3+1.21.1"
     const val GREENHOUSE_CONFIG_TOML = "1.1.0"
-    const val GREENHOUSE_CONFIG_NEOFORGE_RANGE = "[2.2.0,)"
-    const val GREENHOUSE_CONFIG_FABRIC_RANGE = ">=2.2.0"
+    const val GREENHOUSE_CONFIG_NEOFORGE_RANGE = "[2.2.3,)"
+    const val GREENHOUSE_CONFIG_FABRIC_RANGE = ">=2.2.3"
 
     const val JEI = "19.21.0.247"
     const val EMI = "1.1.19+1.21.1"
