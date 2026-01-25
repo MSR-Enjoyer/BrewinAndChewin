@@ -26,7 +26,7 @@ Using a keg, you can brew or ferment many new foods, including liquors, cheese, 
 
 ```groovy
 repositories {
-    maven("https://repo.greenhouse.house/releases/") {
+    maven("https://maven.greenhouse.lgbt/releases/") {
         name = "Greenhouse Maven"
     }
 }
@@ -52,7 +52,7 @@ dependencies {
 repositories {
     maven {
         name = "Greenhouse Maven"
-        url = "https://repo.greenhouse.house/releases/"
+        url = "https://maven.greenhouse.lgbt/releases/"
     }
 }
 
