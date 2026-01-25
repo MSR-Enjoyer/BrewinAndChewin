@@ -1,3 +1,6 @@
 - Fixed the container slot being consumed whenever a liquid is finished fermenting. [#64](https://github.com/ChrysanthCow/BrewinAndChewin/issues/64)
-- Fixed crash when an entity does not have an attack speed modifier and has Raging. [#80](https://github.com/MerchantCalico/BrewinAndChewin/issues/80)
 - Updated Greenhouse Config. Fixes an uncommon crash when launching the game on NeoForge. [#75](https://github.com/ChrysanthCow/BrewinAndChewin/issues/75)
+- Added Traditional Chinese translation [#73](https://github.com/ChrysanthCow/BrewinAndChewin/pull/73) - DEEMsss
+- Fixed crash when an entity does not have an attack speed modifier and has Raging. [#80](https://github.com/MerchantCalico/BrewinAndChewin/issues/80)
+- Added Korean translation [#85](https://github.com/ChrysanthCow/BrewinAndChewin/pull/85) - wqesadxzc12369-ctrl
+- Added Kazakh translation [#96](https://github.com/ChrysanthCow/BrewinAndChewin/pull/96) - ninsent
