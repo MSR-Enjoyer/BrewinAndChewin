@@ -29,8 +29,8 @@ object Versions {
     const val APPLESKIN = "mc1.21-3.0.5"
     const val CLOTH_CONFIG = "15.0.140"
 
-    const val FARMERS_DELIGHT = "1.21.1-1.2.6"
-    const val FARMERS_DELIGHT_RANGE = "[1.2.6,)"
+    const val FARMERS_DELIGHT = "1.21.1-1.3.1"
+    const val FARMERS_DELIGHT_RANGE = "[1.3.1,)"
 
     const val FARMERS_DELIGHT_REFABRICATED = "1.21.1-3.1.0+refabricated"
     const val FARMERS_DELIGHT_REFABRICATED_RANGE = ">=1.21.1-3.1.0"
