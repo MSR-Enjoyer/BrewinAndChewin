@@ -1,0 +1,19 @@
+{
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    {
+      "item": "brewinandchewin:quiche"
+    }
+  ],
+  "result": [
+    {
+      "item": {
+        "count": 4,
+        "id": "brewinandchewin:quiche_slice"
+      }
+    }
+  ],
+  "tool": {
+    "tag": "c:tools/knife"
+  }
+}

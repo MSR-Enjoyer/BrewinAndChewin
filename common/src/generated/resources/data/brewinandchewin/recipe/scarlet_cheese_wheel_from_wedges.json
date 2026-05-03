@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "p": {
+      "item": "brewinandchewin:scarlet_cheese_wedge"
+    }
+  },
+  "pattern": [
+    "pp",
+    "pp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "brewinandchewin:scarlet_cheese_wheel"
+  }
+}

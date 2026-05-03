@@ -1,0 +1,9 @@
+accessWidener v2 named
+accessible class net/minecraft/client/gui/Gui$HeartType
+accessible method net/minecraft/client/gui/GuiGraphics innerBlit (Lnet/minecraft/resources/ResourceLocation;IIIIIFFFFFFFF)V
+accessible class net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration
+accessible field net/minecraft/client/renderer/block/model/BakedQuad tintIndex I
+mutable field net/minecraft/client/renderer/block/model/BakedQuad tintIndex I
+accessible method net/minecraft/core/particles/SimpleParticleType <init> (Z)V
+accessible class net/minecraft/world/entity/player/StackedContents$RecipePicker
+accessible class net/minecraft/stats/RecipeBookSettings$TypeSettings

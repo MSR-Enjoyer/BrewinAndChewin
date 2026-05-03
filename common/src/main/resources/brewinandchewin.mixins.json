@@ -1,0 +1,43 @@
+{
+  "required": true,
+  "package": "umpaz.brewinandchewin.common.mixin",
+  "plugin": "umpaz.brewinandchewin.BnCMixinConfigPlugin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "brewinandchewin.refmap.json",
+  "mixins": [
+    "DataFixTypesAccessor",
+    "DataFixTypesMixin",
+    "IntoxicationCancelSaturationMixin",
+    "KegStackedContentsRecipePickerMixin",
+    "LivingEntityAccessor",
+    "LivingEntityMixin",
+    "LootContextAccessor",
+    "LootParamsAccessor",
+    "MsgCommandMixin",
+    "NbtUtilsMixin",
+    "PlayerListMixin",
+    "PlayerMixin",
+    "ServerGamePacketListenerImplMixin",
+    "ServerPlaceRecipeAccessor",
+    "ServerRecipeBookMixin",
+    "StackedContentsRecipePickerAccessor",
+    "StoreLootParamsMixin$LootParamsBuilderMixin",
+    "StoreLootParamsMixin$LootParamsMixin"
+  ],
+  "client": [
+    "client.ChatListenerMixin",
+    "client.GhostRecipeAccessor",
+    "client.GuiMixin",
+    "client.LevelRendererAccessor",
+    "client.ModelBakeryAccessor",
+    "client.RecipeBookComponentAccessor",
+    "client.TipsyDrunkRendererMixin",
+    "client.TipsySignRendererMixin$TipsyCanvasSignRenderMixin",
+    "client.TipsySignRendererMixin$TipsySignRenderMixin",
+    "client.integration.appleskin.HUDOverlayHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}
