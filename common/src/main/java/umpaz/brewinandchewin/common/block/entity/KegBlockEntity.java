@@ -78,6 +78,12 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
     private int fermentTimeTotal;
     private Component customName;
 
+    //SMH stupid chud local heat sources
+    private static final TagKey<Block> HEAT_SOURCES_LOCAL = TagKey.create(
+            Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath("farmersdelight", "heat_sources")
+    );
+    
     private boolean deferFluidExtraction = false;
     private boolean currentlyOperating = false;
     public int kegTemperature;
@@ -498,8 +504,8 @@ public class KegBlockEntity extends SyncedBlockEntity implements MenuProvider, N
             }
         }
 
-        int heat = states.stream().filter(s -> s.getBlockHolder().isBound()).filter(s -> s.is(ModTags.HEAT_SOURCES) && s.hasProperty(BlockStateProperties.LIT)).filter(s -> s.getValue(BlockStateProperties.LIT)).mapToInt(s -> 1).sum();
-        heat += states.stream().filter(s -> s.getBlockHolder().isBound()).filter(s -> s.is(ModTags.HEAT_SOURCES) && !s.hasProperty(BlockStateProperties.LIT)).mapToInt(s -> 1).sum();
+        int heat = states.stream().filter(s -> s.getBlockHolder().isBound()).filter(s -> s.is(HEAT_SOURCES_LOCAL) && s.hasProperty(BlockStateProperties.LIT)).filter(s -> s.getValue(BlockStateProperties.LIT)).mapToInt(s -> 1).sum();
+        heat += states.stream().filter(s -> s.getBlockHolder().isBound()).filter(s -> s.is(HEAT_SOURCES_LOCAL) && !s.hasProperty(BlockStateProperties.LIT)).mapToInt(s -> 1).sum();
 
         // Compat with mods that have lit states, such as a future Pug FD addon.
         int cold = states.stream().filter(s -> s.getBlockHolder().isBound()).filter(s -> s.is(BnCTags.Blocks.FREEZE_SOURCES) && s.hasProperty(BlockStateProperties.LIT)).filter(s -> s.hasProperty(BlockStateProperties.LIT)).filter(s -> s.getValue(BlockStateProperties.LIT)).mapToInt(s -> 1).sum();
